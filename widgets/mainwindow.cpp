@@ -9946,6 +9946,21 @@ void MainWindow::statusUpdate () const
     {
       tr_period = quint32_max;
     }
+
+  // Collect itone and related data to send in the status message packet
+  char str[MAX_NUM_SYMBOLS+1];
+  int i = 0, index = 0, num_symbols = 0;
+  if ("FT8" == m_mode)
+      num_symbols = NUM_FT8_SYMBOLS;
+  else if ("FT4" == m_mode)
+      num_symbols = NUM_FT4_SYMBOLS;
+  else if ("WSPR" == m_mode)
+      num_symbols = NUM_WSPR_SYMBOLS;
+  // TODO: Handle more digital modes here
+  if (m_transmitting)
+      for (i = 0; i < num_symbols; i++)
+          index += snprintf(&str[index], MAX_NUM_SYMBOLS+1-index, "%d", itone[i]);
+
   m_messageClient->status_update (m_freqNominal, m_mode, m_hisCall,
                                   QString::number (ui->rptSpinBox->value ()),
                                   m_mode, ui->autoButton->isChecked (),
@@ -9956,7 +9971,7 @@ void MainWindow::statusUpdate () const
                                   submode != QChar::Null ? QString {submode} : QString {}, m_bFastMode,
                                   static_cast<quint8> (m_specOp),
                                   ftol, tr_period, m_multi_settings->configuration_name (),
-                                  m_currentMessage);
+                                  m_currentMessage, str, num_symbols);
 }
 
 void MainWindow::childEvent (QChildEvent * e)

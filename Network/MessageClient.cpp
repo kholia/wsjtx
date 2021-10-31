@@ -586,7 +586,8 @@ void MessageClient::status_update (Frequency f, QString const& mode, QString con
                                    , bool fast_mode, quint8 special_op_mode
                                    , quint32 frequency_tolerance, quint32 tr_period
                                    , QString const& configuration_name
-                                   , QString const& tx_message)
+                                   , QString const& tx_message
+                                   , QString const& itone_data, quint32 num_symbols)
 {
   if (m_->server_port_ && !m_->server_.isNull ())
     {
@@ -596,8 +597,8 @@ void MessageClient::status_update (Frequency f, QString const& mode, QString con
           << tx_enabled << transmitting << decoding << rx_df << tx_df << de_call.toUtf8 ()
           << de_grid.toUtf8 () << dx_grid.toUtf8 () << watchdog_timeout << sub_mode.toUtf8 ()
           << fast_mode << special_op_mode << frequency_tolerance << tr_period << configuration_name.toUtf8 ()
-          << tx_message.toUtf8 ();
-      TRACE_UDP ("frequency:" << f << "mode:" << mode << "DX:" << dx_call << "report:" << report << "Tx mode:" << tx_mode << "tx_enabled:" << tx_enabled << "Tx:" << transmitting << "decoding:" << decoding << "Rx df:" << rx_df << "Tx df:" << tx_df << "DE:" << de_call << "DE grid:" << de_grid << "DX grid:" << dx_grid << "w/d t/o:" << watchdog_timeout << "sub_mode:" << sub_mode << "fast mode:" << fast_mode << "spec op mode:" << special_op_mode << "frequency tolerance:" << frequency_tolerance << "T/R period:" << tr_period << "configuration name:" << configuration_name << "Tx message:" << tx_message);
+          << tx_message.toUtf8 () << itone_data.toUtf8 () << num_symbols;
+      TRACE_UDP ("frequency:" << f << "mode:" << mode << "DX:" << dx_call << "report:" << report << "Tx mode:" << tx_mode << "tx_enabled:" << tx_enabled << "Tx:" << transmitting << "decoding:" << decoding << "Rx df:" << rx_df << "Tx df:" << tx_df << "DE:" << de_call << "DE grid:" << de_grid << "DX grid:" << dx_grid << "w/d t/o:" << watchdog_timeout << "sub_mode:" << sub_mode << "fast mode:" << fast_mode << "spec op mode:" << special_op_mode << "frequency tolerance:" << frequency_tolerance << "T/R period:" << tr_period << "configuration name:" << configuration_name << "Tx message:" << tx_message << "itone data:" << itone_data << "num_symbols: " << num_symbols);
       m_->send_message (out, message);
     }
 }
