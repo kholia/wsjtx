@@ -244,10 +244,12 @@ void MessageServer::impl::parse_message (QHostAddress const& sender, port_type s
                 quint32 tr_period {quint32_max};
                 QByteArray configuration_name;
                 QByteArray tx_message;
+                QByteArray itone_data;
+                quint32 num_symbols = 0;
                 in >> f >> mode >> dx_call >> report >> tx_mode >> tx_enabled >> transmitting >> decoding
                    >> rx_df >> tx_df >> de_call >> de_grid >> dx_grid >> watchdog_timeout >> sub_mode
                    >> fast_mode >> special_op_mode >> frequency_tolerance >> tr_period >> configuration_name
-                   >> tx_message;
+                   >> tx_message >> itone_data >> num_symbols;
                 if (check_status (in) != Fail)
                   {
                     Q_EMIT self_->status_update (client_key, f, QString::fromUtf8 (mode)
@@ -259,7 +261,9 @@ void MessageServer::impl::parse_message (QHostAddress const& sender, port_type s
                                                  , QString::fromUtf8 (sub_mode), fast_mode
                                                  , special_op_mode, frequency_tolerance, tr_period
                                                  , QString::fromUtf8 (configuration_name)
-                                                 , QString::fromUtf8 (tx_message));
+                                                 , QString::fromUtf8 (tx_message)
+                                                 , QString::fromUtf8 (itone_data)
+                                                 , num_symbols);
                   }
               }
               break;
