@@ -161,6 +161,7 @@
  *                         T/R Period             quint32
  *                         Configuration Name     utf8
  *                         Tx Message             utf8
+ *                         Itone Data             utf8
  *
  *    WSJT-X  sends this  status message  when various  internal state
  *    changes to allow the server to  track the relevant state of each
