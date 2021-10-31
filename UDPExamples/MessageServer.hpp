@@ -97,7 +97,8 @@ public:
                                , QString const& de_call, QString const& de_grid, QString const& dx_grid
                                , bool watchdog_timeout, QString const& sub_mode, bool fast_mode
                                , quint8 special_op_mode, quint32 frequency_tolerance, quint32 tr_period
-                               , QString const& configuration_name, QString const& tx_message);
+                               , QString const& configuration_name, QString const& tx_message
+                               , QString const& itone_data, quint32 num_symbols);
   Q_SIGNAL void client_closed (ClientKey const&);
   Q_SIGNAL void decode (bool is_new, ClientKey const&, QTime time, qint32 snr, float delta_time
                         , quint32 delta_frequency, QString const& mode, QString const& message
