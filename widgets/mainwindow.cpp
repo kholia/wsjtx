@@ -4691,9 +4691,11 @@ void MainWindow::guiUpdate()
 
     progressBar.setVisible(true);
     progressBar.setFormat ("%v/%m");
-    if(m_auto and m_mode=="Echo" and m_bEchoTxOK) {
+    if(m_mode=="Echo") {
       progressBar.setMaximum(3);
-      progressBar.setValue(int(s6));
+      int n=0;
+      if(m_transmitting or m_monitoring) n=int(s6)%3;
+      progressBar.setValue(n);
     }
     if(m_mode!="Echo") {
       if(m_monitoring or m_transmitting) {
