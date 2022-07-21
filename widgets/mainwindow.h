@@ -433,6 +433,8 @@ private:
   double  m_tRemaining;
   double  m_TRperiod;
   double  m_echoFreq;
+  double  m_wself;
+  double  m_wdx;
 
   float   m_DTtol;
   float   m_t0;
@@ -501,6 +503,7 @@ private:
   qint32  m_latestDecodeTime=-1;
   qint32  m_points=-99;
   qint32  m_score=0;
+  qint32  m_fDop=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;

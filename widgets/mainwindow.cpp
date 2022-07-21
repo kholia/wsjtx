@@ -1579,6 +1579,11 @@ void MainWindow::dataSink(qint64 frames)
     }
   }
 
+  if(m_mode=="Echo" and m_ihsym==1) {
+    qDebug() << "bb" << m_fDop << m_astroWidget->nfRIT()
+             << m_astroWidget->bDither() << m_config.transceiver_resolution ()
+             << m_freqNominal << m_echoFreq << m_wself << m_wdx;
+  }
   bool bCallDecoder=false;
   if(m_ihsym==m_hsymStop) bCallDecoder=true;
   if(m_mode=="FT8" and !m_diskData) {
@@ -7914,6 +7919,9 @@ void MainWindow::transmit (double snr)
     if(m_astroWidget->bDither()) m_echoFreq=1490.0 + QRandomGenerator::global()->bounded(20.0); //Dither by +/- 10 Hz
     Q_EMIT sendMessage (m_mode, 27, 1024.0, m_echoFreq, 0.0, m_soundOutput,
                         m_config.audio_output_channel(), false, false, snr, m_TRperiod);
+    qDebug() << "aa" << m_fDop << m_astroWidget->nfRIT()
+             << m_astroWidget->bDither() << m_config.transceiver_resolution ()
+             << m_freqNominal << m_echoFreq << m_wself << m_wdx;
   }
 
 // In auto-sequencing mode, stop after 5 transmissions of "73" message.
@@ -8723,10 +8731,10 @@ void MainWindow::astroUpdate ()
                                                    m_freqNominal,
                                                    "Echo" == m_mode, m_transmitting,
                                                    !m_config.tx_QSY_allowed (), m_TRperiod);
+      m_fDop=correction.rx;
+      m_wself=correction.wself;
+      m_wdx=correction.wdx;
 
-      qDebug() << "aa" << correction.rx << m_astroWidget->nfRIT()
-               << m_astroWidget->bDither() << m_config.transceiver_resolution ()
-               << m_freqNominal << m_echoFreq << correction.wself << correction.wdx;
       // no Doppler correction in Tx if rig can't do it
       if (m_transmitting && !m_config.tx_QSY_allowed ()) return;
       if (!m_astroWidget->doppler_tracking ()) return;
