@@ -57,6 +57,9 @@ public:
                          double TR_period);
 
   bool doppler_tracking () const;
+  bool bDither();
+  qint32 nfRIT();
+
   Q_SLOT void nominal_frequency (Frequency rx, Frequency tx);
   Q_SIGNAL void tracking_update () const;
 

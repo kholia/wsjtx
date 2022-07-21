@@ -255,6 +255,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
 
 void Astro::check_split ()
 {
+  /*  TEMPORARILY DISABLE
   if (doppler_tracking () && !configuration_->split_mode ())
     {
       MessageBox::warning_message (this, tr ("Doppler Tracking Error"),
@@ -262,6 +263,7 @@ void Astro::check_split ()
                                    tr ("Go to \"Menu->File->Settings->Radio\" to enable split operation"));
       ui_->rbNoDoppler->click ();
     }
+  */
 }
 
 void Astro::on_rbFullTrack_clicked(bool)
@@ -330,4 +332,20 @@ void Astro::hideEvent (QHideEvent * e)
 {
   Q_EMIT tracking_update ();
   QWidget::hideEvent (e);
+}
+
+bool Astro::bDither()
+{
+  return ui_->cbDither->isChecked();
+}
+
+qint32 Astro::nfRIT()
+{
+  if(m_DopplerMethod==0) {
+    ui_->sbRIT->setEnabled(true);
+    return ui_->sbRIT->value();
+  } else {
+    ui_->sbRIT->setEnabled(false);
+    return 0;
+  }
 }

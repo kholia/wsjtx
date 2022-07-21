@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>359</width>
-    <height>342</height>
+    <height>401</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,7 +70,7 @@
            </property>
           </widget>
          </item>
-		 <item>
+         <item>
           <widget class="QRadioButton" name="rbOnDxEcho">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;DX station announces their TX Freq, which is entered as the Sked Freq. Correction applied to RX and TX so you appear on the DX's station's own echo Freq.&lt;/p&gt;&lt;p&gt;If the rig does not accept CAT QSY commands while transmitting a single correction is applied for the whole transmit period.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -83,7 +83,7 @@
            </property>
           </widget>
          </item>
-          <item>
+         <item>
           <widget class="QRadioButton" name="rbCallDx">
            <property name="toolTip">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tune radio manually and select this mode to put your echo on the same frequency.&lt;/p&gt;&lt;p&gt;If the rig does not accept CAT QSY commands while transmitting a single correction is applied for the whole transmit period.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -95,7 +95,7 @@
             <bool>false</bool>
            </property>
           </widget>
-         </item>		 
+         </item>
          <item>
           <widget class="QRadioButton" name="rbNoDoppler">
            <property name="toolTip">
@@ -109,7 +109,7 @@
            </property>
           </widget>
          </item>
-       </layout>
+        </layout>
        </widget>
       </item>
       <item>
@@ -200,6 +200,76 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Echo Mode</string>
+        </property>
+        <widget class="QWidget" name="">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>164</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QSpinBox" name="sbRIT">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="suffix">
+             <string>  Hz</string>
+            </property>
+            <property name="prefix">
+             <string>RIT  </string>
+            </property>
+            <property name="minimum">
+             <number>-20000</number>
+            </property>
+            <property name="maximum">
+             <number>20000</number>
+            </property>
+            <property name="singleStep">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbDither">
+            <property name="text">
+             <string>Dither</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
       <item>

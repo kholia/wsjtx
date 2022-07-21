@@ -8721,6 +8721,9 @@ void MainWindow::astroUpdate ()
                                                    m_freqNominal,
                                                    "Echo" == m_mode, m_transmitting,
                                                    !m_config.tx_QSY_allowed (), m_TRperiod);
+      qDebug() << "aa" << correction.tx << correction.rx << m_astroWidget->nfRIT()
+               << m_astroWidget->bDither() << m_config.transceiver_resolution ()
+               << m_freqNominal;
       // no Doppler correction in Tx if rig can't do it
       if (m_transmitting && !m_config.tx_QSY_allowed ()) return;
       if (!m_astroWidget->doppler_tracking ()) return;
