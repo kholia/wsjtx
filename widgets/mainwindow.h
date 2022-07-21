@@ -432,6 +432,7 @@ private:
 
   double  m_tRemaining;
   double  m_TRperiod;
+  double  m_echoFreq;
 
   float   m_DTtol;
   float   m_t0;

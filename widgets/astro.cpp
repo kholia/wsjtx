@@ -250,6 +250,8 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
         //qDebug () << "correction.tx (no tx qsy):" << correction.tx;
       }
   }
+  correction.wself=width1;
+  correction.wdx=width2;
   return correction;
 }
 

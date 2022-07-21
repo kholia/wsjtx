@@ -32,6 +32,8 @@ public:
     Correction ()
       : rx {0}
       , tx {0}
+      , wself {0}
+      , wdx {0}
     {}
     Correction (Correction const&) = default;
     Correction& operator = (Correction const&) = default;
@@ -45,6 +47,8 @@ public:
 
     FrequencyDelta rx;
     FrequencyDelta tx;
+    double wself;
+    double wdx;
   };
 
   Correction astroUpdate(QDateTime const& t,
