@@ -2004,6 +2004,7 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
+  QTimer::singleShot (3000, [=] {tuneATU_Timer.stop ();});  // Stop the Tune watchdog
   m_auto = checked;
   m_maxPoints=-1;
   if (checked
