@@ -432,7 +432,7 @@ private:
 
   double  m_tRemaining;
   double  m_TRperiod;
-  double  m_echoFreq;
+  double  m_echoFreq=1500.0;
   double  m_wself;
   double  m_wdx;
 

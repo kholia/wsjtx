@@ -252,6 +252,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
   }
   correction.wself=width1;
   correction.wdx=width2;
+  qDebug() << "AA0" << m_DopplerMethod << m_dop00 << m_dop << correction.rx << correction.wself << correction.wdx;
   return correction;
 }
 
