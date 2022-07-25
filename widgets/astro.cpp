@@ -136,14 +136,14 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
       << "Az:     " << azmoon << "\n"
       "El:     " << elmoon << "\n"
       "SelfDop:" << m_dop00 << "\n"
-      "Width:  " << int(width1) << "\n"
+      "Width:  " << int(width1+0.5) << "\n"
       << qSetRealNumberPrecision (2)
       << "Delay:  " << techo << "\n"
       << qSetRealNumberPrecision (1)
       << "DxAz:   " << azmoondx << "\n"
       "DxEl:   " << elmoondx << "\n"
       "DxDop:  " << m_dop << "\n"
-      "DxWid:  " << int(width2) << "\n"
+      "DxWid:  " << int(width2+0.5) << "\n"
       "Dec:    " << decmoon << "\n"
       "SunAz:  " << azsun << "\n"
       "SunEl:  " << elsun << "\n"
