@@ -79,13 +79,14 @@ contains
          ih,im,is,AzSun8,ElSun8,                                        &
          ih,im,is,AzAux,ElAux,                                          &
          nfreq,doppler,dfdt,doppler00,dfdt0,c1
-    if (azel_extra_lines.ge.1) write(15, 1020, err=10) poloffset8,xnr8,Dgrd8
+    if (azel_extra_lines.ge.1) write(15, 1020, err=10) poloffset8,      &
+         xnr8,Dgrd8,width1,width2
 1010 format(                                                          &
          i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Moon'/               &
          i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Sun'/                &
          i2.2,':',i2.2,':',i2.2,',',f5.1,',',f5.1,',Source'/             &
          i5,',',f8.1,',',f8.2,',',f8.1,',',f8.2,',Doppler, ',a1)
-1020 format(f8.1,','f8.1,',',f8.1,',Pol')
+1020 format(f8.1,',',f8.1,',',f8.1,',',f8.1,',',f8.1,',Pol')
 10  close(15)
     go to 999
 

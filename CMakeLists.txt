@@ -509,6 +509,7 @@ set (wsjt_FSRCS
   lib/refspectrum.f90
   lib/savec2.f90
   lib/save_dxbase.f90
+  lib/save_echo_params.f90
   lib/sec0.f90
   lib/sec_midn.f90
   lib/setup65.f90

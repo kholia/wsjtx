@@ -153,6 +153,8 @@ extern "C" {
 
   int savec2_(char const * fname, int* TR_seconds, double* dial_freq, fortran_charlen_t);
 
+  void save_echo_params_(int* ndop, int* nfrit, float* f1, double* fspread, short id2[], int* idir);
+
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
                 float* width);
@@ -1600,7 +1602,11 @@ void MainWindow::dataSink(qint64 frames)
       float width=0.0;
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
-//      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop;
+      if(m_diskData) {
+        int idir=-1;
+        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
+      }
+      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width);
       QString t;
@@ -1609,13 +1615,17 @@ void MainWindow::dataSink(qint64 frames)
       t=QDateTime::currentDateTimeUtc().toString("hh:mm:ss  ") + t;
       if (ui) ui->decodedTextBrowser->appendText(t);
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
+      if(m_saveAll) {
+        int idir=1;
+        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
+      }
       m_nclearave=0;
 //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
         monitor(false);
         m_bEchoTxed=false;
       }
-      return;
+//      return;
     }
     if(m_mode=="FreqCal") {
       return;
