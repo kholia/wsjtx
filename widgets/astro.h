@@ -32,8 +32,8 @@ public:
     Correction ()
       : rx {0}
       , tx {0}
-      , wself {0}
-      , wdx {0}
+      , dop {0}
+      , width {0}
     {}
     Correction (Correction const&) = default;
     Correction& operator = (Correction const&) = default;
@@ -47,8 +47,8 @@ public:
 
     FrequencyDelta rx;
     FrequencyDelta tx;
-    double wself;
-    double wdx;
+    double dop;
+    double width;
   };
 
   Correction astroUpdate(QDateTime const& t,
@@ -57,11 +57,14 @@ public:
                          Frequency frequency,
                          bool dx_is_self,
                          bool bTx,
+                         bool bAuto,
                          bool no_tx_QSY,
                          double TR_period);
 
   bool doppler_tracking () const;
   bool bDither();
+  void selectOwnEcho();
+  void selectOnDxEcho();
   qint32 nfRIT();
 
   Q_SLOT void nominal_frequency (Frequency rx, Frequency tx);
@@ -74,8 +77,8 @@ protected:
 private slots:
   void on_rbConstFreqOnMoon_clicked(bool);
   void on_rbFullTrack_clicked(bool);
-  void on_rbOwnEcho_clicked(bool);
   void on_rbNoDoppler_clicked(bool);
+  void on_rbOwnEcho_clicked(bool);
   void on_rbOnDxEcho_clicked(bool);
   void on_rbCallDx_clicked(bool);
   void on_cbDopplerTracking_toggled(bool);

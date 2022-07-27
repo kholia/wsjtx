@@ -1589,16 +1589,18 @@ void MainWindow::dataSink(qint64 frames)
     if(m_mode=="Echo") {
       float dBerr=0.0;
       int nfrit=0;
+      if(m_astroWidget) nfrit=m_astroWidget->nfRIT();
       int nauto=0;
       if(m_auto) nauto=1;
       int nqual=0;
-      float f1=1500.0;
+      float f1=1500.0 + m_fDither;
       float xlevel=0.0;
       float sigdb=0.0;
       float dfreq=0.0;
       float width=0.0;
       echocom_.nclearave=m_nclearave;
-      int nDop=0;
+      int nDop=m_fAudioShift;
+//      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width);
       QString t;
@@ -2015,9 +2017,14 @@ void MainWindow::on_autoButton_clicked (bool checked)
   if (!checked) m_bCallingCQ = false;
   statusUpdate ();
   m_bEchoTxOK=false;
-  if(m_auto and (m_mode=="Echo")) {
-    m_nclearave=1;
-    echocom_.nsum=0;
+  if(m_mode=="Echo") {
+    if(m_auto) {
+      m_nclearave=1;
+      echocom_.nsum=0;
+      m_astroWidget->selectOwnEcho();
+    } else {
+      m_astroWidget->selectOnDxEcho();
+    }
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
 }
@@ -4150,14 +4157,14 @@ void MainWindow::guiUpdate()
   int nsec=ms/1000;
   double tsec=0.001*ms;
   double t2p=fmod(tsec,2*m_TRperiod);
-  double s6=fmod(tsec,6.0);
+  m_s6=fmod(tsec,6.0);
   int nseq = fmod(double(nsec),m_TRperiod);
   m_tRemaining=m_TRperiod - fmod(tsec,m_TRperiod);
 
   if(m_mode=="Echo") {
     tx1=0.0;
     tx2=txDuration;
-    if(m_auto and s6>4.0) m_bEchoTxOK=true;
+    if(m_auto and m_s6>4.0) m_bEchoTxOK=true;
     if(m_transmitting) m_bEchoTxed=true;
   }
 
@@ -4679,7 +4686,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec;
+//    qDebug() << "AAA" << nsec << (int)m_config.special_op_id() << (int)SpecOp::FOX;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -4694,7 +4701,7 @@ void MainWindow::guiUpdate()
     if(m_mode=="Echo") {
       progressBar.setMaximum(3);
       int n=0;
-      if(m_transmitting or m_monitoring) n=int(s6)%3;
+      if(m_transmitting or m_monitoring) n=int(m_s6)%3;
       progressBar.setValue(n);
     }
     if(m_mode!="Echo") {
@@ -7087,6 +7094,7 @@ void MainWindow::on_actionEcho_triggered()
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
+  m_astroWidget->selectOnDxEcho();
   statusChanged();
 }
 
@@ -7910,13 +7918,11 @@ void MainWindow::transmit (double snr)
   }
 
   if(m_mode=="Echo") {
-    m_echoFreq=1500.0;
-    if(m_astroWidget->bDither()) m_echoFreq=1490.0 + QRandomGenerator::global()->bounded(20.0); //Dither by +/- 10 Hz
-    Q_EMIT sendMessage (m_mode, 27, 1024.0, m_echoFreq, 0.0, m_soundOutput,
+    m_fDither=0.;
+    if(m_astroWidget->bDither()) m_fDither = QRandomGenerator::global()->bounded(20.0) - 10.0; //Dither by +/- 10 Hz
+    Q_EMIT sendMessage (m_mode, 27, 1024.0, 1500.0+m_fDither, 0.0, m_soundOutput,
                         m_config.audio_output_channel(), false, false, snr, m_TRperiod);
-//    qDebug() << "aa" << m_fDop << m_astroWidget->nfRIT()
-//             << m_astroWidget->bDither() << m_config.transceiver_resolution ()
-//             << m_freqNominal << m_echoFreq << m_wself << m_wdx;
+//    qDebug() << "aa" << m_s6 << m_freqNominal << m_rigState.frequency() << m_fDither;
   }
 
 // In auto-sequencing mode, stop after 5 transmissions of "73" message.
@@ -8716,26 +8722,26 @@ void MainWindow::WSPR_scheduling ()
 
 void MainWindow::astroUpdate ()
 {
-  if (m_astroWidget)
-    {
+  if (m_astroWidget) {
       // no Doppler correction while CTRL pressed allows manual tuning
       if (Qt::ControlModifier & QApplication::queryKeyboardModifiers ()) return;
 
       auto correction = m_astroWidget->astroUpdate(QDateTime::currentDateTimeUtc (),
            m_config.my_grid(), m_hisGrid,m_freqNominal,"Echo" == m_mode,
-           m_transmitting,!m_config.tx_QSY_allowed (),m_TRperiod);
-      m_fDop=correction.rx;
-      m_wself=correction.wself;
-      m_wdx=correction.wdx;
-//      qDebug() << "cc" << m_fDop << m_wself << m_wdx;
+           m_transmitting,m_auto,!m_config.tx_QSY_allowed (),m_TRperiod);
+      m_fDop=correction.dop;
+      m_fSpread=correction.width;
 
-      // no Doppler correction in Tx if rig can't do it
-      if (m_transmitting && !m_config.tx_QSY_allowed ()) return;
-      if (!m_astroWidget->doppler_tracking ()) return;
+      if (m_transmitting && !m_config.tx_QSY_allowed ()) return;  // No Tx Doppler correction if rig can't do it
+      if (!m_astroWidget->doppler_tracking()) {                  // We are not using Doppler correction
+        m_fAudioShift=m_fDop;
+//        qDebug() << "cc1" << m_hisGrid << m_auto << m_astroWidget->doppler_tracking()
+//                 << m_fSpread << m_fDop << correction.rx << m_fAudioShift;
+        return;
+      }
       if ((m_monitoring || m_transmitting)
-          // no Doppler correction below 6m
-          && m_freqNominal >= 50000000
-          && m_config.split_mode ())
+          && m_freqNominal >= 21000000          // No Doppler correction below 15m
+          && m_config.split_mode ())            // Doppler correcion needs split mode
         {
           // adjust for rig resolution
           if (m_config.transceiver_resolution () > 2)
@@ -8769,17 +8775,14 @@ void MainWindow::astroUpdate ()
               correction.tx = correction.tx / 10 * 10;
             }
           m_astroCorrection = correction;
-          if (m_reverse_Doppler)
-            {
-              m_astroCorrection.reverse ();
-            }
-        }
-      else
-        {
+          if (m_reverse_Doppler) m_astroCorrection.reverse ();
+        } else {
           m_astroCorrection = {};
         }
-
       setRig ();
+      m_fAudioShift=m_fDop - correction.rx;
+//      qDebug() << "cc2" << m_hisGrid << m_auto << m_astroWidget->doppler_tracking()
+//               << m_fSpread << m_fDop << correction.rx << m_fAudioShift;
     }
 }
 

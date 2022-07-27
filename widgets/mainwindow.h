@@ -432,9 +432,10 @@ private:
 
   double  m_tRemaining;
   double  m_TRperiod;
-  double  m_echoFreq=1500.0;
-  double  m_wself;
-  double  m_wdx;
+  double  m_fSpread;
+  double  m_s6;
+  double  m_fDither;
+  double  m_fAudioShift;
 
   float   m_DTtol;
   float   m_t0;

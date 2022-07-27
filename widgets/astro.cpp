@@ -92,7 +92,7 @@ void Astro::write_settings ()
 }
 
 auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const& hisgrid, Frequency freq,
-                        bool dx_is_self, bool bTx, bool no_tx_QSY, double TR_period) -> Correction
+                        bool bEchoMode, bool bTx, bool bAuto, bool no_tx_QSY, double TR_period) -> Correction
 {
   Frequency freq_moon {freq};
   double azsun,elsun,azmoon,elmoon,azmoondx,elmoondx;
@@ -121,6 +121,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
            AzElFileName.toLocal8Bit ().constData (),
            jpleph.toLocal8Bit ().constData ());
 
+//  qDebug() << "AA1" << m_dop00 << m_dop << width1 << width2;
   QString message;
   {
     QTextStream out {&message};
@@ -159,6 +160,12 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
   ui_->text_label->setText(message);
 
   Correction correction;
+  correction.dop=m_dop00;
+  correction.width=width1;
+  if(hisgrid!="" and !bAuto) {
+    correction.dop=m_dop;
+    correction.width=width2;
+  }
   if (ui_->cbDopplerTracking->isChecked ()) {
     switch (m_DopplerMethod)
       {
@@ -170,7 +177,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
         break;
         //case 5: // All Doppler correction done here; DX station stays at nominal dial frequency.
       case 3: // Both stations do full correction on Rx and none on Tx
-        //correction.rx = dx_is_self ? m_dop00 : m_dop;
+        //correction.rx = bEchoMode ? m_dop00 : m_dop;
         correction.rx =  m_dop00; // Now always sets RX to *own* echo freq
         break;
       case 2:
@@ -195,7 +202,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
       }
     //if (3 != m_DopplerMethod || 4 != m_DopplerMethod) correction.tx = -correction.rx;
     
-    if(dx_is_self && m_DopplerMethod == 1) correction.rx = 0;
+    if(bEchoMode && m_DopplerMethod == 1) correction.rx = 0;
 
     if (no_tx_QSY && 3 != m_DopplerMethod && 0 != m_DopplerMethod)
       {
@@ -229,7 +236,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
           {
           case 1:
             // All Doppler correction done here; DX station stays at nominal dial frequency.
-            offset = dx_is_self ? m_dop00 : m_dop;
+            offset = bEchoMode ? m_dop00 : m_dop;
             break;
 
           case 2:
@@ -250,9 +257,8 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
         //qDebug () << "correction.tx (no tx qsy):" << correction.tx;
       }
   }
-  correction.wself=width1;
-  correction.wdx=width2;
-  qDebug() << "AA0" << m_DopplerMethod << m_dop00 << m_dop << correction.rx << correction.wself << correction.wdx;
+
+//  qDebug() << "AA0" << m_DopplerMethod << bAuto << correction.tx << correction.rx << correction.width;
   return correction;
 }
 
@@ -340,6 +346,16 @@ void Astro::hideEvent (QHideEvent * e)
 bool Astro::bDither()
 {
   return ui_->cbDither->isChecked();
+}
+
+void Astro::selectOwnEcho()
+{
+  ui_->rbOwnEcho->click();
+}
+
+void Astro::selectOnDxEcho()
+{
+  ui_->rbOnDxEcho->click();
 }
 
 qint32 Astro::nfRIT()
