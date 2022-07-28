@@ -1609,10 +1609,12 @@ void MainWindow::dataSink(qint64 frames)
       }
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
-      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop << width;
+//      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop << width;
       QString t;
-      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                dBerr,dfreq,width,nqual);
+//      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d %7d %7d",echocom_.nsum,xlevel,sigdb,
+//                dBerr,dfreq,m_fDop,width,nqual,nDop,nfrit);
+      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
+                dBerr,dfreq,m_fDop,width,nqual);
       t=QDateTime::currentDateTimeUtc().toString("hh:mm:ss  ") + t;
       if (ui) ui->decodedTextBrowser->appendText(t);
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
@@ -7101,7 +7103,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("   UTC      N   Level    SNR     dBerr    DF    Width   Q");
+  ui->lh_decodes_headings_label->setText("   UTC      N   Level    SNR     dBerr    DF   Doppler  Width   Q");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);

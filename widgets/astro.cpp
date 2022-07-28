@@ -167,6 +167,7 @@ auto Astro::astroUpdate(QDateTime const& t, QString const& mygrid, QString const
     correction.width=width2;
   }
   if (ui_->cbDopplerTracking->isChecked ()) {
+    ui_->sbRIT->setEnabled(m_DopplerMethod==0);
     switch (m_DopplerMethod)
       {
       case 1: // All Doppler correction done here; DX station stays at nominal dial frequency.
@@ -361,10 +362,8 @@ void Astro::selectOnDxEcho()
 qint32 Astro::nfRIT()
 {
   if(m_DopplerMethod==0) {
-    ui_->sbRIT->setEnabled(true);
     return ui_->sbRIT->value();
   } else {
-    ui_->sbRIT->setEnabled(false);
     return 0;
   }
 }
