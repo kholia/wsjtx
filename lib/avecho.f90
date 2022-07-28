@@ -1,5 +1,5 @@
 subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
-     dfreq,width)
+     dfreq,width,bDiskData)
 
   integer TXLENGTH
   parameter (TXLENGTH=27648)           !27*1024
@@ -15,6 +15,7 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
   real x(NFFT)
   integer ipkv(1)
   logical ex
+  logical*1 bDiskData
   complex c(0:NH)
   equivalence (x,c),(ipk,ipkv)
   common/echocom/nclearave,nsum,blue(NZ),red(NZ)
@@ -22,6 +23,7 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
   save dop0,sa,sb
 
   fspread=fspread_dx                !### Use the predicted Doppler spread ###
+  if(bDiskData) fspread=width
   if(nauto.eq.1) fspread=fspread_self
   inquire(file='fspread.txt',exist=ex)
   if(ex) then

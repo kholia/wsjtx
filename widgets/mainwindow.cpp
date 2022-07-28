@@ -157,7 +157,7 @@ extern "C" {
 
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
-                float* width);
+                float* width, bool* bDiskData);
 
   void fast_decode_(short id2[], int narg[], double * trperiod,
                     char msg[], char mycall[], char hiscall[],
@@ -1605,10 +1605,11 @@ void MainWindow::dataSink(qint64 frames)
       if(m_diskData) {
         int idir=-1;
         save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
+        width=m_fSpread;
       }
-      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
-          &dBerr,&dfreq,&width);
+          &dBerr,&dfreq,&width,&m_diskData);
+      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop << width;
       QString t;
       t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7.1f %3d",echocom_.nsum,xlevel,sigdb,
                 dBerr,dfreq,width,nqual);
