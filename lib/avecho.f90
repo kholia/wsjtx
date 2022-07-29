@@ -59,8 +59,13 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
   fnominal=1500.0           !Nominal audio frequency w/o doppler or dither
   ia=nint((fnominal+dop0-nfrit)/df)
   ib=nint((f1+dop-nfrit)/df)
-  if(ia.lt.600 .or. ib.lt.600) go to 900
-  if(ia.gt.7590 .or. ib.gt.7590) go to 900
+  if(ia.lt.2048 .or. ib.lt.2048 .or. ia.gt.6144 .or. ib.gt.6144) then
+     xlevel=0.
+     snrdb=0.
+     db_err=0.
+     dfreq=0.
+     go to 900
+  endif
 
   nsum=nsum+1
   do i=1,NZ
