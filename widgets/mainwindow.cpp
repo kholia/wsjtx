@@ -2004,7 +2004,6 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
-  QTimer::singleShot (3000, [=] {tuneATU_Timer.stop ();});  // Stop the Tune watchdog
   m_auto = checked;
   m_maxPoints=-1;
   if (checked
@@ -7479,7 +7478,6 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
-  if (!m_config.Tune_watchdog_disabled ()) tuneATU_Timer.start (90000); // tune watchdog (90s)
   static bool lastChecked = false;
   if (lastChecked == checked) return;
   lastChecked = checked;
