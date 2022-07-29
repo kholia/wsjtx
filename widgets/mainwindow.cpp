@@ -1615,7 +1615,13 @@ void MainWindow::dataSink(qint64 frames)
 //                dBerr,dfreq,m_fDop,width,nqual,nDop,nfrit);
       t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
                 dBerr,dfreq,m_fDop,width,nqual);
-      t=QDateTime::currentDateTimeUtc().toString("hh:mm:ss  ") + t;
+      QString t0;
+      if(m_diskData) {
+        t0=t0.asprintf("%06d  ",m_UTCdisk);
+      } else {
+        t0=QDateTime::currentDateTimeUtc().toString("hhmmss  ");
+      }
+      t = t0 + t;
       if (ui) ui->decodedTextBrowser->appendText(t);
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll) {
@@ -7103,7 +7109,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("   UTC      N   Level    SNR     dBerr    DF   Doppler  Width   Q");
+  ui->lh_decodes_headings_label->setText("  UTC     N   Level    SNR     dBerr    DF   Doppler  Width   Q");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
