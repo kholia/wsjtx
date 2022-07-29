@@ -105,6 +105,7 @@ public:
   using Frequency = Radio::Frequency;
   using FrequencyDelta = Radio::FrequencyDelta;
   using Mode = Modes::Mode;
+  using SpecOp = Configuration::SpecialOperatingActivity;
 
   explicit MainWindow(QDir const& temp_directory, bool multiple, MultiSettings *,
                       QSharedMemory *shdmem, unsigned downSampleFactor,
@@ -561,6 +562,8 @@ private:
   bool    m_bBestSPArmed=false;
   bool    m_bOK_to_chk=false;
   bool    m_bSentReport=false;
+
+  SpecOp  m_specOp;
 
   enum
     {
