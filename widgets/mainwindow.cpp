@@ -1107,7 +1107,7 @@ void MainWindow::on_the_minute ()
 //--------------------------------------------------- MainWindow destructor
 MainWindow::~MainWindow()
 {
-  m_astroWidget.reset ();
+  if(m_astroWidget) m_astroWidget.reset ();
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("wsjtx_wisdom.dat"))};
   fftwf_export_wisdom_to_filename (fname.toLocal8Bit ());
   m_audioThread.quit ();
@@ -2042,9 +2042,9 @@ void MainWindow::on_autoButton_clicked (bool checked)
     if(m_auto) {
       m_nclearave=1;
       echocom_.nsum=0;
-      m_astroWidget->selectOwnEcho();
+      if(m_astroWidget) m_astroWidget->selectOwnEcho();
     } else {
-      m_astroWidget->selectOnDxEcho();
+      if(m_astroWidget) m_astroWidget->selectOnDxEcho();
     }
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
@@ -2544,7 +2544,7 @@ void MainWindow::closeEvent(QCloseEvent * e)
   m_valid = false;              // suppresses subprocess errors
   m_config.transceiver_offline ();
   writeSettings ();
-  m_astroWidget.reset ();
+  if(m_astroWidget) m_astroWidget.reset ();
   m_guiTimer.stop ();
   m_prefixes.reset ();
   m_shortcuts.reset ();
@@ -7108,7 +7108,7 @@ void MainWindow::on_actionEcho_triggered()
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  m_astroWidget->selectOnDxEcho();
+  if(m_astroWidget) m_astroWidget->selectOnDxEcho();
   statusChanged();
 }
 
@@ -7932,7 +7932,7 @@ void MainWindow::transmit (double snr)
 
   if(m_mode=="Echo") {
     m_fDither=0.;
-    if(m_astroWidget->bDither()) m_fDither = QRandomGenerator::global()->bounded(20.0) - 10.0; //Dither by +/- 10 Hz
+    if(m_astroWidget && m_astroWidget->bDither()) m_fDither = QRandomGenerator::global()->bounded(20.0) - 10.0; //Dither by +/- 10 Hz
     Q_EMIT sendMessage (m_mode, 27, 1024.0, 1500.0+m_fDither, 0.0, m_soundOutput,
                         m_config.audio_output_channel(), false, false, snr, m_TRperiod);
 //    qDebug() << "aa" << m_s6 << m_freqNominal << m_rigState.frequency() << m_fDither;
