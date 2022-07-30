@@ -1049,6 +1049,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
     QTimer::singleShot (0, this, SLOT (not_GA_warning_message ()));
   }
 
+  m_specOp=m_config.special_op_id();
   ui->pbBestSP->setVisible(m_mode=="FT4");
 
 // this must be the last statement of constructor
@@ -4706,7 +4707,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec;
+//    qDebug() << "AAA" << nsec << int(m_config.special_op_id()) << int(m_specOp);
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -9931,21 +9932,25 @@ QString MainWindow::WSPR_message()
 
 void MainWindow::on_houndButton_clicked (bool checked)
 {
-   if (checked) {
-        ui->houndButton->setStyleSheet("background-color: #ff0000;");
-        m_config.setSpecial_Hound();
-   } else {
-       ui->houndButton->setStyleSheet("");
-       m_config.setSpecial_None();
-   }
-    on_actionFT8_triggered();
+  if (checked) {
+    ui->houndButton->setStyleSheet("background-color: #ff0000;");
+    m_config.setSpecial_Hound();
+  } else {
+    ui->houndButton->setStyleSheet("");
+    m_config.setSpecial_None();
+  }
+  m_specOp=m_config.special_op_id();
+  on_actionFT8_triggered();
 }
 
 void MainWindow::on_ft8Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionFT8_triggered();
 }
 
@@ -9953,7 +9958,10 @@ void MainWindow::on_ft4Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionFT4_triggered();
 }
 
@@ -9961,7 +9969,10 @@ void MainWindow::on_msk144Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionMSK144_triggered();
 }
 
@@ -9969,7 +9980,10 @@ void MainWindow::on_q65Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionQ65_triggered();
 }
 
@@ -9977,6 +9991,9 @@ void MainWindow::on_jt65Button_clicked()
 {
     ui->houndButton->setChecked(false);
     ui->houndButton->setStyleSheet("");
-    if(m_specOp==SpecOp::HOUND) m_config.setSpecial_None();
+    if(m_specOp==SpecOp::HOUND) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+    }
     on_actionJT65_triggered();
 }
