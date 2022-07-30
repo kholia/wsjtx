@@ -105,6 +105,7 @@ public:
   using Frequency = Radio::Frequency;
   using FrequencyDelta = Radio::FrequencyDelta;
   using Mode = Modes::Mode;
+  using SpecOp = Configuration::SpecialOperatingActivity;
 
   explicit MainWindow(QDir const& temp_directory, bool multiple, MultiSettings *,
                       QSharedMemory *shdmem, unsigned downSampleFactor,
@@ -432,6 +433,10 @@ private:
 
   double  m_tRemaining;
   double  m_TRperiod;
+  double  m_fSpread;
+  double  m_s6;
+  double  m_fDither;
+  double  m_fAudioShift;
 
   float   m_DTtol;
   float   m_t0;
@@ -500,6 +505,7 @@ private:
   qint32  m_latestDecodeTime=-1;
   qint32  m_points=-99;
   qint32  m_score=0;
+  qint32  m_fDop=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;
@@ -556,6 +562,8 @@ private:
   bool    m_bBestSPArmed=false;
   bool    m_bOK_to_chk=false;
   bool    m_bSentReport=false;
+
+  SpecOp  m_specOp;
 
   enum
     {

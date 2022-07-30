@@ -97,7 +97,7 @@ void SoundInput::start(QAudioDeviceInfo const& device, int framesPerBuffer, Audi
       m_stream->start (sink);
       checkStream ();
       cummulative_lost_usec_ = -1;
-      LOG_DEBUG ("Selected buffer size (bytes): " << m_stream->bufferSize () << " period size: " << m_stream->periodSize ());
+//      LOG_DEBUG ("Selected buffer size (bytes): " << m_stream->bufferSize () << " period size: " << m_stream->periodSize ());
     }
   else
     {

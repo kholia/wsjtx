@@ -108,11 +108,11 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
   nfail=0
 10 if (params%nagain) then
      open(13,file=trim(temp_dir)//'/decoded.txt',status='unknown',            &
-          position='append',iostat=ios)
+          position='append',iostat=ios13)
   else
-     open(13,file=trim(temp_dir)//'/decoded.txt',status='unknown',iostat=ios)
+     open(13,file=trim(temp_dir)//'/decoded.txt',status='unknown',iostat=ios13)
   endif
-  if(ios.ne.0) then
+  if(ios13.ne.0) then
      nfail=nfail+1
      if(nfail.le.3) then
         call sleep_msec(10)
@@ -523,8 +523,8 @@ contains
        write(*,1010) params%nutc,snr,dt,freq,csync,decoded,cflags
 1010   format(i4.4,i4,f5.1,i5,1x,a2,1x,a22,1x,a3)
     endif
-    write(13,1012) params%nutc,nint(sync),snr,dt,float(freq),drift,    &
-         decoded,ft,nsum,nsmo
+    if(ios13.eq.0) write(13,1012) params%nutc,nint(sync),snr,dt,    &
+         float(freq),drift,decoded,ft,nsum,nsmo
 1012 format(i4.4,i4,i5,f6.2,f8.0,i4,3x,a22,' JT65',3i3)
     call flush(6)
 
@@ -550,7 +550,8 @@ contains
     !$omp critical(decode_results)
     write(*,1000) params%nutc,snr,dt,nint(freq),decoded
 1000 format(i4.4,i4,f5.1,i5,1x,'@ ',1x,a22)
-    write(13,1002) params%nutc,nint(sync),snr,dt,freq,drift,decoded
+    if(ios13.eq.0) write(13,1002) params%nutc,nint(sync),snr,dt,freq,  &
+         drift,decoded
 1002 format(i4.4,i4,i5,f6.1,f8.0,i4,3x,a22,' JT9')
     call flush(6)
     !$omp end critical(decode_results)
@@ -614,8 +615,9 @@ contains
 1000 format(i6.6,i4,f5.1,i5,' ~ ',1x,a22,1x,a2)
     if(i0.gt.0) write(*,1001) params%nutc,snr,dt,nint(freq),decoded0,annot
 1001 format(i6.6,i4,f5.1,i5,' ~ ',1x,a37,1x,a2)
-    write(13,1002) params%nutc,nint(sync),snr,dt,freq,0,decoded0
+    if(ios13.eq.0) write(13,1002) params%nutc,nint(sync),snr,dt,freq,0,decoded0
 1002 format(i6.6,i4,i5,f6.1,f8.0,i4,3x,a37,' FT8')
+    print*,'A',ios13
 
     if(ncontest.eq.6) then
        i1=index(decoded0,' ')
@@ -651,7 +653,7 @@ contains
     endif
     
     call flush(6)
-    call flush(13)
+    if(ios13.eq.0) call flush(13)
     
     select type(this)
     type is (counting_ft8_decoder)
@@ -686,11 +688,12 @@ contains
 
     write(*,1001) params%nutc,snr,dt,nint(freq),decoded0,annot
 1001 format(i6.6,i4,f5.1,i5,' + ',1x,a37,1x,a2)
-    write(13,1002) params%nutc,nint(sync),snr,dt,freq,0,decoded0
+    if(ios13.eq.0) write(13,1002) params%nutc,nint(sync),snr,dt,  &
+         freq,0,decoded0
 1002 format(i6.6,i4,i5,f6.1,f8.0,i4,3x,a37,' FT4')
     
     call flush(6)
-    call flush(13)
+    if(ios13.eq.0) call flush(13)
     
     select type(this)
     type is (counting_ft4_decoder)
@@ -734,12 +737,12 @@ contains
     if(ntrperiod.lt.60) then
        write(line,1001) nutc,nsnr,dt,nint(freq),decoded0,annot
 1001   format(i6.6,i4,f5.1,i5,' ` ',1x,a37,1x,a2)
-       write(13,1002) nutc,nint(sync),nsnr,dt,freq,0,decoded0
+       if(ios13.eq.0) write(13,1002) nutc,nint(sync),nsnr,dt,freq,0,decoded0
 1002   format(i6.6,i4,i5,f6.1,f8.0,i4,3x,a37,' FST4')
     else
        write(line,1003) nutc,nsnr,dt,nint(freq),decoded0,annot
 1003   format(i4.4,i4,f5.1,i5,' ` ',1x,a37,1x,a2,2f7.3)
-       write(13,1004) nutc,nint(sync),nsnr,dt,freq,0,decoded0
+       if(ios13.eq.0) write(13,1004) nutc,nint(sync),nsnr,dt,freq,0,decoded0
 1004   format(i4.4,i4,i5,f6.1,f8.0,i4,3x,a37,' FST4')
     endif
 
@@ -752,7 +755,7 @@ contains
 1005 format(a70)
 
     call flush(6)
-    call flush(13)
+    if(ios13.eq.0) call flush(13)
 
     select type(this)
     type is (counting_fst4_decoder)
@@ -790,17 +793,17 @@ contains
     if(ntrperiod.lt.60) then
        write(*,1001) nutc,nsnr,dt,nint(freq),decoded,cflags
 1001   format(i6.6,i4,f5.1,i5,' : ',1x,a37,1x,a3)
-    write(13,1002) nutc,nint(snr1),nsnr,dt,freq,0,decoded
+    if(ios13.eq.0) write(13,1002) nutc,nint(snr1),nsnr,dt,freq,0,decoded
 1002 format(i6.6,i4,i5,f6.1,f8.0,i4,3x,a37,' Q65')
     else
        write(*,1003) nutc,nsnr,dt,nint(freq),decoded,cflags
 1003   format(i4.4,i4,f5.1,i5,' : ',1x,a37,1x,a3)
-       write(13,1004) nutc,nint(snr1),nsnr,dt,freq,0,decoded
+       if(ios13.eq.0) write(13,1004) nutc,nint(snr1),nsnr,dt,freq,0,decoded
 1004   format(i4.4,i4,i5,f6.1,f8.0,i4,3x,a37,' Q65')
 
     endif
     call flush(6)
-    call flush(13)
+    if(ios13.eq.0) call flush(13)
 
     select type(this)
     type is (counting_q65_decoder)
