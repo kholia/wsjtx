@@ -7932,7 +7932,11 @@ void MainWindow::transmit (double snr)
 
   if(m_mode=="Echo") {
     m_fDither=0.;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
     if(m_astroWidget && m_astroWidget->bDither()) m_fDither = QRandomGenerator::global()->bounded(20.0) - 10.0; //Dither by +/- 10 Hz
+#else
+    if(m_astroWidget && m_astroWidget->bDither()) m_fDither = 20.0*(double(qrand())/RAND_MAX) - 10.0; //Dither by +/- 10 Hz
+#endif
     Q_EMIT sendMessage (m_mode, 27, 1024.0, 1500.0+m_fDither, 0.0, m_soundOutput,
                         m_config.audio_output_channel(), false, false, snr, m_TRperiod);
 //    qDebug() << "aa" << m_s6 << m_freqNominal << m_rigState.frequency() << m_fDither;
