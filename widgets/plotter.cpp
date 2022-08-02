@@ -595,7 +595,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     painter0.drawLine(x2,yTxTop,x2,yTxTop+yh);
   }
 
-  if(m_dialFreq>10.13 and m_dialFreq< 10.15 and m_mode.mid(0,4)!="WSPR") {
+  if(m_dialFreq>10.13 and m_dialFreq< 10.15 and m_mode.mid(0,4)!="WSPR" and m_mode!="FST4W") {
     float f1=1.0e6*(10.1401 - m_dialFreq);
     float f2=f1+200.0;
     x1=XfromFreq(f1);

@@ -4227,7 +4227,7 @@ void MainWindow::guiUpdate()
 
 // Don't transmit another mode in the 30 m WSPR sub-band
     Frequency onAirFreq = m_freqNominal + ui->TxFreqSpinBox->value();
-    if ((onAirFreq > 10139900 and onAirFreq < 10140320) and m_mode!="WSPR") {
+    if ((onAirFreq > 10139900 and onAirFreq < 10140320) and m_mode!="WSPR" and m_mode!="FST4W") {
       m_bTxTime=false;
       if (m_auto) auto_tx_mode (false);
       if(onAirFreq!=m_onAirFreq0) {
@@ -8586,7 +8586,7 @@ void MainWindow::uploadWSPRSpots (bool direct_post, QString const& decode_text)
     wsprNet->abortOutstandingRequests ();
     m_uploading = false;
   }
-  QString rfreq = QString("%1").arg((m_dialFreqRxWSPR + m_wideGraph->rxFreq ()) / 1e6, 0, 'f', 6);
+  QString rfreq = QString("%1").arg((m_dialFreqRxWSPR + 1500) / 1e6, 0, 'f', 6);
   QString tfreq = QString("%1").arg((m_dialFreqRxWSPR +
                         ui->TxFreqSpinBox->value()) / 1e6, 0, 'f', 6);
   auto pct = QString::number (ui->autoButton->isChecked () ? ui->sbTxPercent->value () : 0);
