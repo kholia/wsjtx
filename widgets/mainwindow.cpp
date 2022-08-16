@@ -4699,7 +4699,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << int(m_config.special_op_id()) << int(m_specOp);
+//    qDebug() << "AAA" << nsec;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -8742,10 +8742,9 @@ void MainWindow::astroUpdate ()
       m_fSpread=correction.width;
 
       if (m_transmitting && !m_config.tx_QSY_allowed ()) return;  // No Tx Doppler correction if rig can't do it
-      if (!m_astroWidget->doppler_tracking()) {                  // We are not using Doppler correction
+      if (!m_astroWidget->doppler_tracking() or m_astroWidget->DopplerMethod()==0) {
+        // We are not using RF Doppler correction
         m_fAudioShift=m_fDop;
-//        qDebug() << "cc1" << m_hisGrid << m_auto << m_astroWidget->doppler_tracking()
-//                 << m_fSpread << m_fDop << correction.rx << m_fAudioShift;
         return;
       }
       if ((m_monitoring || m_transmitting)
