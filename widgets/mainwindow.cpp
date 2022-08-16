@@ -1610,12 +1610,9 @@ void MainWindow::dataSink(qint64 frames)
       }
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
-//      qDebug() << "bb" << m_s6 << f1 << nfrit << nDop << width;
       QString t;
-//      t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d %7d %7d",echocom_.nsum,xlevel,sigdb,
-//                dBerr,dfreq,m_fDop,width,nqual,nDop,nfrit);
       t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                dBerr,dfreq,m_fDop,width,nqual);
+                dBerr,dfreq,nDop,width,nqual);
       QString t0;
       if(m_diskData) {
         t0=t0.asprintf("%06d  ",m_UTCdisk);
@@ -2038,14 +2035,9 @@ void MainWindow::on_autoButton_clicked (bool checked)
   if (!checked) m_bCallingCQ = false;
   statusUpdate ();
   m_bEchoTxOK=false;
-  if(m_mode=="Echo") {
-    if(m_auto) {
-      m_nclearave=1;
-      echocom_.nsum=0;
-      if(m_astroWidget) m_astroWidget->selectOwnEcho();
-    } else {
-      if(m_astroWidget) m_astroWidget->selectOnDxEcho();
-    }
+  if(m_mode=="Echo" and m_auto) {
+    m_nclearave=1;
+    echocom_.nsum=0;
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
 }
@@ -4544,7 +4536,7 @@ void MainWindow::guiUpdate()
     }
     if(m_restart) {
       write_all("Tx",m_currentMessage);
-      if (m_config.TX_messages ()) {
+      if (m_config.TX_messages () and m_mode!="Echo") {
         ui->decodedTextBrowser2->displayTransmittedText(m_currentMessage.trimmed(),m_mode,
                      ui->TxFreqSpinBox->value(),m_bFastMode,m_TRperiod);
         }
@@ -4643,7 +4635,7 @@ void MainWindow::guiUpdate()
       m_msgSent0 = current_message;
     }
 
-    if (m_mode != "FST4W" && m_mode != "WSPR")
+    if (m_mode != "FST4W" && m_mode != "WSPR" && m_mode!="Echo")
       {
         if(!m_tune) write_all("Tx",m_currentMessage);
         if (m_config.TX_messages () && !m_tune && SpecOp::FOX!=m_specOp)
