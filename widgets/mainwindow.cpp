@@ -153,7 +153,7 @@ extern "C" {
 
   int savec2_(char const * fname, int* TR_seconds, double* dial_freq, fortran_charlen_t);
 
-  void save_echo_params_(int* ndop, int* nfrit, float* f1, double* fspread, short id2[], int* idir);
+  void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, double* fspread, short id2[], int* idir);
 
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
@@ -1603,16 +1603,17 @@ void MainWindow::dataSink(qint64 frames)
       float width=0.0;
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
+      int nDopTotal=m_fDop;
       if(m_diskData) {
         int idir=-1;
-        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
+        save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
         width=m_fSpread;
       }
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
       QString t;
       t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                dBerr,dfreq,nDop,width,nqual);
+                dBerr,dfreq,nDopTotal,width,nqual);
       QString t0;
       if(m_diskData) {
         t0=t0.asprintf("%06d  ",m_UTCdisk);
@@ -1624,7 +1625,7 @@ void MainWindow::dataSink(qint64 frames)
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll) {
         int idir=1;
-        save_echo_params_(&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
+        save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&m_fSpread,dec_data.d2,&idir);
       }
       m_nclearave=0;
 //Don't restart Monitor after an Echo transmission
@@ -1632,7 +1633,6 @@ void MainWindow::dataSink(qint64 frames)
         monitor(false);
         m_bEchoTxed=false;
       }
-//      return;
     }
     if(m_mode=="FreqCal") {
       return;
