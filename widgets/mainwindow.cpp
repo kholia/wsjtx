@@ -7100,7 +7100,7 @@ void MainWindow::on_actionEcho_triggered()
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  if(m_astroWidget) m_astroWidget->selectOnDxEcho();
+  if(m_astroWidget) m_astroWidget->selectOwnEcho();
   statusChanged();
 }
 
