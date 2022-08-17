@@ -11,6 +11,44 @@
                                                          
 Copyright 2001 - 2022 by Joe Taylor, K1JT, and the WSJT Development Team
 
+	        Release: WSJT-X 2.6.0-rc3
+	             August 22, 2022
+	        ----------------------
+
+WSJT-X 2.6.0 Release Candidate 3 provides improvements to Echo mode and
+several bug fixes.
+
+ - Echo mode now allows audio-frequency corrections rather than
+   CAT-controlled resetting of dial frequency for Doppler corrections,
+   when Doppler shift is less than half the audio bandwidth.
+
+ - Echo mode now saves .wav files when "Save all" is selected.
+
+ - We added a missing Leap Second (January 1, 2017) to the code that
+   converts UTC to UT1.  (This might matter if you want full accuracy
+   EME Doppler corrections.)
+
+ - Fix a bug that could truncate WSPR transmissions early.
+
+ - Round off displayed EME Doppler values to nearest integer Hz.
+
+ - Fix a bug that occasionally caused a crash when 'decoded.txt'
+   could not be opened.
+
+ - For backward compatibility, "Special Operating Activity"
+   enumerations for Fox and Hound modes are reset to 6 and 7.
+
+ - Fix a bug that could cause a crash if Astronomical Data window
+   is not active when needed.
+
+ - Allow FST4W transmissions on 30m band.  Ensure that correct
+   frequency is reported to WSPRnet for FST4W decodes with Rx Freq
+   spinbox not set to 1500.
+
+ - Fix a bug that caused a crash when "Reset Cabrillo Log" is
+   selected with Active Stations window not active. 
+
+
 	        Release: WSJT-X 2.6.0-rc2
 	             July 21, 2022
 	        ----------------------
