@@ -20,30 +20,35 @@ several bug fixes.
 
  - Echo mode now allows audio-frequency corrections rather than
    CAT-controlled resetting of dial frequency for Doppler corrections,
-   when Doppler shift is less than half the audio bandwidth.
+   when Doppler shift is less than 750 Hz.  Audio-frequency
+   corrections are also used to correct any remaining portion of
+   Doppler shift caused by coarse CAT-controlled frequency setting.
 
- - Echo mode now saves .wav files when "Save all" is selected.
+ - Echo mode now saves .wav files when "Save all" is selected.  When
+   such files are opened in Echo mode, the astronomical parameters at
+   recording time are restored and used for processing the Echo data.
 
- - We added a missing Leap Second (January 1, 2017) to the code that
-   converts UTC to UT1.  (This might matter if you want full accuracy
-   EME Doppler corrections.)
+ - A missing Leap Second (January 1, 2017) was added to the code that
+   converts UTC to UT1.  This detail might matter if you want full
+   accuracy EME Doppler corrections.
 
- - Fix a bug that could truncate WSPR transmissions early.
-
- - Round off displayed EME Doppler values to nearest integer Hz.
-
- - Fix a bug that occasionally caused a crash when 'decoded.txt'
-   could not be opened.
+ - EME Doppler values are now rounded to nearest integer Hz.
 
  - For backward compatibility, "Special Operating Activity"
-   enumerations for Fox and Hound modes are reset to 6 and 7.
-
- - Fix a bug that could cause a crash if Astronomical Data window
-   is not active when needed.
+   enumerations for Fox and Hound modes are reset to their previous
+   values 6 and 7.
 
  - Allow FST4W transmissions on 30m band.  Ensure that correct
    frequency is reported to WSPRnet for FST4W decodes with Rx Freq
    spinbox not set to 1500.
+
+ - Fix a bug that could truncate WSPR transmissions early.
+
+ - Fix a bug that occasionally caused a crash when 'decoded.txt'
+   could not be opened.
+
+ - Fix a bug that could cause a crash if Astronomical Data window
+   is not active when needed.
 
  - Fix a bug that caused a crash when "Reset Cabrillo Log" is
    selected with Active Stations window not active. 
