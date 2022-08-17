@@ -1,8 +1,7 @@
 subroutine save_echo_params(nDopTotal,nDopAudio,nfrit,f1,fspread,id2,idir)
 
-  integer*2 id2(12)
-  integer*2 id2a(12)
-  real*8 fspread,fspread0
+  integer*2 id2(10)
+  integer*2 id2a(10)
   equivalence (nDopTotal0,id2a(1))
   equivalence (nDopAudio0,id2a(3))
   equivalence (nfrit0,id2a(5))
