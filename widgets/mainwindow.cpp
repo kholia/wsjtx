@@ -1615,7 +1615,7 @@ void MainWindow::dataSink(qint64 frames)
         monitor(false);
         m_bEchoTxed=false;
       }
-      if(m_monitoring or m_auto) {
+      if(m_monitoring or m_auto or m_diskData) {
         QString t;
         t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
                        dBerr,dfreq,nDopTotal,width,nqual);
