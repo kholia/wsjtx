@@ -7105,6 +7105,7 @@ void MainWindow::on_actionEcho_triggered()
   fast_config(false);
   if(m_astroWidget) m_astroWidget->selectOwnEcho();
   statusChanged();
+  monitor(false);
 }
 
 void MainWindow::on_actionFreqCal_triggered()
