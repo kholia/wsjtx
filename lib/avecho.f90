@@ -31,7 +31,7 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
      read(39,*) fspread
      close(39)
   endif
-  fspread=min(max(0.1,fspread),700.0)
+  fspread=min(max(0.04,fspread),700.0)
   width=fspread
   dop=ndop
   sq=0.

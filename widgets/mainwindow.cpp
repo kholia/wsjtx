@@ -1619,8 +1619,8 @@ void MainWindow::dataSink(qint64 frames)
       }
       if(m_monitoring or m_auto or m_diskData) {
         QString t;
-        t = t.asprintf("%3d %7.1f %7.1f %7.1f %7.1f %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                       dBerr,dfreq,nDopTotal,width,nqual);
+        t = t.asprintf("%3d %7.1f %7.1f %7.1f %6d %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
+                       dBerr,qRound(dfreq),nDopTotal,width,nqual);
         QString t0;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
@@ -1631,13 +1631,12 @@ void MainWindow::dataSink(qint64 frames)
         if (ui) ui->decodedTextBrowser->appendText(t);
       }
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
-      if(m_saveAll) {
+      if(m_saveAll and !m_diskData) {
         int idir=1;
         save_echo_params_(&m_fDop,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
         m_fSpread=width;
       }
       m_nclearave=0;
-
     }
     if(m_mode=="FreqCal") {
       return;
