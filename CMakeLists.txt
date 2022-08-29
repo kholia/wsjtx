@@ -385,6 +385,7 @@ set (wsjt_FSRCS
   lib/demod64a.f90
   lib/determ.f90
   lib/downsam9.f90
+  lib/echosim.f90
   lib/echo_snr.f90
   lib/encode232.f90
   lib/encode4.f90
@@ -1183,6 +1184,9 @@ target_link_libraries (ft8code wsjt_fort wsjt_cxx)
 
 add_executable (ft4code lib/ft4/ft4code.f90)
 target_link_libraries (ft4code wsjt_fort wsjt_cxx)
+
+add_executable (echosim lib/echosim.f90)
+target_link_libraries (echosim wsjt_fort wsjt_cxx)
 
 add_executable (ft8sim lib/ft8/ft8sim.f90)
 target_link_libraries (ft8sim wsjt_fort wsjt_cxx)
