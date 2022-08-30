@@ -92,8 +92,8 @@ program echosim
      open(10,file=fname,status='unknown',access='stream')
      write(10) h,iwave                !Save to *.wav file
      close(10)
-     write(*,1110) ifile,xdt,f0,snrdb,fname
-1110 format(i4,f7.2,f8.2,f7.1,2x,a17)
+     write(*,1110) ifile,f0,fdop,fspread,snrdb,fname
+1110 format(i4,4f7.1,2x,a17)
   enddo
 
 999 end program echosim
