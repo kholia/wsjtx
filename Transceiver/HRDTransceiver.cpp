@@ -18,7 +18,7 @@ namespace
 
   // some commands require a settling time, particularly "RX A" and
   // "RX B" on the Yaesu FTdx3000.
-  int constexpr yaesu_delay {250};
+  int constexpr yaesu_delay {350};
 }
 
 #include "moc_HRDTransceiver.cpp"
@@ -1124,7 +1124,7 @@ QByteArray HRDTransceiver::read_reply (QString const& cmd)
 {
   // waitForReadReady appears to be occasionally unreliable on Windows
   // timing out when data is waiting so retry a few times
-  unsigned retries {3};
+  unsigned retries {30};
   bool replied {false};
   while (!replied && retries--)
     {
