@@ -1617,6 +1617,7 @@ void MainWindow::dataSink(qint64 frames)
         monitor(false);
         m_bEchoTxed=false;
       }
+
       if(m_monitoring or m_auto or m_diskData) {
         QString t;
         t = t.asprintf("%3d %7.1f %7.1f %7.1f %6d %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
@@ -1630,6 +1631,7 @@ void MainWindow::dataSink(qint64 frames)
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
       }
+
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
       if(m_saveAll and !m_diskData) {
         int idir=1;
@@ -1638,10 +1640,9 @@ void MainWindow::dataSink(qint64 frames)
       }
       m_nclearave=0;
     }
-    if(m_mode=="FreqCal") {
-      return;
-    }
-    if( m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
+    if(m_mode=="FreqCal") return;
+
+    if(m_dialFreqRxWSPR==0) m_dialFreqRxWSPR=m_freqNominal;
     m_dataAvailable=true;
     dec_data.params.npts8=(m_ihsym*m_nsps)/16;
     dec_data.params.newdat=1;
@@ -1686,6 +1687,7 @@ void MainWindow::dataSink(qint64 frames)
         if (err!=0) MessageBox::warning_message (this, tr ("Error saving c2 file"), c2name);
       }
     }
+
     if(m_mode=="WSPR") {
       QStringList t2;
       QStringList depth_args;
@@ -1709,6 +1711,7 @@ void MainWindow::dataSink(qint64 frames)
       m_decoderBusy = true;
       statusUpdate ();
     }
+
     m_rxDone=true;
   }
 }
