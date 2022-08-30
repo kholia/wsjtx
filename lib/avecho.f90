@@ -87,8 +87,12 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
      call smo121(blue,NZ)
   enddo
 
-!  write(*,3001) snrdb,db_err,dfreq,snr_detect,redmax,nqual,nsmo,nclearave,nsum
-!3001 format('A',5f10.1,4i4)
+  ia=200.0/df
+  ib=400.0/df
+  call pctile(red(ia:ib),ib-ia+1,50,bred)
+  red=red-bred
+  call pctile(blue(ia:ib),ib-ia+1,50,bblue)
+  blue=blue-bblue
 
 900  return
 end subroutine avecho

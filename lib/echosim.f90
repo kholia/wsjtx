@@ -20,9 +20,9 @@ program echosim
 
 ! Get command-line argument(s)
   nargs=iargc()
-  if(nargs.ne.6) then
-     print*,'Usage:    echosim   f0   fdop fspread delay nfiles snr'
-     print*,'Examples: echosim  1500   0.0   4.0    5.0    10   -22'
+  if(nargs.ne.5) then
+     print*,'Usage:    echosim   f0   fdop fspread nfiles snr'
+     print*,'Examples: echosim  1500   0.0   4.0     10   -22'
      go to 999
   endif
 
@@ -31,12 +31,10 @@ program echosim
   call getarg(2,arg)
   read(arg,*) fdop                       !Doppler shift (Hz)
   call getarg(3,arg)
-  read(arg,*) fspread                    !Watterson frequency spread (Hz)
+  read(arg,*) fspread                    !Frequency spread (Hz) (JHT Lorentzian model)
   call getarg(4,arg)
-  read(arg,*) delay                      !Watterson delay (ms)
-  call getarg(5,arg)
   read(arg,*) nfiles                     !Number of files
-  call getarg(6,arg)
+  call getarg(5,arg)
   read(arg,*) snrdb                      !SNR_2500
 
   twopi=8.d0*atan(1.d0)
@@ -56,7 +54,7 @@ program echosim
         c0(i)=cmplx(cos(xphi),sin(xphi))
      enddo
      c0(NWAVE:)=0.
-     if(fspread.ne.0.0 .or. delay.ne.0.0) call watterson(c0,NMAX,NWAVE,fs,delay,fspread)
+     if(fspread.gt.0.0) call fspread_lorentz(c0,fspread)
      c=sig*c0
      wave(1:NWAVE)=imag(c(1:NWAVE))
      peak=maxval(abs(wave))
