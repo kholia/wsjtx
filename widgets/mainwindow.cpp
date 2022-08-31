@@ -1620,7 +1620,7 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_monitoring or m_auto or m_diskData) {
         QString t;
-        t = t.asprintf("%4.1f %7d %7.1f %7d %7d %7d %7.1f %7.1f",xlevel,nDopTotal,width,echocom_.nsum,
+        t = t.asprintf("%5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",xlevel,nDopTotal,width,echocom_.nsum,
                        nqual,qRound(dfreq),sigdb,dBerr);
         QString t0;
         if(m_diskData) {
@@ -7106,7 +7106,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC   Level  Doppler  Width       N       Q      DF    SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
