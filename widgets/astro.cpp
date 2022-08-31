@@ -55,7 +55,6 @@ Astro::Astro(QSettings * settings, Configuration const * configuration, QWidget 
 
 Astro::~Astro ()
 {
-  ui_->cbDopplerTracking->setChecked (false);
   Q_EMIT tracking_update ();
   if (isVisible ()) write_settings ();
 }
@@ -69,6 +68,8 @@ void Astro::closeEvent (QCloseEvent * e)
 void Astro::read_settings ()
 {
   SettingsGroup g (settings_, "Astro");
+  bool b=settings_->value("DopplerTracking",false).toBool();
+  ui_->cbDopplerTracking->setChecked(b);
   ui_->doppler_widget->setVisible (ui_->cbDopplerTracking->isChecked ());
   m_DopplerMethod=settings_->value("DopplerMethod",0).toInt();
   switch (m_DopplerMethod)
@@ -86,7 +87,7 @@ void Astro::read_settings ()
 void Astro::write_settings ()
 {
   SettingsGroup g (settings_, "Astro");
-  //settings_->setValue ("DopplerTracking", ui_->cbDopplerTracking->isChecked ());
+  settings_->setValue ("DopplerTracking", ui_->cbDopplerTracking->isChecked());
   settings_->setValue ("DopplerMethod",m_DopplerMethod);
   settings_->setValue ("window/pos", pos ());
 }

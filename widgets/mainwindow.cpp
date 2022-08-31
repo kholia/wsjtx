@@ -1620,8 +1620,8 @@ void MainWindow::dataSink(qint64 frames)
 
       if(m_monitoring or m_auto or m_diskData) {
         QString t;
-        t = t.asprintf("%3d %7.1f %7.1f %7.1f %6d %7d %7.1f %3d",echocom_.nsum,xlevel,sigdb,
-                       dBerr,qRound(dfreq),nDopTotal,width,nqual);
+        t = t.asprintf("%5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",xlevel,nDopTotal,width,echocom_.nsum,
+                       nqual,qRound(dfreq),sigdb,dBerr);
         QString t0;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
@@ -7106,7 +7106,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC     N   Level    SNR     dBerr    DF   Doppler  Width   Q");
+  ui->lh_decodes_headings_label->setText("  UTC   Level  Doppler  Width       N       Q      DF    SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
@@ -10000,3 +10000,28 @@ void MainWindow::on_jt65Button_clicked()
     }
     on_actionJT65_triggered();
 }
+
+void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
+{
+  qDebug() << ui->decodedTextBrowser->toPlainText();
+
+  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
+  if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
+    MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
+                                 tr ("Cannot open \"%1\" for writing").arg (f.fileName ()),
+                                 tr ("Error: %1").arg (f.errorString ()));
+  } else {
+    QString t=ui->decodedTextBrowser->toPlainText();
+
+    QTextStream out(&f);
+    out << t <<
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                 endl
+#else
+                 Qt::endl
+#endif
+                 ;
+    f.close();
+  }
+}
+
