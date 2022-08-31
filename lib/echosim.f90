@@ -31,7 +31,7 @@ program echosim
   call getarg(2,arg)
   read(arg,*) fdop                       !Doppler shift (Hz)
   call getarg(3,arg)
-  read(arg,*) fspread                    !Frequency spread (Hz) (JHT Lorentzian model)
+  read(arg,*) fspread             !Frequency spread (Hz) (JHT Lorentzian model)
   call getarg(4,arg)
   read(arg,*) nfiles                     !Number of files
   call getarg(5,arg)
@@ -44,6 +44,9 @@ program echosim
   sig=sqrt(2*bandwidth_ratio) * 10.0**(0.05*snrdb)
   if(snrdb.gt.90.0) sig=1.0
   dphi=twopi*(f0+fdop)*dt
+
+  write(*,1000)
+1000 format('   N   f0     fDop fSpread   SNR  File name'/51('-'))
 
   do ifile=1,nfiles
      phi=0.d0
