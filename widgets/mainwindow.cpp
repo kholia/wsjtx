@@ -3152,6 +3152,7 @@ void MainWindow::on_ClrAvgButton_clicked()
   m_nclearave=1;
   if(m_mode=="Echo") {
     echocom_.nsum=0;
+    m_echoGraph->clearAvg();
   } else {
     if(m_msgAvgWidget != NULL) {
       if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");

@@ -114,3 +114,13 @@ bool EchoGraph::baseline()
 {
   return ui->cbBaseline->isChecked();
 }
+
+void EchoGraph::clearAvg()
+{
+  for(int i=0; i<4096; i++) {
+    echocom_.blue[i]=0;
+    echocom_.red[i]=0;
+  }
+  echocom_.nsum=0;
+  plotSpec();
+}

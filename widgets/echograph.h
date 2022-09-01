@@ -23,6 +23,7 @@ public:
 
   void   plotSpec();
   void   saveSettings();
+  void   clearAvg();
   bool   baseline();
 
 private slots:
