@@ -2,6 +2,7 @@
 #include "commons.h"
 #include <QSettings>
 #include <QApplication>
+#include <QDebug>
 #include "echoplot.h"
 #include "ui_echograph.h"
 #include "moc_echograph.cpp"
@@ -36,6 +37,7 @@ EchoGraph::EchoGraph(QSettings * settings, QWidget *parent) :
   ui->binsPerPixelSpinBox->setValue(n);
   ui->echoPlot->m_blue=m_settings->value("BlueCurve",false).toBool();
   m_nColor=m_settings->value("EchoColors",0).toInt();
+  ui->cbBaseline->setChecked(m_settings->value("Baseline",false).toBool());
   m_settings->endGroup();
   ui->echoPlot->setColors(m_nColor);
 }
@@ -62,6 +64,7 @@ void EchoGraph::saveSettings()
   m_settings->setValue("EchoBPP",ui->echoPlot->m_binsPerPixel);
   m_settings->setValue("BlueCurve",ui->echoPlot->m_blue);
   m_settings->setValue("EchoColors",m_nColor);
+  m_settings->setValue("Baseline",ui->cbBaseline->isChecked());
   m_settings->endGroup();
 }
 
@@ -100,4 +103,24 @@ void EchoGraph::on_pbColors_clicked()
 {
   m_nColor = (m_nColor+1) % 6;
   ui->echoPlot->setColors(m_nColor);
+}
+
+void EchoGraph::on_cbBaseline_toggled(bool b)
+{
+  ui->echoPlot->setBaseline(b);
+}
+
+bool EchoGraph::baseline()
+{
+  return ui->cbBaseline->isChecked();
+}
+
+void EchoGraph::clearAvg()
+{
+  for(int i=0; i<4096; i++) {
+    echocom_.blue[i]=0;
+    echocom_.red[i]=0;
+  }
+  echocom_.nsum=0;
+  plotSpec();
 }

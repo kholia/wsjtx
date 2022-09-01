@@ -127,7 +127,7 @@ void EPlotter::draw()                           //draw()
     painter2D.setPen(penBlue);
     j=0;
     for(i=0; i<m_w; i++) {
-      y = 0.9*m_h2 - gain*(m_h/10.0)*(blue[i0+i]) - 0.01*m_h2*m_plotZero;
+      y = 0.9*m_h2 - gain*(m_h/10.0)*blue[i0+i] - 0.01*m_h2*m_plotZero;
       LineBuf[j].setX(i);
       LineBuf[j].setY(y);
       j++;
@@ -145,12 +145,19 @@ void EPlotter::draw()                           //draw()
 
   j=0;
   for(int i=0; i<m_w; i++) {
-    y = 0.9*m_h2 - gain*(m_h/10.0)*(red[i0+i]) - 0.01*m_h2*m_plotZero;
+    y = 0.9*m_h2 - gain*(m_h/10.0)*red[i0+i] - 0.01*m_h2*m_plotZero;
     LineBuf[j].setX(i);
     LineBuf[j].setY(y);
     j++;
   }
   painter2D.drawPolyline(LineBuf,j);
+
+  if(m_bBaseline) {
+    // Draw the baseline
+    y = 0.9*m_h2 - 0.01*m_h2*m_plotZero;
+    painter2D.drawLine(0,y,m_w,y);
+  }
+
   update();                              //trigger a new paintEvent
 }
 
@@ -323,3 +330,9 @@ void EPlotter::setColors(qint32 n)                               //setSmooth()
 int EPlotter::plotWidth(){return m_2DPixmap.width();}
 
 void EPlotter::UpdateOverlay() {DrawOverlay();}
+
+void EPlotter::setBaseline(bool b)
+{
+  m_bBaseline=b;
+  draw();
+}

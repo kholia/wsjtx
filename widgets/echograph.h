@@ -23,6 +23,8 @@ public:
 
   void   plotSpec();
   void   saveSettings();
+  void   clearAvg();
+  bool   baseline();
 
 private slots:
   void on_smoothSpinBox_valueChanged(int n);
@@ -30,6 +32,7 @@ private slots:
   void on_zeroSlider_valueChanged(int value);  
   void on_binsPerPixelSpinBox_valueChanged(int n);
   void on_pbColors_clicked();
+  void on_cbBaseline_toggled(bool b);
 
 private:
   QSettings * m_settings;
