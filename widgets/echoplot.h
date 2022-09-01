@@ -36,6 +36,7 @@ public:
   qint32  m_binsPerPixel;
   qint32  m_nColor;
   bool    m_blue;
+  bool    m_bBaseline;
 
   void draw();		                                    //Update the Echo plot
   void SetRunningState(bool running);
@@ -49,6 +50,7 @@ public:
   void setSmooth(int n);
   int  getSmooth();
   void setColors(qint32 n);
+  void setBaseline(bool b);
 
 //  void SetPercent2DScreen(int percent){m_Percent2DScreen=percent;}
 

@@ -10003,8 +10003,6 @@ void MainWindow::on_jt65Button_clicked()
 
 void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
 {
-  qDebug() << ui->decodedTextBrowser->toPlainText();
-
   static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
   if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
     MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
