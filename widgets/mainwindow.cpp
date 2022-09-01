@@ -7690,7 +7690,7 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
   if (old_state.online () == false && s.online () == true)
     {
       // initializing
-      on_monitorButton_clicked (!m_config.monitor_off_at_startup ());
+      on_monitorButton_clicked (!(m_config.monitor_off_at_startup() or m_mode=="Echo"));
     }
   if (s.frequency () != old_state.frequency () || s.split () != m_splitMode)
     {
