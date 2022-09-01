@@ -507,6 +507,7 @@ private:
   qint32  m_points=-99;
   qint32  m_score=0;
   qint32  m_fDop=0;
+  qint32  m_echoSec0=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;
@@ -736,7 +737,8 @@ private:
   QThread::Priority m_audioThreadPriority;
   bool m_bandEdited;
   bool m_splitMode;
-  bool m_monitoring;
+  bool m_monitoring=false;
+  bool m_echoRunning=false;
   bool m_tx_when_ready;
   bool m_transmitting;
   bool m_tune;

@@ -1619,15 +1619,20 @@ void MainWindow::dataSink(qint64 frames)
       }
 
       if(m_monitoring or m_auto or m_diskData) {
-        QString t;
-        t = t.asprintf("%5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",xlevel,nDopTotal,width,echocom_.nsum,
-                       nqual,qRound(dfreq),sigdb,dBerr);
         QString t0;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
         } else {
           t0=QDateTime::currentDateTimeUtc().toString("hhmmss  ");
         }
+        int n=t0.toInt();
+        int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
+        if(!m_echoRunning) m_echoSec0=nsec;
+        n=(nsec-m_echoSec0 + 864000)%86400;
+        m_echoRunning=true;
+        QString t;
+        t = t.asprintf("%6d  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",n,xlevel,
+                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
       }
@@ -2013,6 +2018,7 @@ void MainWindow::on_monitorButton_clicked (bool checked)
   } else {
     ui->monitorButton->setChecked (false); // disallow
   }
+  if(m_mode=="Echo") m_echoRunning=false;
 }
 
 void MainWindow::monitor (bool state)
@@ -2050,6 +2056,7 @@ void MainWindow::on_autoButton_clicked (bool checked)
     echocom_.nsum=0;
   }
   m_tAutoOn=QDateTime::currentMSecsSinceEpoch()/1000;
+  if(m_mode=="Echo") m_echoRunning=false;
 }
 
 void MainWindow::on_sbTxPercent_valueChanged (int n)
@@ -4707,6 +4714,7 @@ void MainWindow::guiUpdate()
       ui->txb1->setEnabled(true);
     }
   }
+  if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
@@ -7107,7 +7115,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC   Level  Doppler  Width       N       Q      DF    SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC     Tsec  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
