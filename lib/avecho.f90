@@ -94,5 +94,6 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
   call pctile(blue(ia:ib),ib-ia+1,50,bblue)
   blue=blue-bblue
 
-900  return
+900 call sleep_msec(10)   !Avoid the "blue Decode button" syndrome
+  return
 end subroutine avecho
