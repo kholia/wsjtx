@@ -1061,9 +1061,9 @@ void MainWindow::not_GA_warning_message ()
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X 2.6.0 made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after Nov 30, 2022.");
+                                "be nonfunctional after Dec 31, 2022.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2022, 11, 30}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2022, 12, 31}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
 }
@@ -7690,7 +7690,7 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
   if (old_state.online () == false && s.online () == true)
     {
       // initializing
-      on_monitorButton_clicked (!m_config.monitor_off_at_startup ());
+      on_monitorButton_clicked (!(m_config.monitor_off_at_startup() or m_mode=="Echo"));
     }
   if (s.frequency () != old_state.frequency () || s.split () != m_splitMode)
     {
