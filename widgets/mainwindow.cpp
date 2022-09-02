@@ -1629,7 +1629,7 @@ void MainWindow::dataSink(qint64 frames)
           int isec=now.toString("ss").toInt();
           if(m_auto) isec=isec - isec%6;
           if(!m_auto) isec=isec - isec%3;
-          t0=t0.asprintf("%02d%02d%02d",ihr,imin,isec);
+          t0=t0.asprintf("%02d%02d%02d  ",ihr,imin,isec);
         }
         int n=t0.toInt();
         int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
