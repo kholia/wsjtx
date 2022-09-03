@@ -11,6 +11,28 @@
                                                          
 Copyright 2001 - 2022 by Joe Taylor, K1JT, and the WSJT Development Team
 
+                      Release: WSJT-X 2.6.0-rc4
+                          September 8, 2022
+                      -------------------------
+
+WSJT-X 2.6.0 Release Candidate 4 provides further improvements to Echo mode, a new File menu item, and several bug fixes.
+
+ - New features and fixes for Echo mode
+   - Created a new simulator echosim[.exe]
+   - Improved organization of output to text window
+   - Gain and Zero controls in Echo Graph now behave independently
+   - "Clear Avg" now erases the plot in Echo Graph
+   - Optional baseline for plots in Echo Graph
+
+ - New menu item "File | Copy main text window to WSJT-X.txt"
+ - Doppler tracking checkbox is made sticky
+
+ - Fix an RC2 bug that prevented normal use of JT9.
+ - Fix a rarely experienced failure when writing to decoded.txt
+ - Fix a hamlib bug caused by setting VFO B when Split is not used
+ - Rig control interface to Ham Radio deluxe made more robust 
+
+
 	        Release: WSJT-X 2.6.0-rc3
 	             August 22, 2022
 	        ----------------------
