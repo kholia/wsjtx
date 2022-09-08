@@ -167,6 +167,8 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
   static QPoint LineBuf[MAX_SCREENSIZE];
   static QPoint LineBuf2[MAX_SCREENSIZE];
   static QPoint LineBuf3[MAX_SCREENSIZE];
+  static QPoint LineBuf4[MAX_SCREENSIZE];
+
   j=0;
   j0=int(m_startFreq/m_fftBinWidth + 0.5);
   int iz=XfromFreq(5000.0);
@@ -231,7 +233,7 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
 
     }
 
-    if(i==iz-1 and !m_bQ65_Sync) {
+    if(i==iz-1 and !m_bQ65_Sync and !m_bTotalPower) {
       painter2D.drawPolyline(LineBuf,j);
     }
     LineBuf[j].setX(i);
@@ -320,6 +322,17 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
       painter2D.drawText(m_w-100,m_h2/2,t);
     }
   }
+
+  if(m_bTotalPower) {
+    painter2D.setPen(Qt::green);
+    int yy=m_h2 - 10*(m_pdB-20);
+    LineBuf4[m_x].setX(m_x);
+    LineBuf4[m_x].setY(yy);
+    painter2D.drawPolyline(LineBuf4,m_x);
+    m_x++;
+    if(m_x > m_w) m_x=0;
+  }
+
   update();                                    //trigger a new paintEvent
   m_bScaleOK=true;
 }
@@ -873,4 +886,14 @@ void CPlotter::setRedFile(QString fRed)
 void CPlotter::setDiskUTC(int nutc)
 {
   m_nUTC=nutc;
+}
+
+void CPlotter::drawTotalPower(float pdB)
+{
+  m_pdB=pdB;
+}
+
+void CPlotter::restartTotalPower()
+{
+  m_x=0;
 }

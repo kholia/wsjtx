@@ -1531,7 +1531,7 @@ void MainWindow::dataSink(qint64 frames)
   if(m_ihsym <=0) return;
   if(ui) ui->signal_meter_widget->setValue(m_px,m_pxmax); // Update thermometer
   if(m_monitoring || m_diskData) {
-    m_wideGraph->dataSink2(s,m_df3,m_ihsym,m_diskData);
+    m_wideGraph->dataSink2(s,m_df3,m_ihsym,m_diskData,m_px);
   }
   if(m_mode=="MSK144") return;
 
@@ -3166,6 +3166,7 @@ void MainWindow::on_ClrAvgButton_clicked()
   if(m_mode=="Echo") {
     echocom_.nsum=0;
     m_echoGraph->clearAvg();
+    m_wideGraph->restartTotalPower();
   } else {
     if(m_msgAvgWidget != NULL) {
       if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");

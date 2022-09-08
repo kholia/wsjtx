@@ -26,7 +26,7 @@ public:
   explicit WideGraph(QSettings *, QWidget *parent = 0);
   ~WideGraph ();
 
-  void   dataSink2(float s[], float df3, int ihsym, int ndiskdata);
+  void   dataSink2(float s[], float df3, int ihsym, int ndiskdata, float pdB);
   void   setRxFreq(int n);
   int    rxFreq();
   int    nStartFreq();
@@ -51,6 +51,7 @@ public:
   void   setFST4_FreqRange(int fLow,int fHigh);
   void   setSingleDecode(bool b);
   void   setDiskUTC(int nutc);
+  void   restartTotalPower();
 
 signals:
   void freezeDecode2(int n);
