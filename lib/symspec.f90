@@ -55,6 +55,7 @@ subroutine symspec(shared_data,k,TRperiod,nsps,ingain,bLowSidelobes,    &
   endif
 
   if(k.lt.k0) then                             !Start a new data block
+     k0=0
      ja=0
      ssum=0.
      ihsym=0
@@ -63,10 +64,6 @@ subroutine symspec(shared_data,k,TRperiod,nsps,ingain,bLowSidelobes,    &
   gain=10.0**(0.1*ingain)
   sq=0.
   pxmax=0.;
-
-!  dwell_time=0.0001
-!  if(k.gt.k0 .and. npct.gt.0) call blanker(shared_data%id2(k0+1:k),  &
-!       k-k0,dwell_time,npct)
 
   do i=k0+1,k
      x1=shared_data%id2(i)
