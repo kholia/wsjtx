@@ -325,7 +325,7 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
 
   if(m_bTotalPower) {
     painter2D.setPen(Qt::green);
-    int yy=m_h2 - 10*(m_pdB-20);
+    int yy=m_h2 - 10*(m_pdB - m_plot2dZero - 20);
     LineBuf4[m_x].setX(m_x);
     LineBuf4[m_x].setY(yy);
     painter2D.drawPolyline(LineBuf4,m_x);

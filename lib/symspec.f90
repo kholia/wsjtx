@@ -66,6 +66,7 @@ subroutine symspec(shared_data,k,TRperiod,nsps,ingain,bLowSidelobes,    &
   pxmax=0.;
 
   do i=k0+1,k
+     if(k0.eq.0 .and. i.le.10) cycle
      x1=shared_data%id2(i)
      if (abs(x1).gt.pxmax) pxmax = abs(x1);
      sq=sq + x1*x1

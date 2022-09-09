@@ -8,7 +8,7 @@ program echosim
   character arg*12,fname*17
   complex c0(0:NMAX-1)
   complex c(0:NMAX-1)
-!  complex cwave(0:NWAVE-1)
+  real*4 level_1,level_2
   real*8 f0,dt,twopi,phi,dphi
   real wave(NZ)
   integer*2 iwave(NZ)                  !Generated full-length waveform
@@ -20,9 +20,11 @@ program echosim
 
 ! Get command-line argument(s)
   nargs=iargc()
-  if(nargs.ne.5) then
-     print*,'Usage:    echosim   f0   fdop fspread nfiles snr'
-     print*,'Examples: echosim  1500   0.0   4.0     10   -22'
+  if(nargs.ne.3 .and. nargs.ne.5) then
+     print*,'Usage 1:  echosim   f0   fdop fspread nfiles snr'
+     print*,'Example:  echosim  1500   0.0   4.0     10   -22'
+     print*,'Usage 2:  echosim level_1 level_2 nfiles'
+     print*,'Example:  echosim   30.0    40.0   100'
      go to 999
   endif
 
@@ -32,12 +34,21 @@ program echosim
   read(arg,*) fdop                       !Doppler shift (Hz)
   call getarg(3,arg)
   read(arg,*) fspread             !Frequency spread (Hz) (JHT Lorentzian model)
+
+  if(nargs.eq.3) then
+     level_1=f0
+     level_2=fdop
+     nfiles=fspread
+     snrdb=0.
+     go to 10
+  endif
+  
   call getarg(4,arg)
   read(arg,*) nfiles                     !Number of files
   call getarg(5,arg)
   read(arg,*) snrdb                      !SNR_2500
 
-  twopi=8.d0*atan(1.d0)
+10 twopi=8.d0*atan(1.d0)
   fs=12000.0                             !Sample rate (Hz)
   dt=1.d0/fs                              !Sample interval (s)
   bandwidth_ratio=2500.0/(fs/2.0)
@@ -49,18 +60,23 @@ program echosim
 1000 format('   N   f0     fDop fSpread   SNR  File name'/51('-'))
 
   do ifile=1,nfiles
-     phi=0.d0
-     do i=0,NWAVE-1
-        phi=phi + dphi
-        if(phi.gt.twopi) phi=phi-twopi
-        xphi=phi
-        c0(i)=cmplx(cos(xphi),sin(xphi))
-     enddo
-     c0(NWAVE:)=0.
-     if(fspread.gt.0.0) call fspread_lorentz(c0,fspread)
-     c=sig*c0
-     wave(1:NWAVE)=imag(c(1:NWAVE))
-     peak=maxval(abs(wave))
+     wave=0.
+
+     if(nargs.eq.5) then
+        phi=0.d0
+        do i=0,NWAVE-1
+           phi=phi + dphi
+           if(phi.gt.twopi) phi=phi-twopi
+           xphi=phi
+           c0(i)=cmplx(cos(xphi),sin(xphi))
+        enddo
+        c0(NWAVE:)=0.
+        if(fspread.gt.0.0) call fspread_lorentz(c0,fspread)
+        c=sig*c0
+        wave(1:NWAVE)=imag(c(1:NWAVE))
+        peak=maxval(abs(wave))
+     endif
+
      if(snrdb.lt.90) then
         do i=1,NWAVE                   !Add gaussian noise at specified SNR
            xnoise=gran()
@@ -73,6 +89,10 @@ program echosim
      endif
 
      gain=100.0
+     if(nargs.eq.3) then
+        gain=10.0**(0.05*level_1)
+        if(mod((ifile-1)/10,2).eq.1) gain=10.0**(0.05*level_2)
+     endif
      if(snrdb.lt.90.0) then
        wave=gain*wave
      else
