@@ -127,7 +127,7 @@ private:
   bool    m_bResized;
 
   float   m_fSpan;
-  float   m_pdB;
+  float   m_pdB=0.0;
   float   m_vpixperdiv;
 
   qint32  m_plotZero;

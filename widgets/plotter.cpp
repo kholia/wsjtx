@@ -323,15 +323,18 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
     }
   }
 
-  if(m_bTotalPower) {
+  if(m_bTotalPower and m_pdB>1.0) {
     painter2D.setPen(Qt::green);
+    if(m_x==m_w-1) {
+      for (int i=0; i<m_w-1; i++) {
+        LineBuf4[i].setY(LineBuf4[i+1].y());
+      }
+    }
     int yy=m_h2 - 0.1*m_vpixperdiv*(m_pdB-20.0);
     LineBuf4[m_x].setX(m_x);
     LineBuf4[m_x].setY(yy);
-//    qDebug() << "aa" << m_w << m_h << m_h2 << m_x << yy << m_pdB << m_plot2dZero;
     painter2D.drawPolyline(LineBuf4,m_x);
-    m_x++;
-    if(m_x > m_w) m_x=0;
+    if(m_x < m_w-1) m_x++;
   }
 
   update();                                    //trigger a new paintEvent
@@ -390,17 +393,18 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
   if(m_fSpan>1000) m_freqPerDiv=200;
   if(m_fSpan>2500) m_freqPerDiv=500;
 
-  pixperdiv = m_freqPerDiv/df;
-  m_hdivs = w*df/m_freqPerDiv + 1.9999;
-
-  float xx0=float(m_startFreq)/float(m_freqPerDiv);
-  xx0=xx0-int(xx0);
-  int x0=xx0*pixperdiv+0.5;
-  for( int i=1; i<m_hdivs; i++) {                  //draw vertical grids
-    x = (int)((float)i*pixperdiv ) - x0;
-    if(x >= 0 and x<=m_w) {
-      painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
-      painter.drawLine(x, 0, x , m_h2);
+  if(!m_bTotalPower) {
+    pixperdiv = m_freqPerDiv/df;
+    m_hdivs = w*df/m_freqPerDiv + 1.9999;
+    float xx0=float(m_startFreq)/float(m_freqPerDiv);
+    xx0=xx0-int(xx0);
+    int x0=xx0*pixperdiv+0.5;
+    for( int i=1; i<m_hdivs; i++) {                  //draw vertical grids
+      x = (int)((float)i*pixperdiv ) - x0;
+      if(x >= 0 and x<=m_w) {
+        painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
+        painter.drawLine(x, 0, x , m_h2);
+      }
     }
   }
 
@@ -408,12 +412,21 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
   if(m_bTotalPower) painter.setPen(QPen(Qt::white, 1,Qt::DashLine));
   for( int i=1; i<VERT_DIVS; i++) {                //draw horizontal grids
     y = int(i*m_vpixperdiv);
-    painter.drawLine(0, y, w, y);
+    painter.drawLine(15, y, w, y);
+  }
+
+  if(m_bTotalPower) {
+    painter.setPen(QPen(Qt::white));
+    for( int i=1; i<VERT_DIVS; i++) {                //draw horizontal grids
+      y = int(i*m_vpixperdiv);
+//      if(i==1) y+=10;
+      painter.drawText(0,y+5,QString::number(10*(VERT_DIVS-i) + 20));
+    }
   }
 
   if(m_bTotalPower and m_h2>100) {
     painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
-    for( int i=1; i<5*VERT_DIVS; i++) {                //draw horizontal 1 dB grids
+    for( int i=1; i<5*VERT_DIVS; i++) {                //draw horizontal 2 dB grids
       if(i%5 > 0) {
         y = int(0.2*i*m_vpixperdiv);
         painter.drawLine(0, y, w, y);
