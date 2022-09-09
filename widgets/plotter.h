@@ -128,6 +128,7 @@ private:
 
   float   m_fSpan;
   float   m_pdB;
+  float   m_vpixperdiv;
 
   qint32  m_plotZero;
   qint32  m_plotGain;

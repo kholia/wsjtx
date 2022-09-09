@@ -100,7 +100,6 @@ void CPlotter::resizeEvent(QResizeEvent* )                    //resizeEvent()
     if(m_bReference) m_h2=m_h-30;
     if(m_h2<1) m_h2=1;
     m_h1=m_h-m_h2;
-//    m_line=0;
     m_2DPixmap = QPixmap(m_Size.width(), m_h2);
     m_2DPixmap.fill(Qt::black);
     m_WaterfallPixmap = QPixmap(m_Size.width(), m_h1);
@@ -112,6 +111,7 @@ void CPlotter::resizeEvent(QResizeEvent* )                    //resizeEvent()
     m_ScalePixmap.fill(Qt::white);
     m_Percent2DScreen0 = m_Percent2DScreen;
     m_bResized = true;
+    m_vpixperdiv = float(m_h2)/float(VERT_DIVS);
   }
   DrawOverlay();
 }
@@ -325,9 +325,10 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
 
   if(m_bTotalPower) {
     painter2D.setPen(Qt::green);
-    int yy=m_h2 - 10*(m_pdB - m_plot2dZero - 20);
+    int yy=m_h2 - 0.1*m_vpixperdiv*(m_pdB-20.0);
     LineBuf4[m_x].setX(m_x);
     LineBuf4[m_x].setY(yy);
+//    qDebug() << "aa" << m_w << m_h << m_h2 << m_x << yy << m_pdB << m_plot2dZero;
     painter2D.drawPolyline(LineBuf4,m_x);
     m_x++;
     if(m_x > m_w) m_x=0;
@@ -382,7 +383,6 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
   painter.setBrush(Qt::SolidPattern);
 
   m_fSpan = w*df;
-//  int n=m_fSpan/10;
   m_freqPerDiv=10;
   if(m_fSpan>100) m_freqPerDiv=20;
   if(m_fSpan>250) m_freqPerDiv=50;
@@ -404,12 +404,23 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     }
   }
 
-  pixperdiv = (float)m_h2 / (float)VERT_DIVS;
   painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
+  if(m_bTotalPower) painter.setPen(QPen(Qt::white, 1,Qt::DashLine));
   for( int i=1; i<VERT_DIVS; i++) {                //draw horizontal grids
-    y = (int)( (float)i*pixperdiv );
+    y = int(i*m_vpixperdiv);
     painter.drawLine(0, y, w, y);
   }
+
+  if(m_bTotalPower and m_h2>100) {
+    painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
+    for( int i=1; i<5*VERT_DIVS; i++) {                //draw horizontal 1 dB grids
+      if(i%5 > 0) {
+        y = int(0.2*i*m_vpixperdiv);
+        painter.drawLine(0, y, w, y);
+      }
+    }
+  }
+
 
   QRect rect0;
   QPainter painter0(&m_ScalePixmap);
@@ -743,7 +754,14 @@ int CPlotter::rxFreq() {return m_rxFreq;}                      //rxFreq
 void CPlotter::mouseMoveEvent (QMouseEvent * event)
 {
   int x=event->x();
-  QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
+  int y=event->y();
+  float pdB=10.0*(m_h-y)/m_vpixperdiv + 20.0;
+//  qDebug() << "bb" << m_w << m_h << m_h2 << x << y << m_pdB << pdB;
+  if(y<m_h2) {
+    QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
+  } else {
+    QToolTip::showText(event->globalPos(),QString::number(int(pdB)) + " dB");
+  }
   QWidget::mouseMoveEvent(event);
 }
 

@@ -492,8 +492,6 @@ void WideGraph::on_zero2dSlider_valueChanged(int value)               //Zero2
 {
   ui->widePlot->setPlot2dZero(value);
   if(ui->widePlot->TotalPower()) {
-//    float dummy[1];
-//    dummy[0]=-99.0;
     ui->widePlot->draw(m_swide,false,false);
   } else {
     if(ui->widePlot->scaleOK ()) {
