@@ -112,6 +112,7 @@ void CPlotter::resizeEvent(QResizeEvent* )                    //resizeEvent()
     m_Percent2DScreen0 = m_Percent2DScreen;
     m_bResized = true;
     m_vpixperdiv = float(m_h2)/float(VERT_DIVS);
+    m_x=0;
   }
   DrawOverlay();
 }
