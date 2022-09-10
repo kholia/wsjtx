@@ -491,13 +491,10 @@ void WideGraph::on_gain2dSlider_valueChanged(int value)               //Gain2
 void WideGraph::on_zero2dSlider_valueChanged(int value)               //Zero2
 {
   ui->widePlot->setPlot2dZero(value);
-  if(ui->widePlot->TotalPower()) {
+  if(ui->widePlot->TotalPower()) return;
+  if(ui->widePlot->scaleOK ()) {
     ui->widePlot->draw(m_swide,false,false);
-  } else {
-    if(ui->widePlot->scaleOK ()) {
-      ui->widePlot->draw(m_swide,false,false);
-      if(m_mode=="Q65") ui->widePlot->draw(m_swide,false,true);
-    }
+    if(m_mode=="Q65") ui->widePlot->draw(m_swide,false,true);
   }
 }
 
