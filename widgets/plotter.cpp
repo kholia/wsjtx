@@ -334,6 +334,7 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
     int yy=m_h2 - 0.1*m_vpixperdiv*(m_pdB-20.0);
     LineBuf4[m_x].setX(m_x);
     LineBuf4[m_x].setY(yy);
+    if(LineBuf4[m_w-1].y()==0) LineBuf4[m_w-1].setY(yy);
     painter2D.drawPolyline(LineBuf4,m_x);
     if(m_x < m_w-1) m_x++;
   }
