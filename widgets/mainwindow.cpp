@@ -1633,7 +1633,7 @@ void MainWindow::dataSink(qint64 frames)
         }
         int n=t0.toInt();
         int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
-        if(!m_echoRunning) m_echoSec0=nsec;
+        if(!m_echoRunning or echocom_.nsum<2) m_echoSec0=nsec;
         n=(nsec-m_echoSec0 + 864000)%86400;
         if(n>43200) n-=86400;
         m_echoRunning=true;
