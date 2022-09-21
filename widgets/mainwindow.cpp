@@ -1619,7 +1619,7 @@ void MainWindow::dataSink(qint64 frames)
       }
 
       if(m_monitoring or m_auto or m_diskData) {
-        QString t0;
+        QString t0,t1;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
         } else {
@@ -1630,6 +1630,7 @@ void MainWindow::dataSink(qint64 frames)
           if(m_auto) isec=isec - isec%6;
           if(!m_auto) isec=isec - isec%3;
           t0=t0.asprintf("%02d%02d%02d  ",ihr,imin,isec);
+          t1=now.toString("yyMMdd_");
         }
         int n=t0.toInt();
         int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
@@ -1642,6 +1643,8 @@ void MainWindow::dataSink(qint64 frames)
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
+        t=t1+t;
+        write_all("Rx",t);
       }
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
@@ -9726,45 +9729,51 @@ void MainWindow::write_all(QString txRx, QString message)
   QString t;
   QString msg;
   QString mode_string;
-
-  if (message.size () > 5 && message[4]==' ') {
-     msg=message.mid(4,-1);
-  } else {
-     msg=message.mid(6,-1);
-  }
-
-  if (message.size () > 19 && message[19]=='#') {
-     mode_string="JT65  ";
-  } else if (message.size () > 19 && message[19]=='@') {
-     mode_string="JT9   ";
-  } else if(m_mode=="Q65") {
-    mode_string=mode_label.text();
-  } else {
-     mode_string=m_mode.leftJustified(6,' ');
-  }
-
-  msg=msg.mid(0,15) + msg.mid(18,-1);
-
-  t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
-  if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
-  auto time = QDateTime::currentDateTimeUtc ();
-  if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
-
-  t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
-  if (m_diskData) {
-    if (m_fileDateTime.size()==11) {
-      line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
-    } else {
-      line=m_fileDateTime + t + txRx + " " + mode_string + msg;
-    } 
-  } else {
-    line=time.toString("yyMMdd_hhmmss") + t + txRx + " " + mode_string + msg;
-  }
-
   QString file_name="ALL.TXT";
-  if (ui->actionSplit_ALL_TXT_yearly->isChecked()) file_name=(time.toString("yyyy") + "-" + "ALL.TXT");
-  if (ui->actionSplit_ALL_TXT_monthly->isChecked()) file_name=(time.toString("yyyy-MM") + "-" + "ALL.TXT");
-  if (m_mode=="WSPR") file_name="ALL_WSPR.TXT";
+
+  if(m_mode!="Echo") {
+    if (message.size () > 5 && message[4]==' ') {
+      msg=message.mid(4,-1);
+    } else {
+      msg=message.mid(6,-1);
+    }
+
+    if (message.size () > 19 && message[19]=='#') {
+      mode_string="JT65  ";
+    } else if (message.size () > 19 && message[19]=='@') {
+      mode_string="JT9   ";
+    } else if(m_mode=="Q65") {
+      mode_string=mode_label.text();
+    } else {
+      mode_string=m_mode.leftJustified(6,' ');
+    }
+
+    msg=msg.mid(0,15) + msg.mid(18,-1);
+
+    t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
+    if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
+    auto time = QDateTime::currentDateTimeUtc ();
+    if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
+
+    t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
+    if (m_diskData) {
+      if (m_fileDateTime.size()==11) {
+        line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
+      } else {
+        line=m_fileDateTime + t + txRx + " " + mode_string + msg;
+      }
+    } else {
+      line=time.toString("yyMMdd_hhmmss") + t + txRx + " " + mode_string + msg;
+    }
+
+    if (ui->actionSplit_ALL_TXT_yearly->isChecked()) file_name=(time.toString("yyyy") + "-" + "ALL.TXT");
+    if (ui->actionSplit_ALL_TXT_monthly->isChecked()) file_name=(time.toString("yyyy-MM") + "-" + "ALL.TXT");
+    if (m_mode=="WSPR") file_name="ALL_WSPR.TXT";
+  } else {
+    file_name="all_echo.txt";
+    line=message;
+  }
+
   QFile f{m_config.writeable_data_dir().absoluteFilePath(file_name)};
   if (f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
     QTextStream out(&f);

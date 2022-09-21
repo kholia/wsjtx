@@ -771,11 +771,13 @@ void CPlotter::mouseMoveEvent (QMouseEvent * event)
   int x=event->x();
   int y=event->y();
   float pdB=10.0*(m_h-y)/m_vpixperdiv + 20.0;
-//  qDebug() << "bb" << m_w << m_h << m_h2 << x << y << m_pdB << pdB;
-  if(y<m_h2) {
+  if(y<(m_h-m_h2)) {
     QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
   } else {
-    QToolTip::showText(event->globalPos(),QString::number(int(pdB)) + " dB");
+    QString t;
+    t=t.asprintf("%4.1f dB",pdB);
+//    qDebug() << "aa" << m_h << m_h2 << y << m_pdB << pdB<< t;
+    QToolTip::showText(event->globalPos(),t);
   }
   QWidget::mouseMoveEvent(event);
 }
