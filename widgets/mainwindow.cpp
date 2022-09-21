@@ -10026,26 +10026,3 @@ void MainWindow::on_jt65Button_clicked()
     }
     on_actionJT65_triggered();
 }
-
-void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
-{
-  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
-  if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
-    MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
-                                 tr ("Cannot open \"%1\" for writing").arg (f.fileName ()),
-                                 tr ("Error: %1").arg (f.errorString ()));
-  } else {
-    QString t=ui->decodedTextBrowser->toPlainText();
-
-    QTextStream out(&f);
-    out << t <<
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                 endl
-#else
-                 Qt::endl
-#endif
-                 ;
-    f.close();
-  }
-}
-
