@@ -1364,6 +1364,7 @@ void MainWindow::readSettings()
   m_audioThreadPriority = static_cast<QThread::Priority> (m_settings->value ("Audio/ThreadPriority", QThread::TimeCriticalPriority).toInt () % 8);
   m_settings->endGroup ();
 
+  m_specOp=m_config.special_op_id();
   checkMSK144ContestType();
   if(displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
