@@ -1,5 +1,5 @@
-subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
-     dfreq,width,bDiskData)
+subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,snrdb0,   &
+     db_err,dfreq,width,bDiskData)
 
   integer TXLENGTH
   parameter (TXLENGTH=27648)           !27*1024
@@ -8,6 +8,8 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
   integer*2 id2(34560)                 !Buffer for Rx data
   real sa(NZ)      !Avg spectrum relative to initial Doppler echo freq
   real sb(NZ)      !Avg spectrum with Dither and changing Doppler removed
+  real red0(NZ)
+  real blue0(NZ)
   integer nsum       !Number of integrations
   real dop0          !Doppler shift for initial integration (Hz)
   real dop           !Doppler shift for current integration (Hz)
@@ -71,6 +73,8 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,db_err,  &
      sa(i)=sa(i) + s(ia+i-2048)    !Center at initial doppler freq
      sb(i)=sb(i) + s(ib+i-2048)    !Center at expected echo freq
   enddo
+  call echo_snr(s(ia-2047),s(ib-2047),fspread,blue0,red0,snrdb0,   &
+       db_err,dfreq,snr_detect)
   call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
   nqual=snr_detect-2
   if(nqual.lt.0) nqual=0

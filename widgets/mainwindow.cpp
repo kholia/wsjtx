@@ -156,7 +156,7 @@ extern "C" {
   void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
 
   void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
-                float* level, float* sigdb, float* snr, float* dfreq,
+                float* level, float* sigdb, float* sigdb0, float* snr, float* dfreq,
                 float* width, bool* bDiskData);
 
   void fast_decode_(short id2[], int narg[], double * trperiod,
@@ -1602,6 +1602,7 @@ void MainWindow::dataSink(qint64 frames)
       float f1=1500.0 + m_fDither;
       float xlevel=0.0;
       float sigdb=0.0;
+      float sigdb0=0.0;
       float dfreq=0.0;
       float width=m_fSpread;
       echocom_.nclearave=m_nclearave;
@@ -1612,7 +1613,7 @@ void MainWindow::dataSink(qint64 frames)
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
-          &dBerr,&dfreq,&width,&m_diskData);
+          &sigdb0,&dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
         monitor(false);
@@ -1636,12 +1637,11 @@ void MainWindow::dataSink(qint64 frames)
         int n=t0.toInt();
         int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
         if(!m_echoRunning or echocom_.nsum<2) m_echoSec0=nsec;
-        n=(nsec-m_echoSec0 + 864000)%86400;
-        if(n>43200) n-=86400;
+        float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
         QString t;
-        t = t.asprintf("%6d  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",n,xlevel,
-                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
+        t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f %7.1f",hour,xlevel,
+                       nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb0,sigdb,dBerr);
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
         t=t1+t;
@@ -7127,7 +7127,7 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC     Tsec  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC      Hour    Level  Doppler  Width       N       Q      DF     SNR   SNRavg  dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
