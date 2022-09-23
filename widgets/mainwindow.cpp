@@ -6630,6 +6630,7 @@ void MainWindow::on_actionFT4_triggered()
   m_wideGraph->setMode(m_mode);
   m_send_RR73=true;
   VHF_features_enabled(bVHF);
+  ui->cbAutoSeq->setChecked(true);
   m_fastGraph->hide();
   m_wideGraph->show();
   ui->rh_decodes_headings_label->setText("  UTC   dB   DT Freq    " + tr ("Message"));
@@ -6947,6 +6948,7 @@ void MainWindow::on_actionQ65_triggered()
   m_mode="Q65";
   ui->actionQ65->setChecked(true);
   switch_mode(Modes::Q65);
+  ui->cbAutoSeq->setChecked(true);
   fast_config(false);
   WSPR_config(false);
   setup_status_bar(true);
@@ -7028,6 +7030,7 @@ void MainWindow::on_actionMSK144_triggered()
   m_toneSpacing=0.0;
   WSPR_config(false);
   VHF_features_enabled(true);
+  ui->cbAutoSeq->setChecked(true);
   m_bFastMode=true;
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
