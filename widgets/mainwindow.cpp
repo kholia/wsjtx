@@ -1214,6 +1214,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("Blanker",ui->sbNB->value());
   m_settings->setValue("Score",m_score);
   m_settings->setValue("labDXpedText",ui->labDXped->text());
+  m_settings->setValue("EchoAvg",ui->sbEchoAvg->value());
 
   {
     QList<QVariant> coeffs;     // suitable for QSettings
@@ -1347,6 +1348,7 @@ void MainWindow::readSettings()
   ui->actionAuto_Clear_Avg->setChecked (m_settings->value ("AutoClearAvg", false).toBool());
   ui->decodes_splitter->restoreState(m_settings->value("SplitterState").toByteArray());
   ui->sbNB->setValue(m_settings->value("Blanker",0).toInt());
+  ui->sbEchoAvg->setValue(m_settings->value("EchoAvg",10).toInt());
   {
     auto const& coeffs = m_settings->value ("PhaseEqualizationCoefficients"
                                             , QList<QVariant> {0., 0., 0., 0., 0.}).toList ();
@@ -6523,6 +6525,7 @@ void MainWindow::displayWidgets(qint64 n)
       (m_config.RTTY_Exchange()=="DX" or m_config.RTTY_Exchange()=="#") );
   }
   if(m_mode=="MSK144") b=SpecOp::EU_VHF==m_specOp;
+  ui->sbEchoAvg->setVisible(m_mode=="Echo");
   ui->sbSerialNumber->setVisible(b);
   m_lastCallsign.clear ();     // ensures Tx5 is updated for new modes
   b=m_mode.startsWith("FST4");
@@ -7135,7 +7138,7 @@ void MainWindow::on_actionEcho_triggered()
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  if(m_astroWidget) m_astroWidget->selectOwnEcho();
+  ui->sbEchoAvg->values ({1, 2, 5, 10, 20, 50, 100});
   statusChanged();
   monitor(false);
 }
