@@ -155,7 +155,7 @@ extern "C" {
 
   void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
 
-  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
+  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* navg, int* nqual, float* f1,
                 float* level, float* sigdb, float* sigdb0, float* snr, float* dfreq,
                 float* width, bool* bDiskData);
 
@@ -1610,11 +1610,12 @@ void MainWindow::dataSink(qint64 frames)
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
       int nDopTotal=m_fDop;
+      int navg=ui->sbEchoAvg->value();
       if(m_diskData) {
         int idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
-      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
+      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &sigdb0,&dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {

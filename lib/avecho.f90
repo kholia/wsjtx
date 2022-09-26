@@ -1,4 +1,4 @@
-subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,snrdb0,   &
+subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,snrdb0,   &
      db_err,dfreq,width,bDiskData)
 
   integer TXLENGTH
@@ -8,6 +8,8 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,snrdb0,   &
   integer*2 id2(34560)                 !Buffer for Rx data
   real sa(NZ)      !Avg spectrum relative to initial Doppler echo freq
   real sb(NZ)      !Avg spectrum with Dither and changing Doppler removed
+  real, dimension (:,:), allocatable :: sax
+  real, dimension (:,:), allocatable :: sbx
   real red0(NZ)
   real blue0(NZ)
   integer nsum       !Number of integrations
@@ -22,8 +24,18 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,snrdb0,   &
   equivalence (x,c),(ipk,ipkv)
   common/echocom/nclearave,nsum,blue(NZ),red(NZ)
   common/echocom2/fspread_self,fspread_dx
-  save dop0,sa,sb
+  data navg0/-1/
+  save dop0,navg0,sax,sbx
 
+  if(navg.ne.navg0) then
+     if(allocated(sax)) deallocate(sax)
+     if(allocated(sbx)) deallocate(sbx)
+     allocate(sax(1:navg,1:NZ))
+     allocate(sbx(1:navg,1:NZ))
+     nsum=0
+     navg0=navg
+  endif
+  
   fspread=fspread_dx                !### Use the predicted Doppler spread ###
   if(bDiskData) fspread=width
   if(nauto.eq.1) fspread=fspread_self
@@ -46,8 +58,8 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,snrdb0,   &
   if(nclearave.ne.0) nsum=0
   if(nsum.eq.0) then
      dop0=dop                             !Remember the initial Doppler
-     sa=0.                                !Clear the average arrays
-     sb=0.
+     sax=0.                               !Clear the average arrays
+     sbx=0.
   endif
 
   x(TXLENGTH+1:)=0.
@@ -69,10 +81,14 @@ subroutine avecho(id2,ndop,nfrit,nauto,nqual,f1,xlevel,snrdb,snrdb0,   &
   endif
 
   nsum=nsum+1
+  j=mod(nsum-1,navg)+1
   do i=1,NZ
-     sa(i)=sa(i) + s(ia+i-2048)    !Center at initial doppler freq
-     sb(i)=sb(i) + s(ib+i-2048)    !Center at expected echo freq
+     sax(j,i)=s(ia+i-2048)    !Center at initial doppler freq
+     sbx(j,i)=s(ib+i-2048)    !Center at expected echo freq
+     sa(i)=sum(sax(1:navg,i))
+     sb(i)=sum(sbx(1:navg,i))
   enddo
+  
   call echo_snr(s(ia-2047),s(ib-2047),fspread,blue0,red0,snrdb0,   &
        db_err,dfreq,snr_detect)
   call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
