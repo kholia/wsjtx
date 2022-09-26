@@ -1,4 +1,4 @@
-subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,snrdb0,   &
+subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,   &
      db_err,dfreq,width,bDiskData)
 
   integer TXLENGTH
@@ -10,8 +10,6 @@ subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,snrdb0,   &
   real sb(NZ)      !Avg spectrum with Dither and changing Doppler removed
   real, dimension (:,:), allocatable :: sax
   real, dimension (:,:), allocatable :: sbx
-  real red0(NZ)
-  real blue0(NZ)
   integer nsum       !Number of integrations
   real dop0          !Doppler shift for initial integration (Hz)
   real dop           !Doppler shift for current integration (Hz)
@@ -89,8 +87,6 @@ subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,snrdb0,   &
      sb(i)=sum(sbx(1:navg,i))
   enddo
   
-  call echo_snr(s(ia-2047),s(ib-2047),fspread,blue0,red0,snrdb0,   &
-       db_err,dfreq,snr_detect)
   call echo_snr(sa,sb,fspread,blue,red,snrdb,db_err,dfreq,snr_detect)
   nqual=snr_detect-2
   if(nqual.lt.0) nqual=0
