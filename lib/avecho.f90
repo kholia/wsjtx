@@ -103,12 +103,17 @@ subroutine avecho(id2,ndop,nfrit,nauto,navg,nqual,f1,xlevel,snrdb,   &
      call smo121(blue,NZ)
   enddo
 
-  ia=200.0/df
-  ib=400.0/df
-  call pctile(red(ia:ib),ib-ia+1,50,bred)
-  red=red-bred
-  call pctile(blue(ia:ib),ib-ia+1,50,bblue)
-  blue=blue-bblue
+  ia=50.0/df
+  ib=250.0/df
+  call pctile(red(ia:ib),ib-ia+1,50,bred1)
+  call pctile(blue(ia:ib),ib-ia+1,50,bblue1)
+  ia=1250.0/df
+  ib=1450.0/df
+  call pctile(red(ia:ib),ib-ia+1,50,bred2)
+  call pctile(blue(ia:ib),ib-ia+1,50,bblue2)
+
+  red=red-0.5*(bred1+bred2)
+  blue=blue-0.5*(bblue1+bblue2)
 
 900 call sleep_msec(10)   !Avoid the "blue Decode button" syndrome
   return
