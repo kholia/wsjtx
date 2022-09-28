@@ -1,6 +1,6 @@
 program testfast9
 
-  parameter (NMAX=359424)
+  parameter (NMAX=30*12000)
   integer*2 id2(NMAX)
   integer narg(0:11)
   character*80 line(100)
@@ -8,8 +8,8 @@ program testfast9
   
   nargs=iargc()
   if(nargs.ne.2) then
-     print*,'Usage:    testfast9 submode infile'
-     print*,'Example: testfast9 E /data/VE1SKY/K1JT/JT9E/150806_123300.wav'
+     print*,'Usage:   testfast9 submode infile'
+     print*,'Example: testfast9 E 150806_123300.wav'
      go to 999
   endif
   call getarg(1,submode)

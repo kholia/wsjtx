@@ -1153,6 +1153,9 @@ target_link_libraries (q65_ftn_test wsjt_fort wsjt_cxx)
 add_executable (jt49sim lib/jt49sim.f90)
 target_link_libraries (jt49sim wsjt_fort wsjt_cxx)
 
+add_executable (testfast9 lib/testfast9.f90)
+target_link_libraries (testfast9 wsjt_fort wsjt_cxx)
+
 #add_executable (allsim lib/allsim.f90)
 #target_link_libraries (allsim wsjt_fort wsjt_cxx)
 
