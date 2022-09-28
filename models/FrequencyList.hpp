@@ -5,6 +5,10 @@
 
 #include <QList>
 #include <QSortFilterProxyModel>
+#include <QDateTime>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QFile>
 
 #include "Radio.hpp"
 #include "IARURegions.hpp"
@@ -53,11 +57,18 @@ public:
     Mode mode_;
     Region region_;
     QString toString () const;
+    bool isSane() const;
+    QJsonObject toJson () const;
+    QString description_;
+    QString source_;
+    QDateTime start_time_;
+    QDateTime end_time_;
+
   };
   using FrequencyItems = QList<Item>;
   using BandSet = QSet<QString>;
 
-  enum Column {region_column, mode_column, frequency_column, frequency_mhz_column, SENTINAL};
+  enum Column {region_column, mode_column, frequency_column, frequency_mhz_column, description_column, start_time_column, end_time_column, source_column,  SENTINAL};
 
   // an iterator that meets the requirements of the C++ for range statement
   class const_iterator
@@ -78,9 +89,11 @@ public:
   private:
     FrequencyList_v2 const * parent_;
     int row_;
+    //qint32 qrg_version_;
   };
 
   explicit FrequencyList_v2 (Bands const *, QObject * parent = nullptr);
+
   ~FrequencyList_v2 ();
 
   // Load and store underlying items
@@ -88,6 +101,8 @@ public:
   FrequencyItems const& frequency_list () const;
   FrequencyItems frequency_list (QModelIndexList const&) const;
   void frequency_list_merge (FrequencyItems const&);
+  void to_json_stream(QDataStream *, QString, QString, FrequencyItems const&);
+  FrequencyList_v2::FrequencyItems from_json_file(QFile *);
 
   // Iterators for the sorted and filtered items
   //
@@ -156,6 +171,31 @@ QDebug operator << (QDebug, FrequencyList_v2::Item const&);
 Q_DECLARE_METATYPE (FrequencyList_v2::Item);
 Q_DECLARE_METATYPE (FrequencyList_v2::FrequencyItems);
 
+class FrequencyList_v2_100 final
+{
+public:
+  using Frequency = Radio::Frequency;
+  using Mode = Modes::Mode;
+  using Region = IARURegions::Region;
+
+  struct Item
+  {
+    Frequency frequency_;
+    Mode mode_;
+    Region region_;
+    QString toString () const;
+  };
+  using FrequencyItems = QList<Item>;
+
+private:
+  FrequencyItems frequency_list_;
+};
+
+QDataStream& operator << (QDataStream&, FrequencyList_v2_100::Item const&);
+QDataStream& operator >> (QDataStream&, FrequencyList_v2_100::Item&);
+
+Q_DECLARE_METATYPE (FrequencyList_v2_100::Item);
+Q_DECLARE_METATYPE (FrequencyList_v2_100::FrequencyItems);
 
 //
 // Obsolete version of FrequencyList no longer used but needed to

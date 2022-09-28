@@ -168,6 +168,11 @@
 #include <QHostAddress>
 #include <QStandardItem>
 #include <QDebug>
+#include <QDateTimeEdit>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+
 
 #include "pimpl_impl.hpp"
 #include "Logger.hpp"
@@ -250,7 +255,8 @@ namespace
 
   // Magic numbers for file validation
   constexpr quint32 qrg_magic {0xadbccbdb};
-  constexpr quint32 qrg_version {100}; // M.mm
+  constexpr quint32 qrg_version {101}; // M.mm
+  constexpr quint32 qrg_version_100 {100};
 }
 
 
@@ -268,8 +274,21 @@ public:
   explicit FrequencyDialog (IARURegions * regions_model, Modes * modes_model, QWidget * parent = nullptr)
     : QDialog {parent}
   {
+    start_date_time_edit_ = new QDateTimeEdit(QDateTime(QDate::currentDate(), QTime(0,0,0,0), Qt::UTC), parent);
+    end_date_time_edit_ = new QDateTimeEdit(QDateTime(QDate::currentDate().addDays(2), QTime(0,0,0,0), Qt::UTC), parent);
+
+    enable_dates_checkbox_ = new QCheckBox {tr ("Validity Period")};
+    start_date_time_edit_->setDisplayFormat("yyyy.MM.dd hh:mm:ss 'UTC'");
+    start_date_time_edit_->setTimeSpec(Qt::UTC);
+    start_date_time_edit_->setMinimumDate(QDate::currentDate().addDays(-365));
+
+    end_date_time_edit_->setDisplayFormat("yyyy.MM.dd hh:mm:ss 'UTC'");
+    end_date_time_edit_->setTimeSpec(Qt::UTC);
+    end_date_time_edit_->setMinimumDate(QDate::currentDate().addDays(-365));
+
     setWindowTitle (QApplication::applicationName () + " - " +
                     tr ("Add Frequency"));
+
     region_combo_box_.setModel (regions_model);
     mode_combo_box_.setModel (modes_model);
 
@@ -277,28 +296,71 @@ public:
     form_layout->addRow (tr ("IARU &Region:"), &region_combo_box_);
     form_layout->addRow (tr ("&Mode:"), &mode_combo_box_);
     form_layout->addRow (tr ("&Frequency (MHz):"), &frequency_line_edit_);
+    form_layout->addRow (tr ("&Enable Date Range"), enable_dates_checkbox_);
+    form_layout->addRow (tr ("S&tart:"), start_date_time_edit_);
+    form_layout->addRow (tr ("&End:"), end_date_time_edit_);
+    form_layout->addRow (tr ("&Description:"), &description_line_edit_);
+    form_layout->addRow (tr ("&Source:"), &source_line_edit_);
 
     auto main_layout = new QVBoxLayout (this);
     main_layout->addLayout (form_layout);
 
-    auto button_box = new QDialogButtonBox {QDialogButtonBox::Ok | QDialogButtonBox::Cancel};
+    button_box = new QDialogButtonBox {QDialogButtonBox::Ok | QDialogButtonBox::Cancel};
     main_layout->addWidget (button_box);
 
     connect (button_box, &QDialogButtonBox::accepted, this, &FrequencyDialog::accept);
     connect (button_box, &QDialogButtonBox::rejected, this, &FrequencyDialog::reject);
+    connect(start_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
+    connect(end_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
+    connect(enable_dates_checkbox_, &QCheckBox::stateChanged, this, &FrequencyDialog::toggleValidity);
+    toggleValidity();
   }
+
+    void toggleValidity()
+    {
+        start_date_time_edit_->setEnabled(enable_dates_checkbox_->isChecked());
+        end_date_time_edit_->setEnabled(enable_dates_checkbox_->isChecked());
+        checkSaneDates();
+    }
+
+    void checkSaneDates()
+    {
+        if (enable_dates_checkbox_->isChecked() && start_date_time_edit_->dateTime().isValid() && end_date_time_edit_->dateTime().isValid())
+        {
+            if (start_date_time_edit_->dateTime() > end_date_time_edit_->dateTime())
+            {
+                QMessageBox::warning(this, tr("Invalid Date Range"), tr("Start date must be before end date"));
+                button_box->button(QDialogButtonBox::Ok)->setEnabled(false);
+                return;
+            }
+        }
+        button_box->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
 
   Item item () const
   {
-    return {frequency_line_edit_.frequency ()
-        , Modes::value (mode_combo_box_.currentText ())
-        , IARURegions::value (region_combo_box_.currentText ())};
+    QDateTime start_time = enable_dates_checkbox_->isChecked() ? start_date_time_edit_->dateTime() : QDateTime();
+    QDateTime end_time = enable_dates_checkbox_->isChecked() ? end_date_time_edit_->dateTime()  : QDateTime();
+    return {
+            frequency_line_edit_.frequency(),
+            Modes::value(mode_combo_box_.currentText()),
+            IARURegions::value(region_combo_box_.currentText()),
+            description_line_edit_.text(), source_line_edit_.text(),
+            start_time,
+            end_time
+    };
   }
 
 private:
   QComboBox region_combo_box_;
   QComboBox mode_combo_box_;
   FrequencyLineEdit frequency_line_edit_;
+  QLineEdit description_line_edit_;
+  QLineEdit source_line_edit_;
+  QDialogButtonBox * button_box;
+  QCheckBox *enable_dates_checkbox_;
+  QDateTimeEdit *end_date_time_edit_;
+  QDateTimeEdit *start_date_time_edit_;
 };
 
 
@@ -477,7 +539,9 @@ private:
   void save_frequencies ();
   void reset_frequencies ();
   void insert_frequency ();
-  FrequencyList_v2::FrequencyItems read_frequencies_file (QString const&);
+  void size_frequency_table_columns();
+
+    FrequencyList_v2::FrequencyItems read_frequencies_file (QString const&);
 
   void delete_stations ();
   void insert_station ();
@@ -1198,6 +1262,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
 
   ui_->frequencies_table_view->setModel (&next_frequencies_);
   ui_->frequencies_table_view->horizontalHeader ()->setSectionResizeMode (QHeaderView::ResizeToContents);
+
   ui_->frequencies_table_view->horizontalHeader ()->setResizeContentsPrecision (0);
   ui_->frequencies_table_view->verticalHeader ()->setSectionResizeMode (QHeaderView::ResizeToContents);
   ui_->frequencies_table_view->verticalHeader ()->setResizeContentsPrecision (0);
@@ -2508,17 +2573,25 @@ void Configuration::impl::check_multicast (QHostAddress const& ha)
   udp_server_name_edited_ = false;
 }
 
+void Configuration::impl::size_frequency_table_columns()
+{
+  ui_->frequencies_table_view->setVisible(false);
+  ui_->frequencies_table_view->resizeColumnsToContents();
+  ui_->frequencies_table_view->setVisible(true);
+}
+
 void Configuration::impl::delete_frequencies ()
 {
   auto selection_model = ui_->frequencies_table_view->selectionModel ();
   selection_model->select (selection_model->selection (), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
   next_frequencies_.removeDisjointRows (selection_model->selectedRows ());
   ui_->frequencies_table_view->resizeColumnToContents (FrequencyList_v2::mode_column);
+  size_frequency_table_columns ();
 }
 
 void Configuration::impl::load_frequencies ()
 {
-  auto file_name = QFileDialog::getOpenFileName (this, tr ("Load Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg);;All files (*.*)"));
+  auto file_name = QFileDialog::getOpenFileName (this, tr ("Load Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg *.qrg.json);;All files (*.*)"));
   if (!file_name.isNull ())
     {
       auto const list = read_frequencies_file (file_name);
@@ -2532,15 +2605,17 @@ void Configuration::impl::load_frequencies ()
         {
           next_frequencies_.frequency_list (list); // update the model
         }
+      size_frequency_table_columns();
     }
 }
 
 void Configuration::impl::merge_frequencies ()
 {
-  auto file_name = QFileDialog::getOpenFileName (this, tr ("Merge Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg);;All files (*.*)"));
+  auto file_name = QFileDialog::getOpenFileName (this, tr ("Merge Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg *.qrg.json);;All files (*.*)"));
   if (!file_name.isNull ())
     {
       next_frequencies_.frequency_list_merge (read_frequencies_file (file_name)); // update the model
+      size_frequency_table_columns();
     }
 }
 
@@ -2550,6 +2625,62 @@ FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QSt
   frequencies_file.open (QFile::ReadOnly);
   QDataStream ids {&frequencies_file};
   FrequencyList_v2::FrequencyItems list;
+  FrequencyList_v2_100::FrequencyItems list_v100;
+
+  // read file as json if ends with qrg.json
+    if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+        {
+        QJsonDocument doc = QJsonDocument::fromJson(frequencies_file.readAll());
+        if (doc.isNull())
+            {
+            MessageBox::critical_message (this, tr ("Error reading frequencies file"), tr ("%1 - Invalid Format").arg (file_name));
+            return list;
+            }
+        QJsonObject obj = doc.object();
+        if (obj.isEmpty())
+            {
+            MessageBox::critical_message (this, tr ("Error reading frequencies file"), tr ("%1 - Information Missing ").arg (file_name));
+            return list;
+            }
+        QJsonArray arr = obj["frequencies"].toArray();
+        if (arr.isEmpty())
+            {
+            MessageBox::critical_message (this, tr ("Error reading frequencies file"), tr ("No Frequencies were found"));
+            return list;
+            }
+        int valid_entry_count = 0;
+        int skipped_entry_count = 0;
+        for (auto const &item: arr)
+          {
+            QString mode_s, region_s;
+            QJsonObject obj = item.toObject();
+            FrequencyList_v2::Item freq;
+            region_s = obj["region"].toString();
+            mode_s = obj["mode"].toString();
+
+            freq.frequency_ = obj["frequency"].toString().toDouble() * 1e6;
+            freq.region_ = IARURegions::value(region_s);
+            freq.mode_ = Modes::value(mode_s);
+            freq.description_ = obj["description"].toString();
+            freq.source_ = obj["source"].toString();
+            freq.start_time_ = QDateTime::fromString(obj["start_time"].toString(), Qt::ISODate);
+            freq.end_time_ = QDateTime::fromString(obj["end_time"].toString(), Qt::ISODate);
+            //MessageBox::critical_message (this, tr ("Entry"), tr ("Entry: %1 ").arg(freq.toString()+"[sane:" +freq.isSane() + "] [region:" + obj["region"].toString() + "] [mode:" + obj["mode"].toString()+"] "));
+            if ((freq.mode_ != Modes::ALL || QString::compare("ALL", mode_s)) &&
+                (freq.region_ != IARURegions::ALL || QString::compare("ALL", region_s, Qt::CaseInsensitive)) &&
+                freq.isSane())
+              {
+                list.push_back(freq);
+                valid_entry_count++;
+              } else
+              skipped_entry_count++;
+          }
+        MessageBox::information_message(this, tr("Loaded Frequencies from %1").arg(file_name),
+                                        tr("Entries Valid/Skipped %1").arg(QString::number(valid_entry_count) + "/" +
+                                                                           QString::number(skipped_entry_count)));
+        return list;
+      }
+
   quint32 magic;
   ids >> magic;
   if (qrg_magic != magic)
@@ -2568,8 +2699,19 @@ FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QSt
     }
 
   // de-serialize the data using version if necessary to
-  // handle old schemata
-  ids >> list;
+  // handle old schema
+  if (version == qrg_version_100)
+    {
+      ids >> list_v100;
+      Q_FOREACH (auto const& item, list_v100)
+        {
+          list << FrequencyList_v2::Item{item.frequency_, item.mode_, item.region_, QString(), QString(), QDateTime(),QDateTime()};
+        }
+    }
+    else
+    {
+      ids >> list;
+    }
 
   if (ids.status () != QDataStream::Ok || !ids.atEnd ())
     {
@@ -2577,13 +2719,12 @@ FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QSt
       list.clear ();
       return list;
     }
-
   return list;
 }
 
 void Configuration::impl::save_frequencies ()
 {
-  auto file_name = QFileDialog::getSaveFileName (this, tr ("Save Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg);;All files (*.*)"));
+  auto file_name = QFileDialog::getSaveFileName (this, tr ("Save Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg *.qrg.json);;All files (*.*)"));
   if (!file_name.isNull ())
     {
       QFile frequencies_file {file_name};
@@ -2598,11 +2739,28 @@ void Configuration::impl::save_frequencies ()
                                                                  "Click No to save all.")))
         {
           selection_model->select (selection_model->selection (), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-          ods << qrg_magic << qrg_version << next_frequencies_.frequency_list (selection_model->selectedRows ());
+          if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+            {
+              next_frequencies_.to_json_stream(&ods, "0x" + QString::number(qrg_magic, 16).toUpper(),
+                                               "0x" + QString::number(qrg_version, 16).toUpper(),
+                                               next_frequencies_.frequency_list(selection_model->selectedRows()));
+            } else
+            {
+              ods << qrg_magic << qrg_version << next_frequencies_.frequency_list(selection_model->selectedRows());
+            }
         }
       else
         {
-          ods << qrg_magic << qrg_version << next_frequencies_.frequency_list ();
+          if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+            {
+              next_frequencies_.to_json_stream(&ods,
+                                               "0x" + QString::number(qrg_magic, 16).toUpper(),
+                                               "0x" + QString::number(qrg_version, 16).toUpper(),
+                                                             next_frequencies_.frequency_list());
+            } else
+            {
+              ods << qrg_magic << qrg_version << next_frequencies_.frequency_list();
+            }
         }
     }
 }
@@ -2616,6 +2774,7 @@ void Configuration::impl::reset_frequencies ()
     {
       next_frequencies_.reset_to_defaults ();
     }
+    size_frequency_table_columns ();
 }
 
 void Configuration::impl::insert_frequency ()
@@ -2624,6 +2783,7 @@ void Configuration::impl::insert_frequency ()
     {
       ui_->frequencies_table_view->setCurrentIndex (next_frequencies_.add (frequency_dialog_->item ()));
       ui_->frequencies_table_view->resizeColumnToContents (FrequencyList_v2::mode_column);
+      size_frequency_table_columns();
     }
 }
 
