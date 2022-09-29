@@ -9763,11 +9763,7 @@ void MainWindow::write_all(QString txRx, QString message)
     auto time = QDateTime::currentDateTimeUtc ();
     if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
 
-    if ("WSPR" != m_mode) {
-      t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
-    } else {
-      t = t.asprintf("%10.3f ",m_freqNominal/1.e6);
-    }
+    t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
     if (m_diskData) {
       if (m_fileDateTime.size()==11) {
         line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
