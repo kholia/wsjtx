@@ -1035,6 +1035,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_wideGraph->setMode(m_mode);
 
   connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::on_the_minute);
+  connect (&minuteTimer, &QTimer::timeout, this, &MainWindow::invalidate_frequencies_filter);
+
   minuteTimer.setSingleShot (true);
   minuteTimer.start (ms_minute_error () + 60 * 1000);
 
@@ -1077,6 +1079,14 @@ void MainWindow::initialize_fonts ()
 void MainWindow::splash_done ()
 {
   m_splash && m_splash->close ();
+}
+
+void MainWindow::invalidate_frequencies_filter ()
+{
+  // every interval, invalidate the frequency filter, so that if any
+  // working frequency goes in/out of scope, we pick it up.
+  m_config.frequencies ()->filter_refresh ();
+  ui->bandComboBox->update ();
 }
 
 void MainWindow::on_the_minute ()
@@ -7159,7 +7169,7 @@ void MainWindow::on_actionFreqCal_triggered()
 void MainWindow::switch_mode (Mode mode)
 {
   m_fastGraph->setMode(m_mode);
-  m_config.frequencies ()->filter (m_config.region (), mode);
+  m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
   auto const& row = m_config.frequencies ()->best_working_frequency (m_freqNominal);
   ui->bandComboBox->setCurrentIndex (row);
   if (row >= 0) {

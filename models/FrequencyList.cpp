@@ -23,11 +23,13 @@
 #include <QJsonArray>
 #include <QCoreApplication>
 #include <QFile>
+#include <QException>
 
 #include "Radio.hpp"
 #include "Bands.hpp"
 #include "pimpl_impl.hpp"
 #include "revision_utils.hpp"
+#include "Logger.hpp"
 
 #include "moc_FrequencyList.cpp"
 
@@ -378,7 +380,6 @@ QString FrequencyList_v2::Item::toString () const
       << end_time_.toString(Qt::ISODate) << ", "
       << description_ << ", "
       << source_ << ')';
-
   return string;
 }
 
@@ -423,6 +424,7 @@ public:
     , bands_ {bands}
     , region_filter_ {IARURegions::ALL}
     , mode_filter_ {Modes::ALL}
+    , filter_on_time_ {false}
   {
   }
 
@@ -449,6 +451,7 @@ public:
   FrequencyItems frequency_list_;
   Region region_filter_;
   Mode mode_filter_;
+  bool filter_on_time_;
 };
 
 FrequencyList_v2::FrequencyList_v2 (Bands const * bands, QObject * parent)
@@ -564,7 +567,7 @@ bool FrequencyList_v2::removeDisjointRows (QModelIndexList rows)
 
   // We must work with source model indexes because we don't want row
   // removes to invalidate model indexes we haven't yet processed. We
-  // achieve that by processing them in decending row order.
+  // achieve that by processing them in descending row order.
   for (int r = 0; r < rows.size (); ++r)
     {
       rows[r] = mapToSource (rows[r]);
@@ -585,10 +588,16 @@ bool FrequencyList_v2::removeDisjointRows (QModelIndexList rows)
   return result;
 }
 
-void FrequencyList_v2::filter (Region region, Mode mode)
+void FrequencyList_v2::filter (Region region, Mode mode, bool filter_on_time)
 {
   m_->region_filter_ = region;
   m_->mode_filter_ = mode;
+  m_->filter_on_time_ = filter_on_time;
+  invalidateFilter ();
+}
+
+void FrequencyList_v2::filter_refresh ()
+{
   invalidateFilter ();
 }
 
@@ -605,6 +614,11 @@ bool FrequencyList_v2::filterAcceptsRow (int source_row, QModelIndex const& /* p
       // we pass ALL mode rows unless filtering for FreqCal mode
       result = (Modes::ALL == item.mode_ && m_->mode_filter_ != Modes::FreqCal)
         || m_->mode_filter_ == item.mode_;
+    }
+  if (result && m_->filter_on_time_)
+    {
+      result = (!item.start_time_.isValid() || item.start_time_ <= QDateTime::currentDateTimeUtc ()) &&
+              (!item.end_time_.isValid() || item.end_time_ >= QDateTime::currentDateTimeUtc ());
     }
   return result;
 }
@@ -796,7 +810,7 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
               item = Qt::AlignRight + Qt::AlignVCenter;
               break;
             }
-          break;
+            break;
 
           case description_column:
             switch (role)
@@ -810,14 +824,14 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
 
                 case Qt::ToolTipRole:
                 case Qt::AccessibleDescriptionRole:
-                  item = tr ("Description");
+                  item = tr("Description");
                 break;
 
                 case Qt::TextAlignmentRole:
                   item = Qt::AlignLeft + Qt::AlignVCenter;
                 break;
               }
-          break;
+            break;
 
           case source_column:
             switch (role)
@@ -826,9 +840,6 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
                 case Qt::DisplayRole:
                 case Qt::EditRole:
                 case Qt::AccessibleTextRole:
-                  item = frequency_item.start_time_ == frequency_item.end_time_
-                    ? tr ("Equal")
-                    : tr ("NOTEQUAL");
                   item = frequency_item.source_;
                 break;
 
@@ -847,6 +858,8 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
             switch (role)
               {
                 case SortRole:
+                  item = frequency_item.start_time_;
+                break;
                 case Qt::DisplayRole:
                 case Qt::EditRole:
                 case Qt::AccessibleTextRole:
@@ -868,6 +881,8 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
             switch (role)
               {
                 case SortRole:
+                  item = frequency_item.end_time_;
+                break;
                 case Qt::DisplayRole:
                 case Qt::EditRole:
                 case Qt::AccessibleTextRole:
@@ -902,45 +917,111 @@ bool FrequencyList_v2::impl::setData (QModelIndex const& model_index, QVariant c
       roles << role;
 
       auto& item = frequency_list_[row];
-      switch (model_index.column ())
+      switch (model_index.column())
         {
-        case region_column:
-          {
-            auto region = IARURegions::value (value.toString ());
-            if (region != item.region_)
-              {
-                item.region_ = region;
-                Q_EMIT dataChanged (model_index, model_index, roles);
-                changed = true;
-              }
-            }
-          break;
-
-        case mode_column:
-          {
-            auto mode = Modes::value (value.toString ());
-            if (mode != item.mode_)
-              {
-                item.mode_ = mode;
-                Q_EMIT dataChanged (model_index, model_index, roles);
-                changed = true;
-              }
-          }
-          break;
-
-        case frequency_column:
-          if (value.canConvert<Frequency> ())
+          case region_column:
             {
-              Radio::Frequency frequency {qvariant_cast <Radio::Frequency> (value)};
-              if (frequency != item.frequency_)
+              auto region = IARURegions::value(value.toString());
+              if (region != item.region_)
                 {
-                  item.frequency_ = frequency;
-                  // mark derived column (1) changed as well
-                  Q_EMIT dataChanged (index (model_index.row (), 1), model_index, roles);
+                  item.region_ = region;
+                  Q_EMIT dataChanged(model_index, model_index, roles);
                   changed = true;
                 }
             }
           break;
+
+          case mode_column:
+            {
+              auto mode = Modes::value(value.toString());
+              if (mode != item.mode_)
+                {
+                  item.mode_ = mode;
+                  Q_EMIT dataChanged(model_index, model_index, roles);
+                  changed = true;
+                }
+            }
+          break;
+
+          case frequency_column:
+            {
+              if (value.canConvert<Frequency>())
+                {
+                  Radio::Frequency frequency{qvariant_cast<Radio::Frequency>(value)};
+                  if (frequency != item.frequency_)
+                    {
+                      item.frequency_ = frequency;
+                      // mark derived column (1) changed as well
+                      Q_EMIT dataChanged(index(model_index.row(), 1), model_index, roles);
+                      changed = true;
+                    }
+                }
+            }
+          break;
+
+          case description_column:
+            {
+              if (value.toString() != item.description_)
+                {
+                  item.description_ = value.toString();
+                  Q_EMIT dataChanged(model_index, model_index, roles);
+                  changed = true;
+                }
+            }
+          break;
+
+          case source_column:
+            {
+              if (value.toString() != item.source_)
+                {
+                  item.source_ = value.toString();
+                  Q_EMIT dataChanged(model_index, model_index, roles);
+                  changed = true;
+                }
+            }
+          break;
+
+          case start_time_column:
+            {
+              QDateTime start_time = QDateTime::fromString(value.toString(), Qt::ISODate);
+              LOG_INFO(QString{"start_time = %1 - isEmpty %2"}.arg(value.toString()).arg(value.toString().isEmpty()));
+              if (value.toString().isEmpty())
+                { // empty string is valid
+                  start_time = QDateTime();
+                }
+              if (start_time.isValid() || start_time.isNull())
+                {
+                  item.start_time_ = start_time;
+                  if (item.end_time_.isValid() && !item.start_time_.isNull() && item.end_time_ < item.start_time_)
+                    {
+                      item.end_time_ = item.start_time_;
+                    }
+                  Q_EMIT dataChanged(model_index, index(model_index.row(), end_time_column), roles);
+                  changed = true;
+                }
+            }
+          break;
+
+          case end_time_column:
+            {
+              QDateTime end_time = QDateTime::fromString(value.toString(), Qt::ISODate);
+              if (value.toString().isEmpty())
+                { // empty string is valid
+                  end_time = QDateTime();
+                }
+              if (end_time.isValid() || end_time.isNull())
+                {
+                  item.end_time_ = end_time;
+                  if (item.start_time_.isValid() && !item.end_time_.isNull() && end_time <= item.start_time_)
+                    {
+                      item.start_time_ = end_time;
+                    }
+                  Q_EMIT dataChanged(index(model_index.row(), start_time_column), model_index, roles);
+                  changed = true;
+                }
+            }
+          break;
+
         }
     }
 
@@ -1104,8 +1185,57 @@ auto FrequencyList_v2::all_bands (Region region, Mode mode) const -> BandSet
   return result;
 }
 
+FrequencyList_v2::FrequencyItems FrequencyList_v2::from_json_file(QFile *input_file)
+{
+  FrequencyList_v2::FrequencyItems list;
+  QJsonDocument doc = QJsonDocument::fromJson(input_file->readAll());
+  if (doc.isNull())
+    {
+      throw ReadFileException {tr ("Failed to parse JSON file")};
+    }
+  QJsonObject obj = doc.object();
+  if (obj.isEmpty())
+    {
+      throw ReadFileException{tr("Information Missing")};
+    }
+  QJsonArray arr = obj["frequencies"].toArray();
+  if (arr.isEmpty())
+    {
+      throw ReadFileException{tr ("No Frequencies were found")};
+    }
+  int valid_entry_count = 0;
+  int skipped_entry_count = 0;
+  for (auto const &item: arr)
+    {
+      QString mode_s, region_s;
+      QJsonObject obj = item.toObject();
+      FrequencyList_v2::Item freq;
+      region_s = obj["region"].toString();
+      mode_s = obj["mode"].toString();
+
+      freq.frequency_ = obj["frequency"].toString().toDouble() * 1e6;
+      freq.region_ = IARURegions::value(region_s);
+      freq.mode_ = Modes::value(mode_s);
+      freq.description_ = obj["description"].toString();
+      freq.source_ = obj["source"].toString();
+      freq.start_time_ = QDateTime::fromString(obj["start_time"].toString(), Qt::ISODate);
+      freq.end_time_ = QDateTime::fromString(obj["end_time"].toString(), Qt::ISODate);
+      if ((freq.mode_ != Modes::ALL || QString::compare("ALL", mode_s)) &&
+          (freq.region_ != IARURegions::ALL || QString::compare("ALL", region_s, Qt::CaseInsensitive)) &&
+          freq.isSane())
+        {
+          list.push_back(freq);
+          valid_entry_count++;
+        } else
+        skipped_entry_count++;
+    }
+  //MessageBox::information_message(this, tr("Loaded Frequencies from %1").arg(file_name),
+  //                                tr("Entries Valid/Skipped %1").arg(QString::number(valid_entry_count) + "/" +
+  //                                                                   QString::number(skipped_entry_count)));
+  return list;
+}
 // write JSON format to a file
-void FrequencyList_v2::to_json_stream(QDataStream *ods, QString magic_s, QString version_s,
+void FrequencyList_v2::to_json_file(QFile *output_file, QString magic_s, QString version_s,
                                                     FrequencyItems const &frequency_items)
 {
   QJsonObject jobject{
@@ -1122,25 +1252,7 @@ void FrequencyList_v2::to_json_stream(QDataStream *ods, QString magic_s, QString
   jobject["frequencies"] = array;
 
   QJsonDocument d = QJsonDocument(jobject);
-  ods->writeRawData(d.toJson().data(), d.toJson().size());
-}
-
-QTextStream& qStdOut()
-{
-  static QTextStream ts( stdout );
-  return ts;
-}
-
-FrequencyList_v2::FrequencyItems FrequencyList_v2::from_json_file(QFile *input_file)
-{
-  // attempt to read the file as JSON
-  FrequencyList_v2::FrequencyItems list;
-  QByteArray jsonData = input_file->readAll();
-  QJsonDocument jsonDoc(QJsonDocument::fromJson(jsonData));
-  QJsonArray array = jsonDoc.object().value("frequencies").toArray();
-  qStdOut() << "Frequencies read";
-  qStdOut() << array.count();
-  return list;
+  output_file->write(d.toJson());
 }
 
 // previous version 100 of the FrequencyList_v2 class

@@ -185,6 +185,7 @@
 #include "item_delegates/ForeignKeyDelegate.hpp"
 #include "item_delegates/FrequencyDelegate.hpp"
 #include "item_delegates/FrequencyDeltaDelegate.hpp"
+#include "item_delegates/MessageItemDelegate.hpp"
 #include "Transceiver/TransceiverFactory.hpp"
 #include "Transceiver/Transceiver.hpp"
 #include "models/Bands.hpp"
@@ -437,31 +438,7 @@ public:
 };
 
 
-//
-// Class MessageItemDelegate
-//
-//	Item delegate for message entry such as free text message macros.
-//
-class MessageItemDelegate final
-  : public QStyledItemDelegate
-{
-public:
-  explicit MessageItemDelegate (QObject * parent = nullptr)
-    : QStyledItemDelegate {parent}
-  {
-  }
 
-  QWidget * createEditor (QWidget * parent
-                          , QStyleOptionViewItem const& /* option*/
-                          , QModelIndex const& /* index */
-                          ) const override
-  {
-    auto editor = new QLineEdit {parent};
-    editor->setFrame (false);
-    editor->setValidator (new QRegularExpressionValidator {message_alphabet, editor});
-    return editor;
-  }
-};
 
 // Internal implementation of the Configuration class.
 class Configuration::impl final
@@ -1268,6 +1245,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->frequencies_table_view->verticalHeader ()->setResizeContentsPrecision (0);
   ui_->frequencies_table_view->sortByColumn (FrequencyList_v2::frequency_column, Qt::AscendingOrder);
   ui_->frequencies_table_view->setColumnHidden (FrequencyList_v2::frequency_mhz_column, true);
+  ui_->frequencies_table_view->setColumnHidden (FrequencyList_v2::source_column, true);
 
   // delegates
   ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2::frequency_column, new FrequencyDelegate {this});
@@ -2052,7 +2030,6 @@ TransceiverFactory::ParameterPack Configuration::impl::gather_rig_data ()
 void Configuration::impl::accept ()
 {
   // Called when OK button is clicked.
-
   if (!validate ())
     {
       return;			// not accepting
@@ -2627,59 +2604,19 @@ FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QSt
   FrequencyList_v2::FrequencyItems list;
   FrequencyList_v2_100::FrequencyItems list_v100;
 
-  // read file as json if ends with qrg.json
-    if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+  // read file as json if ends with qrg.json.
+  if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+    {
+      try
         {
-        QJsonDocument doc = QJsonDocument::fromJson(frequencies_file.readAll());
-        if (doc.isNull())
-            {
-            MessageBox::critical_message (this, tr ("Error reading frequencies file"), tr ("%1 - Invalid Format").arg (file_name));
-            return list;
-            }
-        QJsonObject obj = doc.object();
-        if (obj.isEmpty())
-            {
-            MessageBox::critical_message (this, tr ("Error reading frequencies file"), tr ("%1 - Information Missing ").arg (file_name));
-            return list;
-            }
-        QJsonArray arr = obj["frequencies"].toArray();
-        if (arr.isEmpty())
-            {
-            MessageBox::critical_message (this, tr ("Error reading frequencies file"), tr ("No Frequencies were found"));
-            return list;
-            }
-        int valid_entry_count = 0;
-        int skipped_entry_count = 0;
-        for (auto const &item: arr)
-          {
-            QString mode_s, region_s;
-            QJsonObject obj = item.toObject();
-            FrequencyList_v2::Item freq;
-            region_s = obj["region"].toString();
-            mode_s = obj["mode"].toString();
-
-            freq.frequency_ = obj["frequency"].toString().toDouble() * 1e6;
-            freq.region_ = IARURegions::value(region_s);
-            freq.mode_ = Modes::value(mode_s);
-            freq.description_ = obj["description"].toString();
-            freq.source_ = obj["source"].toString();
-            freq.start_time_ = QDateTime::fromString(obj["start_time"].toString(), Qt::ISODate);
-            freq.end_time_ = QDateTime::fromString(obj["end_time"].toString(), Qt::ISODate);
-            //MessageBox::critical_message (this, tr ("Entry"), tr ("Entry: %1 ").arg(freq.toString()+"[sane:" +freq.isSane() + "] [region:" + obj["region"].toString() + "] [mode:" + obj["mode"].toString()+"] "));
-            if ((freq.mode_ != Modes::ALL || QString::compare("ALL", mode_s)) &&
-                (freq.region_ != IARURegions::ALL || QString::compare("ALL", region_s, Qt::CaseInsensitive)) &&
-                freq.isSane())
-              {
-                list.push_back(freq);
-                valid_entry_count++;
-              } else
-              skipped_entry_count++;
-          }
-        MessageBox::information_message(this, tr("Loaded Frequencies from %1").arg(file_name),
-                                        tr("Entries Valid/Skipped %1").arg(QString::number(valid_entry_count) + "/" +
-                                                                           QString::number(skipped_entry_count)));
-        return list;
-      }
+          list = FrequencyList_v2::from_json_file(&frequencies_file);
+        }
+      catch (ReadFileException const &e)
+        {
+          MessageBox::critical_message(this, tr("Error reading frequency file"), e.message_);
+        }
+      return list;
+    }
 
   quint32 magic;
   ids >> magic;
@@ -2727,9 +2664,13 @@ void Configuration::impl::save_frequencies ()
   auto file_name = QFileDialog::getSaveFileName (this, tr ("Save Working Frequencies"), writeable_data_dir_.absolutePath (), tr ("Frequency files (*.qrg *.qrg.json);;All files (*.*)"));
   if (!file_name.isNull ())
     {
+      bool b_write_json = file_name.endsWith(".qrg.json", Qt::CaseInsensitive);
+
       QFile frequencies_file {file_name};
       frequencies_file.open (QFile::WriteOnly);
+
       QDataStream ods {&frequencies_file};
+
       auto selection_model = ui_->frequencies_table_view->selectionModel ();
       if (selection_model->hasSelection ()
           && MessageBox::Yes == MessageBox::query_message (this
@@ -2739,9 +2680,9 @@ void Configuration::impl::save_frequencies ()
                                                                  "Click No to save all.")))
         {
           selection_model->select (selection_model->selection (), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-          if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+          if (b_write_json)
             {
-              next_frequencies_.to_json_stream(&ods, "0x" + QString::number(qrg_magic, 16).toUpper(),
+              next_frequencies_.to_json_file(&frequencies_file, "0x" + QString::number(qrg_magic, 16).toUpper(),
                                                "0x" + QString::number(qrg_version, 16).toUpper(),
                                                next_frequencies_.frequency_list(selection_model->selectedRows()));
             } else
@@ -2751,9 +2692,9 @@ void Configuration::impl::save_frequencies ()
         }
       else
         {
-          if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
+          if (b_write_json)
             {
-              next_frequencies_.to_json_stream(&ods,
+              next_frequencies_.to_json_file(&frequencies_file,
                                                "0x" + QString::number(qrg_magic, 16).toUpper(),
                                                "0x" + QString::number(qrg_version, 16).toUpper(),
                                                              next_frequencies_.frequency_list());

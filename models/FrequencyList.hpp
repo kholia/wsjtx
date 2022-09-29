@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QFile>
+#include <QException>
 
 #include "Radio.hpp"
 #include "IARURegions.hpp"
@@ -56,19 +57,19 @@ public:
     Frequency frequency_;
     Mode mode_;
     Region region_;
-    QString toString () const;
-    bool isSane() const;
-    QJsonObject toJson () const;
     QString description_;
     QString source_;
     QDateTime start_time_;
     QDateTime end_time_;
+    QString toString () const;
+    bool isSane() const;
+    QJsonObject toJson () const;
 
   };
   using FrequencyItems = QList<Item>;
   using BandSet = QSet<QString>;
 
-  enum Column {region_column, mode_column, frequency_column, frequency_mhz_column, description_column, start_time_column, end_time_column, source_column,  SENTINAL};
+  enum Column {region_column, mode_column, frequency_column, frequency_mhz_column, description_column, start_time_column, end_time_column, source_column, SENTINAL};
 
   // an iterator that meets the requirements of the C++ for range statement
   class const_iterator
@@ -89,7 +90,6 @@ public:
   private:
     FrequencyList_v2 const * parent_;
     int row_;
-    //qint32 qrg_version_;
   };
 
   explicit FrequencyList_v2 (Bands const *, QObject * parent = nullptr);
@@ -101,8 +101,8 @@ public:
   FrequencyItems const& frequency_list () const;
   FrequencyItems frequency_list (QModelIndexList const&) const;
   void frequency_list_merge (FrequencyItems const&);
-  void to_json_stream(QDataStream *, QString, QString, FrequencyItems const&);
-  FrequencyList_v2::FrequencyItems from_json_file(QFile *);
+  void to_json_file(QFile *, QString, QString, FrequencyItems const&);
+  static FrequencyItems from_json_file(QFile *);
 
   // Iterators for the sorted and filtered items
   //
@@ -131,7 +131,7 @@ public:
   int best_working_frequency (QString const& band) const;
 
   // Set filter
-  Q_SLOT void filter (Region, Mode);
+  Q_SLOT void filter (Region, Mode, bool);
 
   // Reset
   Q_SLOT void reset_to_defaults ();
@@ -143,6 +143,9 @@ public:
 
   // Proxy API
   bool filterAcceptsRow (int source_row, QModelIndex const& parent) const override;
+
+  // Refresh the filter based on the current filter settings (underlying data may have changed)
+  void filter_refresh ();
 
   // Custom roles.
   static int constexpr SortRole = Qt::UserRole;
@@ -158,7 +161,11 @@ bool operator == (FrequencyList_v2::Item const& lhs, FrequencyList_v2::Item cons
   return
     lhs.frequency_ == rhs.frequency_
     && lhs.region_ == rhs.region_
-    && lhs.mode_ == rhs.mode_;
+    && lhs.mode_ == rhs.mode_
+    && lhs.description_ == rhs.description_
+    && lhs.source_ == rhs.source_
+    && lhs.start_time_ == rhs.start_time_
+    && lhs.end_time_ == rhs.end_time_;
 }
 
 QDataStream& operator << (QDataStream&, FrequencyList_v2::Item const&);
@@ -223,5 +230,19 @@ QDataStream& operator >> (QDataStream&, FrequencyList::Item&);
 
 Q_DECLARE_METATYPE (FrequencyList::Item);
 Q_DECLARE_METATYPE (FrequencyList::FrequencyItems);
+
+class ReadFileException : public QException {
+public:
+  ReadFileException (QString const& message)
+    : message_ {message}
+  {
+  }
+
+  void raise () const override { throw *this; }
+  ReadFileException * clone () const override { return new ReadFileException {*this}; }
+
+  QString filename_;
+  QString message_;
+};
 
 #endif
