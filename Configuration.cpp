@@ -286,6 +286,7 @@ public:
     end_date_time_edit_->setDisplayFormat("yyyy.MM.dd hh:mm:ss 'UTC'");
     end_date_time_edit_->setTimeSpec(Qt::UTC);
     end_date_time_edit_->setMinimumDate(QDate::currentDate().addDays(-365));
+    preferred_frequency_checkbox_ = new QCheckBox {tr ("Preferred for Band/Mode")};
 
     setWindowTitle (QApplication::applicationName () + " - " +
                     tr ("Add Frequency"));
@@ -297,10 +298,11 @@ public:
     form_layout->addRow (tr ("IARU &Region:"), &region_combo_box_);
     form_layout->addRow (tr ("&Mode:"), &mode_combo_box_);
     form_layout->addRow (tr ("&Frequency (MHz):"), &frequency_line_edit_);
+    form_layout->addRow (tr ("&Preferred:"), preferred_frequency_checkbox_);
+    form_layout->addRow (tr ("&Description:"), &description_line_edit_);
     form_layout->addRow (tr ("&Enable Date Range"), enable_dates_checkbox_);
     form_layout->addRow (tr ("S&tart:"), start_date_time_edit_);
     form_layout->addRow (tr ("&End:"), end_date_time_edit_);
-    form_layout->addRow (tr ("&Description:"), &description_line_edit_);
     form_layout->addRow (tr ("&Source:"), &source_line_edit_);
 
     auto main_layout = new QVBoxLayout (this);
@@ -348,7 +350,8 @@ public:
             IARURegions::value(region_combo_box_.currentText()),
             description_line_edit_.text(), source_line_edit_.text(),
             start_time,
-            end_time
+            end_time,
+            false
     };
   }
 
@@ -360,6 +363,7 @@ private:
   QLineEdit source_line_edit_;
   QDialogButtonBox * button_box;
   QCheckBox *enable_dates_checkbox_;
+  QCheckBox *preferred_frequency_checkbox_;
   QDateTimeEdit *end_date_time_edit_;
   QDateTimeEdit *start_date_time_edit_;
 };
@@ -1241,6 +1245,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->frequencies_table_view->horizontalHeader ()->setSectionResizeMode (QHeaderView::ResizeToContents);
 
   ui_->frequencies_table_view->horizontalHeader ()->setResizeContentsPrecision (0);
+  ui_->frequencies_table_view->horizontalHeader ()->moveSection(8, 3); // swap preferred to be in front of description
   ui_->frequencies_table_view->verticalHeader ()->setSectionResizeMode (QHeaderView::ResizeToContents);
   ui_->frequencies_table_view->verticalHeader ()->setResizeContentsPrecision (0);
   ui_->frequencies_table_view->sortByColumn (FrequencyList_v2::frequency_column, Qt::AscendingOrder);
@@ -2642,7 +2647,8 @@ FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QSt
       ids >> list_v100;
       Q_FOREACH (auto const& item, list_v100)
         {
-          list << FrequencyList_v2::Item{item.frequency_, item.mode_, item.region_, QString(), QString(), QDateTime(),QDateTime()};
+          list << FrequencyList_v2::Item{item.frequency_, item.mode_, item.region_, QString(), QString(), QDateTime(),
+                                         QDateTime(), false};
         }
     }
     else

@@ -37,40 +37,40 @@ namespace
 {
   FrequencyList_v2::FrequencyItems const default_frequency_list =
     {
-      {198000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime()}, // BBC Radio 4 Droitwich
-      {4996000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime()},  // RWM time signal
-      {9996000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime()},  // RWM time signal
-      {14996000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime()}, // RWM time signal
+      {198000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime(), false}, // BBC Radio 4 Droitwich
+      {4996000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime(), false},  // RWM time signal
+      {9996000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime(), false},  // RWM time signal
+      {14996000, Modes::FreqCal, IARURegions::R1, "","", QDateTime(), QDateTime(), false}, // RWM time signal
       
-      {660000, Modes::FreqCal, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {880000, Modes::FreqCal, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {1210000, Modes::FreqCal, IARURegions::R2, "","", QDateTime(), QDateTime()},
+      {660000, Modes::FreqCal, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {880000, Modes::FreqCal, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {1210000, Modes::FreqCal, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
       
-      {2500000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {3330000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {5000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {7850000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {10000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {14670000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {15000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {20000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {2500000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {3330000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {5000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {7850000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {10000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {14670000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {15000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {20000000, Modes::FreqCal, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
       
-      {136000, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {136000, Modes::FST4, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {136000, Modes::FST4W, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {136000, Modes::JT9, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {136000, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {136000, Modes::FST4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {136000, Modes::FST4W, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {136000, Modes::JT9, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
 
-      {474200, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {474200, Modes::FST4, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {474200, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {474200, Modes::FST4W, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {474200, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {474200, Modes::FST4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {474200, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {474200, Modes::FST4W, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
-      {1836600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {1836800, Modes::FST4W, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {1838000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // squeezed allocations
-      {1839000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {1839000, Modes::FST4, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {1840000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {1836600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {1836800, Modes::FST4W, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {1838000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // squeezed allocations
+      {1839000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {1839000, Modes::FST4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {1840000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
       // Band plans (all USB dial unless stated otherwise)
       //
@@ -99,12 +99,12 @@ namespace
       //     3580         PSK31
       //     3600         LSB EMCOMM
       // 
-      {3570000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // JA compatible
-      {3572000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {3573000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // above as below JT65 is out of DM allocation
-      {3568600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // needs guard marker and lock out
-      {3575000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()},  // provisional
-      {3568000, Modes::FT4, IARURegions::R3, "","", QDateTime(), QDateTime()},   // provisional
+      {3570000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // JA compatible
+      {3572000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {3573000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // above as below JT65 is out of DM allocation
+      {3568600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // needs guard marker and lock out
+      {3575000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},  // provisional
+      {3568000, Modes::FT4, IARURegions::R3, "","", QDateTime(), QDateTime(), false},   // provisional
 
       // Band plans (all USB dial unless stated otherwise)
       //
@@ -137,11 +137,11 @@ namespace
       //     7090         LSB QRP CoA
       //     7110         LSB EMCOMM
       //
-      {7038600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {7074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {7076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {7078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {7047500, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // provisional - moved
+      {7038600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {7074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {7076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {7078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {7047500, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // provisional - moved
                                                // up 500Hz to clear
                                                // W1AW code practice QRG
 
@@ -171,11 +171,11 @@ namespace
       //     10142.25       OLIVIA, Contestia, etc.
       //     10143.25       OLIVIA, Contestia, etc. (main QRG)
       //
-      {10136000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {10138000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {10138700, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {10140000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {10140000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // provisional
+      {10136000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {10138000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {10138700, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {10140000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {10140000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // provisional
 
       // Band plans (all USB dial unless stated otherwise)
       //
@@ -214,11 +214,11 @@ namespace
       //     14105.5            OLIVIA 1000
       //     14106.5            OLIVIA 1000 (main QRG)
       // 
-      {14095600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {14074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {14076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {14078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {14080000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // provisional
+      {14095600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {14074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {14076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {14078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {14080000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // provisional
 
       // Band plans (all USB dial unless stated otherwise)
       //
@@ -247,111 +247,111 @@ namespace
       //     18104.4            OLIVIA, Contestia, etc.
       //     18110              NCDXF beacons
       //
-      {18100000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {18102000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {18104000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {18104000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // provisional
-      {18104600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {18100000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {18102000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {18104000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {18104000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // provisional
+      {18104600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
-      {21074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {21076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {21078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {21094600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {21140000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {21074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {21076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {21078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {21094600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {21140000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
-      {24915000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {24917000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {24919000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {24919000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // provisional
-      {24924600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {24915000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {24917000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {24919000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {24919000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // provisional
+      {24924600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
-      {28074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {28076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {28078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {28124600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {28180000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {28074000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {28076000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {28078000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {28124600, Modes::WSPR, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {28180000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
-      {50200000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {50211000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {50275000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {50276000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {50276000, Modes::JT65, IARURegions::R3, "","", QDateTime(), QDateTime()},
-      {50380000, Modes::MSK144, IARURegions::R1, "","", QDateTime(), QDateTime()},
-      {50260000, Modes::MSK144, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {50260000, Modes::MSK144, IARURegions::R3, "","", QDateTime(), QDateTime()},
-      {50293000, Modes::WSPR, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {50293000, Modes::WSPR, IARURegions::R3, "","", QDateTime(), QDateTime()},
-      {50310000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {50312000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {50313000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {50318000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()}, // provisional
-      {50323000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {50200000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {50211000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {50275000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {50276000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {50276000, Modes::JT65, IARURegions::R3, "","", QDateTime(), QDateTime(), false},
+      {50380000, Modes::MSK144, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
+      {50260000, Modes::MSK144, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {50260000, Modes::MSK144, IARURegions::R3, "","", QDateTime(), QDateTime(), false},
+      {50293000, Modes::WSPR, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {50293000, Modes::WSPR, IARURegions::R3, "","", QDateTime(), QDateTime(), false},
+      {50310000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {50312000, Modes::JT9, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {50313000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {50318000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false}, // provisional
+      {50323000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
       
-      {70102000, Modes::JT65, IARURegions::R1, "","", QDateTime(), QDateTime()},
-      {70104000, Modes::JT9, IARURegions::R1, "","", QDateTime(), QDateTime()},
-      {70091000, Modes::WSPR, IARURegions::R1, "","", QDateTime(), QDateTime()},
-      {70154000, Modes::FT8, IARURegions::R1, "","", QDateTime(), QDateTime()},
-      {70230000, Modes::MSK144, IARURegions::R1, "","", QDateTime(), QDateTime()},
+      {70102000, Modes::JT65, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
+      {70104000, Modes::JT9, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
+      {70091000, Modes::WSPR, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
+      {70154000, Modes::FT8, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
+      {70230000, Modes::MSK144, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
       
-      {144116000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {144120000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {144120000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {144170000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {144174000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {144360000, Modes::MSK144, IARURegions::R1, "","", QDateTime(), QDateTime()},
-      {144150000, Modes::MSK144, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {144489000, Modes::WSPR, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {144116000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {144120000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {144120000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {144170000, Modes::FT4, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {144174000, Modes::FT8, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {144360000, Modes::MSK144, IARURegions::R1, "","", QDateTime(), QDateTime(), false},
+      {144150000, Modes::MSK144, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {144489000, Modes::WSPR, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {222065000, Modes::Echo, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {222065000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {222065000, Modes::Q65, IARURegions::R2, "","", QDateTime(), QDateTime()},
+      {222065000, Modes::Echo, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {222065000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {222065000, Modes::Q65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
 	  
-      {432065000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {432065000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {432300000, Modes::WSPR, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {432360000, Modes::MSK144, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {432065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {432065000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {432065000, Modes::JT65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {432300000, Modes::WSPR, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {432360000, Modes::MSK144, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {432065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {902065000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime()},
-      {902065000, Modes::Q65, IARURegions::R2, "","", QDateTime(), QDateTime()},
+      {902065000, Modes::JT65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
+      {902065000, Modes::Q65, IARURegions::R2, "","", QDateTime(), QDateTime(), false},
       
-      {1296065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {1296065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {1296500000, Modes::WSPR, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {1296065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {1296065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {1296065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {1296500000, Modes::WSPR, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {1296065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {2301000000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {2301065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2301065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2301065000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime()},
+      {2301000000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {2301065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2301065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2301065000, Modes::Q65, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
 
-      {2304065000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime()},
-      {2304065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2304065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2304065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {2304065000, Modes::Echo, IARURegions::ALL, "","", QDateTime(), QDateTime(), false},
+      {2304065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2304065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2304065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {2320065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2320065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2320065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {2320065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {2320065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2320065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2320065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {2320065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {3400065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {3400065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {3400065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {3400065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {3400065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {3400065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {3400065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {3400065000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {5760065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {5760065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {5760065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {5760200000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {5760065000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {5760065000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {5760065000, Modes::JT65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {5760200000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
       
-      {10368100000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {10368200000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {10368200000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {10368100000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {10368200000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {10368200000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
 	  
-      {24048100000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {24048200000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime()},
-      {24048200000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime()},
+      {24048100000, Modes::Echo, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {24048200000, Modes::JT4, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
+      {24048200000, Modes::Q65, IARURegions::ALL,"","", QDateTime(), QDateTime(), false},
     };
 }
 
@@ -379,7 +379,8 @@ QString FrequencyList_v2::Item::toString () const
       << start_time_.toString(Qt::ISODate) << ", "
       << end_time_.toString(Qt::ISODate) << ", "
       << description_ << ", "
-      << source_ << ')';
+      << source_ << ","
+      << preferred_ << ')';
   return string;
 }
 
@@ -390,7 +391,8 @@ QJsonObject FrequencyList_v2::Item::toJson() const {
           {"description", description_},
           {"source", source_},
           {"start_time", start_time_.toString(Qt::ISODate) },
-          {"end_time", end_time_.toString(Qt::ISODate)}};
+          {"end_time", end_time_.toString(Qt::ISODate) },
+          {"preferred", preferred_}};
 }
 
 QDataStream& operator << (QDataStream& os, FrequencyList_v2::Item const& item)
@@ -401,7 +403,8 @@ QDataStream& operator << (QDataStream& os, FrequencyList_v2::Item const& item)
             << item.start_time_
             << item.end_time_
             << item.description_
-            << item.source_;
+            << item.source_
+            << item.preferred_;
 }
 
 QDataStream& operator >> (QDataStream& is, FrequencyList_v2::Item& item)
@@ -412,7 +415,8 @@ QDataStream& operator >> (QDataStream& is, FrequencyList_v2::Item& item)
             >> item.start_time_
             >> item.end_time_
             >> item.description_
-            >> item.source_;
+            >> item.source_
+            >> item.preferred_;
 }
 
 class FrequencyList_v2::impl final
@@ -697,6 +701,11 @@ Qt::ItemFlags FrequencyList_v2::impl::flags (QModelIndex const& index) const
         {
           result |= Qt::ItemIsEditable | Qt::ItemIsDragEnabled;
         }
+
+      if (preferred_column == column)
+        {
+          result |= Qt::ItemIsUserCheckable;
+        }
     }
   return result;
 }
@@ -899,6 +908,33 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
                 break;
               }
           break;
+
+          case preferred_column:
+            switch (role)
+              {
+                case SortRole:
+                  item = frequency_item.preferred_;
+                break;
+                case Qt::DisplayRole:
+                case Qt::EditRole:
+                case Qt::AccessibleTextRole:
+                  //item = frequency_item.preferred_ ? QString("True") : QString("False");
+                break;
+
+                case Qt::ToolTipRole:
+                case Qt::AccessibleDescriptionRole:
+                  item = tr ("Pref");
+                break;
+
+                case Qt::TextAlignmentRole:
+                  item = Qt::AlignHCenter + Qt::AlignVCenter;
+                break;
+
+                case Qt::CheckStateRole:
+                  item = frequency_item.preferred_ ? Qt::Checked : Qt::Unchecked;
+                break;
+              }
+          break;
         }
     }
   return item;
@@ -907,16 +943,30 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
 bool FrequencyList_v2::impl::setData (QModelIndex const& model_index, QVariant const& value, int role)
 {
   bool changed {false};
-
   auto const& row = model_index.row ();
+  auto& item = frequency_list_[row];
+
+  QVector<int> roles;
+  roles << role;
+
+  if (model_index.isValid ()
+      && Qt::CheckStateRole == role
+      && row < frequency_list_.size ()
+      && model_index.column () == preferred_column)
+    {
+      bool b_val = ((Qt::CheckState)value.toInt() == Qt::Checked);
+      if (b_val != item.preferred_)
+        {
+          item.preferred_ = b_val;
+          Q_EMIT dataChanged(model_index, model_index, roles);
+          changed = true;
+        }
+    }
+
   if (model_index.isValid ()
       && Qt::EditRole == role
       && row < frequency_list_.size ())
     {
-      QVector<int> roles;
-      roles << role;
-
-      auto& item = frequency_list_[row];
       switch (model_index.column())
         {
           case region_column:
@@ -1022,6 +1072,18 @@ bool FrequencyList_v2::impl::setData (QModelIndex const& model_index, QVariant c
             }
           break;
 
+          case preferred_column:
+            {
+              bool b_value = value.toBool();
+              if (b_value != item.preferred_)
+                {
+                  item.preferred_ = b_value;
+                  Q_EMIT dataChanged(index(model_index.row(), start_time_column), model_index, roles);
+                  changed = true;
+                }
+            }
+          break;
+
         }
     }
 
@@ -1037,14 +1099,15 @@ QVariant FrequencyList_v2::impl::headerData (int section, Qt::Orientation orient
     {
       switch (section)
         {
-        case region_column: header = tr ("IARU Region"); break;
-        case mode_column: header = tr ("Mode"); break;
-        case frequency_column: header = tr ("Frequency"); break;
-        case frequency_mhz_column: header = tr ("Frequency (MHz)"); break;
-        case description_column: header = tr ("Description"); break;
-        case source_column: header = tr ("Source"); break;
-        case start_time_column: header = tr ("Start"); break;
-        case end_time_column: header = tr ("End"); break;
+          case region_column: header = tr ("IARU Region"); break;
+          case mode_column: header = tr ("Mode"); break;
+          case frequency_column: header = tr ("Frequency"); break;
+          case frequency_mhz_column: header = tr ("Frequency (MHz)"); break;
+          case source_column: header = tr ("Source"); break;
+          case start_time_column: header = tr ("Start"); break;
+          case end_time_column: header = tr ("End"); break;
+          case preferred_column: header = tr ("Pref"); break;
+          case description_column: header = tr ("Description"); break;
         }
     }
   else
@@ -1076,7 +1139,7 @@ bool FrequencyList_v2::impl::insertRows (int row, int count, QModelIndex const& 
       beginInsertRows (parent, row, row + count - 1);
       for (auto r = 0; r < count; ++r)
         {
-          frequency_list_.insert (row, Item {0, Mode::ALL, IARURegions::ALL, QString(), QString(), QDateTime(), QDateTime()});
+          frequency_list_.insert (row, Item {0, Mode::ALL, IARURegions::ALL, QString(), QString(), QDateTime(), QDateTime(), false});
         }
       endInsertRows ();
       return true;
@@ -1220,6 +1283,8 @@ FrequencyList_v2::FrequencyItems FrequencyList_v2::from_json_file(QFile *input_f
       freq.source_ = obj["source"].toString();
       freq.start_time_ = QDateTime::fromString(obj["start_time"].toString(), Qt::ISODate);
       freq.end_time_ = QDateTime::fromString(obj["end_time"].toString(), Qt::ISODate);
+      freq.preferred_ = obj["preferred"].toBool();
+
       if ((freq.mode_ != Modes::ALL || QString::compare("ALL", mode_s)) &&
           (freq.region_ != IARURegions::ALL || QString::compare("ALL", region_s, Qt::CaseInsensitive)) &&
           freq.isSane())

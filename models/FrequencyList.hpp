@@ -61,6 +61,7 @@ public:
     QString source_;
     QDateTime start_time_;
     QDateTime end_time_;
+    bool preferred_;  // preferred frequency for this band and mode
     QString toString () const;
     bool isSane() const;
     QJsonObject toJson () const;
@@ -69,7 +70,7 @@ public:
   using FrequencyItems = QList<Item>;
   using BandSet = QSet<QString>;
 
-  enum Column {region_column, mode_column, frequency_column, frequency_mhz_column, description_column, start_time_column, end_time_column, source_column, SENTINAL};
+  enum Column {region_column, mode_column, frequency_column, frequency_mhz_column, description_column, start_time_column, end_time_column, source_column, preferred_column, SENTINAL};
 
   // an iterator that meets the requirements of the C++ for range statement
   class const_iterator
@@ -165,7 +166,8 @@ bool operator == (FrequencyList_v2::Item const& lhs, FrequencyList_v2::Item cons
     && lhs.description_ == rhs.description_
     && lhs.source_ == rhs.source_
     && lhs.start_time_ == rhs.start_time_
-    && lhs.end_time_ == rhs.end_time_;
+    && lhs.end_time_ == rhs.end_time_
+    && lhs.preferred_ == rhs.preferred_;
 }
 
 QDataStream& operator << (QDataStream&, FrequencyList_v2::Item const&);
