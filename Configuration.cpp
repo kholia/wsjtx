@@ -278,7 +278,7 @@ public:
     start_date_time_edit_ = new QDateTimeEdit(QDateTime(QDate::currentDate(), QTime(0,0,0,0), Qt::UTC), parent);
     end_date_time_edit_ = new QDateTimeEdit(QDateTime(QDate::currentDate().addDays(2), QTime(0,0,0,0), Qt::UTC), parent);
 
-    enable_dates_checkbox_ = new QCheckBox {tr ("Validity Period")};
+    enable_dates_checkbox_ = new QCheckBox {tr ("")};
     start_date_time_edit_->setDisplayFormat("yyyy.MM.dd hh:mm:ss 'UTC'");
     start_date_time_edit_->setTimeSpec(Qt::UTC);
     start_date_time_edit_->setMinimumDate(QDate::currentDate().addDays(-365));
@@ -286,7 +286,7 @@ public:
     end_date_time_edit_->setDisplayFormat("yyyy.MM.dd hh:mm:ss 'UTC'");
     end_date_time_edit_->setTimeSpec(Qt::UTC);
     end_date_time_edit_->setMinimumDate(QDate::currentDate().addDays(-365));
-    preferred_frequency_checkbox_ = new QCheckBox {tr ("Preferred for Band/Mode")};
+    preferred_frequency_checkbox_ = new QCheckBox {tr ("")};
 
     setWindowTitle (QApplication::applicationName () + " - " +
                     tr ("Add Frequency"));
@@ -298,9 +298,9 @@ public:
     form_layout->addRow (tr ("IARU &Region:"), &region_combo_box_);
     form_layout->addRow (tr ("&Mode:"), &mode_combo_box_);
     form_layout->addRow (tr ("&Frequency (MHz):"), &frequency_line_edit_);
-    form_layout->addRow (tr ("&Preferred:"), preferred_frequency_checkbox_);
+    form_layout->addRow (tr ("&Preferred for Band/Mode:"), preferred_frequency_checkbox_);
     form_layout->addRow (tr ("&Description:"), &description_line_edit_);
-    form_layout->addRow (tr ("&Enable Date Range"), enable_dates_checkbox_);
+    form_layout->addRow (tr ("&Enable Date Range:"), enable_dates_checkbox_);
     form_layout->addRow (tr ("S&tart:"), start_date_time_edit_);
     form_layout->addRow (tr ("&End:"), end_date_time_edit_);
     form_layout->addRow (tr ("&Source:"), &source_line_edit_);

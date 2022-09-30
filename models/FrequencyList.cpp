@@ -869,8 +869,19 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
                 case SortRole:
                   item = frequency_item.start_time_;
                 break;
-                case Qt::DisplayRole:
+
                 case Qt::EditRole:
+                  if (frequency_item.start_time_.isNull () || !frequency_item.start_time_.isValid ())
+                    {
+                      item = QDateTime::currentDateTimeUtc ().toString (Qt::ISODate);
+                    }
+                    else
+                    {
+                      item = frequency_item.start_time_.toString(Qt::ISODate);
+                    }
+                break;
+
+                case Qt::DisplayRole:
                 case Qt::AccessibleTextRole:
                   item = frequency_item.start_time_.toString(Qt::ISODate);
                 break;
@@ -892,8 +903,19 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
                 case SortRole:
                   item = frequency_item.end_time_;
                 break;
-                case Qt::DisplayRole:
+
                 case Qt::EditRole:
+                  if (frequency_item.end_time_.isNull () || !frequency_item.end_time_.isValid ())
+                    {
+                      item = QDateTime::currentDateTimeUtc ().toString (Qt::ISODate);
+                    }
+                    else
+                    {
+                      item = frequency_item.end_time_.toString(Qt::ISODate);
+                    }
+                break;
+
+                case Qt::DisplayRole:
                 case Qt::AccessibleTextRole:
                   item = frequency_item.end_time_.toString(Qt::ISODate);
                 break;
@@ -1104,8 +1126,8 @@ QVariant FrequencyList_v2::impl::headerData (int section, Qt::Orientation orient
           case frequency_column: header = tr ("Frequency"); break;
           case frequency_mhz_column: header = tr ("Frequency (MHz)"); break;
           case source_column: header = tr ("Source"); break;
-          case start_time_column: header = tr ("Start"); break;
-          case end_time_column: header = tr ("End"); break;
+          case start_time_column: header = tr ("Start Date/Time"); break;
+          case end_time_column: header = tr ("End Date/Time"); break;
           case preferred_column: header = tr ("Pref"); break;
           case description_column: header = tr ("Description"); break;
         }
