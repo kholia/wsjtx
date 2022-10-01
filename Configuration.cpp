@@ -351,7 +351,7 @@ public:
             description_line_edit_.text(), source_line_edit_.text(),
             start_time,
             end_time,
-            false
+            preferred_frequency_checkbox_->isChecked()
     };
   }
 

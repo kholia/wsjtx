@@ -448,6 +448,8 @@ public:
   QStringList mimeTypes () const override;
   QMimeData * mimeData (QModelIndexList const&) const override;
 
+  void unprefer_all_but(Item & item, int const row, QVector<int> );
+
   static int constexpr num_cols {SENTINAL};
   static auto constexpr mime_type = "application/wsjt.Frequencies";
 
@@ -456,6 +458,7 @@ public:
   Region region_filter_;
   Mode mode_filter_;
   bool filter_on_time_;
+
 };
 
 FrequencyList_v2::FrequencyList_v2 (Bands const * bands, QObject * parent)
@@ -511,6 +514,11 @@ int FrequencyList_v2::best_working_frequency (Frequency f) const
           auto const& band = m_->bands_->find (candidate_frequency);
           if (band == target_band)
             {
+              // take the preferred one
+              if (m_->frequency_list_[source_row].preferred_)
+                {
+                  return row;
+                }
               // take closest band match
               Radio::FrequencyDelta new_delta = f - candidate_frequency;
               if (std::abs (new_delta) < std::abs (delta))
@@ -536,7 +544,9 @@ int FrequencyList_v2::best_working_frequency (QString const& target_band) const
           auto const& band = m_->bands_->find (m_->frequency_list_[source_row].frequency_);
           if (band == target_band)
             {
-              return row;
+               if (m_->frequency_list_[source_row].preferred_)
+                 return row; // return the preferred one immediately
+               result = row;
             }
         }
     }
@@ -647,6 +657,9 @@ QModelIndex FrequencyList_v2::impl::add (Item f)
       beginInsertRows (QModelIndex {}, row, row);
       frequency_list_.append (f);
       endInsertRows ();
+
+      // if we added one that had a preferred frequency, unprefer everything else
+      unprefer_all_but(f, row, {Qt::DisplayRole, Qt::CheckStateRole});
 
       return index (row, 0);
     }
@@ -805,8 +818,14 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
             case Qt::DisplayRole:
               {
                 auto const& band = bands_->find (frequency_item.frequency_);
-                item = Radio::pretty_frequency_MHz_string (frequency_item.frequency_)
-                  + " MHz (" + (band.isEmpty () ? "OOB" : band) + ')';
+                QString desc_text;
+                desc_text = frequency_item.description_.isEmpty() ? "" : " \u2016 " + frequency_item.description_;
+                item = (frequency_item.preferred_ ? "\u2055 " : "") +
+                       Radio::pretty_frequency_MHz_string(frequency_item.frequency_)
+                       + " MHz (" + (band.isEmpty() ? "OOB" : band) + ")" +
+                        (((frequency_item.start_time_.isValid() && !frequency_item.start_time_.isNull()) ||
+                        (frequency_item.end_time_.isValid() && !frequency_item.end_time_.isNull())) ? " \u2016 " : "")
+                       + desc_text;
               }
               break;
 
@@ -962,6 +981,30 @@ QVariant FrequencyList_v2::impl::data (QModelIndex const& index, int role) const
   return item;
 }
 
+void FrequencyList_v2::impl::unprefer_all_but(Item &item, int const item_row, QVector<int> roles)
+{
+  // un-prefer all of the other frequencies in this band
+  auto const band = bands_->find (item.frequency_);
+  if (band.isEmpty ()) return; // out of any band
+
+  roles << Qt::CheckStateRole;
+  roles << Qt::DisplayRole;
+
+  for (int row = 0; row < rowCount (); ++row)
+  {
+      if (row == item_row) continue;
+
+      Item &i = frequency_list_[row];
+      auto const &iter_band = bands_->find(i.frequency_);
+
+      if (!iter_band.isEmpty() && band == iter_band && (i.region_ == item.region_) && (i.mode_ == item.mode_))
+      {
+          i.preferred_ = false;
+          Q_EMIT dataChanged(index(row,preferred_column), index(row,preferred_column), roles);
+      }
+  }
+}
+
 bool FrequencyList_v2::impl::setData (QModelIndex const& model_index, QVariant const& value, int role)
 {
   bool changed {false};
@@ -980,7 +1023,11 @@ bool FrequencyList_v2::impl::setData (QModelIndex const& model_index, QVariant c
       if (b_val != item.preferred_)
         {
           item.preferred_ = b_val;
-          Q_EMIT dataChanged(model_index, model_index, roles);
+          if (item.preferred_)
+            {
+              unprefer_all_but (item, row, roles); // un-prefer all of the other frequencies in this band
+            }
+          Q_EMIT dataChanged(index(row,description_column), index(row,preferred_column), roles);
           changed = true;
         }
     }
