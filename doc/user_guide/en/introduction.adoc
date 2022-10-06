@@ -70,7 +70,8 @@ provides a mapping facility, archival storage, and many other
 features.
 
 *Echo* mode allows you to detect and measure your own station's echoes
-from the moon, even if they are far below the audible threshold.
+from the moon and to make other measurements useful for optimizing
+your EME station's performance.
 
 _WSJT-X_ provides spectral displays for receiver passbands as wide as
 5 kHz, flexible rig control for nearly all modern radios used by
