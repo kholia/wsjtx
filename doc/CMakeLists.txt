@@ -72,7 +72,7 @@ set (UG_IMGS
   images/config-menu.png
   images/decode-menu.png
   images/download_samples.png
-  images/echo_144.png
+  images/Echo_1296.png
   images/EME_Deep_0.png
   images/EME_Deep_1.png
   images/EME_Deep_2.png
