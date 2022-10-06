@@ -352,6 +352,7 @@ void CPlotter::drawRed(int ia, int ib, float swide[])
 
 void CPlotter::replot()
 {
+  resizeEvent(NULL);
   float swide[m_w];
   m_bReplot=true;
   for(int irow=0; irow<m_h1; irow++) {
@@ -421,7 +422,6 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     painter.setPen(QPen(Qt::white));
     for( int i=1; i<VERT_DIVS; i++) {                //draw horizontal grids
       y = int(i*m_vpixperdiv);
-//      if(i==1) y+=10;
       painter.drawText(0,y+5,QString::number(10*(VERT_DIVS-i) + 20));
     }
   }
@@ -435,7 +435,6 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
       }
     }
   }
-
 
   QRect rect0;
   QPainter painter0(&m_ScalePixmap);
@@ -776,7 +775,6 @@ void CPlotter::mouseMoveEvent (QMouseEvent * event)
   } else {
     QString t;
     t=t.asprintf("%4.1f dB",pdB);
-//    qDebug() << "aa" << m_h << m_h2 << y << m_pdB << pdB<< t;
     QToolTip::showText(event->globalPos(),t);
   }
   QWidget::mouseMoveEvent(event);
