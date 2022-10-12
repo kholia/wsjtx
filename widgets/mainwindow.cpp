@@ -783,7 +783,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
   // Hook up working frequencies.
   ui->bandComboBox->setModel (m_config.frequencies ());
-  ui->bandComboBox->setModelColumn (FrequencyList_v2::frequency_mhz_column);
+  ui->bandComboBox->setModelColumn (FrequencyList_v2_101::frequency_mhz_column);
 
   // Enable live band combo box entry validation and action.
   auto band_validator = new LiveFrequencyValidator {ui->bandComboBox
@@ -7414,7 +7414,7 @@ void MainWindow::on_actionOpen_log_directory_triggered ()
 void MainWindow::on_bandComboBox_currentIndexChanged (int index)
 {
   auto const& frequencies = m_config.frequencies ();
-  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2::frequency_column));
+  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2_101::frequency_column));
   Frequency frequency {m_freqNominal};
   if (source_index.isValid ())
     {
@@ -7442,7 +7442,7 @@ void MainWindow::on_bandComboBox_editTextChanged (QString const& text)
 void MainWindow::on_bandComboBox_activated (int index)
 {
   auto const& frequencies = m_config.frequencies ();
-  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2::frequency_column));
+  auto const& source_index = frequencies->mapToSource (frequencies->index (index, FrequencyList_v2_101::frequency_column));
   Frequency frequency {m_freqNominal};
   if (source_index.isValid ())
     {

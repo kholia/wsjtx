@@ -1630,7 +1630,7 @@ Error: %2 - %3</translation>
     </message>
 </context>
 <context>
-    <name>FrequencyList_v2</name>
+    <name>FrequencyList_v2_100</name>
     <message>
         <location filename="../models/FrequencyList.cpp" line="680"/>
         <location filename="../models/FrequencyList.cpp" line="836"/>

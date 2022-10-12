@@ -270,7 +270,7 @@ class FrequencyDialog final
   Q_OBJECT
 
 public:
-  using Item = FrequencyList_v2::Item;
+  using Item = FrequencyList_v2_101::Item;
 
   explicit FrequencyDialog (IARURegions * regions_model, Modes * modes_model, QWidget * parent = nullptr)
     : QDialog {parent}
@@ -522,7 +522,7 @@ private:
   void insert_frequency ();
   void size_frequency_table_columns();
 
-    FrequencyList_v2::FrequencyItems read_frequencies_file (QString const&);
+    FrequencyList_v2_101::FrequencyItems read_frequencies_file (QString const&);
 
   void delete_stations ();
   void insert_station ();
@@ -614,8 +614,8 @@ private:
   IARURegions regions_;
   IARURegions::Region region_;
   Modes modes_;
-  FrequencyList_v2 frequencies_;
-  FrequencyList_v2 next_frequencies_;
+  FrequencyList_v2_101 frequencies_;
+  FrequencyList_v2_101 next_frequencies_;
   StationList stations_;
   StationList next_stations_;
   FrequencyDelta current_offset_;
@@ -821,8 +821,8 @@ Bands const * Configuration::bands () const {return &m_->bands_;}
 StationList * Configuration::stations () {return &m_->stations_;}
 StationList const * Configuration::stations () const {return &m_->stations_;}
 IARURegions::Region Configuration::region () const {return m_->region_;}
-FrequencyList_v2 * Configuration::frequencies () {return &m_->frequencies_;}
-FrequencyList_v2 const * Configuration::frequencies () const {return &m_->frequencies_;}
+FrequencyList_v2_101 * Configuration::frequencies () {return &m_->frequencies_;}
+FrequencyList_v2_101 const * Configuration::frequencies () const {return &m_->frequencies_;}
 QStringListModel * Configuration::macros () {return &m_->macros_;}
 QStringListModel const * Configuration::macros () const {return &m_->macros_;}
 QDir Configuration::save_directory () const {return m_->save_directory_;}
@@ -1090,7 +1090,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
         throw std::runtime_error {"Failed to create save directory"};
       }
 
-    // we now have a deafult save path that exists
+    // we now have a default save path that exists
 
     // make sure samples directory exists
     QString samples_dir {"samples"};
@@ -1239,7 +1239,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   //
   // setup working frequencies table model & view
   //
-  frequencies_.sort (FrequencyList_v2::frequency_column);
+  frequencies_.sort (FrequencyList_v2_101::frequency_column);
 
   ui_->frequencies_table_view->setModel (&next_frequencies_);
   ui_->frequencies_table_view->horizontalHeader ()->setSectionResizeMode (QHeaderView::ResizeToContents);
@@ -1248,14 +1248,14 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->frequencies_table_view->horizontalHeader ()->moveSection(8, 3); // swap preferred to be in front of description
   ui_->frequencies_table_view->verticalHeader ()->setSectionResizeMode (QHeaderView::ResizeToContents);
   ui_->frequencies_table_view->verticalHeader ()->setResizeContentsPrecision (0);
-  ui_->frequencies_table_view->sortByColumn (FrequencyList_v2::frequency_column, Qt::AscendingOrder);
-  ui_->frequencies_table_view->setColumnHidden (FrequencyList_v2::frequency_mhz_column, true);
-  ui_->frequencies_table_view->setColumnHidden (FrequencyList_v2::source_column, true);
+  ui_->frequencies_table_view->sortByColumn (FrequencyList_v2_101::frequency_column, Qt::AscendingOrder);
+  ui_->frequencies_table_view->setColumnHidden (FrequencyList_v2_101::frequency_mhz_column, true);
+  ui_->frequencies_table_view->setColumnHidden (FrequencyList_v2_101::source_column, true);
 
   // delegates
-  ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2::frequency_column, new FrequencyDelegate {this});
-  ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2::region_column, new ForeignKeyDelegate {&regions_, 0, this});
-  ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2::mode_column, new ForeignKeyDelegate {&modes_, 0, this});
+  ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2_101::frequency_column, new FrequencyDelegate {this});
+  ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2_101::region_column, new ForeignKeyDelegate {&regions_, 0, this});
+  ui_->frequencies_table_view->setItemDelegateForColumn (FrequencyList_v2_101::mode_column, new ForeignKeyDelegate {&modes_, 0, this});
 
   // actions
   frequency_delete_action_ = new QAction {tr ("&Delete"), ui_->frequencies_table_view};
@@ -1498,6 +1498,13 @@ void Configuration::impl::done (int r)
 void Configuration::impl::read_settings ()
 {
   SettingsGroup g {settings_, "Configuration"};
+  LOG_INFO(QString{"Configuration Settings (%1)"}.arg(settings_->fileName()));
+  QStringList keys = settings_->allKeys();
+  //Q_FOREACH (auto const& item, keys)
+  //{
+  //  LOG_INFO(QString{"  %1 = %2"}.arg(item).arg(settings_->value(item).toString()));
+  //}
+
   restoreGeometry (settings_->value ("window/geometry").toByteArray ());
 
   my_callsign_ = settings_->value ("MyCall", QString {}).toString ();
@@ -1551,12 +1558,20 @@ void Configuration::impl::read_settings ()
 
   region_ = settings_->value ("Region", QVariant::fromValue (IARURegions::ALL)).value<IARURegions::Region> ();
 
-  if (settings_->contains ("FrequenciesForRegionModes"))
+  LOG_INFO(QString{"Reading frequencies"});
+
+  if (settings_->contains ("FrequenciesForRegionModes_v2"))
     {
-      auto const& v = settings_->value ("FrequenciesForRegionModes");
+      LOG_INFO(QString{"read_settings found FrequenciesForRegionModes_v2"});
+      if (settings_->contains ("FrequenciesForRegionModes"))
+        {
+          LOG_INFO(QString{"read_settings ALSO found FrequenciesForRegionModes"});
+        }
+
+      auto const& v = settings_->value ("FrequenciesForRegionModes_v2");
       if (v.isValid ())
         {
-          frequencies_.frequency_list (v.value<FrequencyList_v2::FrequencyItems> ());
+          frequencies_.frequency_list (v.value<FrequencyList_v2_101::FrequencyItems> ());
         }
       else
         {
@@ -1565,7 +1580,34 @@ void Configuration::impl::read_settings ()
     }
   else
     {
-      frequencies_.reset_to_defaults ();
+      LOG_INFO(QString{"read_settings looking for FrequenciesForRegionModes"});
+      if (settings_->contains ("FrequenciesForRegionModes")) // has the old ones.
+        {
+          LOG_INFO(QString{"found FrequenciesForRegionModes"});
+          auto const& v = settings_->value("FrequenciesForRegionModes");
+          LOG_INFO(QString{"v is %1"}.arg(v.typeName()));
+          if (v.isValid())
+            {
+              LOG_INFO(QString{"read_settings found VALID FrequenciesForRegionModes"});
+              FrequencyList_v2_101::FrequencyItems list;
+              FrequencyList_v2::FrequencyItems v100 = v.value<FrequencyList_v2::FrequencyItems>();
+              LOG_INFO(QString{"read_settings read %1 old_format items from FrequenciesForRegionModes"}.arg(v100.size()));
+
+              Q_FOREACH (auto const& item, v100)
+              {
+                list << FrequencyList_v2_101::Item{item.frequency_, item.mode_, item.region_, QString(), QString(), QDateTime(),
+                                               QDateTime(), false};
+              }
+              LOG_INFO(QString{"converted %1 items to FrequenciesForRegionModes_v2"}.arg(list.size()));
+
+              frequencies_.frequency_list(list);
+            }
+            else
+            {
+              LOG_INFO(QString{"read_settings INVALID FrequenciesForRegionModes"});
+              frequencies_.reset_to_defaults();
+            }
+        }
     }
 
   stations_.station_list (settings_->value ("stations").value<StationList::Stations> ());
@@ -1707,8 +1749,8 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("After73", id_after_73_);
   settings_->setValue ("TxQSYAllowed", tx_QSY_allowed_);
   settings_->setValue ("Macros", macros_.stringList ());
-  settings_->setValue ("FrequenciesForRegionModes", QVariant::fromValue (frequencies_.frequency_list ()));
   settings_->setValue ("stations", QVariant::fromValue (stations_.station_list ()));
+  settings_->setValue ("FrequenciesForRegionModes_v2", QVariant::fromValue (frequencies_.frequency_list ()));
   settings_->setValue ("DecodeHighlighting", QVariant::fromValue (decode_highlighing_model_.items ()));
   settings_->setValue ("HighlightByMode", highlight_by_mode_);
   settings_->setValue ("OnlyFieldsSought", highlight_only_fields_);
@@ -2235,7 +2277,7 @@ void Configuration::impl::accept ()
   if (frequencies_.frequency_list () != next_frequencies_.frequency_list ())
     {
       frequencies_.frequency_list (next_frequencies_.frequency_list ());
-      frequencies_.sort (FrequencyList_v2::frequency_column);
+      frequencies_.sort (FrequencyList_v2_101::frequency_column);
     }
 
   if (stations_.station_list () != next_stations_.station_list ())
@@ -2567,7 +2609,7 @@ void Configuration::impl::delete_frequencies ()
   auto selection_model = ui_->frequencies_table_view->selectionModel ();
   selection_model->select (selection_model->selection (), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
   next_frequencies_.removeDisjointRows (selection_model->selectedRows ());
-  ui_->frequencies_table_view->resizeColumnToContents (FrequencyList_v2::mode_column);
+  ui_->frequencies_table_view->resizeColumnToContents (FrequencyList_v2_101::mode_column);
   size_frequency_table_columns ();
 }
 
@@ -2601,20 +2643,20 @@ void Configuration::impl::merge_frequencies ()
     }
 }
 
-FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QString const& file_name)
+FrequencyList_v2_101::FrequencyItems Configuration::impl::read_frequencies_file (QString const& file_name)
 {
   QFile frequencies_file {file_name};
   frequencies_file.open (QFile::ReadOnly);
   QDataStream ids {&frequencies_file};
-  FrequencyList_v2::FrequencyItems list;
-  FrequencyList_v2_100::FrequencyItems list_v100;
+  FrequencyList_v2_101::FrequencyItems list;
+  FrequencyList_v2::FrequencyItems list_v100;
 
   // read file as json if ends with qrg.json.
   if (file_name.endsWith(".qrg.json", Qt::CaseInsensitive))
     {
       try
         {
-          list = FrequencyList_v2::from_json_file(&frequencies_file);
+          list = FrequencyList_v2_101::from_json_file(&frequencies_file);
         }
       catch (ReadFileException const &e)
         {
@@ -2647,7 +2689,7 @@ FrequencyList_v2::FrequencyItems Configuration::impl::read_frequencies_file (QSt
       ids >> list_v100;
       Q_FOREACH (auto const& item, list_v100)
         {
-          list << FrequencyList_v2::Item{item.frequency_, item.mode_, item.region_, QString(), QString(), QDateTime(),
+          list << FrequencyList_v2_101::Item{item.frequency_, item.mode_, item.region_, QString(), QString(), QDateTime(),
                                          QDateTime(), false};
         }
     }
@@ -2729,7 +2771,7 @@ void Configuration::impl::insert_frequency ()
   if (QDialog::Accepted == frequency_dialog_->exec ())
     {
       ui_->frequencies_table_view->setCurrentIndex (next_frequencies_.add (frequency_dialog_->item ()));
-      ui_->frequencies_table_view->resizeColumnToContents (FrequencyList_v2::mode_column);
+      ui_->frequencies_table_view->resizeColumnToContents (FrequencyList_v2_101::mode_column);
       size_frequency_table_columns();
     }
 }
