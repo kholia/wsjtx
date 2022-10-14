@@ -297,10 +297,24 @@ Doppler-shifted frequency.  With *Split Operation* set to *Rig* or
 Moon and click *Enable Tx* on the main window to start a sequence of
 echo measurements.  Each cycle takes 6 seconds.  If strong enough,
 echoes will be visible in the waterfall.  Their average spectrum will
-be displayed in the Echo Graph window, and numerical parameters in the
-main window.
+be displayed in the Echo Graph window, and numerical parameters of the
+measurements appear in the main window:
 
 image::Echo_1296.png[align="center",alt="Echo 144 MHz"]
+
+At the end of each echo cycle a line of data in the main text window
+displays the following information:
+
+ UTC       Time in hhmmss format
+ Hour      UTC in hours and decimal fraction
+ Level     Relative received noise power (dB)
+ Doppler   EME Doppler shift at center of lunar disk
+ Width     EME Doppler spread over full lunar disk
+ N         Number of accumulated echo or monitor cycles
+ Q         Estimated quality of averaged data on a 0 – 10 scale
+ DF        Offset of spectral peak from 1500 Hz
+ SNR       Average signal-to-noise ratio (dB/2500 Hz)
+ dBerr     Estimated uncertainty of SNR
 
 ... more to come ...
 
