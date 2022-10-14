@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>893</width>
+    <width>901</width>
     <height>665</height>
    </rect>
   </property>
@@ -36,7 +36,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -180,7 +179,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -576,7 +574,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,0,0,0,0">
+        <layout class="QGridLayout" name="gridLayout_5" rowstretch="1,0,0" columnstretch="0,0,1,1,5,0" columnminimumwidth="0,0,0,0,0,0">
          <item row="1" column="5" rowspan="2">
           <widget class="QSlider" name="outAttenuation">
            <property name="toolTip">
@@ -956,8 +954,17 @@ QLabel[oob=&quot;true&quot;] {
          </item>
          <item row="1" column="0" rowspan="2">
           <layout class="QVBoxLayout" name="verticalLayout_11">
+           <property name="spacing">
+            <number>6</number>
+           </property>
            <item>
             <widget class="QSpinBox" name="sbNB">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="maximumSize">
               <size>
                <width>100</width>
@@ -982,38 +989,64 @@ QLabel[oob=&quot;true&quot;] {
             </widget>
            </item>
            <item>
-            <widget class="SignalMeter" name="signal_meter_widget">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <property name="spacing">
+              <number>0</number>
              </property>
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;30dB recommended when only noise present&lt;br/&gt;Green when good&lt;br/&gt;Red when clipping may occur&lt;br/&gt;Yellow when too low&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="accessibleName">
-              <string>Rx Signal</string>
-             </property>
-             <property name="accessibleDescription">
-              <string>30dB recommended when only noise present
+             <item>
+              <widget class="SignalMeter" name="signal_meter_widget">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;30dB recommended when only noise present&lt;br/&gt;Green when good&lt;br/&gt;Red when clipping may occur&lt;br/&gt;Yellow when too low&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="accessibleName">
+                <string>Rx Signal</string>
+               </property>
+               <property name="accessibleDescription">
+                <string>30dB recommended when only noise present
 Green when good
 Red when clipping may occur
 Yellow when too low</string>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::Panel</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-            </widget>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Panel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Sunken</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -2048,9 +2081,6 @@ list. The list can be maintained in Settings (F2).</string>
                         <property name="insertPolicy">
                          <enum>QComboBox::InsertAtBottom</enum>
                         </property>
-                        <property name="sizeAdjustPolicy">
-                         <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-                        </property>
                        </widget>
                       </item>
                       <item row="5" column="1">
@@ -2846,6 +2876,12 @@ Double-click to reset to the standard 73 message</string>
          </item>
          <item row="0" column="0">
           <widget class="BandComboBox" name="bandComboBox">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="maximumSize">
             <size>
              <width>100</width>
@@ -3030,8 +3066,8 @@ Double-click to reset to the standard 73 message</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>893</width>
-     <height>21</height>
+     <width>901</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
