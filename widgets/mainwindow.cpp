@@ -1389,8 +1389,16 @@ void MainWindow::set_application_font (QFont const& font)
         }
     }
   qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
-  // ensure a balanced layout of the mode buttons
+  // ensure a balanced layout of the signal meter and the mode buttons
   qreal pointSize = m_config.text_font().pointSizeF();
+  if (pointSize < 9) ui->signal_meter_widget->setMaximumWidth(50);
+  if (pointSize == 9) ui->signal_meter_widget->setMaximumWidth(53);
+  if (pointSize == 10) ui->signal_meter_widget->setMaximumWidth(56);
+  if (pointSize == 11) ui->signal_meter_widget->setMaximumWidth(59);
+  if (pointSize == 12) ui->signal_meter_widget->setMaximumWidth(62);
+  if (pointSize == 13) ui->signal_meter_widget->setMaximumWidth(65);
+  if (pointSize == 14) ui->signal_meter_widget->setMaximumWidth(70);
+  if (pointSize > 14) ui->signal_meter_widget->setMaximumWidth(75);
   if (pointSize < 11) {
       ui->houndButton->setMaximumWidth(40);
       ui->ft8Button->setMaximumWidth(40);
