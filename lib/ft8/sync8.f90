@@ -124,7 +124,6 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,s,candidate,   &
         candidate0(1,k)=n*df
         candidate0(2,k)=(jpeak(n)-0.5)*tstep
         candidate0(3,k)=red(n)
-!write(*,*) i, k, candidate0(1,k), candidate0(2,k), candidate0(3,k)
      endif
      if(abs(jpeak2(n)-jpeak(n)).eq.0) cycle 
      if(k.ge.MAXPRECAND) exit
@@ -133,11 +132,9 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,s,candidate,   &
         candidate0(1,k)=n*df
         candidate0(2,k)=(jpeak2(n)-0.5)*tstep
         candidate0(3,k)=red2(n)
-!write(*,*) i, k, candidate0(1,k), candidate0(2,k), candidate0(3,k)
      endif
   enddo
   ncand=k
-!write(*,*) 'sync8: before deduping ',ncand
 
 ! Save only the best of near-dupe freqs.  
   do i=1,ncand
@@ -177,6 +174,5 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,s,candidate,   &
      endif
   enddo
   ncand=k-1
-!write(*,*) 'sync8: after deduping ',ncand
   return
 end subroutine sync8
