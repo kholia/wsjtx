@@ -402,7 +402,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     float xx0=float(m_startFreq)/float(m_freqPerDiv);
     xx0=xx0-int(xx0);
     int x0=xx0*pixperdiv+0.5;
-    for( int i=1; i<m_hdivs; i++) {                  //draw vertical grids
+    for( int i=1; i<m_hdivs; i++) {                 //draw vertical grids
       x = (int)((float)i*pixperdiv ) - x0;
       if(x >= 0 and x<=m_w) {
         painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
@@ -413,14 +413,18 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
 
   painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
   if(m_bTotalPower) painter.setPen(QPen(Qt::white, 1,Qt::DashLine));
-  for( int i=1; i<VERT_DIVS; i++) {                //draw horizontal grids
+  for( int i=1; i<VERT_DIVS; i++) {                 //draw horizontal grids
     y = int(i*m_vpixperdiv);
-    painter.drawLine(15, y, w, y);
+    if(m_bTotalPower) {
+        painter.drawLine(15, y, w, y);
+    } else {
+        painter.drawLine(0, y, w, y);
+    }
   }
 
   if(m_bTotalPower) {
     painter.setPen(QPen(Qt::white));
-    for( int i=1; i<VERT_DIVS; i++) {                //draw horizontal grids
+    for( int i=1; i<VERT_DIVS; i++) {               //draw horizontal grids
       y = int(i*m_vpixperdiv);
       painter.drawText(0,y+5,QString::number(10*(VERT_DIVS-i) + 20));
     }
@@ -428,7 +432,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
 
   if(m_bTotalPower and m_h2>100) {
     painter.setPen(QPen(Qt::white, 1,Qt::DotLine));
-    for( int i=1; i<5*VERT_DIVS; i++) {                //draw horizontal 2 dB grids
+    for( int i=1; i<5*VERT_DIVS; i++) {             //draw horizontal 2 dB grids
       if(i%5 > 0) {
         y = int(0.2*i*m_vpixperdiv);
         painter.drawLine(0, y, w, y);

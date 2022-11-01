@@ -90,6 +90,7 @@
 #include "ExportCabrillo.h"
 #include "ui_mainwindow.h"
 #include "moc_mainwindow.cpp"
+#include "Logger.hpp"
 
 #define FCL fortran_charlen_t
 
@@ -1385,7 +1386,9 @@ void MainWindow::set_application_font (QFont const& font)
       QFile sf {sheet};
       if (sf.open (QFile::ReadOnly | QFile::Text))
         {
-          ss = sf.readAll () + ss;
+          QString tmp = sf.readAll();
+          if (tmp != NULL) ss = sf.readAll () + tmp;
+          else qDebug() << "tmp==NULL at sf.readAll";
         }
     }
   qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
@@ -4023,7 +4026,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
             if(f.open(QIODevice::ReadOnly | QIODevice::Text)) {
               QTextStream s(&f);
               QString t=s.readAll();
-              m_msgAvgWidget->displayAvg(t);
+              if (t != NULL) m_msgAvgWidget->displayAvg(t);
+              else qDebug() << "tmp==NULL at s.readAll";
             }
           }
         }
@@ -6152,7 +6156,9 @@ void MainWindow::on_addButton_clicked()                       //Add button
                                               // preserve symlinks
     f1.open (QFile::WriteOnly | QFile::Text); // truncates
     f2.seek (0);
-    f1.write (f2.readAll ());                 // copy contents
+    QByteArray tmp = f2.readAll();
+    if (tmp != (const char*)NULL) f1.write (tmp);                 // copy contents
+    else qDebug() << "tmp==NULL at f1.write";
     f2.remove ();
   }
 }
@@ -7999,7 +8005,7 @@ void MainWindow::on_outAttenuation_valueChanged (int a)
     tt_str = tr ("Transmit digital gain ");
   }
   tt_str += (a ? QString::number (-dBAttn, 'f', 1) : "0") + "dB";
-  if (!m_block_pwr_tooltip) {
+  if (ui->outAttenuation->hasFocus() && !m_block_pwr_tooltip) {
     QToolTip::showText (QCursor::pos (), tt_str, ui->outAttenuation);
   }
   QString curBand = ui->bandComboBox->currentText();

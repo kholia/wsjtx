@@ -137,6 +137,7 @@ void MessageClient::impl::host_info_results (QHostInfo host_info)
   if (QHostInfo::NoError != host_info.error ())
     {
       Q_EMIT self_->error ("UDP server DNS lookup failed: " + host_info.errorString ());
+      return;
     }
   else
     {
