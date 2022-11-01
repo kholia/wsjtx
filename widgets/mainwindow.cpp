@@ -7999,7 +7999,7 @@ void MainWindow::on_outAttenuation_valueChanged (int a)
     tt_str = tr ("Transmit digital gain ");
   }
   tt_str += (a ? QString::number (-dBAttn, 'f', 1) : "0") + "dB";
-  if (!m_block_pwr_tooltip) {
+  if (ui->outAttenuation->hasFocus() && !m_block_pwr_tooltip) {
     QToolTip::showText (QCursor::pos (), tt_str, ui->outAttenuation);
   }
   QString curBand = ui->bandComboBox->currentText();
