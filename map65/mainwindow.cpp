@@ -1404,6 +1404,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
       return;
     }
 
+    read_log();
+
     if(t.indexOf("!") >= 0) {
       int n=t.length();
       int m=2;
@@ -2343,4 +2345,25 @@ bool MainWindow::isGrid4(QString g)
   if(g.mid(2,1)<'0' or g.mid(2,1)>'9') return false;
   if(g.mid(3,1)<'0' or g.mid(3,1)>'9') return false;
   return true;
+}
+
+void MainWindow::read_log()
+{
+  // Update "m_worked" by reading wsjtx.log
+  m_worked.clear();                     //Start from scratch
+  QFile f("wsjtx.log");
+  f.open(QIODevice::ReadOnly);
+  if(f.isOpen()) {
+    QTextStream in(&f);
+    QString line,callsign;
+    for(int i=0; i<99999; i++) {
+      line=in.readLine();
+      if(line.length()<=0) break;
+      callsign=line.mid(40,6);
+      int n=callsign.indexOf(",");
+      if(n>0) callsign=callsign.left(n);
+      m_worked[callsign]=true;
+    }
+    f.close();
+  }
 }

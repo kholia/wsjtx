@@ -294,6 +294,7 @@ private:
   void stub();
   bool isGrid4(QString g);
   bool subProcessFailed (QProcess *, int exit_code, QProcess::ExitStatus);
+  void read_log();
 };
 
 extern void getfile(QString fname, bool xpol, int idInt);
