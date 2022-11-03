@@ -50,7 +50,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   mode65=mod(nmode,10)
   if(mode65.eq.3) mode65=4
   mode_q65=nmode/10
-  nts_jt65=2**(mode65-1)              !JT65 tone separation factor
+  nts_jt65=mode65                     !JT65 tone separation factor
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
   xpol=(nxpol.ne.0)
   
