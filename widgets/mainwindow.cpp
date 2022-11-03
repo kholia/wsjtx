@@ -7122,7 +7122,13 @@ void MainWindow::on_actionWSPR_triggered()
 
 void MainWindow::on_actionEcho_triggered()
 {
+  int nd=int(m_ndepth&3);
   on_actionJT4_triggered();
+// Don't allow decoding depth to be changed just because Echo mode was entered:
+  if(nd==1) ui->actionQuickDecode->setChecked (true);
+  if(nd==2) ui->actionMediumDecode->setChecked (true);
+  if(nd==3) ui->actionDeepestDecode->setChecked (true);
+
   m_mode="Echo";
   ui->actionEcho->setChecked(true);
   m_TRperiod=3.0;
