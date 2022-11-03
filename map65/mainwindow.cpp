@@ -1119,6 +1119,9 @@ void MainWindow::diskDat()                                   //diskDat()
   //These may be redundant??
   m_diskData=true;
   datcom_.newdat=1;
+  if(m_wide_graph_window->m_bForceCenterFreq) {
+    datcom_.fcenter=m_wide_graph_window->m_dForceCenterFreq;
+  }
 
   if(m_fs96000) hsym=2048.0*96000.0/11025.0;   //Samples per JT65 half-symbol
   if(!m_fs96000) hsym=2048.0*95238.1/11025.0;
