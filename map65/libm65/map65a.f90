@@ -158,7 +158,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            ssmax=1.e30
            call ccf65(ss(1,1,i),nhsym,ssmax,sync1,ipol,jpz,dt,     &
                 flipk,syncshort,snr2,ipol2,dt2)
-           if(dt.lt.-2.6 .or. dt.gt.2.5) sync1=-99.0  !###
+!###           if(dt.lt.-2.6 .or. dt.gt.2.5) sync1=-99.0  !###
            call timer('ccf65   ',1)
            if(mode65.eq.0) syncshort=-99.0     !If "No JT65", don't waste time
 
@@ -410,8 +410,8 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            if(cand(icand)%iflip.ne.0) cycle    !Do only Q65 candidates here
            if(candec(icand)) cycle             !Skip if already decoded
            freq=cand(icand)%f+nkhz_center-48.0-1.27046
-! If here at nqd=1, do only candidates at mousefqso +/- ntol
-           if(nqd.eq.1 .and. abs(freq-mousefqso).gt.0.001*ntol) cycle
+!###! If here at nqd=1, do only candidates at mousefqso +/- ntol
+!###           if(nqd.eq.1 .and. abs(freq-mousefqso).gt.0.001*ntol) cycle
            ikhz=nint(freq)
            f0=cand(icand)%f
            call timer('q65b    ',0)
