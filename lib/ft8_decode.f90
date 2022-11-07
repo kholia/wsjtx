@@ -241,7 +241,7 @@ contains
    if(nzhsym.lt.50) ndec_early=ndecodes
    
 900 continue
-   if(nzhsym.eq.50 .and. ndec(jseq,0).ge.1) then
+   if(lft8apon .and. ncontest.ne.6 .and. ncontest.ne.7 .and. nzhsym.eq.50 .and. ndec(jseq,0).ge.1) then
       newdat=.true.
       do i=1,ndec(jseq,0)
          if(f0(i,jseq,0).eq.-99.0) exit
