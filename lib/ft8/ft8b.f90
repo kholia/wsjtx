@@ -287,6 +287,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
 !          5 : WW_DIGI 
 !          6 : FOX
 !          7 : HOUND
+!          8 : ARRL_DIGI
 !
 ! Conditions that cause us to bail out of AP decoding
         if(ncontest.le.5 .and. iaptype.ge.3 .and. (abs(f1-nfqso).gt.napwid .and. abs(f1-nftx).gt.napwid) ) cycle
@@ -306,6 +307,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
            if(ncontest.eq.4) llrz(1:29)=apmag*mcqru(1:29)
            if(ncontest.eq.5) llrz(1:29)=apmag*mcqww(1:29)
            if(ncontest.eq.7) llrz(1:29)=apmag*mcq(1:29)
+           if(ncontest.eq.8) llrz(1:29)=apmag*mcqtest(1:29)
            apmask(75:77)=1 
            llrz(75:76)=apmag*(-1)
            llrz(77)=apmag*(+1)
@@ -313,7 +315,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
 
         if(iaptype.eq.2) then ! MyCall,???,??? 
            apmask=0
-           if(ncontest.eq.0.or.ncontest.eq.1.or.ncontest.eq.5) then
+           if(ncontest.eq.0.or.ncontest.eq.1.or.ncontest.eq.5.or.ncontest.eq.8) then
               apmask(1:29)=1  
               llrz(1:29)=apmag*apsym(1:29)
               apmask(75:77)=1 
@@ -353,7 +355,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
 
         if(iaptype.eq.3) then ! MyCall,DxCall,??? 
            apmask=0
-           if(ncontest.eq.0.or.ncontest.eq.1.or.ncontest.eq.2.or.ncontest.eq.5.or.ncontest.eq.7) then
+           if(ncontest.eq.0.or.ncontest.eq.1.or.ncontest.eq.2.or.ncontest.eq.5.or.ncontest.eq.7.or.ncontest.eq.8) then
               apmask(1:58)=1  
               llrz(1:58)=apmag*apsym
               apmask(75:77)=1 
@@ -379,7 +381,7 @@ subroutine ft8b(dd0,newdat,nQSOProgress,nfqso,nftx,ndepth,nzhsym,lapon,     &
         if(iaptype.eq.5.and.ncontest.eq.7) cycle !Hound
         if(iaptype.eq.4 .or. iaptype.eq.5 .or. iaptype.eq.6) then  
            apmask=0
-           if(ncontest.le.5 .or. (ncontest.eq.7.and.iaptype.eq.6)) then
+           if(ncontest.le.5 .or. (ncontest.eq.7.and.iaptype.eq.6) .or. ncontest.eq.8) then
               apmask(1:77)=1   ! mycall, hiscall, RRR|73|RR73
               llrz(1:58)=apmag*apsym
               if(iaptype.eq.4) llrz(59:77)=apmag*mrrr 

@@ -44,7 +44,7 @@ contains
 
     class(ft8_decoder), intent(inout) :: this
     procedure(ft8_decode_callback) :: callback
-    parameter (MAXCAND=300,MAX_EARLY=100)
+    parameter (MAXCAND=500,MAX_EARLY=100)
     real*8 tsec,tseq
     real s(NH1,NHSYM)
     real sbase(NH1)
@@ -80,7 +80,9 @@ contains
        dt0=0.
        f0=0.
     endif
-    if(nutc.ne.nutc0) then
+!Added 41==nzhsym to force a reset if the same wav file is processed twice or more in a row,
+!in which case nutc.eq.nutc0 and ndec(jseq,1) doesn't get reset
+    if(nzhsym==41 .or. (nutc.ne.nutc0)) then
 ! New UTC.  Move previously saved 'a7' data from k=1 to k=0
        iz=ndec(jseq,1)
        dt0(1:iz,jseq,0)  = dt0(1:iz,jseq,1)
@@ -164,11 +166,13 @@ contains
 ! ndepth=2: subtraction, 3 passes, bp+osd (no subtract refinement) 
 ! ndepth=3: subtraction, 3 passes, bp+osd
     npass=3
-    if(ndepth.eq.1) npass=1
+    if(ndepth.eq.1) npass=2
     do ipass=1,npass
       newdat=.true.
       syncmin=1.3
       if(ndepth.le.2) syncmin=1.6
+!      if(nzhsym.eq.41.or.ipass.eq.1) syncmin=2.0
+      if(nzhsym.eq.41) syncmin=2.0
       if(ipass.eq.1) then
         lsubtract=.true.
         ndeep=ndepth
@@ -185,7 +189,7 @@ contains
       endif 
       call timer('sync8   ',0)
       maxc=MAXCAND
-      call sync8(dd,ifa,ifb,syncmin,nfqso,maxc,s,candidate,   &
+      call sync8(dd,ifa,ifb,syncmin,nfqso,maxc,nzhsym,candidate,   &
            ncand,sbase)
       call timer('sync8   ',1)
       do icand=1,ncand
@@ -237,7 +241,7 @@ contains
    if(nzhsym.lt.50) ndec_early=ndecodes
    
 900 continue
-   if(nzhsym.eq.50 .and. ndec(jseq,0).ge.1) then
+   if(lft8apon .and. ncontest.ne.6 .and. ncontest.ne.7 .and. nzhsym.eq.50 .and. ndec(jseq,0).ge.1) then
       newdat=.true.
       do i=1,ndec(jseq,0)
          if(f0(i,jseq,0).eq.-99.0) exit
