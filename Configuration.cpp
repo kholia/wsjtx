@@ -2464,7 +2464,8 @@ void Configuration::impl::on_udp_server_line_edit_editingFinished ()
       case 2: iperr = "Error between second and third number";break;
       case 3: iperr = "Error between third and fourth number";break;
       case 4: iperr = ""; break;
-      default: iperr = "Unknown error n=" + n;
+      case 5: iperr = "Invalid characters after IP address"; break;
+      default: iperr = "Unknown error parsing network address";
     }
     if (n != 4)
     {
