@@ -209,6 +209,7 @@ QVector<QColor> g_ColorTbl;
 using SpecOp = Configuration::SpecialOperatingActivity;
 
 bool m_displayBand = false;
+bool no_a7_decodes = false;
 
 namespace
 {
@@ -3688,6 +3689,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
           continue;
         }
       }
+
+    // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
+    if (!(no_a7_decodes && line_read.contains("a7"))) {
+
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
       line_read = line_read.left(44) + "              " + line_read.mid(44);
@@ -3754,6 +3759,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
         m_tBlankLine = line_read.left(ntime);
       }
+    }
       if ("FST4W" == m_mode)
         {
           uploadWSPRSpots (true, line_read);
@@ -7475,6 +7481,10 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
+  // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
+  no_a7_decodes = true;
+  QTimer::singleShot ((int(1000.0*m_TRperiod)), [=] {no_a7_decodes = false;});
+
   // Set the attenuation value if options are checked
   if (m_config.pwrBandTxMemory() && !m_tune) {
     auto const&curBand = ui->bandComboBox->currentText();
