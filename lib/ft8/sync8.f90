@@ -73,10 +73,6 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
               t0c=t0c + sum(s(i:i+nfos*6:nfos,m+nssy*72))
            endif
         enddo
-        t=ta+tb
-        t0=t0a+t0b
-        t0=(t0-t)/6.0
-        sync_ab=t/t0
         t=ta+tb+tc
         t0=t0a+t0b+t0c
         t0=(t0-t)/6.0
@@ -85,14 +81,7 @@ subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
         t0=t0b+t0c
         t0=(t0-t)/6.0
         sync_bc=t/t0
-        if(j.le.-12) then
-           sync2d(i,j)=sync_bc
-        elseif(j.gt.-12 .and. j.lt. 49) then
-           if(nzhsym.eq.41) sync2d(i,j)=sync_ab
-           if(nzhsym.eq.50) sync2d(i,j)=max(sync_abc,sync_bc)
-        elseif(j.ge.49) then
-           sync2d(i,j)=sync_ab
-        endif
+        sync2d(i,j)=max(sync_abc,sync_bc)
      enddo
   enddo
 
