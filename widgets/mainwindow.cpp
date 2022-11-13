@@ -9816,8 +9816,13 @@ void MainWindow::foxTest()
     if(line_trimmed.startsWith("Hound:")) {
       t=line_trimmed.mid(6,-1).trimmed();
       b_hounds_written = true;
-      //sdiag << t << Qt::endl;
-      houndstream << t << Qt::endl;
+      houndstream << t
+#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
+        << Qt::endl
+#else
+        << endl
+#endif
+      ;
     }
 
     if(line.contains("Del:")) {
