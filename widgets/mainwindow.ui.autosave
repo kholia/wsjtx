@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
+    <width>1114</width>
     <height>665</height>
    </rect>
   </property>
@@ -3133,7 +3133,7 @@ QPushButton[state=&quot;ok&quot;] {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1015</width>
+     <width>1114</width>
      <height>37</height>
     </rect>
    </property>

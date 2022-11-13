@@ -655,7 +655,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect(txMsgButtonGroup,SIGNAL(buttonClicked(int)),SLOT(set_ntx(int)));
   connect (ui->decodedTextBrowser, &DisplayText::selectCallsign, this, &MainWindow::doubleClickOnCall2);
   connect (ui->decodedTextBrowser2, &DisplayText::selectCallsign, this, &MainWindow::doubleClickOnCall);
-  connect (ui->textBrowser4, &DisplayText::selectCallsign, this, &MainWindow::doubleClickOnFoxQueue);
+  connect (ui->houndQueueTextBrowser, &DisplayText::selectCallsign, this, &MainWindow::doubleClickOnFoxQueue);
+  connect (ui->foxTxListTextBrowser, &DisplayText::selectCallsign, this, &MainWindow::doubleClickOnFoxInProgress);
   connect (ui->decodedTextBrowser, &DisplayText::erased, this, &MainWindow::band_activity_cleared);
   connect (ui->decodedTextBrowser2, &DisplayText::erased, this, &MainWindow::rx_frequency_activity_cleared);
 
@@ -1425,9 +1426,14 @@ void MainWindow::setDecodedTextFont (QFont const& font)
 {
   ui->decodedTextBrowser->setContentFont (font);
   ui->decodedTextBrowser2->setContentFont (font);
-  ui->textBrowser4->setContentFont(font);
-  ui->textBrowser4->displayFoxToBeCalled(" ");
-  ui->textBrowser4->setText("");
+  ui->houndQueueTextBrowser->setContentFont(font);
+  ui->houndQueueTextBrowser->displayHoundToBeCalled(" ");
+  ui->houndQueueTextBrowser->setText("");
+
+  ui->foxTxListTextBrowser->setContentFont(font);
+  ui->foxTxListTextBrowser->displayHoundToBeCalled(" ");
+  ui->foxTxListTextBrowser->setText("");
+
   auto style_sheet = "QLabel {" + font_as_stylesheet (font) + '}';
   ui->lh_decodes_headings_label->setStyleSheet (ui->lh_decodes_headings_label->styleSheet () + style_sheet);
   ui->rh_decodes_headings_label->setStyleSheet (ui->rh_decodes_headings_label->styleSheet () + style_sheet);
@@ -1653,7 +1659,7 @@ void MainWindow::dataSink(qint64 frames)
         t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t;
-        if (ui) ui->decodedTextBrowser->appendText(t);
+        if (ui) ui->decodedTextBrowser->insertText(t);
         t=t1+t;
         write_all("Rx",t);
       }
@@ -2093,7 +2099,6 @@ void MainWindow::auto_tx_mode (bool state)
 
 void MainWindow::keyPressEvent (QKeyEvent * e)
 {
-
   if(SpecOp::FOX == m_specOp) {
     switch (e->key()) {
       case Qt::Key_Return:
@@ -2105,6 +2110,13 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
       case Qt::Key_Backspace:
         qDebug() << "Key Backspace";
         return;
+#ifdef DEBUG_FOX
+      case Qt::Key_X:
+        if(e->modifiers() & Qt::AltModifier) {
+            foxTest();
+            return;
+          }
+#endif
     }
     QMainWindow::keyPressEvent (e);
   }
@@ -4878,7 +4890,7 @@ void MainWindow::startTx2()
         t = " Transmitting " + m_mode + " ----------------------- " +
           m_config.bands ()->find (m_freqNominal);
         t=beacon_start_time (m_TRperiod / 2) + ' ' + t.rightJustified (66, '-');
-        ui->decodedTextBrowser->appendText(t);
+        ui->decodedTextBrowser->insertText(t);
       }
       write_all("Tx",m_currentMessage);
     }
@@ -5157,7 +5169,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   if(SpecOp::FOX==m_specOp and m_decodedText2) {
     if(m_houndQueue.count()<10 and m_nSortedHounds>0) {
       QString t=cursor.block().text();
-      selectHound(t);
+      selectHound(t, modifiers==(Qt::AltModifier));  // alt double-click gets put at top of queue
     }
     return;
   }
@@ -8495,7 +8507,7 @@ void MainWindow::p1ReadFromStdout()                        //p1readFromStdout
           t = " " + tr ("Receiving") + " " + m_mode + " ----------------------- " +
               m_config.bands ()->find (m_dialFreqRxWSPR);
           t=beacon_start_time (-m_TRperiod / 2) + ' ' + t.rightJustified (66, '-');
-          ui->decodedTextBrowser->appendText(t);
+          ui->decodedTextBrowser->insertText(t);
         }
         killFileTimer.start (45*1000); //Kill in 45s (for slow modes)
       }
@@ -8569,12 +8581,12 @@ void MainWindow::p1ReadFromStdout()                        //p1readFromStdout
           QString band;
           Frequency f=1000000.0*rxFields.at(3).toDouble()+0.5;
           band = ' ' + m_config.bands ()->find (f);
-          ui->decodedTextBrowser->appendText(band.rightJustified (71, '-'));
+          ui->decodedTextBrowser->insertText(band.rightJustified (71, '-'));
         }
         m_tBlankLine = rxLine.left(4);
       }
       m_nWSPRdecodes += 1;
-      ui->decodedTextBrowser->appendText(rxLine);
+      ui->decodedTextBrowser->insertText(rxLine);
     }
   }
 }
@@ -9157,7 +9169,9 @@ void MainWindow::on_pbFoxReset_clicked()
     QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
     f.remove();
     ui->decodedTextBrowser->setText("");
-    ui->textBrowser4->setText("");
+    ui->houndQueueTextBrowser->setText("");
+    ui->foxTxListTextBrowser->setText("");
+
     m_houndQueue.clear();
     m_foxQSO.clear();
     m_foxQSOinProgress.clear();
@@ -9277,19 +9291,18 @@ QString MainWindow::sortHoundCalls(QString t, int isort, int max_dB)
 }
 
 //------------------------------------------------------------------------------
-void MainWindow::selectHound(QString line)
+void MainWindow::selectHound(QString line, bool bTopQueue)
 {
 /* Called from doubleClickOnCall() in DXpedition Fox mode.
  * QString "line" is a user-selected line from left text window.
  * The line may be selected by double-clicking; alternatively, hitting
  * <Enter> is equivalent to double-clicking on the top-most line.
 */
-
   if(line.length()==0) return;
   QString houndCall=line.split(" ",SkipEmptyParts).at(0);
 
 // Don't add a call already enqueued or in QSO
-  if(ui->textBrowser4->toPlainText().indexOf(houndCall) >= 0) return;
+  if(ui->houndQueueTextBrowser->toPlainText().indexOf(houndCall) >= 0) return;
 
   QString houndGrid=line.split(" ",SkipEmptyParts).at(1);  // Hound caller's grid
   QString rpt=line.split(" ",SkipEmptyParts).at(2);        // Hound SNR
@@ -9299,16 +9312,25 @@ void MainWindow::selectHound(QString line)
   ui->decodedTextBrowser->setText(m_houndCallers);   // Populate left window with Hound callers
   QString t1=houndCall + "          ";
   QString t2=rpt;
+  QString t1_with_grid;
   if(rpt.mid(0,1) != "-" and rpt.mid(0,1) != "+") t2="+" + rpt;
   if(t2.length()==2) t2=t2.mid(0,1) + "0" + t2.mid(1,1);
   t1=t1.mid(0,12) + t2;
-  ui->textBrowser4->displayFoxToBeCalled(t1); // Add hound call and rpt to tb4
-  t1=t1 + " " + houndGrid;                    // Append the grid
-  m_houndQueue.enqueue(t1);     // Put this hound into the queue
-  writeFoxQSO(" Sel:  " + t1);
-  QTextCursor cursor = ui->textBrowser4->textCursor();
+  ui->houndQueueTextBrowser->displayHoundToBeCalled(t1, bTopQueue); // Add hound call and rpt to tb4
+  t1_with_grid=t1 + " " + houndGrid;                    // Append the grid
+
+  if (bTopQueue)
+    {
+      m_houndQueue.prepend(t1_with_grid);     // Put this hound into the queue at the top
+    }
+  else
+    {
+      m_houndQueue.enqueue(t1_with_grid);      // Put this hound into the queue
+    }
+  writeFoxQSO(" Sel:  " + t1_with_grid);
+  QTextCursor cursor = ui->houndQueueTextBrowser->textCursor();
   cursor.setPosition(0);                                 // Scroll to top of list
-  ui->textBrowser4->setTextCursor(cursor);
+  ui->houndQueueTextBrowser->setTextCursor(cursor);
 }
 
 //------------------------------------------------------------------------------
@@ -9337,7 +9359,7 @@ void MainWindow::houndCallers()
       houndCall=line.mid(0,i0);
       paddedHoundCall=houndCall + " ";
       //Don't list a hound already in the queue
-      if(!ui->textBrowser4->toPlainText().contains(paddedHoundCall)) {
+      if(!ui->houndQueueTextBrowser->toPlainText().contains(paddedHoundCall)) {
         if(m_loggedByFox[houndCall].contains(m_lastBand))   continue;   //already logged on this band
         if(m_foxQSO.contains(houndCall)) continue;   //still in the QSO map
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
@@ -9393,6 +9415,19 @@ void MainWindow::foxRxSequencer(QString msg, QString houndCall, QString rptRcvd)
       }
     }
   }
+}
+void MainWindow::updateFoxQSOsInProgressDisplay()
+{
+
+  ui->foxTxListTextBrowser->clear();
+  for (int i = 0; i < m_foxQSOinProgress.count(); i++)
+    {
+      //First do those for QSOs in progress
+      QString hc = m_foxQSOinProgress.at(i);
+      QString status = m_foxQSO[hc].ncall > m_maxStrikes ? QString(" (rx) ") : QString(" ");
+      QString str = (hc + "             ").left(13) + QString::number(m_foxQSO[hc].ncall) + status;
+      ui->foxTxListTextBrowser->displayHoundToBeCalled(str);
+    }
 }
 
 void MainWindow::foxTxSequencer()
@@ -9590,13 +9625,14 @@ Transmit:
       m_foxLogWindow->rate (m_foxRateQueue.size ());
       m_foxLogWindow->queued (m_foxQSOinProgress.count ());
     }
+  updateFoxQSOsInProgressDisplay();
 }
 
 void MainWindow::rm_tb4(QString houndCall)
 {
   if(houndCall=="") return;
   QString t="";
-  QString tb4=ui->textBrowser4->toPlainText();
+  QString tb4=ui->houndQueueTextBrowser->toPlainText();
   QStringList list=tb4.split("\n");
   int n=list.size();
   int j=0;
@@ -9609,24 +9645,78 @@ void MainWindow::rm_tb4(QString houndCall)
     }
   }
   t.replace("\n\n","\n");
-  ui->textBrowser4->setText(t);
+  ui->houndQueueTextBrowser->setText(t);
 }
 
 void MainWindow::doubleClickOnFoxQueue(Qt::KeyboardModifiers modifiers)
 {
   if(modifiers==9999) return;                               //Silence compiler warning
-  QTextCursor cursor=ui->textBrowser4->textCursor();
+  QTextCursor cursor=ui->houndQueueTextBrowser->textCursor();
   cursor.setPosition(cursor.selectionStart());
-  QString houndCall=cursor.block().text().mid(0,12).trimmed();
-  rm_tb4(houndCall);
-  writeFoxQSO(" Del:  " + houndCall);
-  QQueue<QString> tmpQueue;
-  while(!m_houndQueue.isEmpty()) {
-    QString t=m_houndQueue.dequeue();
-    QString hc=t.mid(0,12).trimmed();
-    if(hc != houndCall) tmpQueue.enqueue(t);
-  }
-  m_houndQueue.swap(tmpQueue);
+  QString houndLine=cursor.block().text();
+  QString houndCall=houndLine.mid(0,12).trimmed();
+
+  if (modifiers == (Qt::AltModifier))
+    {
+      //Alt-click on a Fox queue entry - put on top of queue
+      // remove
+      for(auto i=0; i<m_houndQueue.size(); i++) {
+          QString t = m_houndQueue[i];
+          QString hc = t.mid(0, 12).trimmed();
+          if (hc == houndCall) {
+            m_houndQueue.removeAt(i);
+            break;
+          }
+        }
+      m_houndQueue.prepend(houndLine);
+      ui->houndQueueTextBrowser->clear();
+      for (QString line: m_houndQueue)
+        {
+          ui->houndQueueTextBrowser->displayHoundToBeCalled(line.mid(0,16), false);
+        }
+    } else
+    {
+      rm_tb4(houndCall);
+      writeFoxQSO(" Del:  " + houndCall);
+      QQueue <QString> tmpQueue;
+      while (!m_houndQueue.isEmpty())
+        {
+          QString t = m_houndQueue.dequeue();
+          QString hc = t.mid(0, 12).trimmed();
+          if (hc != houndCall) tmpQueue.enqueue(t);
+        }
+      m_houndQueue.swap(tmpQueue);
+    }
+}
+
+void MainWindow::doubleClickOnFoxInProgress(Qt::KeyboardModifiers modifiers)
+{
+  if (modifiers == 9999) return;                               //Silence compiler warning
+  QTextCursor cursor = ui->foxTxListTextBrowser->textCursor();
+  cursor.setPosition(cursor.selectionStart());
+  QString houndLine = cursor.block().text();
+  QString houndCall = houndLine.mid(0, 12).trimmed();
+
+  if (modifiers == 0)
+    {
+      m_foxQSO[houndCall].ncall = m_maxStrikes + 1; // time them out
+      updateFoxQSOsInProgressDisplay();
+    }
+}
+
+void MainWindow::foxQueueTopCallCommand()
+{
+  m_decodedText2 = true;
+  if(SpecOp::FOX==m_specOp && m_decodedText2 && m_houndQueue.count() < 10)
+    {
+
+      QTextCursor cursor = ui->decodedTextBrowser->textCursor();
+      cursor.setPosition(cursor.selectionStart());
+      QString houndCallLine = cursor.block().text();
+
+      writeFoxQSO(" QTop:  " + houndCallLine);
+      selectHound(houndCallLine, true);  // alt double-click gets put at top of queue
+    }
 }
 
 void MainWindow::foxGenWaveform(int i,QString fm)
@@ -9680,14 +9770,29 @@ void MainWindow::writeFoxQSO(QString const& msg)
 /*################################################################################### */
 void MainWindow::foxTest()
 {
-  QFile f("steps.txt");
-  if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) return;
+  QString curdir = QDir::currentPath();
+  bool b_hounds_written = false;
 
-  QFile fdiag("diag.txt");
+  QFile fdiag(m_config.writeable_data_dir ().absoluteFilePath("diag.txt"));
   if(!fdiag.open(QIODevice::WriteOnly | QIODevice::Text)) return;
+
+  QFile f(m_config.writeable_data_dir ().absoluteFilePath("steps.txt"));
+  if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    fdiag.write("Cannot open steps.txt");
+    return;
+  }
 
   QTextStream s(&f);
   QTextStream sdiag(&fdiag);
+
+  QFile fhounds(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
+  if(!fhounds.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+    {
+      sdiag << "can't write to houndcallers.txt";
+      return;
+    }
+  QTextStream houndstream(&fhounds);
+
   QString line;
   QString t;
   QString msg;
@@ -9705,7 +9810,14 @@ void MainWindow::foxTest()
     }
     if(line.contains("Sel:")) {
       t=line.mid(43,6) + "       " + line.mid(54,4) + "   " + line.mid(50,3);
-      selectHound(t);
+      selectHound(t, false);
+    }
+    auto line_trimmed = line.trimmed();
+    if(line_trimmed.startsWith("Hound:")) {
+      t=line_trimmed.mid(6,-1).trimmed();
+      b_hounds_written = true;
+      //sdiag << t << Qt::endl;
+      houndstream << t << Qt::endl;
     }
 
     if(line.contains("Del:")) {
@@ -9745,6 +9857,11 @@ void MainWindow::foxTest()
       sdiag << t << line.mid(37).trimmed() << "\n";
     }
   }
+  if (b_hounds_written)
+    {
+      fhounds.close();
+      houndCallers();
+    }
 }
 
 void MainWindow::write_all(QString txRx, QString message)
