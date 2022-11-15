@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "SettingsGroup.hpp"
 #include "commons.h"
+#include <math.h>
 
 extern "C" {
   void astrosub_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
@@ -44,7 +45,7 @@ Astro::~Astro()
 }
 
 void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
-                        int fQSO, int nsetftx, int ntxFreq, QString azelDir)
+                        int fQSO, int nsetftx, int ntxFreq, QString azelDir, double xavg)
 {
   static int ntxFreq0=-99;
   char cc[300];
@@ -86,6 +87,65 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
           ntsky,xnr,dgrd);
   ui->astroTextBrowser->setText(" "+ date + "\nUTC: " + utc + "\n" + cc);
 
+  double azOffset=0.0;
+  double elOffset=0.0;
+  double rad=57.2957795131;
+  int iCycle=2;
+// Are we doing pointing tests?
+  bool bPointing=ui->cbPointingTests->isChecked();
+  ui->gbPointing->setVisible(bPointing);
+  if(bPointing) {
+    int nDwell=int(ui->sbDwell->value());
+    if(ui->cbAutoCycle->isChecked()) {
+      iCycle=(t.currentSecsSinceEpoch()%(6*nDwell))/nDwell + 1;
+      if(iCycle==1) {
+        azOffset = -ui->sbOffset->value()/cos(elsun/rad);
+        ui->rb1->setChecked(true);
+      }
+      if(iCycle==2 or iCycle==5) {
+        ui->rb2->setChecked(true);
+      }
+      if(iCycle==3) {
+        azOffset = +ui->sbOffset->value()/cos(elsun/rad);
+        ui->rb3->setChecked(true);
+      }
+      if(iCycle==4) {
+        elOffset = -ui->sbOffset->value();
+        ui->rb4->setChecked(true);
+      }
+      if(iCycle==6) {
+        elOffset = +ui->sbOffset->value();
+        ui->rb6->setChecked(true);
+      }
+    }
+    if(ui->cbOnOff->isChecked()) {
+      iCycle=(t.currentSecsSinceEpoch()%(2*nDwell))/nDwell + 1;
+      if(iCycle==1) {
+        azOffset = -ui->sbOffset->value()/cos(elsun/rad);
+        ui->rb1->setChecked(true);
+      }
+      if(iCycle==2) {
+        ui->rb2->setChecked(true);
+      }
+    }
+    if(ui->cbAutoCycle->isChecked() or ui->cbOnOff->isChecked()) {
+      QFile f("pointing.out");
+      if(f.open(QIODevice::WriteOnly | QIODevice::Append)) {
+        QTextStream out(&f);
+        out << t.toString("yyyy-MMM-dd hh:mm:ss");
+        sprintf(cc,"%7.1f %7.1f   %d %7.1f %7.1f %10.1f %7.2f\n",
+                azsun,elsun,iCycle,azOffset,elOffset,xavg,10.0*log10(xavg));
+        out << cc;
+        f.close();
+      }
+    }
+  } else {
+    ui->rb2->setChecked(true);
+    ui->cbAutoCycle->setChecked(false);
+    ui->cbOnOff->setChecked(false);
+  }
+
+// Write pointing data to azel.dat
   QString fname=azelDir+"/azel.dat";
   QFile f(fname);
   if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -107,7 +167,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
           "%3d,%1d,fQSO\n"
           "%3d,%1d,fQSO2\n",
           nhr,nmin,isec,azmoon,elmoon,
-          nhr,nmin,isec,azsun,elsun,
+          nhr,nmin,isec,azsun+azOffset,elsun+elOffset,
           nhr,nmin,isec,0.0,0.0,
           nfreq,ndop,ndop00,
           fQSO,nsetftx,
@@ -120,3 +180,14 @@ void Astro::setFontSize(int n)
 {
   ui->astroTextBrowser->setFontPointSize(n);
 }
+
+void Astro::on_cbAutoCycle_clicked(bool checked)
+{
+  if(checked) ui->cbOnOff->setChecked(false);
+}
+
+void Astro::on_cbOnOff_clicked(bool checked)
+{
+  if(checked) ui->cbAutoCycle->setChecked(false);
+}
+
