@@ -210,6 +210,7 @@ using SpecOp = Configuration::SpecialOperatingActivity;
 
 bool m_displayBand = false;
 bool no_a7_decodes = false;
+bool keep_frequency = false;
 
 namespace
 {
@@ -4133,7 +4134,7 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
   }
   int snr = decodedtext.snr();
   Frequency frequency = m_freqNominalPeriod + audioFrequency;   // prevent spotting wrong band
-  if(grid.contains (grid_regexp)) {
+  if(grid.contains (grid_regexp)  || decodedtext.string().contains(" CQ ")) {
 //    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr;
     if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr))
       {
@@ -6758,7 +6759,7 @@ void MainWindow::on_actionFT8_triggered()
     ui->txb5->setEnabled(false);
     ui->txb6->setEnabled(false);
   } else {
-    switch_mode (Modes::FT8);
+    if (!(keep_frequency)) switch_mode (Modes::FT8);
   }
 
   if(m_specOp != SpecOp::HOUND) {
@@ -10006,6 +10007,8 @@ void MainWindow::on_houndButton_clicked (bool checked)
   } else {
     ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
+    keep_frequency = true;
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
   m_specOp=m_config.special_op_id();
   on_actionFT8_triggered();

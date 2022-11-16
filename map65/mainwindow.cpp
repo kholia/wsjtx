@@ -520,6 +520,8 @@ void MainWindow::dataSink(int k)
   static int nkhz;
   static int nfsample=96000;
   static int nxpol=0;
+  static int nsec0=0;
+  static int nsum=0;
   static float fgreen;
   static int ndiskdat;
   static int nb;
@@ -529,6 +531,7 @@ void MainWindow::dataSink(int k)
   static float rejectx;
   static float rejecty;
   static float slimit;
+  static double xsum=0.0;
 
   if(m_diskData) {
     ndiskdat=1;
@@ -551,8 +554,22 @@ void MainWindow::dataSink(int k)
            &nfsample, &fgreen, &m_adjustIQ, &m_applyIQcal,
            &m_gainx, &m_gainy, &m_phasex, &m_phasey, &rejectx, &rejecty,
            &px, &py, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
+
+  int nsec=QDateTime::currentSecsSinceEpoch();
+  if(nsec==nsec0) {
+    xsum+=pow(10.0,0.1*px);
+    nsum+=1;
+  } else {
+    m_xavg=0.0;
+    if(nsum>0) m_xavg=xsum/nsum;
+    xsum=pow(10.0,0.1*px);
+    nsum=1;
+  }
+  nsec0=nsec;
+
   QString t;
   m_pctZap=nzap/178.3;
+  ui->yMeterFrame->setVisible(m_xpol);
   if(m_xpol) {
     lab4->setText (
                   QString {" Rx noise: %1  %2 %3 %% "}
@@ -1693,7 +1710,7 @@ void MainWindow::guiUpdate()
     QDateTime t = QDateTime::currentDateTimeUtc();
     int fQSO=m_wide_graph_window->QSOfreq();
     m_astro_window->astroUpdate(t, m_myGrid, m_hisGrid, fQSO, m_setftx,
-                          m_txFreq, m_azelDir);
+                          m_txFreq, m_azelDir, m_xavg);
     m_setftx=0;
     QString utc = t.date().toString(" yyyy MMM dd \n") + t.time().toString();
     ui->labUTC->setText(utc);
