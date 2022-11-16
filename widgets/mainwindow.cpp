@@ -7484,7 +7484,7 @@ void MainWindow::band_changed (Frequency f)
 {
   // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
   no_a7_decodes = true;
-  QTimer::singleShot ((int(1000.0*m_TRperiod)), [=] {no_a7_decodes = false;});
+  QTimer::singleShot ((int(1500.0*m_TRperiod)), [=] {no_a7_decodes = false;});
 
   // Set the attenuation value if options are checked
   if (m_config.pwrBandTxMemory() && !m_tune) {
