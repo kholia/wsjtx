@@ -1051,7 +1051,7 @@ void MainWindow::not_GA_warning_message ()
                                 "available for testing purposes.  By design it will\n"
                                 "be nonfunctional after Mar 31, 2023.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2022, 12, 31}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2023, 03, 31}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
 }
