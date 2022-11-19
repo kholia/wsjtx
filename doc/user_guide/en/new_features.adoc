@@ -15,10 +15,11 @@ that station.
 of situations with available _a priori_ (AP) information.
 
 - *Echo* mode now offers a *Clear Avg* button and produces reliable
-measurements of SNR even when Doppler spread is large.  The *Measure*
-function can be used to measure SNR for a received unmodulated carrier
--- for example, a key-down test signal emitted by another station and
-reflected from the Moon.
+measurements of SNR even when Doppler spread is large.  Its *Monitor*
+function can be used to measure SNR for a received unmodulated
+carrier such as a key-down test signal emitted by another station and
+reflected from the Moon, and to measure Sun, Moon, and ground noise as
+aids for optimizing an EME station's performance.
 
 - New buttons on the main window allow quick changes between modes
 FT4, FT8, MSK144, Q65, and JT65.  Another new button allows toggling

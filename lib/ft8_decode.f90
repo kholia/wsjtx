@@ -44,7 +44,7 @@ contains
 
     class(ft8_decoder), intent(inout) :: this
     procedure(ft8_decode_callback) :: callback
-    parameter (MAXCAND=300,MAX_EARLY=100)
+    parameter (MAXCAND=600,MAX_EARLY=100)
     real*8 tsec,tseq
     real s(NH1,NHSYM)
     real sbase(NH1)
@@ -80,7 +80,9 @@ contains
        dt0=0.
        f0=0.
     endif
-    if(nutc.ne.nutc0) then
+!Added 41==nzhsym to force a reset if the same wav file is processed twice or more in a row,
+!in which case nutc.eq.nutc0 and ndec(jseq,1) doesn't get reset
+    if(nzhsym==41 .or. (nutc.ne.nutc0)) then
 ! New UTC.  Move previously saved 'a7' data from k=1 to k=0
        iz=ndec(jseq,1)
        dt0(1:iz,jseq,0)  = dt0(1:iz,jseq,1)
@@ -107,6 +109,7 @@ contains
        dd=iwave
        dd1=dd
     endif
+
     if(nzhsym.eq.41) then
        ndecodes=0
        allmessages='                                     '
@@ -114,10 +117,12 @@ contains
     else
        ndecodes=ndec_early
     endif
+
     if(nzhsym.eq.47 .and. ndec_early.eq.0) then
        dd1=dd
        go to 800
     endif
+
     if(nzhsym.eq.47 .and. ndec_early.ge.1) then
        lsubtracted=.false.
        lrefinedt=.true.
@@ -140,6 +145,7 @@ contains
        dd1=dd
        go to 900
     endif
+
     if(nzhsym.eq.50 .and. ndec_early.ge.1 .and. .not.nagain) then
        n=47*3456
        dd(1:n)=dd1(1:n)
@@ -151,6 +157,7 @@ contains
        enddo
        call timer('sub_ft8c',1)
     endif
+
     ifa=nfa
     ifb=nfb
     if(nzhsym.eq.50 .and. nagain) then
@@ -164,11 +171,12 @@ contains
 ! ndepth=2: subtraction, 3 passes, bp+osd (no subtract refinement) 
 ! ndepth=3: subtraction, 3 passes, bp+osd
     npass=3
-    if(ndepth.eq.1) npass=1
+    if(ndepth.eq.1) npass=2
     do ipass=1,npass
       newdat=.true.
       syncmin=1.3
       if(ndepth.le.2) syncmin=1.6
+      if(nzhsym.eq.41) syncmin=2.0
       if(ipass.eq.1) then
         lsubtract=.true.
         ndeep=ndepth
@@ -185,7 +193,7 @@ contains
       endif 
       call timer('sync8   ',0)
       maxc=MAXCAND
-      call sync8(dd,ifa,ifb,syncmin,nfqso,maxc,s,candidate,   &
+      call sync8(dd,ifa,ifb,syncmin,nfqso,maxc,nzhsym,candidate,   &
            ncand,sbase)
       call timer('sync8   ',1)
       do icand=1,ncand
@@ -221,10 +229,6 @@ contains
               if(emedelay.ne.0) xdt=xdt+2.0
               call this%callback(sync,nsnr,xdt,f1,msg37,iaptype,qual)
               call ft8_a7_save(nutc,xdt,f1,msg37)  !Enter decode in table
-!              ii=ndec(jseq,1)
-!              write(41,3041) jseq,ii,nint(f0(ii,jseq,0)),msg0(ii,jseq,0)(1:22),&
-!                   nint(f0(ii,jseq,1)),msg0(ii,jseq,1)(1:22)
-!3041          format(3i5,2x,a22,i5,2x,a22)
            endif
         endif
         call timestamp(tsec,tseq,ctime)
@@ -237,7 +241,7 @@ contains
    if(nzhsym.lt.50) ndec_early=ndecodes
    
 900 continue
-   if(nzhsym.eq.50 .and. ndec(jseq,0).ge.1) then
+   if(lft8apon .and. ncontest.ne.6 .and. ncontest.ne.7 .and. nzhsym.eq.50 .and. ndec(jseq,0).ge.1) then
       newdat=.true.
       do i=1,ndec(jseq,0)
          if(f0(i,jseq,0).eq.-99.0) exit

@@ -194,12 +194,12 @@ private:
   qint32  m_RxState;
   qint32  m_dB;
 
-
   double  m_fAdd;
   //    double  m_IQamp;
   //    double  m_IQphase;
   double  m_cal570;
   double  m_TxOffset;
+  double  m_xavg;
 
   bool    m_monitoring;
   bool    m_transmitting;
@@ -294,6 +294,7 @@ private:
   void stub();
   bool isGrid4(QString g);
   bool subProcessFailed (QProcess *, int exit_code, QProcess::ExitStatus);
+  void read_log();
 };
 
 extern void getfile(QString fname, bool xpol, int idInt);

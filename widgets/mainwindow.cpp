@@ -90,6 +90,7 @@
 #include "ExportCabrillo.h"
 #include "ui_mainwindow.h"
 #include "moc_mainwindow.cpp"
+#include "Logger.hpp"
 
 #define FCL fortran_charlen_t
 
@@ -155,7 +156,7 @@ extern "C" {
 
   void save_echo_params_(int* ndoptotal, int* ndop, int* nfrit, float* f1, float* fspread, short id2[], int* idir);
 
-  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* nqual, float* f1,
+  void avecho_( short id2[], int* dop, int* nfrit, int* nauto, int* navg, int* nqual, float* f1,
                 float* level, float* sigdb, float* snr, float* dfreq,
                 float* width, bool* bDiskData);
 
@@ -208,6 +209,8 @@ QVector<QColor> g_ColorTbl;
 using SpecOp = Configuration::SpecialOperatingActivity;
 
 bool m_displayBand = false;
+bool no_a7_decodes = false;
+bool keep_frequency = false;
 
 namespace
 {
@@ -753,24 +756,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
               }
           });
 
-  // ensure a balanced layout of the mode buttons
-  qreal pointSize = m_config.text_font().pointSizeF();
-  if (pointSize < 11) {
-      ui->houndButton->setMaximumWidth(40);
-      ui->ft8Button->setMaximumWidth(40);
-      ui->ft4Button->setMaximumWidth(40);
-      ui->msk144Button->setMaximumWidth(40);
-      ui->q65Button->setMaximumWidth(40);
-      ui->jt65Button->setMaximumWidth(40);
-  } else {
-      ui->houndButton->setMinimumWidth(50);
-      ui->ft8Button->setMinimumWidth(50);
-      ui->ft4Button->setMinimumWidth(50);
-      ui->msk144Button->setMinimumWidth(50);
-      ui->q65Button->setMinimumWidth(50);
-      ui->jt65Button->setMinimumWidth(50);
-  }
-
   // hook up save WAV file exit handling
   connect (&m_saveWAVWatcher, &QFutureWatcher<QString>::finished, [this] {
       // extract the promise from the future
@@ -1224,6 +1209,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("Blanker",ui->sbNB->value());
   m_settings->setValue("Score",m_score);
   m_settings->setValue("labDXpedText",ui->labDXped->text());
+  m_settings->setValue("EchoAvg",ui->sbEchoAvg->value());
 
   {
     QList<QVariant> coeffs;     // suitable for QSettings
@@ -1357,6 +1343,7 @@ void MainWindow::readSettings()
   ui->actionAuto_Clear_Avg->setChecked (m_settings->value ("AutoClearAvg", false).toBool());
   ui->decodes_splitter->restoreState(m_settings->value("SplitterState").toByteArray());
   ui->sbNB->setValue(m_settings->value("Blanker",0).toInt());
+  ui->sbEchoAvg->setValue(m_settings->value("EchoAvg",10).toInt());
   {
     auto const& coeffs = m_settings->value ("PhaseEqualizationCoefficients"
                                             , QList<QVariant> {0., 0., 0., 0., 0.}).toList ();
@@ -1374,6 +1361,7 @@ void MainWindow::readSettings()
   m_audioThreadPriority = static_cast<QThread::Priority> (m_settings->value ("Audio/ThreadPriority", QThread::TimeCriticalPriority).toInt () % 8);
   m_settings->endGroup ();
 
+  m_specOp=m_config.special_op_id();
   checkMSK144ContestType();
   if(displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
@@ -1410,10 +1398,35 @@ void MainWindow::set_application_font (QFont const& font)
       QFile sf {sheet};
       if (sf.open (QFile::ReadOnly | QFile::Text))
         {
-          ss = sf.readAll () + ss;
+          QString tmp = sf.readAll();
+          if (tmp != NULL) ss = sf.readAll () + tmp;
+          else qDebug() << "tmp==NULL at sf.readAll";
         }
     }
   qApp->setStyleSheet (ss + "* {" + font_as_stylesheet (font) + '}');
+  // ensure a balanced layout of the mode buttons
+  qreal pointSize = m_config.text_font().pointSizeF();
+  if (pointSize < 11) {
+      ui->houndButton->setMaximumWidth(40);
+      ui->ft8Button->setMaximumWidth(40);
+      ui->ft4Button->setMaximumWidth(40);
+      ui->msk144Button->setMaximumWidth(40);
+      ui->q65Button->setMaximumWidth(40);
+      ui->jt65Button->setMaximumWidth(40);
+      ui->houndButton->setMinimumWidth(0);
+      ui->ft8Button->setMinimumWidth(0);
+      ui->ft4Button->setMinimumWidth(0);
+      ui->msk144Button->setMinimumWidth(0);
+      ui->q65Button->setMinimumWidth(0);
+      ui->jt65Button->setMinimumWidth(0);
+  } else {
+      ui->houndButton->setMinimumWidth(50);
+      ui->ft8Button->setMinimumWidth(50);
+      ui->ft4Button->setMinimumWidth(50);
+      ui->msk144Button->setMinimumWidth(50);
+      ui->q65Button->setMinimumWidth(50);
+      ui->jt65Button->setMinimumWidth(50);
+  }
   for (auto& widget : qApp->topLevelWidgets ())
     {
       widget->updateGeometry ();
@@ -1541,7 +1554,7 @@ void MainWindow::dataSink(qint64 frames)
   if(m_ihsym <=0) return;
   if(ui) ui->signal_meter_widget->setValue(m_px,m_pxmax); // Update thermometer
   if(m_monitoring || m_diskData) {
-    m_wideGraph->dataSink2(s,m_df3,m_ihsym,m_diskData);
+    m_wideGraph->dataSink2(s,m_df3,m_ihsym,m_diskData,m_px);
   }
   if(m_mode=="MSK144") return;
 
@@ -1616,11 +1629,12 @@ void MainWindow::dataSink(qint64 frames)
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
       int nDopTotal=m_fDop;
+      int navg=ui->sbEchoAvg->value();
       if(m_diskData) {
         int idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
-      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&nqual,&f1,&xlevel,&sigdb,
+      avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
       if(m_bEchoTxed and !m_auto) {
@@ -1629,7 +1643,7 @@ void MainWindow::dataSink(qint64 frames)
       }
 
       if(m_monitoring or m_auto or m_diskData) {
-        QString t0;
+        QString t0,t1;
         if(m_diskData) {
           t0=t0.asprintf("%06d  ",m_UTCdisk);
         } else {
@@ -1640,17 +1654,20 @@ void MainWindow::dataSink(qint64 frames)
           if(m_auto) isec=isec - isec%6;
           if(!m_auto) isec=isec - isec%3;
           t0=t0.asprintf("%02d%02d%02d  ",ihr,imin,isec);
+          t1=now.toString("yyMMdd_");
         }
         int n=t0.toInt();
         int nsec=((n/10000)*3600) + (((n/100)%100)*60) + (n%100);
-        if(!m_echoRunning) m_echoSec0=nsec;
-        n=(nsec-m_echoSec0 + 864000)%86400;
+        if(!m_echoRunning or echocom_.nsum<2) m_echoSec0=nsec;
+        float hour=n/10000 + ((n/100)%100)/60.0 + (n%100)/3600.0;
         m_echoRunning=true;
         QString t;
-        t = t.asprintf("%6d  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",n,xlevel,
+        t = t.asprintf("%9.6f  %5.2f %7d %7.1f %7d %7d %7d %7.1f %7.1f",hour,xlevel,
                        nDopTotal,width,echocom_.nsum,nqual,qRound(dfreq),sigdb,dBerr);
         t = t0 + t;
         if (ui) ui->decodedTextBrowser->appendText(t);
+        t=t1+t;
+        write_all("Rx",t);
       }
 
       if(m_echoGraph->isVisible()) m_echoGraph->plotSpec();
@@ -3176,6 +3193,7 @@ void MainWindow::on_ClrAvgButton_clicked()
   if(m_mode=="Echo") {
     echocom_.nsum=0;
     m_echoGraph->clearAvg();
+    m_wideGraph->restartTotalPower();
   } else {
     if(m_msgAvgWidget != NULL) {
       if(m_msgAvgWidget->isVisible()) m_msgAvgWidget->displayAvg("");
@@ -3682,6 +3700,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
           continue;
         }
       }
+
+    // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
+    if (!(no_a7_decodes && line_read.contains("a7"))) {
+
     if (m_mode!="FT8" and m_mode!="FT4" and !m_mode.startsWith ("FST4") and m_mode!="Q65") {
       //Pad 22-char msg to at least 37 chars
       line_read = line_read.left(44) + "              " + line_read.mid(44);
@@ -3748,6 +3770,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
         m_tBlankLine = line_read.left(ntime);
       }
+    }
       if ("FST4W" == m_mode)
         {
           uploadWSPRSpots (true, line_read);
@@ -3797,7 +3820,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
           if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
                || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
-               || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))))  {
+               || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))
+               || (decodedtext.string().contains(QRegularExpression {"<...> " + m_hisCall}))))  {
               ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true); // highlight dxCallEntry
               QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
                   ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
@@ -4019,7 +4043,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
             if(f.open(QIODevice::ReadOnly | QIODevice::Text)) {
               QTextStream s(&f);
               QString t=s.readAll();
-              m_msgAvgWidget->displayAvg(t);
+              if (t != NULL) m_msgAvgWidget->displayAvg(t);
+              else qDebug() << "tmp==NULL at s.readAll";
             }
           }
         }
@@ -4119,7 +4144,7 @@ void MainWindow::pskPost (DecodedText const& decodedtext)
   }
   int snr = decodedtext.snr();
   Frequency frequency = m_freqNominalPeriod + audioFrequency;   // prevent spotting wrong band
-  if(grid.contains (grid_regexp)) {
+  if(grid.contains (grid_regexp)  || decodedtext.string().contains(" CQ ")) {
 //    qDebug() << "To PSKreporter:" << deCall << grid << frequency << msgmode << snr;
     if (!m_psk_Reporter.addRemoteStation (deCall, grid, frequency, msgmode, snr))
       {
@@ -6148,7 +6173,9 @@ void MainWindow::on_addButton_clicked()                       //Add button
                                               // preserve symlinks
     f1.open (QFile::WriteOnly | QFile::Text); // truncates
     f2.seek (0);
-    f1.write (f2.readAll ());                 // copy contents
+    QByteArray tmp = f2.readAll();
+    if (tmp != (const char*)NULL) f1.write (tmp);                 // copy contents
+    else qDebug() << "tmp==NULL at f1.write";
     f2.remove ();
   }
 }
@@ -6526,6 +6553,7 @@ void MainWindow::displayWidgets(qint64 n)
       (m_config.RTTY_Exchange()=="DX" or m_config.RTTY_Exchange()=="#") );
   }
   if(m_mode=="MSK144") b=SpecOp::EU_VHF==m_specOp;
+  ui->sbEchoAvg->setVisible(m_mode=="Echo");
   ui->sbSerialNumber->setVisible(b);
   m_lastCallsign.clear ();     // ensures Tx5 is updated for new modes
   b=m_mode.startsWith("FST4");
@@ -6634,6 +6662,7 @@ void MainWindow::on_actionFT4_triggered()
   m_wideGraph->setMode(m_mode);
   m_send_RR73=true;
   VHF_features_enabled(bVHF);
+  ui->cbAutoSeq->setChecked(true);
   m_fastGraph->hide();
   m_wideGraph->show();
   ui->rh_decodes_headings_label->setText("  UTC   dB   DT Freq    " + tr ("Message"));
@@ -6740,7 +6769,7 @@ void MainWindow::on_actionFT8_triggered()
     ui->txb5->setEnabled(false);
     ui->txb6->setEnabled(false);
   } else {
-    switch_mode (Modes::FT8);
+    if (!(keep_frequency)) switch_mode (Modes::FT8);
   }
 
   if(m_specOp != SpecOp::HOUND) {
@@ -6951,6 +6980,7 @@ void MainWindow::on_actionQ65_triggered()
   m_mode="Q65";
   ui->actionQ65->setChecked(true);
   switch_mode(Modes::Q65);
+  ui->cbAutoSeq->setChecked(true);
   fast_config(false);
   WSPR_config(false);
   setup_status_bar(true);
@@ -7032,6 +7062,7 @@ void MainWindow::on_actionMSK144_triggered()
   m_toneSpacing=0.0;
   WSPR_config(false);
   VHF_features_enabled(true);
+  ui->cbAutoSeq->setChecked(true);
   m_bFastMode=true;
   m_bFast9=false;
   ui->sbTR->values ({5, 10, 15, 30});
@@ -7108,7 +7139,13 @@ void MainWindow::on_actionWSPR_triggered()
 
 void MainWindow::on_actionEcho_triggered()
 {
+  int nd=int(m_ndepth&3);
   on_actionJT4_triggered();
+// Don't allow decoding depth to be changed just because Echo mode was entered:
+  if(nd==1) ui->actionQuickDecode->setChecked (true);
+  if(nd==2) ui->actionMediumDecode->setChecked (true);
+  if(nd==3) ui->actionDeepestDecode->setChecked (true);
+
   m_mode="Echo";
   ui->actionEcho->setChecked(true);
   m_TRperiod=3.0;
@@ -7131,11 +7168,11 @@ void MainWindow::on_actionEcho_triggered()
   m_bFastMode=false;
   m_bFast9=false;
   WSPR_config(true);
-  ui->lh_decodes_headings_label->setText("  UTC     Tsec  Level  Doppler  Width       N       Q      DF    SNR    dBerr");
+  ui->lh_decodes_headings_label->setText("  UTC      Hour    Level  Doppler  Width       N       Q      DF     SNR    dBerr");
   //                       01234567890123456789012345678901234567
   displayWidgets(nWidgets("00000000000000000010001000000000000000"));
   fast_config(false);
-  if(m_astroWidget) m_astroWidget->selectOwnEcho();
+  ui->sbEchoAvg->values ({1, 2, 5, 10, 20, 50, 100});
   statusChanged();
   monitor(false);
 }
@@ -7455,6 +7492,10 @@ void MainWindow::on_bandComboBox_activated (int index)
 
 void MainWindow::band_changed (Frequency f)
 {
+  // Don't allow a7 decodes during the first period because they can be leftovers from the previous band
+  no_a7_decodes = true;
+  QTimer::singleShot ((int(1500.0*m_TRperiod)), [=] {no_a7_decodes = false;});
+
   // Set the attenuation value if options are checked
   if (m_config.pwrBandTxMemory() && !m_tune) {
     auto const&curBand = ui->bandComboBox->currentText();
@@ -7991,7 +8032,7 @@ void MainWindow::on_outAttenuation_valueChanged (int a)
     tt_str = tr ("Transmit digital gain ");
   }
   tt_str += (a ? QString::number (-dBAttn, 'f', 1) : "0") + "dB";
-  if (!m_block_pwr_tooltip) {
+  if (ui->outAttenuation->hasFocus() && !m_block_pwr_tooltip) {
     QToolTip::showText (QCursor::pos (), tt_str, ui->outAttenuation);
   }
   QString curBand = ui->bandComboBox->currentText();
@@ -9734,45 +9775,55 @@ void MainWindow::write_all(QString txRx, QString message)
   QString t;
   QString msg;
   QString mode_string;
-
-  if (message.size () > 5 && message[4]==' ') {
-     msg=message.mid(4,-1);
-  } else {
-     msg=message.mid(6,-1);
-  }
-
-  if (message.size () > 19 && message[19]=='#') {
-     mode_string="JT65  ";
-  } else if (message.size () > 19 && message[19]=='@') {
-     mode_string="JT9   ";
-  } else if(m_mode=="Q65") {
-    mode_string=mode_label.text();
-  } else {
-     mode_string=m_mode.leftJustified(6,' ');
-  }
-
-  msg=msg.mid(0,15) + msg.mid(18,-1);
-
-  t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
-  if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
-  auto time = QDateTime::currentDateTimeUtc ();
-  if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
-
-  t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
-  if (m_diskData) {
-    if (m_fileDateTime.size()==11) {
-      line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
-    } else {
-      line=m_fileDateTime + t + txRx + " " + mode_string + msg;
-    } 
-  } else {
-    line=time.toString("yyMMdd_hhmmss") + t + txRx + " " + mode_string + msg;
-  }
-
   QString file_name="ALL.TXT";
-  if (ui->actionSplit_ALL_TXT_yearly->isChecked()) file_name=(time.toString("yyyy") + "-" + "ALL.TXT");
-  if (ui->actionSplit_ALL_TXT_monthly->isChecked()) file_name=(time.toString("yyyy-MM") + "-" + "ALL.TXT");
-  if (m_mode=="WSPR") file_name="ALL_WSPR.TXT";
+
+  if(m_mode!="Echo") {
+    if (message.size () > 5 && message[4]==' ') {
+      msg=message.mid(4,-1);
+    } else {
+      msg=message.mid(6,-1);
+    }
+
+    if (message.size () > 19 && message[19]=='#') {
+      mode_string="JT65  ";
+    } else if (message.size () > 19 && message[19]=='@') {
+      mode_string="JT9   ";
+    } else if(m_mode=="Q65") {
+      mode_string=mode_label.text();
+    } else {
+      mode_string=m_mode.leftJustified(6,' ');
+    }
+
+    msg=msg.mid(0,15) + msg.mid(18,-1);
+
+    t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
+    if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
+    auto time = QDateTime::currentDateTimeUtc ();
+    if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
+
+    if (txRx=="Rx") {
+       t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
+    } else {
+       t = t.asprintf("%10.3f ",m_freqNominal/1.e6);
+    }
+    if (m_diskData) {
+      if (m_fileDateTime.size()==11) {
+        line=m_fileDateTime + "  " + t + txRx + " " + mode_string + msg;
+      } else {
+        line=m_fileDateTime + t + txRx + " " + mode_string + msg;
+      }
+    } else {
+      line=time.toString("yyMMdd_hhmmss") + t + txRx + " " + mode_string + msg;
+    }
+
+    if (ui->actionSplit_ALL_TXT_yearly->isChecked()) file_name=(time.toString("yyyy") + "-" + "ALL.TXT");
+    if (ui->actionSplit_ALL_TXT_monthly->isChecked()) file_name=(time.toString("yyyy-MM") + "-" + "ALL.TXT");
+    if (m_mode=="WSPR") file_name="ALL_WSPR.TXT";
+  } else {
+    file_name="all_echo.txt";
+    line=message;
+  }
+
   QFile f{m_config.writeable_data_dir().absoluteFilePath(file_name)};
   if (f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append)) {
     QTextStream out(&f);
@@ -9966,6 +10017,8 @@ void MainWindow::on_houndButton_clicked (bool checked)
   } else {
     ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
+    keep_frequency = true;
+    QTimer::singleShot (250, [=] {keep_frequency = false;});
   }
   m_specOp=m_config.special_op_id();
   on_actionFT8_triggered();
@@ -10025,26 +10078,3 @@ void MainWindow::on_jt65Button_clicked()
     }
     on_actionJT65_triggered();
 }
-
-void MainWindow::on_actionCopy_to_WSJTX_txt_triggered()
-{
-  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("WSJT-X.txt")};
-  if(!f.open(QIODevice::Text | QIODevice::WriteOnly)) {
-    MessageBox::warning_message (this, tr ("WSJT-X.txt file error"),
-                                 tr ("Cannot open \"%1\" for writing").arg (f.fileName ()),
-                                 tr ("Error: %1").arg (f.errorString ()));
-  } else {
-    QString t=ui->decodedTextBrowser->toPlainText();
-
-    QTextStream out(&f);
-    out << t <<
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-                 endl
-#else
-                 Qt::endl
-#endif
-                 ;
-    f.close();
-  }
-}
-

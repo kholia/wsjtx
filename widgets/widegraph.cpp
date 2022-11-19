@@ -71,11 +71,13 @@ WideGraph::WideGraph(QSettings * settings, QWidget *parent) :
     ui->widePlot->setLinearAvg(m_settings->value("LinearAvg",false).toBool());
     ui->widePlot->setReference(m_settings->value("Reference",false).toBool());
     ui->widePlot->setQ65_Sync(m_settings->value("Q65_Sync",false).toBool());
+    ui->widePlot->setTotalPower(m_settings->value("TotalPower",false).toBool());
     if(ui->widePlot->current()) ui->spec2dComboBox->setCurrentIndex(0);
     if(ui->widePlot->cumulative()) ui->spec2dComboBox->setCurrentIndex(1);
     if(ui->widePlot->linearAvg()) ui->spec2dComboBox->setCurrentIndex(2);
     if(ui->widePlot->Reference()) ui->spec2dComboBox->setCurrentIndex(3);
     if(ui->widePlot->Q65_Sync()) ui->spec2dComboBox->setCurrentIndex(4);
+    if(ui->widePlot->TotalPower()) ui->spec2dComboBox->setCurrentIndex(5);
     int nbpp=m_settings->value("BinsPerPixel",2).toInt();
     ui->widePlot->setBinsPerPixel(nbpp);
     ui->sbPercent2dPlot->setValue(m_Percent2DScreen);
@@ -133,6 +135,7 @@ void WideGraph::saveSettings()                                           //saveS
   m_settings->setValue ("LinearAvg", ui->widePlot->linearAvg());
   m_settings->setValue ("Reference", ui->widePlot->Reference());
   m_settings->setValue ("Q65_Sync", ui->widePlot->Q65_Sync());
+  m_settings->setValue ("TotalPower", ui->widePlot->TotalPower());
   m_settings->setValue ("BinsPerPixel", ui->widePlot->binsPerPixel ());
   m_settings->setValue ("StartFreq", ui->widePlot->startFreq ());
   m_settings->setValue ("WaterfallPalette", m_waterfallPalette);
@@ -148,11 +151,12 @@ void WideGraph::drawRed(int ia, int ib)
   ui->widePlot->drawRed(ia,ib,m_swide);
 }
 
-void WideGraph::dataSink2(float s[], float df3, int ihsym, int ndiskdata)  //dataSink2
+void WideGraph::dataSink2(float s[], float df3, int ihsym, int ndiskdata, float pdB)  //dataSink2
 {
   static float splot[NSMAX];
   int nbpp = ui->widePlot->binsPerPixel();
 
+  if(ui->widePlot->TotalPower()) ui->widePlot->drawTotalPower(pdB);
 //Average spectra over specified number, m_waterfallAvg
   if (m_n==0) {
     for (int i=0; i<NSMAX; i++)
@@ -313,6 +317,7 @@ void WideGraph::on_spec2dComboBox_currentIndexChanged(int index)
   ui->widePlot->setLinearAvg(false);
   ui->widePlot->setReference(false);
   ui->widePlot->setQ65_Sync(false);
+  ui->widePlot->setTotalPower(false);
   ui->smoSpinBox->setEnabled(false);
   switch (index)
     {
@@ -332,7 +337,10 @@ void WideGraph::on_spec2dComboBox_currentIndexChanged(int index)
     case 4:
       ui->widePlot->setQ65_Sync(true);
       break;
-  }
+    case 5:
+      ui->widePlot->setTotalPower(true);
+      break;
+    }
   replot();
 }
 
@@ -473,6 +481,7 @@ void WideGraph::on_zeroSlider_valueChanged(int value)                 //Zero
 void WideGraph::on_gain2dSlider_valueChanged(int value)               //Gain2
 {
   ui->widePlot->setPlot2dGain(value);
+  if(ui->widePlot->TotalPower()) return;
   if(ui->widePlot->scaleOK ()) {
     ui->widePlot->draw(m_swide,false,false);
     if(m_mode=="Q65") ui->widePlot->draw(m_swide,false,true);
@@ -482,6 +491,7 @@ void WideGraph::on_gain2dSlider_valueChanged(int value)               //Gain2
 void WideGraph::on_zero2dSlider_valueChanged(int value)               //Zero2
 {
   ui->widePlot->setPlot2dZero(value);
+  if(ui->widePlot->TotalPower()) return;
   if(ui->widePlot->scaleOK ()) {
     ui->widePlot->draw(m_swide,false,false);
     if(m_mode=="Q65") ui->widePlot->draw(m_swide,false,true);
@@ -539,4 +549,9 @@ void WideGraph::setRedFile(QString fRed)
 void WideGraph::setDiskUTC(int nutc)
 {
   ui->widePlot->setDiskUTC(nutc);
+}
+
+void WideGraph::restartTotalPower()
+{
+  ui->widePlot->restartTotalPower();
 }

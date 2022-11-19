@@ -586,13 +586,26 @@ contains
                         xsig=xsig+s4(itone(i),i)
                      enddo
                      base=candidates(icand,5)
-                     arg=600.0*(xsig/base)-1.0
+                     select case(ntrperiod)
+                        case(15) 
+                           snr_calfac=800.0
+                        case(30) 
+                           snr_calfac=600.0
+                        case(60) 
+                           snr_calfac=430.0
+                        case(120) 
+                           snr_calfac=390.0
+                        case(300) 
+                           snr_calfac=340.0
+                        case(900) 
+                           snr_calfac=320.0
+                        case(1800) 
+                           snr_calfac=320.0
+                        case default
+                     end select
+                     arg=snr_calfac*xsig/base - 1.0
                      if(arg.gt.0.0) then
-                        xsnr=10*log10(arg)-35.5-12.5*log10(nsps/8200.0)
-                        if(ntrperiod.eq.  15) xsnr=xsnr+2
-                        if(ntrperiod.eq.  30) xsnr=xsnr+1
-                        if(ntrperiod.eq. 900) xsnr=xsnr+1
-                        if(ntrperiod.eq.1800) xsnr=xsnr+2
+                        xsnr=10*log10(arg)+10*log10(1.46/2500)+10*log10(8200.0/nsps)
                      else
                         xsnr=-99.9
                      endif

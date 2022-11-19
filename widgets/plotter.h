@@ -34,6 +34,7 @@ public:
   QSize sizeHint() const Q_DECL_OVERRIDE;
 
   void draw(float swide[], bool bScroll, bool bRed);		//Update the waterfall
+  void drawTotalPower(float pdB);
   void replot();
   void SetRunningState(bool running);
   void setPlotZero(int plotZero);
@@ -81,12 +82,15 @@ public:
   bool Reference() const {return m_bReference;}
   void setQ65_Sync(bool b) {m_bQ65_Sync = b;}
   bool Q65_Sync() const {return m_bQ65_Sync;}
+  void setTotalPower(bool b) {m_bTotalPower = b;}
+  bool TotalPower() const {return m_bTotalPower;}
   void drawRed(int ia, int ib, float swide[]);
   void setVHF(bool bVHF);
   void setRedFile(QString fRed);
   void setFST4_FreqRange(int fLow,int fHigh);
   void setSingleDecode(bool b);
   void setDiskUTC(int nutc);
+  void restartTotalPower();
 
   bool scaleOK () const {return m_bScaleOK;}
 signals:
@@ -116,12 +120,15 @@ private:
   bool    m_bReference;
   bool    m_bReference0;
   bool    m_bQ65_Sync;
+  bool    m_bTotalPower;
   bool    m_bVHF;
   bool    m_bSingleDecode;
   bool    m_bFirst=true;
   bool    m_bResized;
 
   float   m_fSpan;
+  float   m_pdB=0.0;
+  float   m_vpixperdiv;
 
   qint32  m_plotZero;
   qint32  m_plotGain;
@@ -137,6 +144,7 @@ private:
   qint32  m_nfa;
   qint32  m_nfb;
   qint32  m_nUTC;
+  qint32  m_x=0;
 
   QPixmap m_WaterfallPixmap;
   QPixmap m_2DPixmap;

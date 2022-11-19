@@ -520,6 +520,8 @@ void MainWindow::dataSink(int k)
   static int nkhz;
   static int nfsample=96000;
   static int nxpol=0;
+  static int nsec0=0;
+  static int nsum=0;
   static float fgreen;
   static int ndiskdat;
   static int nb;
@@ -529,6 +531,7 @@ void MainWindow::dataSink(int k)
   static float rejectx;
   static float rejecty;
   static float slimit;
+  static double xsum=0.0;
 
   if(m_diskData) {
     ndiskdat=1;
@@ -551,8 +554,22 @@ void MainWindow::dataSink(int k)
            &nfsample, &fgreen, &m_adjustIQ, &m_applyIQcal,
            &m_gainx, &m_gainy, &m_phasex, &m_phasey, &rejectx, &rejecty,
            &px, &py, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
+
+  int nsec=QDateTime::currentSecsSinceEpoch();
+  if(nsec==nsec0) {
+    xsum+=pow(10.0,0.1*px);
+    nsum+=1;
+  } else {
+    m_xavg=0.0;
+    if(nsum>0) m_xavg=xsum/nsum;
+    xsum=pow(10.0,0.1*px);
+    nsum=1;
+  }
+  nsec0=nsec;
+
   QString t;
   m_pctZap=nzap/178.3;
+  ui->yMeterFrame->setVisible(m_xpol);
   if(m_xpol) {
     lab4->setText (
                   QString {" Rx noise: %1  %2 %3 %% "}
@@ -1119,6 +1136,9 @@ void MainWindow::diskDat()                                   //diskDat()
   //These may be redundant??
   m_diskData=true;
   datcom_.newdat=1;
+  if(m_wide_graph_window->m_bForceCenterFreq) {
+    datcom_.fcenter=m_wide_graph_window->m_dForceCenterFreq;
+  }
 
   if(m_fs96000) hsym=2048.0*96000.0/11025.0;   //Samples per JT65 half-symbol
   if(!m_fs96000) hsym=2048.0*95238.1/11025.0;
@@ -1396,6 +1416,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
       QFile lockFile(m_appDir + "/.lock");
       lockFile.open(QIODevice::ReadWrite);
       if(t.indexOf("<DecodeFinished>") >= 0) {
+        int ndecodes=t.mid(40,5).toInt();
+        lab5->setText(QString::number(ndecodes));
         m_map65RxLog=0;
         m_startAnother=m_loopall;
       }
@@ -1403,6 +1425,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
       decodeBusy(false);
       return;
     }
+
+    read_log();
 
     if(t.indexOf("!") >= 0) {
       int n=t.length();
@@ -1688,7 +1712,7 @@ void MainWindow::guiUpdate()
     QDateTime t = QDateTime::currentDateTimeUtc();
     int fQSO=m_wide_graph_window->QSOfreq();
     m_astro_window->astroUpdate(t, m_myGrid, m_hisGrid, fQSO, m_setftx,
-                          m_txFreq, m_azelDir);
+                          m_txFreq, m_azelDir, m_xavg);
     m_setftx=0;
     QString utc = t.date().toString(" yyyy MMM dd \n") + t.time().toString();
     ui->labUTC->setText(utc);
@@ -2343,4 +2367,25 @@ bool MainWindow::isGrid4(QString g)
   if(g.mid(2,1)<'0' or g.mid(2,1)>'9') return false;
   if(g.mid(3,1)<'0' or g.mid(3,1)>'9') return false;
   return true;
+}
+
+void MainWindow::read_log()
+{
+  // Update "m_worked" by reading wsjtx.log
+  m_worked.clear();                     //Start from scratch
+  QFile f("wsjtx.log");
+  f.open(QIODevice::ReadOnly);
+  if(f.isOpen()) {
+    QTextStream in(&f);
+    QString line,callsign;
+    for(int i=0; i<99999; i++) {
+      line=in.readLine();
+      if(line.length()<=0) break;
+      callsign=line.mid(40,6);
+      int n=callsign.indexOf(",");
+      if(n>0) callsign=callsign.left(n);
+      m_worked[callsign]=true;
+    }
+    f.close();
+  }
 }

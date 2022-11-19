@@ -280,37 +280,43 @@ being readable by anyone listening in.
 
 === Echo Mode
 
-*Echo* mode allows you to make sensitive measurements of your own
-lunar echoes even when they are too weak to be heard. Select *Echo*
-from the *Mode* menu, aim your antenna at the moon, pick a clear
-frequency, and toggle click *Tx Enable*. _WSJT-X_ will then cycle
-through the following loop every 6 seconds:
+*Echo* mode provides tools for two types of measurements: echoes of
+your transmitted signal from the Moon, and broadband noise power
+received from the Sun, Moon, and possibly other sources including
+nearby ground.  In each case the system noise temperature (noise power
+referred to the antenna terminals, expressed in Kelvin degrees) serves
+as the reference noise level.  Such measurements are widely used for
+optimizing a station's capabilities for Earth-Moon-Earth (EME)
+communication.
 
-1. Transmit a 1500 Hz fixed tone for 2.3 s
-2. Wait about 0.2 s for start of the return echo
-3. Record the received signal for 2.3 s
-4. Analyze, average, and display the results
-5. Repeat from step 1
+For lunar echoes, _WSJT_ generates short fixed-frequency transmissions
+that alternate with reception intervals at the appropriate
+Doppler-shifted frequency.  With *Split Operation* set to *Rig* or
+*Fake It* on the *Settings | Radio* tab, check *Doppler tracking* and
+*Own Echo* on the Astronomical Data window.  Point your antenna at the
+Moon and click *Enable Tx* on the main window to start a sequence of
+echo measurements.  Each cycle takes 6 seconds.  If strong enough,
+echoes will be visible in the waterfall.  Their average spectrum will
+be displayed in the Echo Graph window, and numerical parameters of the
+measurements appear in the main window:
 
-To make a sequence of echo tests:
+image::Echo_1296.png[align="center",alt="Echo 144 MHz"]
 
-- Select *Echo* from the *Mode* menu.
+At the end of each echo cycle a line of data in the main text window
+displays the following information:
 
-- Check *Doppler tracking* and *Constant frequency on the Moon* on the
-Astronomical Data window.
+ UTC       Time in hhmmss format
+ Hour      UTC in hours and decimal fraction
+ Level     Relative received noise power (dB)
+ Doppler   EME Doppler shift at center of lunar disk
+ Width     EME Doppler spread over full lunar disk
+ N         Number of accumulated echo or monitor cycles
+ Q         Estimated quality of averaged data on a 0 – 10 scale
+ DF        Offset of spectral peak from 1500 Hz
+ SNR       Average signal-to-noise ratio (dB/2500 Hz)
+ dBerr     Estimated uncertainty of SNR
 
-- Be sure that your rig control has been set up for _Split Operation_,
-using either *Rig* or *Fake It* on the *Settings | Radio* tab.
-
-- Click *Enable Tx* on the main window to start a sequence of 6-second
-cycles.
-
-- _WSJT-X_ calculates and compensates for Doppler shift automatically.
-As shown in the screen shot below, when proper Doppler corrections
-have been applied your return echo should always appear at the center
-of the plot area on the Echo Graph window.
-
-image::echo_144.png[align="center",alt="Echo 144 MHz"]
+... more to come ...
 
 === Tips for EME
 

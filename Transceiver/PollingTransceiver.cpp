@@ -117,6 +117,10 @@ void PollingTransceiver::do_post_ptt (bool p)
       retries_ = polls_to_stabilize;
       //retries_ = 0;             // fast feedback on PTT
     }
+  else
+    {
+      next_state_.ptt(p);         // ensure this is initialized
+    }
 }
 
 bool PollingTransceiver::do_pre_update ()

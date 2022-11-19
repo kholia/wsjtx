@@ -437,15 +437,14 @@ QString DXLabSuiteCommanderTransceiver::command_with_reply (QString const& cmd)
           };
     }
 
-  auto result = commander_->readAll ();
-  // qDebug () << "result: " << result;
-  // for (int i = 0; i < result.size (); ++i)
-  //   {
-  //     qDebug () << i << ":" << hex << int (result[i]);
-  //   }
+  QString result = commander_->readAll ();
 
+  if (result != NULL)
+  {
   CAT_TRACE (cmd << " -> " << QString {result});
   return result;                // converting raw UTF-8 bytes to QString
+  }
+  return "";
 }
 
 bool DXLabSuiteCommanderTransceiver::write_to_port (QString const& s)
