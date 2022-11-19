@@ -2294,7 +2294,7 @@ Double-click to reset to the standard 73 message</string>
                       <item row="0" column="1">
                        <widget class="QLabel" name="label_inProcess">
                         <property name="text">
-                         <string>In-QSO</string>
+                         <string>In Progress</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
