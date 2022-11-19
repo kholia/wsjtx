@@ -477,7 +477,7 @@ private:
   qint32  m_k0;
   qint32  m_kdone;
   qint32  m_nPick;
-  FrequencyList_v2::const_iterator m_frequency_list_fcal_iter;
+  FrequencyList_v2_101::const_iterator m_frequency_list_fcal_iter;
   qint32  m_nTx73;
   qint32  m_UTCdisk;
   qint32  m_wait;
@@ -824,6 +824,7 @@ private:
   void subProcessError (QProcess *, QProcess::ProcessError);
   void statusUpdate () const;
   void update_watchdog_label ();
+  void invalidate_frequencies_filter ();
   void on_the_minute ();
   void add_child_to_event_filter (QObject *);
   void remove_child_from_event_filter (QObject *);

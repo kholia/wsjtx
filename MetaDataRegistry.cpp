@@ -52,9 +52,13 @@ void register_types ()
   
   item_editor_factory->registerEditor (qMetaTypeId<QDateTime> (), new QStandardItemEditorCreator<DateTimeEdit> ());
 
-  // Frequency list model
+  // V101 Frequency list model
+  qRegisterMetaTypeStreamOperators<FrequencyList_v2_101::Item> ("Item_v2_101");
+  QMetaType::registerConverter<FrequencyList_v2_101::Item, QString> (&FrequencyList_v2_101::Item::toString);
+  qRegisterMetaTypeStreamOperators<FrequencyList_v2_101::FrequencyItems> ("FrequencyItems_v2_101");
+
+  // V100 Frequency list model
   qRegisterMetaTypeStreamOperators<FrequencyList_v2::Item> ("Item_v2");
-  QMetaType::registerConverter<FrequencyList_v2::Item, QString> (&FrequencyList_v2::Item::toString);
   qRegisterMetaTypeStreamOperators<FrequencyList_v2::FrequencyItems> ("FrequencyItems_v2");
 
   // defunct old versions
