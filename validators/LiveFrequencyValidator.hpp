@@ -7,7 +7,7 @@
 #include "Radio.hpp"
 
 class Bands;
-class FrequencyList_v2;
+class FrequencyList_v2_101;
 class QComboBox;
 class QWidget;
 
@@ -35,7 +35,7 @@ public:
 
   LiveFrequencyValidator (QComboBox * combo_box // associated combo box
                           , Bands const * bands // bands model
-                          , FrequencyList_v2 const * frequencies // working frequencies model
+                          , FrequencyList_v2_101 const * frequencies // working frequencies model
                           , Frequency const * nominal_frequency
                           , QWidget * parent = nullptr);
 
@@ -46,7 +46,7 @@ public:
 
 private:
   Bands const * bands_;
-  FrequencyList_v2 const * frequencies_;
+  FrequencyList_v2_101 const * frequencies_;
   Frequency const * nominal_frequency_;
   QComboBox * combo_box_;
 };

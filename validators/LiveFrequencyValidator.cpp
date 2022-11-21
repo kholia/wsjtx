@@ -12,7 +12,7 @@
 
 LiveFrequencyValidator::LiveFrequencyValidator (QComboBox * combo_box
                                                 , Bands const * bands
-                                                , FrequencyList_v2 const * frequencies
+                                                , FrequencyList_v2_101 const * frequencies
                                                 , Frequency const * nominal_frequency
                                                 , QWidget * parent)
   : QRegExpValidator {

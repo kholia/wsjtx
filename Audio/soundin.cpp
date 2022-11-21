@@ -180,13 +180,15 @@ void SoundInput::reset (bool report_dropped_frames)
       if (cummulative_lost_usec_ != std::numeric_limits<qint64>::min () && report_dropped_frames)
         {
           auto lost_usec = elapsed_usecs - m_stream->processedUSecs () - cummulative_lost_usec_;
-          if (std::abs (lost_usec) > 48000 / 5)
-            {
-              LOG_WARN ("Detected dropped audio source samples: "
-                        << m_stream->format ().framesForDuration (lost_usec)
-                        << " (" << std::setprecision (4) << lost_usec / 1.e6 << " S)");
-            }
-          else if (std::abs (lost_usec) > 5 * 48000)
+      // disable log warnings on dropped audio for now, as detection is not reliable
+//          if (std::abs (lost_usec) > 48000 / 5)
+//            {
+//              LOG_WARN ("Detected dropped audio source samples: "
+//                        << m_stream->format ().framesForDuration (lost_usec)
+//                        << " (" << std::setprecision (4) << lost_usec / 1.e6 << " S)");
+//            }
+//          else if (std::abs (lost_usec) > 5 * 48000)
+          if (std::abs (lost_usec) > 5 * 48000)
             {
               LOG_ERROR ("Detected excessive dropped audio source samples: "
                         << m_stream->format ().framesForDuration (lost_usec)

@@ -15,7 +15,7 @@ BandComboBox::BandComboBox (QWidget * parent)
 // item text.
 void BandComboBox::showPopup ()
 {
-  auto minimum_width = view ()->sizeHintForColumn (FrequencyList_v2::frequency_mhz_column);
+  auto minimum_width = view ()->sizeHintForColumn (FrequencyList_v2_101::frequency_mhz_column);
   if (count () > maxVisibleItems ())
     {
       // for some as yet unknown reason, in FT8 mode the scrollbar

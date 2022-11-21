@@ -127,6 +127,7 @@ public slots:
   void doubleClickOnCall (Qt::KeyboardModifiers);
   void doubleClickOnCall2(Qt::KeyboardModifiers);
   void doubleClickOnFoxQueue(Qt::KeyboardModifiers);
+  void doubleClickOnFoxInProgress(Qt::KeyboardModifiers modifiers);
   void readFromStdout();
   void p1ReadFromStdout();
   void setXIT(int n, Frequency base = 0u);
@@ -476,7 +477,7 @@ private:
   qint32  m_k0;
   qint32  m_kdone;
   qint32  m_nPick;
-  FrequencyList_v2::const_iterator m_frequency_list_fcal_iter;
+  FrequencyList_v2_101::const_iterator m_frequency_list_fcal_iter;
   qint32  m_nTx73;
   qint32  m_UTCdisk;
   qint32  m_wait;
@@ -823,6 +824,7 @@ private:
   void subProcessError (QProcess *, QProcess::ProcessError);
   void statusUpdate () const;
   void update_watchdog_label ();
+  void invalidate_frequencies_filter ();
   void on_the_minute ();
   void add_child_to_event_filter (QObject *);
   void remove_child_from_event_filter (QObject *);
@@ -832,8 +834,10 @@ private:
   void displayWidgets(qint64 n);
   QChar current_submode () const; // returns QChar {0} if submode is not appropriate
   void write_transmit_entry (QString const& file_name);
-  void selectHound(QString t);
+  void selectHound(QString t, bool bTopQueue);
   void houndCallers();
+  void updateFoxQSOsInProgressDisplay();
+  void foxQueueTopCallCommand();
   void foxRxSequencer(QString msg, QString houndCall, QString rptRcvd);
   void foxTxSequencer();
   void foxGenWaveform(int i,QString fm);

@@ -11,11 +11,103 @@
                                                          
 Copyright 2001 - 2022 by Joe Taylor, K1JT, and the WSJT Development Team
 
+                      Release: WSJT-X 2.6.0-rc5
+                          November 29, 2022
+                      -------------------------
+
+WSJT-X 2.6.0 Release Candidate 5 brings a number of improvements as
+well as some bug fixes.
+
+In program WSJT-X:
+
+ - Better calibration for FST4/W SNR estimates.
+
+ - Improved FT8 decoding on crowded bands. 
+
+ - The Working frequency table now offers the following options:
+   - Better handling of more than one frequency per band.
+   - Set your preferred frequencies, WSJT-X always comes back to these
+     QRGs when changing band or mode.
+   - You can label your frequencies with discriptions (e.g. DXp AB0YXZ).
+   - Option to set Start and End Date/Time, so that the frequencies 
+     automatically appear and disappear. Useful for contest or 
+     DXpedition QRGs.
+   - Load a frequency table from a file to easily get all such data 
+     implemented.
+
+ - In Fox mode, there are now a few additional functions that allow 
+   operators to react even better to different QSO situations:
+   - A new two-column table in Tab 2 provides a better overview of 
+     the queue and of the callsigns with QSOs in progress.
+   - Fox operator can now change the ordering of callsigns in the
+     queue so that he can react if there is only a narrow time slot
+     for a particular QSO due to propagation.
+   - Fox now responds for another two cycles to stations whose 
+     report was not received, increasing the success rate for a
+     difficult QSO.
+
+ - Correct a flaw in Hound mode that sometimes prevented completion of
+   QSOs with non-standard calls.
+
+ - Improvements to EME Echo mode:
+   - New control "Avg" sets the number of Echo cycles to be averaged.
+   - New capability to display measurements of wideband noise power as
+     a function of time.  This can be useful for measuring Sun noise,
+     antenna tracking errors, and the like.
+   - Several minor bug fixes
+
+ - Correct a flaw that prevented WSJT-X from always initializing 
+   correctly when special operating activities were enabled.
+
+ - Correct a flaw that caused wrong Tx frequencies to be written to  
+   ALL.TXT.
+
+ - The GUI has been improved regarding some details. The controls now 
+   scale better at different font sizes and on different operating 
+   systems.
+
+ - When in Hound mode and click the "H" button again, the frequency 
+   is now kept. This gives the user the following two options to return 
+   to normal FT8 mode:
+    - Click the "H" button again. Then you will stay on the QRG.
+    - Click the "FT8" button (or use the Settings menu). It brings  
+      you back to the default FT8 QRG.
+
+ - Decodes flagged as 'a7' are now disabled when "Enable AP" is not
+   checked, and during the first period after a band change.
+
+ - The network address of the UDP server is now checked for errors  
+   before being accepted.
+
+ - Some improvements to the DX Lab Suite Commander interface. 
+
+ - Correct some possible flaws that could cause segfault errors in 
+   certain unusual situations.
+
+ - Warnings on dropped audio have been disabled for now, as detection  
+   has turned out to be not reliable enough.
+
+ - Correct a long-standing flaw which caused the "Transmit digital gain" 
+   overlay toappear somewhere on the screen.
+
+ - "Highlight DX Call" now also works when the other station is <...>.
+
+ - CQ messages without a grid are now sent to PSK reporter.
+
+ - Several other minor corrections (tool tips, etc.). 
+
+Program MAP65 (Windows only) includes several minor bug fixes and two 
+tentative new features:
+ - an aid for measuring antenna pointing errors
+ - an ability to read the file wsjtx.log (kept by WSJT-X) to recognize
+   EME contest dupes.
+
                       Release: WSJT-X 2.6.0-rc4
                           September 8, 2022
                       -------------------------
 
-WSJT-X 2.6.0 Release Candidate 4 provides further improvements to Echo mode, a new File menu item, and several bug fixes.
+WSJT-X 2.6.0 Release Candidate 4 provides further improvements to Echo 
+mode, a new File menu item, and several bug fixes.
 
  - New features and fixes for Echo mode
    - Created a new simulator echosim[.exe]
