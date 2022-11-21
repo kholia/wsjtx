@@ -20,9 +20,9 @@ well as some bug fixes.
 
 In program WSJT-X:
 
- - Our FT8 decoder has been further improved, resulting in more decodes 
-   especially on crowded bands, and in an improved sync  
-   for early decodes.
+ - Better calibration for FST4/W SNR estimates.
+
+ - Improved FT8 decoding on crowded bands. 
 
  - The Working frequency table now offers the following options:
    - Better handling of more than one frequency per band.
