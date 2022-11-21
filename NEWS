@@ -20,14 +20,14 @@ well as some bug fixes.
 
 In program WSJT-X:
 
- - Our FT8 decoder has been further improved, resulting in more decodes 
-   especially on crowded bands, and in an improved sync  
-   for early decodes.
+ - Better calibration for FST4/W SNR estimates.
+
+ - Improved FT8 decoding on crowded bands. 
 
  - The Working frequency table now offers the following options:
    - Better handling of more than one frequency per band.
-   - Set your prefered frequencies, wsjt-x_improved always comes back 
-     to these QRGs when changing band or mode.
+   - Set your prefered frequencies, WSJT-X always comes back to these
+     QRGs when changing band or mode.
    - You can label your frequencies with discriptions (e.g. DXp AB0YXZ).
    - Option to set Start and End Date/Time, so that the frequencies 
      automatically appear and disappear. Useful for contest or 
@@ -83,6 +83,8 @@ In program WSJT-X:
    overlay toappear somewhere on the screen.
 
  - Highlight DX Call now also works when the other station is <...>.
+
+ - CQ messages without a grid are now sent to PSK reporter.
 
  - Further improvements to Echo mode:
    - Some improvements on the Echo-mode averaging.
