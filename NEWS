@@ -22,6 +22,8 @@ In program WSJT-X:
 
  - Better calibration for FST4/W SNR estimates.
 
+ - Upload FST4W-900 spots to wsprnet with TR code 15 instead of 16.
+
  - Improved FT8 decoding on crowded bands. 
 
  - The Working frequency table now offers the following options:
