@@ -90,7 +90,7 @@ In program WSJT-X:
    has turned out to be not reliable enough.
 
  - Correct a long-standing flaw which caused the "Transmit digital gain" 
-   overlay toappear somewhere on the screen.
+   overlay to appear somewhere on the screen.
 
  - "Highlight DX Call" now also works when the other station is <...>.
 
@@ -103,6 +103,7 @@ tentative new features:
  - an aid for measuring antenna pointing errors
  - an ability to read the file wsjtx.log (kept by WSJT-X) to recognize
    EME contest dupes.
+
 
                       Release: WSJT-X 2.6.0-rc4
                           September 8, 2022
