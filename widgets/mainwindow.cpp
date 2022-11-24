@@ -9593,7 +9593,10 @@ list2Done:
           on_logQSOButton_clicked ();
           m_foxRateQueue.enqueue (now); //Add present time in seconds
                                         //to Rate queue.
-          QTimer::singleShot (1000, [=] {m_foxQSOinProgress.removeOne(hc1);}); //Remove from In Progress window
+          QTimer::singleShot (13000, [=] {
+              m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
+              updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
+          });
         }
       m_loggedByFox[hc1] += (m_lastBand + " ");
     }
