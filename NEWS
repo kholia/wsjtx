@@ -30,7 +30,7 @@ In program WSJT-X:
    - Better handling of more than one frequency per band.
    - Set your preferred frequencies, WSJT-X always comes back to these
      QRGs when changing band or mode.
-   - You can label your frequencies with discriptions (e.g. DXp AB0YXZ).
+   - You can label your frequencies with descriptions (e.g. DXp AB0YXZ).
    - Option to set Start and End Date/Time, so that the frequencies 
      automatically appear and disappear. Useful for contest or 
      DXpedition QRGs.
