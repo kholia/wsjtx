@@ -3957,7 +3957,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
           }
           if(SpecOp::FOX==m_specOp and decodedtext.string().contains(" DE ")) for_us=true; //Hound with compound callsign
-          if(SpecOp::FOX==m_specOp and for_us and (audioFreq<1000)) bDisplayRight=true;
+          if(SpecOp::FOX==m_specOp and for_us and decodedtext.string().contains(QRegularExpression{" R\\W\\d"})) bDisplayRight=true;
           if(SpecOp::FOX!=m_specOp and (for_us or (abs(audioFreq - m_wideGraph->rxFreq()) <= 10))) bDisplayRight=true;
         }
       } else {
@@ -9593,6 +9593,10 @@ list2Done:
           on_logQSOButton_clicked ();
           m_foxRateQueue.enqueue (now); //Add present time in seconds
                                         //to Rate queue.
+          QTimer::singleShot (13000, [=] {
+              m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
+              updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
+          });
         }
       m_loggedByFox[hc1] += (m_lastBand + " ");
     }

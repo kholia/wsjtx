@@ -22,13 +22,15 @@ In program WSJT-X:
 
  - Better calibration for FST4/W SNR estimates.
 
+ - Upload FST4W-900 spots to wsprnet with TR code 15 instead of 16.
+
  - Improved FT8 decoding on crowded bands. 
 
  - The Working frequency table now offers the following options:
    - Better handling of more than one frequency per band.
    - Set your preferred frequencies, WSJT-X always comes back to these
      QRGs when changing band or mode.
-   - You can label your frequencies with discriptions (e.g. DXp AB0YXZ).
+   - You can label your frequencies with descriptions (e.g. DXp AB0YXZ).
    - Option to set Start and End Date/Time, so that the frequencies 
      automatically appear and disappear. Useful for contest or 
      DXpedition QRGs.
@@ -88,7 +90,7 @@ In program WSJT-X:
    has turned out to be not reliable enough.
 
  - Correct a long-standing flaw which caused the "Transmit digital gain" 
-   overlay toappear somewhere on the screen.
+   overlay to appear somewhere on the screen.
 
  - "Highlight DX Call" now also works when the other station is <...>.
 
@@ -101,6 +103,7 @@ tentative new features:
  - an aid for measuring antenna pointing errors
  - an ability to read the file wsjtx.log (kept by WSJT-X) to recognize
    EME contest dupes.
+
 
                       Release: WSJT-X 2.6.0-rc4
                           September 8, 2022

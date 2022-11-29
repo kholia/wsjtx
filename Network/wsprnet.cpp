@@ -278,9 +278,10 @@ QString WSPRNet::encode_mode () const
   if (m_mode == "FST4W")
     {
       auto tr = static_cast<int> ((TR_period_ / 60.)+.5);
-      if (2 == tr || 15 == tr)
+//      if (2 == tr || 15 == tr)
+      if (2 == tr)
         {
-          tr += 1;              // distinguish from WSPR-2 and WSPR-15
+          tr += 1;              // distinguish from WSPR-2
         }
       return QString::number (tr);
     }
