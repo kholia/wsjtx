@@ -68,11 +68,11 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   endif
 !###
 !  do k=1,ncand
-!     freq=cand(k)%f+nkhz_center-48.0-1.27046
+!     freq=cand(k)%f+nkhz_center-48.0
 !     ipk=cand(k)%indx
-!     write(*,3010) nutc,k,db(cand(k)%snr),freq,cand(k)%xdt,    &
+!     write(71,3071) k,db(cand(k)%snr),freq,cand(k)%xdt,    &
 !          cand(k)%ipol,cand(k)%iflip,ipk,ldecoded(ipk)
-!3010 format('=a',i5.4,i5,f8.2,f10.3,f8.2,2i3,i6,L4)
+!3071 format(i3,f8.2,f10.3,f8.2,2i3,i6,L4)
 !  enddo
 !###
 

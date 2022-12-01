@@ -40,7 +40,7 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
   lagain=(nagain.ne.0)
   bVHF=.true.
   emedelay=2.5
-  ndepth=1
+  ndepth=3                       !Does this make it too slow?
   ntrperiod=60
 
   open(17,file=trim(temp_dir)//'/red.dat',status='unknown')
