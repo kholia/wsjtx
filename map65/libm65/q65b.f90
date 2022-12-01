@@ -181,8 +181,9 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      if(nutc.ne.nutc00 .or. msg0(1:28).ne.msg00 .or. freq1.ne.freq1_00) then
 ! Write to file map65_rx.log:
         ndecodes=ndecodes+1
-        write(21,1110)  freq1,ndf,xdt0,npol,nsnr0,nutc,msg0(1:28),cq0
-1110    format(f8.3,i5,f5.1,2i4,i5.4,2x,a28,': A',2x,a3)
+        write(21,1110)  freq1,ndf,xdt0,npol,nsnr0,nutc,msg0(1:28),   &
+             cmode(2:2),cq0
+1110    format(f8.3,i5,f5.1,2i4,i5.4,2x,a28,': ',a1,2x,a3)
         nutc00=nutc
         msg00=msg0(1:28)
         freq1_00=freq1
