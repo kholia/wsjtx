@@ -187,8 +187,6 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         nutc00=nutc
         msg00=msg0(1:28)
         freq1_00=freq1
-
-        ndop00=1575     !### TEMPORARY, for Nov 12 2022 at 0500 UTC ###
         frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
         fsked=frx - 0.001*ndop00/2.0 - 1.5
         write(12,1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
