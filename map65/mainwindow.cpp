@@ -1293,7 +1293,25 @@ void MainWindow::decode()                                       //decode()
   datcom_.mousefqso=m_wide_graph_window->QSOfreq();
   datcom_.ndepth=m_ndepth;
   datcom_.ndiskdat=0;
-  if(m_diskData) datcom_.ndiskdat=1;
+  if(m_diskData) {
+    datcom_.ndiskdat=1;
+    int i0=m_path.indexOf(".tf2");
+    if(i0<0) i0=m_path.indexOf(".iq");
+    if(i0>0) {
+      // Compute self Doppler using the filename for Date and Time
+      int nyear=m_path.mid(i0-11,2).toInt()+2000;
+      int month=m_path.mid(i0-9,2).toInt();
+      int nday=m_path.mid(i0-7,2).toInt();
+      int nhr=m_path.mid(i0-4,2).toInt();
+      int nmin=m_path.mid(i0-2,2).toInt();
+      double uth=nhr + nmin/60.0;
+      int nfreq=(int)datcom_.fcenter;
+      int ndop00;
+
+      astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
+      datcom_.nfast=ndop00;               //Send self Doppler to decoder, via datcom
+    }
+  }
   datcom_.neme=0;
   if(ui->actionOnly_EME_calls->isChecked()) datcom_.neme=1;
 
