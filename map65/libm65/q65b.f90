@@ -187,6 +187,10 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         nutc00=nutc
         msg00=msg0(1:28)
         freq1_00=freq1
+
+        f1=0.001*k0*df+nkhz_center-48.0+1.0
+        write(12,1120) nutc,f1,xdt0,nsnr0,trim(msg0)
+1120    format(i4.4,f9.3,f7.2,i5,2x,a)
      endif
   endif
 

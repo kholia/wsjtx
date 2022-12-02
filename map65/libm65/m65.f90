@@ -7,9 +7,9 @@ program m65
 !
 !   10  binary input data, *.tf2 files
 !   11  prefixes.txt
-!   12
+!   12  wb_w65.txt
 !   13  map65.log
-!   14
+!   14  
 !   15
 !   16  tquick log
 !   17  saved *.tf2 files

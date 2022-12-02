@@ -41,6 +41,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   data nfile/0/,nutc0/-999/,nid/0/,ip000/1/,ip001/1/,mousefqso0/-999/
   save
 
+  rewind 12
   ndecodes=0
 
 ! Clean start for Q65 at early decode
@@ -520,6 +521,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   ndecdone=2
 
 900 close(23)
+  call flush(12)
   ndphi=0
   mcall3b=mcall3a
 
