@@ -41,7 +41,7 @@ program m65
   common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,                &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
-       nfast,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
+       ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
   common/early/nhsym1,nhsym2,ldecoded(32768)
 
   nargs=iargc()

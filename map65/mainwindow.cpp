@@ -1322,7 +1322,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.nxpol=0;
   if(m_xpol) datcom_.nxpol=1;
   datcom_.nmode=10*m_modeQ65 + m_modeJT65;
-  datcom_.nfast=1;                               //No longer used
+//  datcom_.nfast=1;                               //No longer used
   datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
 

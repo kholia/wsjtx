@@ -2,7 +2,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,             &
      nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                    &
      neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,                &
-     ndiskdat,nxpol,nmode)
+     ndiskdat,nxpol,nmode,ndop00)
 
 !  Processes timf2 data from Linrad to find and decode JT65 signals.
 
@@ -366,7 +366,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
               call timer('q65b    ',0)
               call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,   &
                    ntol,xpol,mycall,mygrid, hiscall,hisgrid,mode_q65,f0,fqso, &
-                   newdat,nagain,max_drift,nhsym,idec)
+                   newdat,nagain,max_drift,nhsym,ndop00,idec)
               call timer('q65b    ',1)
               if(idec.ge.0) candec(icand)=.true.
            enddo
@@ -377,7 +377,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
               call timer('q65b    ',0)
               call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,   &
                    ntol,xpol,mycall,mygrid,hiscall,hisgrid,mode_q65,f0,fqso,  &
-                   newdat,nagain,max_drift,nhsym,idec)
+                   newdat,nagain,max_drift,nhsym,ndop00,idec)
               call timer('q65b    ',1)
            endif
         endif
@@ -421,7 +421,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            call timer('q65b    ',0)
            call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
                 xpol,mycall,mygrid,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
-                nagain,max_drift,nhsym,idec)
+                nagain,max_drift,nhsym,ndop00,idec)
            call timer('q65b    ',1)
            if(idec.ge.0) candec(icand)=.true.
         enddo  ! icand

@@ -12,7 +12,7 @@ subroutine decode0(dd,ss,savg,nstandalone)
   common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,                &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
-       nfast,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
+       ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
   common/early/nhsym1,nhsym2,ldecoded(32768)
   common/decodes/ndecodes
   data neme0/-99/,mcall3b/1/
@@ -56,7 +56,7 @@ subroutine decode0(dd,ss,savg,nstandalone)
        mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,          &
        nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                 &
        neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,             &
-       ndiskdat,nxpol,nmode)
+       ndiskdat,nxpol,nmode,ndop00)
   call timer('map65a  ',1)
   call timer('decode0 ',1)
 

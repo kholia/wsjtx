@@ -1,6 +1,6 @@
 subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      mycall0,mygrid,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
-     max_drift,nhsym,idec)
+     max_drift,nhsym,ndop00,idec)
 
 ! This routine provides an interface between MAP65 and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the MAP65 GUI.
@@ -188,9 +188,11 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         msg00=msg0(1:28)
         freq1_00=freq1
 
-        f1=0.001*k0*df+nkhz_center-48.0+1.0
-        write(12,1120) nutc,f1,xdt0,nsnr0,trim(msg0)
-1120    format(i4.4,f9.3,f7.2,i5,2x,a)
+        ndop00=1575     !### TEMPORARY, for Nov 12 2022 at 0500 UTC ###
+        frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
+        fsked=frx - 0.001*ndop00/2.0 - 1.5
+        write(12,1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
+1120    format(i4.4,f9.3,f7.2,i5,2x,a,i6)
      endif
   endif
 
