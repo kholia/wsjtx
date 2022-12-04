@@ -94,8 +94,6 @@ MainWindow::MainWindow(QWidget *parent) :
   txMsgButtonGroup->addButton(ui->txrb5,5);
   txMsgButtonGroup->addButton(ui->txrb6,6);
   connect(txMsgButtonGroup,SIGNAL(buttonClicked(int)),SLOT(set_ntx(int)));
-  connect(ui->decodedTextBrowser,SIGNAL(selectCallsign(bool)),this,
-          SLOT(selectCall2(bool)));
 
   setWindowTitle (program_title ());
 
@@ -217,8 +215,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_pbAutoOn_style="QPushButton{background-color: red; \
       border-style: outset; border-width: 1px; border-radius: 5px; \
       border-color: black; min-width: 5em; padding: 3px;}";
-
-  genStdMsgs("");
 
   on_actionAstro_Data_triggered();           //Create the other windows
   on_actionWide_Waterfall_triggered();
@@ -840,17 +836,6 @@ void MainWindow::keyPressEvent( QKeyEvent *e )                //keyPressEvent
       m_wide_graph_window->setDF(n0+n);
     }
     break;
-  case Qt::Key_G:
-    if(e->modifiers() & Qt::AltModifier) {
-      genStdMsgs("");
-    }
-    break;
-  case Qt::Key_L:
-    if(e->modifiers() & Qt::ControlModifier) {
-      lookup();
-      genStdMsgs("");
-      break;
-    }
   }
 }
 
@@ -1510,53 +1495,6 @@ void MainWindow::guiUpdate()
     }
   }
 
-// Calculate Tx waveform when needed
-  if((iptt==1 && iptt0==0) || m_restart) {
-    char message[23];
-    QByteArray ba;
-    if(m_ntx == 1) ba=ui->tx1->text().toLocal8Bit();
-    if(m_ntx == 2) ba=ui->tx2->text().toLocal8Bit();
-    if(m_ntx == 3) ba=ui->tx3->text().toLocal8Bit();
-    if(m_ntx == 4) ba=ui->tx4->text().toLocal8Bit();
-    if(m_ntx == 5) ba=ui->tx5->text().toLocal8Bit();
-    if(m_ntx == 6) ba=ui->tx6->text().toLocal8Bit();
-
-    ba2msg(ba,message);
-    int len1=22;
-    int mode65=m_mode65;
-    int ntxFreq=1000;
-    double samfac=1.0;
-
-    if(m_modeTx=="JT65") {
-      gen65_(message,&mode65,&samfac,&nsendingsh,msgsent,iwave,
-             &nwave,len1,len1);
-    } else {
-      if(m_modeQ65==5) ntxFreq=700;
-      gen_q65_wave_(message,&ntxFreq,&m_modeQ65,msgsent,iwave,
-                 &nwave,len1,len1);
-    }
-    msgsent[22]=0;
-
-    if(m_restart) {
-      QString t="  Tx " + m_modeTx + "   ";
-      t=t.left(11);
-      QFile f("map65_tx.log");
-      f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
-      QTextStream out(&f);
-      out << QDateTime::currentDateTimeUtc().toString("yyyy-MMM-dd hh:mm")
-          << t << QString::fromLatin1(msgsent)
-#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
-          << Qt::endl
-#else
-          << endl
-#endif
-        ;
-      f.close();
-    }
-
-    m_restart=false;
-  }
-
 // If PTT was just raised, start a countdown for raising TxOK:
   if(iptt==1 && iptt0==0) nc1=-9;    // TxDelay = 0.8 s
   if(nc1 <= 0) nc1++;
@@ -1761,94 +1699,6 @@ void MainWindow::on_txb6_clicked()                                //txb6
   m_restart=true;
 }
 
-void MainWindow::selectCall2(bool ctrl)                         //selectCall2
-{
-  QString t = ui->decodedTextBrowser->toPlainText();   //Full contents
-  int i=ui->decodedTextBrowser->textCursor().position();
-  int i0=t.lastIndexOf(" ",i);
-  int i1=t.indexOf(" ",i);
-  QString hiscall=t.mid(i0+1,i1-i0-1);
-  if(hiscall!="") {
-    int n=hiscall.length();
-    if( n>2 and n<13 and hiscall.toDouble()==0.0 and \
-        hiscall.mid(2,-1).toInt()==0) doubleClickOnCall(hiscall, ctrl);
-  }
-}
-                                                          //doubleClickOnCall
-void MainWindow::doubleClickOnCall(QString hiscall, bool ctrl)
-{
-  if(m_worked[hiscall]) {
-    msgBox("Possible dupe: " + hiscall + " already in log.");
-  }
-  ui->dxCallEntry->setText(hiscall);
-  QString t = ui->decodedTextBrowser->toPlainText();   //Full contents
-  int i2=ui->decodedTextBrowser->textCursor().position();
-  QString t1 = t.mid(0,i2);              //contents up to text cursor
-  int i1=t1.lastIndexOf("\n") + 1;
-  QString t2 = t1.mid(i1,i2-i1);         //selected line
-  int n = 60*t2.mid(14,2).toInt() + t2.mid(16,2).toInt();
-  m_txFirst = ((n%2) == 1);
-  ui->txFirstCheckBox->setChecked(m_txFirst);
-  if((t2.indexOf("#")>0) and m_modeTx!="JT65") on_pbTxMode_clicked();
-  if((t2.indexOf(":")>0) and m_modeTx!="Q65") on_pbTxMode_clicked();
-
-  QString t3=t.mid(i1);
-  int i3=t3.indexOf("\n");
-  if(i3<0) i3=t3.length();
-  t3=t3.left(i3);
-  auto const& words = t3.mid(30).split(' ', SkipEmptyParts);
-  QString grid=words[2];
-  if(isGrid4(grid) and hiscall==words[1]) {
-    ui->dxGridEntry->setText(grid);
-  } else {
-    lookup();
-  }
-
-  QString rpt="";
-  if(ctrl or m_modeTx=="Q65") rpt=t2.mid(25,3);
-  genStdMsgs(rpt);
-  if(t2.indexOf(m_myCall)>0) {
-    m_ntx=2;
-    ui->txrb2->setChecked(true);
-  } else {
-    m_ntx=1;
-    ui->txrb1->setChecked(true);
-  }
-}
-
-void MainWindow::genStdMsgs(QString rpt)                       //genStdMsgs()
-{
-  if(rpt.left(2)==" -") rpt="-0"+rpt.mid(2,1);
-  if(rpt.left(2)==" +") rpt="+0"+rpt.mid(2,1);
-  QString hiscall=ui->dxCallEntry->text().toUpper().trimmed();
-  ui->dxCallEntry->setText(hiscall);
-  QString t0=hiscall + " " + m_myCall + " ";
-  QString t=t0;
-  if(t0.indexOf("/")<0) t=t0 + m_myGrid.mid(0,4);
-  msgtype(t, ui->tx1);
-  if(rpt == "" and m_modeTx=="Q65") rpt="-24";
-  if(rpt == "" and m_modeTx=="JT65") {
-    t=t+" OOO";
-    msgtype(t, ui->tx2);
-    msgtype("RO", ui->tx3);
-    msgtype("RRR", ui->tx4);
-    msgtype("73", ui->tx5);
-  } else {
-    t=t0 + rpt;
-    msgtype(t, ui->tx2);
-    t=t0 + "R" + rpt;
-    msgtype(t, ui->tx3);
-    t=t0 + "RRR";
-    msgtype(t, ui->tx4);
-    t=t0 + "73";
-    msgtype(t, ui->tx5);
-  }
-  t="CQ " + m_myCall + " " + m_myGrid.mid(0,4);
-  msgtype(t, ui->tx6);
-  m_ntx=1;
-  ui->txrb1->setChecked(true);
-}
-
 void MainWindow::lookup()                                       //lookup()
 {
   QString hiscall=ui->dxCallEntry->text().toUpper().trimmed();
@@ -2021,42 +1871,6 @@ void MainWindow::msgtype(QString t, QLineEdit* tx)                //msgtype()
   }
 }
 
-void MainWindow::on_tx1_editingFinished()                       //tx1 edited
-{
-  QString t=ui->tx1->text();
-  msgtype(t, ui->tx1);
-}
-
-void MainWindow::on_tx2_editingFinished()                       //tx2 edited
-{
-  QString t=ui->tx2->text();
-  msgtype(t, ui->tx2);
-}
-
-void MainWindow::on_tx3_editingFinished()                       //tx3 edited
-{
-  QString t=ui->tx3->text();
-  msgtype(t, ui->tx3);
-}
-
-void MainWindow::on_tx4_editingFinished()                       //tx4 edited
-{
-  QString t=ui->tx4->text();
-  msgtype(t, ui->tx4);
-}
-
-void MainWindow::on_tx5_editingFinished()                       //tx5 edited
-{
-  QString t=ui->tx5->text();
-  msgtype(t, ui->tx5);
-}
-
-void MainWindow::on_tx6_editingFinished()                       //tx6 edited
-{
-  QString t=ui->tx6->text();
-  msgtype(t, ui->tx6);
-}
-
 void MainWindow::on_setTxFreqButton_clicked()                  //Set Tx Freq
 {
   m_setftx=1;
@@ -2083,7 +1897,6 @@ void MainWindow::on_dxGridEntry_textChanged(const QString &t) //dxGrid changed
 
 void MainWindow::on_genStdMsgsPushButton_clicked()         //genStdMsgs button
 {
-  genStdMsgs("");
 }
 
 void MainWindow::on_logQSOButton_clicked()                 //Log QSO button

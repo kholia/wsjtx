@@ -48,7 +48,6 @@ public slots:
   void m65_error (QProcess::ProcessError);
   void editor_error();
   void guiUpdate();
-  void doubleClickOnCall(QString hiscall, bool ctrl);
 
 private:
   virtual void keyPressEvent (QKeyEvent *) override;
@@ -56,12 +55,6 @@ private:
   virtual void closeEvent (QCloseEvent *) override;
 
 private slots:
-  void on_tx1_editingFinished();
-  void on_tx2_editingFinished();
-  void on_tx3_editingFinished();
-  void on_tx4_editingFinished();
-  void on_tx5_editingFinished();
-  void on_tx6_editingFinished();
   void on_actionDeviceSetup_triggered();
   void on_monitorButton_clicked();
   void on_actionExit_triggered();
@@ -112,7 +105,6 @@ private slots:
   void on_setTxFreqButton_clicked();
   void on_dxCallEntry_textChanged(const QString &arg1);
   void on_dxGridEntry_textChanged(const QString &arg1);
-  void selectCall2(bool ctrl);
   void on_genStdMsgsPushButton_clicked();
   void bumpDF(int n);
   void on_logQSOButton_clicked();
@@ -277,7 +269,6 @@ private:
   void createStatusBar();
   void updateStatusBar();
   void msgBox(QString t);
-  void genStdMsgs(QString rpt);
   void lookup();
   void ba2msg(QByteArray ba, char* message);
   void msgtype(QString t, QLineEdit* tx);
