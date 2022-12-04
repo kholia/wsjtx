@@ -636,19 +636,8 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-  if(ihsym<280) m_RxState=0;
-
-  if(m_RxState==0 and ihsym>=280 and !m_diskData) {   //Early decode, t=52 s
-    m_RxState=1;
-    datcom_.newdat=1;
-    datcom_.nagain=0;
-    datcom_.nhsym=ihsym;
-    QDateTime t = QDateTime::currentDateTimeUtc();
-    m_dateTime=t.toString("yyyy-MMM-dd hh:mm");
-    decode();                                           //Start the decoder
-  }
-
-  if(m_RxState<=1 and ihsym>=302) {   //Decode at t=56 s (for Q65 and data from disk)
+    */
+    if(ihsym>=302) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
     datcom_.newdat=1;
     datcom_.nagain=0;
@@ -1446,20 +1435,17 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
     read_log();
 
-    if(t.indexOf("!") >= 0) {
+    if(t.indexOf("@") >= 0) {
       int n=t.length();
       int m=2;
 #ifdef WIN32
       m=3;
 #endif
-      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m));
+      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(q,n-m-4).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
       m_messagesText="";
       m_bandmapText="";
-    }
-
-    if(t.indexOf("@") >= 0) {
       m_messagesText += t.mid(1);
       m_widebandDecode=true;
     }
