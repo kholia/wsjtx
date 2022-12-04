@@ -27,7 +27,6 @@ namespace Ui {
 class QTimer;
 class Astro;
 class BandMap;
-class Messages;
 class WideGraph;
 
 class MainWindow : public QMainWindow
@@ -51,7 +50,6 @@ public slots:
   void editor_error();
   void guiUpdate();
   void doubleClickOnCall(QString hiscall, bool ctrl);
-  void doubleClickOnMessages(QString hiscall, QString t2, bool ctrl);
 
 private:
   virtual void keyPressEvent (QKeyEvent *) override;
@@ -83,7 +81,6 @@ private slots:
   void on_actionQ65_Sensitivity_in_MAP65_3_0_triggered();
   void on_actionWide_Waterfall_triggered();
   void on_actionBand_Map_triggered();
-  void on_actionMessages_triggered();
   void on_actionOpen_triggered();
   void on_actionOpen_next_in_directory_triggered();
   void on_actionDecode_remaining_files_in_directory_triggered();
@@ -152,7 +149,6 @@ private:
   QString m_settings_filename;
   QScopedPointer<Astro> m_astro_window;
   QScopedPointer<BandMap> m_band_map_window;
-  QScopedPointer<Messages> m_messages_window;
   QScopedPointer<WideGraph> m_wide_graph_window;
   QPointer<QTimer> m_gui_timer;
   qint64  m_msErase;
@@ -256,7 +252,6 @@ private:
   QString m_pbdecoding_style1;
   QString m_pbmonitor_style;
   QString m_pbAutoOn_style;
-  QString m_messagesText;
   QString m_bandmapText;
   QString m_myCall;
   QString m_myGrid;

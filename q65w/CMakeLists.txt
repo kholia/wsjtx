@@ -8,7 +8,6 @@ set (q65w_CXXSRCS
   getfile.cpp
   main.cpp
   mainwindow.cpp
-  messages.cpp
   meterwidget.cpp
   plotter.cpp
   set570.cpp
@@ -29,7 +28,6 @@ set (q65w_UISRCS
   bandmap.ui
   devsetup.ui
   mainwindow.ui
-  messages.ui
   txtune.ui
   widegraph.ui
 )

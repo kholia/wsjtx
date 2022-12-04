@@ -15,7 +15,6 @@
 #include "about.h"
 #include "astro.h"
 #include "widegraph.h"
-#include "messages.h"
 #include "bandmap.h"
 #include "txtune.h"
 #include "sleep.h"
@@ -48,7 +47,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_settings_filename {m_appDir + "/map65.ini"},
   m_astro_window {new Astro {m_settings_filename}},
   m_band_map_window {new BandMap {m_settings_filename}},
-//  m_messages_window {new Messages {m_settings_filename}},
   m_wide_graph_window {new WideGraph {m_settings_filename}},
   m_gui_timer {new QTimer {this}}
 {
@@ -226,9 +224,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   on_actionAstro_Data_triggered();           //Create the other windows
   on_actionWide_Waterfall_triggered();
-//  on_actionMessages_triggered();
   on_actionBand_Map_triggered();
-//  if (m_messages_window) m_messages_window->setColors(m_colors);
   m_band_map_window->setColors(m_colors);
   if (m_astro_window) m_astro_window->setFontSize (m_astroFont);
 
@@ -301,7 +297,6 @@ MainWindow::MainWindow(QWidget *parent) :
   if(ui->actionAFMHot->isChecked()) on_actionAFMHot_triggered();
   if(ui->actionBlue->isChecked()) on_actionBlue_triggered();
 
-//  connect (m_messages_window.get (), &Messages::click2OnCallsign, this, &MainWindow::doubleClickOnMessages);
   connect (m_wide_graph_window.get (), &WideGraph::freezeDecode2, this, &MainWindow::freezeDecode);
   connect (m_wide_graph_window.get (), &WideGraph::f11f12, this, &MainWindow::bumpDF);
 
@@ -728,7 +723,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_initIQplus=dlg.m_initIQplus;
     m_bIQxt=dlg.m_bIQxt;
     m_colors=dlg.m_colors;
-//    m_messages_window->setColors(m_colors);
     m_band_map_window->setColors(m_colors);
     m_cal570=dlg.m_cal570;
     m_TxOffset=dlg.m_TxOffset;
@@ -976,7 +970,6 @@ void MainWindow::closeEvent (QCloseEvent * e)
   mem_m65.detach();
   if (m_astro_window) m_astro_window->close ();
   if (m_band_map_window) m_band_map_window->close ();
-//  if (m_messages_window) m_messages_window->close ();
   if (m_wide_graph_window) m_wide_graph_window->close ();
   QMainWindow::closeEvent (e);
 }
@@ -1041,11 +1034,6 @@ void MainWindow::on_actionWide_Waterfall_triggered()      //Display Waterfalls
 void MainWindow::on_actionBand_Map_triggered()              //Display BandMap
 {
   m_band_map_window->show ();
-}
-
-void MainWindow::on_actionMessages_triggered()              //Display Messages
-{
-//  m_messages_window->show();
 }
 
 void MainWindow::on_actionOpen_triggered()                     //Open File
@@ -1167,7 +1155,6 @@ void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
 void MainWindow::on_actionErase_Band_Map_and_Messages_triggered()
 {
   m_band_map_window->setText("");
-//  m_messages_window->setText("","");
   m_map65RxLog |= 4;
 }
 
@@ -1415,7 +1402,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
     if((t.indexOf("<EarlyFinished>") >= 0) or (t.indexOf("<DecodeFinished>") >= 0)) {
       if(m_widebandDecode) {
-//        m_messages_window->setText(m_messagesText,m_bandmapText);
         m_band_map_window->setText(m_bandmapText);
         m_widebandDecode=false;
       }
@@ -1443,9 +1429,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m-4).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
-//      m_messagesText="";
       m_bandmapText="";
-//      m_messagesText += t.mid(1);
       m_widebandDecode=true;
     }
 
@@ -1474,7 +1458,6 @@ void MainWindow::on_EraseButton_clicked()
   qint64 ms=QDateTime::currentMSecsSinceEpoch();
   ui->decodedTextBrowser->clear();
   if((ms-m_msErase)<500) {
-//    on_actionErase_Band_Map_and_Messages_triggered();
   }
   m_msErase=ms;
 }
@@ -1844,41 +1827,6 @@ void MainWindow::doubleClickOnCall(QString hiscall, bool ctrl)
   QString rpt="";
   if(ctrl or m_modeTx=="Q65") rpt=t2.mid(25,3);
   genStdMsgs(rpt);
-  if(t2.indexOf(m_myCall)>0) {
-    m_ntx=2;
-    ui->txrb2->setChecked(true);
-  } else {
-    m_ntx=1;
-    ui->txrb1->setChecked(true);
-  }
-}
-                                                      //doubleClickOnMessages
-void MainWindow::doubleClickOnMessages(QString hiscall, QString t2, bool ctrl)
-{
-  if(hiscall.length()<3) return;
-  if(m_worked[hiscall]) {
-    msgBox("Possible dupe: " + hiscall + " already in log.");
-  }
-  ui->dxCallEntry->setText(hiscall);
-  int n = 60*t2.mid(13,2).toInt() + t2.mid(15,2).toInt();
-  m_txFirst = ((n%2) == 1);
-  ui->txFirstCheckBox->setChecked(m_txFirst);
-
-  if((t2.indexOf(":")<0) and m_modeTx!="JT65") on_pbTxMode_clicked();
-  if((t2.indexOf(":")>0) and m_modeTx!="Q65") on_pbTxMode_clicked();
-
-  auto const& words = t2.mid(25).split(' ', SkipEmptyParts);
-  QString grid=words[2];
-  if(isGrid4(grid) and hiscall==words[1]) {
-    ui->dxGridEntry->setText(grid);
-  } else {
-    lookup();
-  }
-
-  QString rpt="";
-  if(ctrl or m_modeTx=="Q65") rpt=t2.mid(20,3);
-  genStdMsgs(rpt);
-
   if(t2.indexOf(m_myCall)>0) {
     m_ntx=2;
     ui->txrb2->setChecked(true);
