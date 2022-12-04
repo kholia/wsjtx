@@ -46,7 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_appDir {QApplication::applicationDirPath ()},
   m_settings_filename {m_appDir + "/map65.ini"},
   m_astro_window {new Astro {m_settings_filename}},
-  m_band_map_window {new BandMap {m_settings_filename}},
   m_wide_graph_window {new WideGraph {m_settings_filename}},
   m_gui_timer {new QTimer {this}}
 {
@@ -224,8 +223,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   on_actionAstro_Data_triggered();           //Create the other windows
   on_actionWide_Waterfall_triggered();
-  on_actionBand_Map_triggered();
-  m_band_map_window->setColors(m_colors);
+//  on_actionBand_Map_triggered();
+//  m_band_map_window->setColors(m_colors);
   if (m_astro_window) m_astro_window->setFontSize (m_astroFont);
 
   if(m_modeQ65==0) on_actionNoQ65_triggered();
@@ -723,7 +722,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_initIQplus=dlg.m_initIQplus;
     m_bIQxt=dlg.m_bIQxt;
     m_colors=dlg.m_colors;
-    m_band_map_window->setColors(m_colors);
+//    m_band_map_window->setColors(m_colors);
     m_cal570=dlg.m_cal570;
     m_TxOffset=dlg.m_TxOffset;
     m_mult570Tx=dlg.m_mult570Tx;
@@ -969,7 +968,7 @@ void MainWindow::closeEvent (QCloseEvent * e)
   quitFile.remove();
   mem_m65.detach();
   if (m_astro_window) m_astro_window->close ();
-  if (m_band_map_window) m_band_map_window->close ();
+//  if (m_band_map_window) m_band_map_window->close ();
   if (m_wide_graph_window) m_wide_graph_window->close ();
   QMainWindow::closeEvent (e);
 }
@@ -1033,7 +1032,7 @@ void MainWindow::on_actionWide_Waterfall_triggered()      //Display Waterfalls
 
 void MainWindow::on_actionBand_Map_triggered()              //Display BandMap
 {
-  m_band_map_window->show ();
+//  m_band_map_window->show ();
 }
 
 void MainWindow::on_actionOpen_triggered()                     //Open File
@@ -1154,7 +1153,7 @@ void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
                                           //Clear BandMap and Messages windows
 void MainWindow::on_actionErase_Band_Map_and_Messages_triggered()
 {
-  m_band_map_window->setText("");
+//  m_band_map_window->setText("");
   m_map65RxLog |= 4;
 }
 
@@ -1402,7 +1401,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
     if((t.indexOf("<EarlyFinished>") >= 0) or (t.indexOf("<DecodeFinished>") >= 0)) {
       if(m_widebandDecode) {
-        m_band_map_window->setText(m_bandmapText);
+//        m_band_map_window->setText(m_bandmapText);
         m_widebandDecode=false;
       }
       QFile lockFile(m_appDir + "/.lock");
@@ -1429,7 +1428,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m-4).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
-      m_bandmapText="";
+//      m_bandmapText="";
       m_widebandDecode=true;
     }
 
@@ -1443,7 +1442,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         } else {
           q=q.mid(1,4) + " *" + q.mid(5);
         }
-        m_bandmapText += q;
+//        m_bandmapText += q;
       }
     }
     if(t.indexOf("=") >= 0) {
