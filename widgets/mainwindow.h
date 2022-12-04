@@ -373,6 +373,7 @@ private:
   void setColorHighlighting();
   void chkFT4();
   bool elide_tx1_not_allowed () const;
+  void readWidebandDecodes();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
@@ -700,6 +701,15 @@ private:
     qint32 points;
   };
   QMap<QString,ActiveCall> m_activeCall;   //Key = callsign, value = grid4, az, points for ARRL_DIGI
+
+  struct EMECall
+  {
+    QString grid4;
+    double fsked;
+    qint32 t;
+    bool worked;
+  };
+  QMap<QString,EMECall> m_EMECall;
 
   struct RecentCall
   {

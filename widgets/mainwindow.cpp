@@ -4781,6 +4781,14 @@ void MainWindow::guiUpdate()
   if(nsec != m_sec0) {
 //    qDebug() << "AAA" << nsec << int(m_specOp) << ui->labDXped->text();
 
+    if(m_mode=="Q65") {
+      QFileInfo fi(m_appDir+"/wb_q65.txt");
+      QDateTime fileTime=fi.lastModified();
+      QDateTime now = QDateTime::currentDateTimeUtc ();
+      int age=fileTime.msecsTo(now)/1000;
+      if(age==1) readWidebandDecodes();
+    }
+
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
     if( SpecOp::HOUND == m_specOp ) {
@@ -9150,6 +9158,63 @@ void MainWindow::write_transmit_entry (QString const& file_name)
           MessageBox::warning_message (this, tr ("Log File Error"), message);
         });
     }
+}
+
+void MainWindow::readWidebandDecodes()
+{
+// Update "m_wEMECall" by reading wb_dec.txt
+  int nhr=0;
+  int nmin=0;
+  QFile f(m_appDir+"/wb_q65.txt");
+  f.open(QIODevice::ReadOnly);
+  if(f.isOpen()) {
+    QTextStream in(&f);
+    QString line,callsign;
+    for(int i=0; i<99999; i++) {
+      line=in.readLine();
+      if(line.length()<=0) break;
+      nhr=line.mid(0,2).toInt();
+      nmin=line.mid(2,2).toInt();
+      double fsked=line.mid(4,9).toDouble();
+      QString msg=line.mid(27,-1);
+      int i1=msg.indexOf(" ");
+      int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
+      QString call=msg.mid(i1+1,i2-i1);
+      QString w3=msg.mid(i2+1,-1);
+      m_EMECall[call].fsked=fsked;
+      m_EMECall[call].t=60*nhr + nmin;
+      m_EMECall[call].worked=false;
+      if(w3.contains(grid_regexp)) m_EMECall[call].grid4=w3;
+    }
+    f.close();
+
+    /*
+     if(m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();
+
+     if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(t);
+     QString t1;
+     if(!bReady) t1 = t1.asprintf("  %3d  %+2.2d  %4d  %1d %2d %4d",az,snr,freq,itx,age,points);
+     */
+
+    QMap<QString,EMECall>::iterator i;
+    QString t="";
+    QString t1;
+    for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
+      int age=60*nhr + nmin - (i->t);
+      if(age<0) age += 1440;
+      if(i->worked) {
+        t1=t1.asprintf("%5.1f   %8s %4d\n",i->fsked,i.key().toLatin1().constData(),age);
+      } else {
+        t1=t1.asprintf("%5.1f * %8s %4d\n",i->fsked,i.key().toLatin1().constData(),age);
+      }
+      t+=t1;
+    }
+    qDebug() << "bb" << t;
+    if(m_ActiveStationsWidget != NULL) {
+      m_ActiveStationsWidget->erase();
+      m_ActiveStationsWidget->displayRecentStations(t);
+    }
+  }
 }
 
 // -------------------------- Code for FT8 DXpedition Mode ---------------------------

@@ -70,6 +70,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
             &azmoondx, &elmoondx, &ntsky, &ndop, &ndop00,&ramoon, &decmoon,
             &dgrd, &poloffset, &xnr, 6, 6);
 
+  datcom_.nfast=ndop00;               //Send self Doppler to decoder, via datcom
   sprintf(cc,
           "Az:    %6.1f\n"
           "El:    %6.1f\n"

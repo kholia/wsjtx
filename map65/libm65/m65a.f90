@@ -82,7 +82,7 @@ subroutine m65c(dd,ss,savg,nparams0)
   common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,              &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,               &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,             &
-       nfast,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,       &
+       ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,       &
        datetime,junk1,junk2
   common/early/nhsym1,nhsym2,ldecoded(32768)
   equivalence (nparams,fcenter)
