@@ -1,7 +1,6 @@
 set (q65w_CXXSRCS
   about.cpp
   astro.cpp
-  bandmap.cpp
   devsetup.cpp
   displaytext.cpp
   getdev.cpp
@@ -25,7 +24,6 @@ endif (WIN32)
 set (q65w_UISRCS
   about.ui
   astro.ui
-  bandmap.ui
   devsetup.ui
   mainwindow.ui
   txtune.ui
