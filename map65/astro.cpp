@@ -63,7 +63,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
   int isec=sec;
   double uth=nhr + nmin/60.0 + sec/3600.0;
   int nfreq=(int)datcom_.fcenter;
-  if(nfreq<10 or nfreq > 50000) nfreq=144;
+//  if(nfreq<10 or nfreq > 50000) nfreq=144;
 
   astrosub_(&nyear, &month, &nday, &uth, &nfreq, mygrid.toLatin1(),
             hisgrid.toLatin1(), &azsun, &elsun, &azmoon, &elmoon,
