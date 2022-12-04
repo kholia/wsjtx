@@ -26,7 +26,6 @@ namespace Ui {
 
 class QTimer;
 class Astro;
-class BandMap;
 class WideGraph;
 
 class MainWindow : public QMainWindow
@@ -80,12 +79,10 @@ private slots:
   void on_actionQSG_MAP65_v3_triggered();
   void on_actionQ65_Sensitivity_in_MAP65_3_0_triggered();
   void on_actionWide_Waterfall_triggered();
-  void on_actionBand_Map_triggered();
   void on_actionOpen_triggered();
   void on_actionOpen_next_in_directory_triggered();
   void on_actionDecode_remaining_files_in_directory_triggered();
   void on_actionDelete_all_tf2_files_in_SaveDir_triggered();
-  void on_actionErase_Band_Map_and_Messages_triggered();
   void on_actionFind_Delta_Phi_triggered();
   void on_actionF4_sets_Tx6_triggered();
   void on_actionOnly_EME_calls_triggered();
@@ -148,7 +145,6 @@ private:
   QString m_appDir;
   QString m_settings_filename;
   QScopedPointer<Astro> m_astro_window;
-  QScopedPointer<BandMap> m_band_map_window;
   QScopedPointer<WideGraph> m_wide_graph_window;
   QPointer<QTimer> m_gui_timer;
   qint64  m_msErase;
@@ -252,7 +248,6 @@ private:
   QString m_pbdecoding_style1;
   QString m_pbmonitor_style;
   QString m_pbAutoOn_style;
-  QString m_bandmapText;
   QString m_myCall;
   QString m_myGrid;
   QString m_hisCall;
