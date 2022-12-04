@@ -636,7 +636,6 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-    */
     if(ihsym>=302) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
     datcom_.newdat=1;
@@ -1441,7 +1440,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 #ifdef WIN32
       m=3;
 #endif
-      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(q,n-m-4).trimmed());
+      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m-4).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
       m_messagesText="";
