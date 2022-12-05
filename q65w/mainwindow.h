@@ -80,13 +80,7 @@ private slots:
   void decode();
   void decodeBusy(bool b);
   void on_EraseButton_clicked();
-  void on_txb1_clicked();
   void set_ntx(int n);
-  void on_txb2_clicked();
-  void on_txb3_clicked();
-  void on_txb4_clicked();
-  void on_txb5_clicked();
-  void on_txb6_clicked();
   void on_lookupButton_clicked();
   void on_addButton_clicked();
   void on_dxCallEntry_textChanged(const QString &arg1);

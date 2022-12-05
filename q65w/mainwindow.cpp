@@ -79,15 +79,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->actionNormal_Deep_Search->setActionGroup(DepthGroup);
   ui->actionAggressive_Deep_Search->setActionGroup(DepthGroup);
 
-  QButtonGroup* txMsgButtonGroup = new QButtonGroup;
-  txMsgButtonGroup->addButton(ui->txrb1,1);
-  txMsgButtonGroup->addButton(ui->txrb2,2);
-  txMsgButtonGroup->addButton(ui->txrb3,3);
-  txMsgButtonGroup->addButton(ui->txrb4,4);
-  txMsgButtonGroup->addButton(ui->txrb5,5);
-  txMsgButtonGroup->addButton(ui->txrb6,6);
-  connect(txMsgButtonGroup,SIGNAL(buttonClicked(int)),SLOT(set_ntx(int)));
-
   setWindowTitle (program_title ());
 
   connect(&soundInThread, SIGNAL(readyForFFT(int)),
@@ -793,10 +784,6 @@ void MainWindow::keyPressEvent( QKeyEvent *e )                //keyPressEvent
   case Qt::Key_F4:
     ui->dxCallEntry->setText("");
     ui->dxGridEntry->setText("");
-    if(m_kb8rq) {
-      m_ntx=6;
-      ui->txrb6->setChecked(true);
-    }
     break;
   case Qt::Key_F6:
     if(e->modifiers() & Qt::ShiftModifier) {
@@ -1569,48 +1556,6 @@ void MainWindow::ba2msg(QByteArray ba, char message[])             //ba2msg()
 void MainWindow::set_ntx(int n)                                   //set_ntx()
 {
   m_ntx=n;
-}
-
-void MainWindow::on_txb1_clicked()                                //txb1
-{
-  m_ntx=1;
-  ui->txrb1->setChecked(true);
-  m_restart=true;
-}
-
-void MainWindow::on_txb2_clicked()                                //txb2
-{
-  m_ntx=2;
-  ui->txrb2->setChecked(true);
-  m_restart=true;
-}
-
-void MainWindow::on_txb3_clicked()                                //txb3
-{
-  m_ntx=3;
-  ui->txrb3->setChecked(true);
-  m_restart=true;
-}
-
-void MainWindow::on_txb4_clicked()                                //txb4
-{
-  m_ntx=4;
-  ui->txrb4->setChecked(true);
-  m_restart=true;
-}
-
-void MainWindow::on_txb5_clicked()                                //txb5
-{
-  m_ntx=5;
-  ui->txrb5->setChecked(true);
-  m_restart=true;
-}
-
-void MainWindow::on_txb6_clicked()                                //txb6
-{
-  m_ntx=6;
-  ui->txrb6->setChecked(true);
-  m_restart=true;
 }
 
 void MainWindow::lookup()                                       //lookup()
