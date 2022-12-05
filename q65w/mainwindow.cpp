@@ -788,11 +788,6 @@ void MainWindow::msgBox(QString t)                             //msgBox
   msgBox0.exec();
 }
 
-void MainWindow::stub()                                        //stub()
-{
-  msgBox("Not yet implemented.");
-}
-
 void MainWindow::on_actionAstro_Data_triggered()             //Display Astro
 {
   if (m_astro_window ) m_astro_window->show();
