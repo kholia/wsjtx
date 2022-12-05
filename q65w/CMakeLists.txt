@@ -3,7 +3,6 @@ set (q65w_CXXSRCS
   astro.cpp
   devsetup.cpp
   displaytext.cpp
-  getdev.cpp
   getfile.cpp
   main.cpp
   mainwindow.cpp

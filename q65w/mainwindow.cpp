@@ -16,7 +16,6 @@
 #include "astro.h"
 #include "widegraph.h"
 #include "sleep.h"
-#include <portaudio.h>
 
 #define NFFT 32768
 
@@ -161,10 +160,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
 
-  PaError paerr=Pa_Initialize();                    //Initialize Portaudio
-  if(paerr!=paNoError) {
-    msgBox("Unable to initialize PortAudio.");
-  }
   readSettings();		             //Restore user's setup params
   QFile lockFile(m_appDir + "/.lock"); //Create .lock so m65 will wait
   lockFile.open(QIODevice::ReadWrite);
@@ -252,7 +247,6 @@ MainWindow::~MainWindow()
     soundInThread.quit();
     soundInThread.wait(3000);
   }
-  Pa_Terminate();
   fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
   if(!m_decoderBusy) {
     QFile lockFile(m_appDir + "/.lock");

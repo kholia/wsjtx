@@ -51,8 +51,7 @@ RC_FILE = map65.rc
 
 unix {
 LIBS += ../map65/libm65/libm65.a
-LIBS += -lfftw3f -lportaudio -lgfortran
-#LIBS +- -lusb
+LIBS += -lfftw3f -lgfortran
 }
 
 win32 {
