@@ -123,7 +123,7 @@ private:
   qint32  m_nrx;
   qint32  m_hsym0;
   qint32  m_paInDevice;
-  qint32  m_paOutDevice;
+  qint32  m_paOutDevice;    //### Why is this needed, now? ###
   qint32  m_udpPort;
   qint32  m_NBslider;
   qint32  m_adjustIQ;
