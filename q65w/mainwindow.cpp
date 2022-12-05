@@ -195,7 +195,10 @@ MainWindow::MainWindow(QWidget *parent) :
   watcher2 = new QFutureWatcher<void>;
   connect(watcher2, SIGNAL(finished()),this,SLOT(diskWriteFinished()));
 
-  soundInThread.setRate(96000.0);
+// Assign input device and start input thread
+  soundInThread.setInputDevice(m_paInDevice);
+  if(m_fs96000) soundInThread.setRate(96000.0);
+  if(!m_fs96000) soundInThread.setRate(95238.1);
   soundInThread.setBufSize(10*7056);
   soundInThread.setNetwork(m_network);
   soundInThread.setPort(m_udpPort);
@@ -286,6 +289,8 @@ void MainWindow::writeSettings()
   settings.setValue("NetworkInput", m_network);
   settings.setValue("FSam96000", m_fs96000);
   settings.setValue("SoundInIndex",m_nDevIn);
+  settings.setValue("paInDevice",m_paInDevice);
+  settings.setValue("paOutDevice",m_paOutDevice);
   settings.setValue("IQswap",m_IQswap);
   settings.setValue("Scale_dB",m_dB);
   settings.setValue("IQxt",m_bIQxt);
@@ -346,6 +351,8 @@ void MainWindow::readSettings()
   m_network = settings.value("NetworkInput",true).toBool();
   m_fs96000 = settings.value("FSam96000",true).toBool();
   m_nDevIn = settings.value("SoundInIndex", 0).toInt();
+  m_paInDevice = settings.value("paInDevice",0).toInt();
+  m_paOutDevice = settings.value("paOutDevice",0).toInt();
   m_IQswap = settings.value("IQswap",false).toBool();
   m_dB = settings.value("Scale_dB",0).toInt();
   m_initIQplus = settings.value("InitIQplus",false).toBool();
@@ -553,6 +560,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_network=m_network;
   dlg.m_fs96000=m_fs96000;
   dlg.m_nDevIn=m_nDevIn;
+  dlg.m_nDevOut=m_nDevOut;
   dlg.m_udpPort=m_udpPort;
   dlg.m_IQswap=m_IQswap;
   dlg.m_dB=m_dB;
@@ -577,6 +585,9 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_fs96000=dlg.m_fs96000;
     m_network=dlg.m_network;
     m_nDevIn=dlg.m_nDevIn;
+    m_paInDevice=dlg.m_paInDevice;
+    m_nDevOut=dlg.m_nDevOut;
+    m_paOutDevice=dlg.m_paOutDevice;
     m_udpPort=dlg.m_udpPort;
     m_IQswap=dlg.m_IQswap;
     m_dB=dlg.m_dB;
@@ -588,9 +599,11 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
       soundInThread.quit();
       soundInThread.wait(1000);
       soundInThread.setNetwork(m_network);
-      soundInThread.setRate(96000.0);
+      if(m_fs96000) soundInThread.setRate(96000.0);
+      if(!m_fs96000) soundInThread.setRate(95238.1);
       soundInThread.setFadd(m_fAdd);
       soundInThread.setNrx(1);
+      soundInThread.setInputDevice(m_paInDevice);
       soundInThread.start(QThread::HighestPriority);
     }
   }
