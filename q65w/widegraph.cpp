@@ -299,6 +299,7 @@ void WideGraph::on_fCenterLineEdit_editingFinished()
   m_dForceCenterFreq=ui->fCenterLineEdit->text().toDouble();
 }
 
+/*
 void WideGraph::on_pbSetRxHardware_clicked()
 {
   int iret=set570(m_mult570*(1.0+0.000001*m_cal570)*m_dForceCenterFreq);
@@ -322,7 +323,7 @@ void WideGraph::initIQplus()
     on_pbSetRxHardware_clicked();
   }
 }
-
+*/
 void WideGraph::on_cbSpec2d_toggled(bool b)
 {
   ui->widePlot->set2Dspec(b);
@@ -343,7 +344,7 @@ void WideGraph::on_cbLockTxRx_stateChanged(int n)
   m_bLockTxRx = (n!=0);
   ui->widePlot->setLockTxRx(m_bLockTxRx);
 }
-
+/*
 void WideGraph::rx570()
 {
   double f=m_mult570*(1.0+0.000001*m_cal570)*m_dForceCenterFreq;
@@ -372,7 +373,7 @@ void WideGraph::tx570()
     mb.exec();
   }
 }
-
+*/
 void WideGraph::updateFreqLabel()
 {
   auto rxFreq = QString {"%1"}.arg (ui->widePlot->rxFreq (), 10, 'f', 6);

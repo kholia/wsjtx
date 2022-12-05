@@ -9,7 +9,6 @@ set (q65w_CXXSRCS
   mainwindow.cpp
   meterwidget.cpp
   plotter.cpp
-  set570.cpp
   signalmeter.cpp
   soundin.cpp
   widegraph.cpp

@@ -33,8 +33,6 @@ public:
   void   setPeriod(int n);
   void   setDecodeFinished();
   double fGreen();
-  void   rx570();
-  void   tx570();
   void   updateFreqLabel();
   void   enableSetRxHardware(bool b);
 
@@ -46,7 +44,6 @@ signals:
 
 public slots:
   void wideFreezeDecode(int n);
-  void initIQplus();
 
 protected:
   virtual void keyPressEvent( QKeyEvent *e );
@@ -61,7 +58,6 @@ private slots:
   void on_autoZeroPushButton_clicked();
   void on_cbFcenter_stateChanged(int arg1);
   void on_fCenterLineEdit_editingFinished();
-  void on_pbSetRxHardware_clicked();
   void on_cbSpec2d_toggled(bool checked);
   void on_cbLockTxRx_stateChanged(int arg1);
 
@@ -73,10 +69,7 @@ public:
 private:
   bool   m_bLockTxRx;
 public:
-  qint32 m_mult570;
-  qint32 m_mult570Tx;
   double m_dForceCenterFreq;
-  double m_cal570;
   double m_TxOffset;
 private:
   bool   m_bIQxt;
@@ -86,7 +79,5 @@ private:
   qint32 m_mode65;
   qint32 m_TRperiod=60;
 };
-
-extern int set570(double freq_MHz);
 
 #endif // WIDEGRAPH_H
