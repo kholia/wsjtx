@@ -1246,21 +1246,6 @@ void MainWindow::guiUpdate()
   bIQxt=m_bIQxt;
 }
 
-void MainWindow::ba2msg(QByteArray ba, char message[])             //ba2msg()
-{
-  bool eom;
-  eom=false;
-  for(int i=0;i<22; i++) {
-    if (i >= ba.size () || !ba[i]) eom=true;
-    if(eom) {
-      message[i] = ' ';
-    } else {
-      message[i]=ba[i];
-    }
-  }
-  message[22] = '\0';
-}
-
 void MainWindow::lookup()                                       //lookup()
 {
   QString hiscall=ui->dxCallEntry->text().toUpper().trimmed();
@@ -1393,47 +1378,6 @@ void MainWindow::on_addButton_clicked()                       //Add button
     f2.remove ();
   }
 }
-
-/*
-void MainWindow::msgtype(QString t, QLineEdit* tx)                //msgtype()
-{
-//  if(t.length()<1) return 0;
-  char message[23];
-  char msgsent[23];
-  int len1=22;
-  int mode65=0;            //mode65 ==> check message but don't make wave()
-  double samfac=1.0;
-  int nsendingsh=0;
-  int mwave;
-  t=t.toUpper();
-  int i1=t.indexOf(" OOO");
-  QByteArray s=t.toUpper().toLocal8Bit();
-  ba2msg(s,message);
-  gen65_(message,&mode65,&samfac,&nsendingsh,msgsent,iwave,
-         &mwave,len1,len1);
-
-  QPalette p(tx->palette());
-  if(nsendingsh==1) {
-    p.setColor(QPalette::Base,"#66ffff");
-  } else if(nsendingsh==-1) {
-    p.setColor(QPalette::Base,"#ffccff");
-  } else {
-    p.setColor(QPalette::Base,Qt::white);
-  }
-  tx->setPalette(p);
-  int len=t.length();
-  if(nsendingsh==-1) {
-    len=qMin(len,13);
-    if(i1>10) {
-      tx->setText(t.mid(0,len).toUpper() + " OOO");
-    } else {
-      tx->setText(t.mid(0,len).toUpper());
-    }
-  } else {
-    tx->setText(t);
-  }
-}
-*/
 
 void MainWindow::on_dxCallEntry_textChanged(const QString &t) //dxCall changed
 {

@@ -217,9 +217,6 @@ private:
   void updateStatusBar();
   void msgBox(QString t);
   void lookup();
-  void ba2msg(QByteArray ba, char* message);
-  void msgtype(QString t, QLineEdit* tx);
-  void stub();
   bool isGrid4(QString g);
   bool subProcessFailed (QProcess *, int exit_code, QProcess::ExitStatus);
 };
@@ -239,14 +236,6 @@ extern "C" {
                 float* phasex, float* phasey, float* rejectx, float* rejecty,
                 float* px, float* py, float s[], int* nkhz, int* nhsym,
                 int* nzap, float* slimit, uchar lstrong[]);
-
-  void gen65_(char* msg, int* mode65, double* samfac,
-              int* nsendingsh, char* msgsent, short iwave[], int* nwave,
-              int len1, int len2);
-
-  void gen_q65_wave_(char* msg, int* ntxFreq, int* mode64,
-              char* msgsent, short iwave[], int* nwave,
-              int len1, int len2);
 
   void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
                     const char* mygrid, int* ndop00, int len1);
