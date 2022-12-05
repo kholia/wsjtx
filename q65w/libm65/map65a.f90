@@ -4,7 +4,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,                &
      ndiskdat,nxpol,nmode,ndop00)
 
-!  Processes timf2 data from Linrad to find and decode JT65 signals.
+!  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
 
   use wideband_sync
   use timer_module, only: timer
@@ -67,7 +67,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      call timer('get_cand',1)
      candec=.false.
   endif
-  print*,'~ncand:',ncand
 !###
 !  do k=1,ncand
 !     freq=cand(k)%f+nkhz_center-48.0

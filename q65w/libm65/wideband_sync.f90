@@ -39,6 +39,7 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   integer indx(NFFT)
   logical xpol,skip,ldecoded
   type(candidate) :: cand(MAX_CANDIDATES)
+  type(candidate) :: cand0(MAX_CANDIDATES)
   common/early/nhsym1,nhsym2,ldecoded(32768)
 
   call wb_sync(ss,savg,xpol,jz,nfa,nfb)          !Output to sync() array
@@ -102,6 +103,13 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
      if(k.ge.MAX_CANDIDATES) exit
   enddo
   ncand=k
+
+  cand0(1:ncand)=cand(1:ncand)
+  call indexx(cand0(1:ncand)%f,ncand,indx)   !Sort by relative snr
+  do i=1,ncand
+     k=indx(i)
+     cand(i)=cand0(k)
+  enddo
 
   return
 end subroutine get_candidates
