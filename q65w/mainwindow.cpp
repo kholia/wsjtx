@@ -754,26 +754,6 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
   dlg.exec();
 }
 
-void MainWindow::on_autoButton_clicked()                     //Auto
-{
-  m_auto = !m_auto;
-  if(m_auto) {
-    ui->autoButton->setStyleSheet(m_pbAutoOn_style);
-    ui->autoButton->setText("Auto is ON");
-  } else {
-    btxok=false;
-    ui->autoButton->setStyleSheet("");
-    ui->autoButton->setText("Auto is OFF");
-    on_monitorButton_clicked();
-  }
-}
-
-void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
-{
-  if(m_auto) on_autoButton_clicked();
-  btxok=false;
-}
-
 void MainWindow::keyPressEvent( QKeyEvent *e )                //keyPressEvent
 {
   switch(e->key())
@@ -1369,9 +1349,6 @@ void MainWindow::guiUpdate()
   }
   qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
   int nsec=ms/1000;
-  double tsec=0.001*ms;
-  double t2p=fmod(tsec,120.0);
-  bool bTxTime = (t2p >= tx1) and (t2p < tx2);
 
   if(bTune0 and !bTune) {
     btxok=false;
@@ -1380,28 +1357,6 @@ void MainWindow::guiUpdate()
   }
   if(bTune and !bTune0) bMonitoring0=m_monitoring;
   bTune0=bTune;
-
-  if(m_auto or bTune) {
-    if((bTxTime or bTune) and iptt==0 and !m_txMute) {
-      int itx=1;
-      int ierr = ptt_(&m_pttPort,&itx,&iptt);       // Raise PTT
-      if(ierr != 0) {
-        on_stopTxButton_clicked();
-        char s[18];
-        sprintf(s,"Cannot open COM%d",m_pttPort);
-        msgBox(s);
-      }
-
-      if(m_bIQxt) m_wide_graph_window->tx570();     // Set Si570 to Tx Freq
-
-      if(!soundOutThread.isRunning()) {
-        soundOutThread.start(QThread::HighPriority);
-      }
-    }
-    if((!bTxTime and !bTune) or m_txMute) {
-      btxok=false;
-    }
-  }
 
 // If PTT was just raised, start a countdown for raising TxOK:
   if(iptt==1 && iptt0==0) nc1=-9;    // TxDelay = 0.8 s

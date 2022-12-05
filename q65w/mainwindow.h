@@ -61,8 +61,6 @@ private slots:
   void on_actionAbout_triggered();
   void on_actionLinrad_triggered();
   void on_actionCuteSDR_triggered();
-  void on_autoButton_clicked();
-  void on_stopTxButton_clicked();
   void on_tolSpinBox_valueChanged(int arg1);
   void on_actionAstro_Data_triggered();
   void on_stopButton_clicked();

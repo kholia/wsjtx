@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
+    <width>472</width>
     <height>523</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>635</width>
+    <width>472</width>
     <height>0</height>
    </size>
   </property>
@@ -112,19 +112,6 @@ p, li { white-space: pre-wrap; }
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QPushButton" name="logQSOButton">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Log &amp;QSO</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="stopButton">
           <property name="minimumSize">
            <size>
@@ -185,44 +172,6 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>&amp;Erase</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="autoButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>&amp;Auto is OFF</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="stopTxButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>St&amp;op Tx</string>
           </property>
          </widget>
         </item>
@@ -647,17 +596,17 @@ p, li { white-space: pre-wrap; }
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_9">
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2"/>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3"/>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_4"/>
-          </item>
-         </layout>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>
@@ -670,7 +619,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>635</width>
+     <width>472</width>
      <height>21</height>
     </rect>
    </property>
@@ -682,12 +631,9 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOpen_next_in_directory"/>
     <addaction name="actionDecode_remaining_files_in_directory"/>
     <addaction name="separator"/>
-    <addaction name="actionEdit_wsjt_log"/>
     <addaction name="separator"/>
     <addaction name="actionDelete_all_tf2_files_in_SaveDir"/>
-    <addaction name="actionErase_Band_Map_and_Messages"/>
     <addaction name="actionErase_map65_rx_log"/>
-    <addaction name="actionErase_map65_tx_log"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -697,12 +643,6 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionDeviceSetup"/>
     <addaction name="separator"/>
-    <addaction name="actionAdjust_IQ_Calibration"/>
-    <addaction name="actionApply_IQ_Calibration"/>
-    <addaction name="actionFind_Delta_Phi"/>
-    <addaction name="actionTx_Tune"/>
-    <addaction name="separator"/>
-    <addaction name="actionF4_sets_Tx6"/>
     <addaction name="separator"/>
     <addaction name="actionFUNcube_Dongle"/>
    </widget>
