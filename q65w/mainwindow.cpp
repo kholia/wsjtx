@@ -1361,7 +1361,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
   while(proc_m65.canReadLine())
   {
     QByteArray t=proc_m65.readLine();
-    qDebug() << "aa" << t.trimmed();
     if(t.indexOf("<QuickDecodeDone>") >= 0) {
       m_nsum=t.mid(17,4).toInt();
       m_nsave=t.mid(21,4).toInt();
@@ -1394,7 +1393,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
 #ifdef WIN32
       m=3;
 #endif
-      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m-4).trimmed());
+      qDebug() << "aa" << n << m << t.trimmed();
+      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
       m_widebandDecode=true;
