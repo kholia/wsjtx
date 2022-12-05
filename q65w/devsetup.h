@@ -39,7 +39,6 @@ public:
   bool    m_xpol;
   bool    m_IQswap;
   bool    m_restartSoundIn;
-  bool    m_restartSoundOut;
   bool    m_initIQplus;
   bool    m_bIQxt;
 

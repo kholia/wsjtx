@@ -12,7 +12,6 @@ DevSetup::DevSetup(QWidget *parent) :	QDialog(parent)
 {
   ui.setupUi(this);	//setup the dialog form
   m_restartSoundIn=false;
-  m_restartSoundOut=false;
 }
 
 DevSetup::~DevSetup()
@@ -148,9 +147,6 @@ void DevSetup::accept()
      m_paInDevice!=m_inDevList[m_nDevIn] or
      m_xpol!=ui.cbXpol->isChecked() or
      m_udpPort!=ui.sbPort->value()) m_restartSoundIn=true;
-
-  if(m_nDevOut!=ui.comboBoxSndOut->currentIndex() or
-     m_paOutDevice!=m_outDevList[m_nDevOut]) m_restartSoundOut=true;
 
   m_myCall=ui.myCallEntry->text();
   m_myGrid=ui.myGridEntry->text();
