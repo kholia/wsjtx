@@ -63,14 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->actionAFMHot->setActionGroup(paletteGroup);
   ui->actionBlue->setActionGroup(paletteGroup);
 
-  QActionGroup* modeGroup = new QActionGroup(this);
-  ui->actionNoJT65->setActionGroup(modeGroup);
-  ui->actionJT65A->setActionGroup(modeGroup);
-  ui->actionJT65B->setActionGroup(modeGroup);
-  ui->actionJT65C->setActionGroup(modeGroup);
-
   QActionGroup* modeGroup2 = new QActionGroup(this);
-  ui->actionNoQ65->setActionGroup(modeGroup2);
   ui->actionQ65A->setActionGroup(modeGroup2);
   ui->actionQ65B->setActionGroup(modeGroup2);
   ui->actionQ65C->setActionGroup(modeGroup2);
@@ -220,17 +213,12 @@ MainWindow::MainWindow(QWidget *parent) :
   on_actionWide_Waterfall_triggered();
   if (m_astro_window) m_astro_window->setFontSize (m_astroFont);
 
-  if(m_modeQ65==0) on_actionNoQ65_triggered();
   if(m_modeQ65==1) on_actionQ65A_triggered();
   if(m_modeQ65==2) on_actionQ65B_triggered();
   if(m_modeQ65==3) on_actionQ65C_triggered();
   if(m_modeQ65==4) on_actionQ65D_triggered();
   if(m_modeQ65==5) on_actionQ65E_triggered();
 
-  if(m_modeJT65==0) on_actionNoJT65_triggered();
-  if(m_modeJT65==1) on_actionJT65A_triggered();
-  if(m_modeJT65==2) on_actionJT65B_triggered();
-  if(m_modeJT65==3) on_actionJT65C_triggered();
   future1 = new QFuture<void>;
   watcher1 = new QFutureWatcher<void>;
   connect(watcher1, SIGNAL(finished()),this,SLOT(diskDat()));
@@ -401,7 +389,6 @@ void MainWindow::readSettings()
     ui->dxGridEntry->setText(settings.value("DXgrid","").toString());
     m_path = settings.value("MRUdir", m_appDir + "/save").toString();
     m_txFirst = settings.value("TxFirst",false).toBool();
-    ui->txFirstCheckBox->setChecked(m_txFirst);
   }
 
   SettingsGroup g {&settings, "Common"};
@@ -460,8 +447,6 @@ void MainWindow::readSettings()
   if(m_modeQ65==3) ui->actionQ65C->setChecked(true);
   if(m_modeQ65==4) ui->actionQ65D->setChecked(true);
   if(m_modeQ65==5) ui->actionQ65E->setChecked(true);
-  if(m_modeTx=="JT65")  ui->pbTxMode->setText("Tx JT65   #");
-  if(m_modeTx=="Q65") ui->pbTxMode->setText("Tx Q65  :");
 
   ui->actionNone->setChecked(settings.value("SaveNone",true).toBool());
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
@@ -971,35 +956,6 @@ void MainWindow::stub()                                        //stub()
   msgBox("Not yet implemented.");
 }
 
-void MainWindow::on_actionRelease_Notes_triggered()
-{
-  QDesktopServices::openUrl(QUrl(
-  "https://www.physics.princeton.edu/pulsar/K1JT/Release_Notes.txt",
-                              QUrl::TolerantMode));
-}
-
-void MainWindow::on_actionOnline_Users_Guide_triggered()      //Display manual
-{
-  QDesktopServices::openUrl(QUrl(
-  "https://www.physics.princeton.edu/pulsar/K1JT/MAP65_Users_Guide.pdf",
-                              QUrl::TolerantMode));
-}
-
-void MainWindow::on_actionQSG_Q65_triggered()
-{
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/Q65_Quick_Start.pdf"});
-}
-
-void MainWindow::on_actionQSG_MAP65_v3_triggered()
-{
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
-}
-
-void MainWindow::on_actionQ65_Sensitivity_in_MAP65_3_0_triggered()
-{
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/Q65_Sensitivity_in_MAP65.pdf"});
-}
-
 void MainWindow::on_actionAstro_Data_triggered()             //Display Astro
 {
   if (m_astro_window ) m_astro_window->show();
@@ -1126,27 +1082,6 @@ void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
   }
 }
 
-void MainWindow::on_actionFind_Delta_Phi_triggered()              //Find dPhi
-{
-  m_map65RxLog |= 8;
-  on_DecodeButton_clicked();
-}
-
-void MainWindow::on_actionF4_sets_Tx6_triggered()                //F4 sets Tx6
-{
-  m_kb8rq = !m_kb8rq;
-}
-
-void MainWindow::on_actionOnly_EME_calls_triggered()          //EME calls only
-{
-  m_onlyEME = ui->actionOnly_EME_calls->isChecked();
-}
-
-void MainWindow::on_actionNo_shorthands_if_Tx1_triggered()
-{
-  stub();
-}
-
 void MainWindow::on_actionNo_Deep_Search_triggered()          //No Deep Search
 {
   m_ndepth=0;
@@ -1173,22 +1108,7 @@ void MainWindow::on_actionSave_all_triggered()                //Save All
 {
   m_saveAll=true;
 }
-                                          //Display list of keyboard shortcuts
-void MainWindow::on_actionKeyboard_shortcuts_triggered()
-{
-  stub();
-}
-                                              //Display list of mouse commands
-void MainWindow::on_actionSpecial_mouse_commands_triggered()
-{
-  stub();
-}
-                                              //Diaplay list of Add-On pfx/sfx
-void MainWindow::on_actionAvailable_suffixes_and_add_on_prefixes_triggered()
-{
-  stub();
-}
-
+                                          //Display list of keyboard shortcuts                                           //Display list of mouse commands                                             //Diaplay list of Add-On pfx/sfx
 void MainWindow::on_DecodeButton_clicked()                    //Decode request
 {
   int n=m_sec0%m_TRperiod;
@@ -1393,7 +1313,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 #ifdef WIN32
       m=3;
 #endif
-      qDebug() << "aa" << n << m << t.trimmed();
+//      qDebug() << "aa" << n << m << t.trimmed();
       if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
@@ -1563,8 +1483,6 @@ void MainWindow::guiUpdate()
     m_startAnother=false;
     on_actionOpen_next_in_directory_triggered();
   }
-  if(m_modeQ65==0 and m_modeTx=="Q65") on_pbTxMode_clicked();
-  if(m_modeJT65==0  and m_modeTx=="JT65")  on_pbTxMode_clicked();
 
   if(nsec != m_sec0) {                                     //Once per second
 //    qDebug() << "AAA" << nsec%60 << m_mode65 << m_modeQ65 << m_modeTx;
@@ -1646,11 +1564,6 @@ void MainWindow::ba2msg(QByteArray ba, char message[])             //ba2msg()
     }
   }
   message[22] = '\0';
-}
-
-void MainWindow::on_txFirstCheckBox_stateChanged(int nstate)        //TxFirst
-{
-  m_txFirst = (nstate==2);
 }
 
 void MainWindow::set_ntx(int n)                                   //set_ntx()
@@ -1872,12 +1785,6 @@ void MainWindow::msgtype(QString t, QLineEdit* tx)                //msgtype()
   }
 }
 
-void MainWindow::on_setTxFreqButton_clicked()                  //Set Tx Freq
-{
-  m_setftx=1;
-  m_txFreq=m_wide_graph_window->QSOfreq();
-}
-
 void MainWindow::on_dxCallEntry_textChanged(const QString &t) //dxCall changed
 {
   m_hisCall=t.toUpper().trimmed();
@@ -1896,35 +1803,6 @@ void MainWindow::on_dxGridEntry_textChanged(const QString &t) //dxGrid changed
   ui->dxGridEntry->setText(m_hisGrid);
 }
 
-void MainWindow::on_genStdMsgsPushButton_clicked()         //genStdMsgs button
-{
-}
-
-void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
-{
-  int nMHz=int(datcom_.fcenter);
-  QDateTime t = QDateTime::currentDateTimeUtc();
-  QString qsoMode=lab5->text();
-  if(m_modeTx.startsWith("Q65")) qsoMode=lab6->text();
-  QString logEntry=t.date().toString("yyyy-MMM-dd,") +
-      t.time().toString("hh:mm,") + m_hisCall + "," + m_hisGrid + "," +
-          QString::number(nMHz) + "," + qsoMode + "\r\n";
-
-  int ret = QMessageBox::warning(this, "Log Entry",
-       "Please confirm log entry:\n\n" + logEntry + "\n",
-       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-  if(ret==QMessageBox::No) return;
-  QFile f("wsjt.log");
-  if(!f.open(QFile::Append)) {
-    msgBox("Cannot open file \"wsjt.log\".");
-    return;
-  }
-  QTextStream out(&f);
-  out << logEntry;
-  f.close();
-  m_worked[m_hisCall]=true;
-}
-
 void MainWindow::on_actionErase_map65_rx_log_triggered()     //Erase Rx log
 {
   int ret = QMessageBox::warning(this, "Confirm Erase",
@@ -1933,83 +1811,6 @@ void MainWindow::on_actionErase_map65_rx_log_triggered()     //Erase Rx log
   if(ret==QMessageBox::Yes) {
     m_map65RxLog |= 2;                      // Rewind map65_rx.log
   }
-}
-
-void MainWindow::on_actionErase_map65_tx_log_triggered()     //Erase Tx log
-{
-  int ret = QMessageBox::warning(this, "Confirm Erase",
-      "Are you sure you want to erase file map65_tx.log ?",
-       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-  if(ret==QMessageBox::Yes) {
-    QFile f("map65_tx.log");
-    f.remove();
-  }
-}
-
-void MainWindow::on_actionNoJT65_triggered()
-{
-  m_mode65=0;
-  m_modeJT65=0;
-  m_TRperiod=60;
-  soundInThread.setPeriod(m_TRperiod);
-  soundOutThread.setPeriod(m_TRperiod);
-  m_wide_graph_window->setMode65(m_mode65);
-  m_wide_graph_window->setPeriod(m_TRperiod);
-  lab5->setStyleSheet("");
-  lab5->setText("");
-}
-void MainWindow::on_actionJT65A_triggered()
-{
-  m_mode="JT65A";
-  m_modeJT65=1;
-  m_mode65=1;
-  m_modeJT65=1;
-  m_TRperiod=60;
-  soundInThread.setPeriod(m_TRperiod);
-  soundOutThread.setPeriod(m_TRperiod);
-  m_wide_graph_window->setMode65(m_mode65);
-  m_wide_graph_window->setPeriod(m_TRperiod);
-  lab5->setStyleSheet("QLabel{background-color: #ff6666}");
-  lab5->setText("JT65A");
-  ui->actionJT65A->setChecked(true);
-}
-
-void MainWindow::on_actionJT65B_triggered()
-{
-  m_mode="JT65B";
-  m_modeJT65=2;
-  m_mode65=2;
-  m_modeJT65=2;
-  m_TRperiod=60;
-  soundInThread.setPeriod(m_TRperiod);
-  soundOutThread.setPeriod(m_TRperiod);
-  m_wide_graph_window->setMode65(m_mode65);
-  m_wide_graph_window->setPeriod(m_TRperiod);
-  lab5->setStyleSheet("QLabel{background-color: #ffff66}");
-  lab5->setText("JT65B");
-  ui->actionJT65B->setChecked(true);
-}
-
-void MainWindow::on_actionJT65C_triggered()
-{
-  m_mode="JT65C";
-  m_modeJT65=3;
-  m_mode65=4;
-  m_TRperiod=60;
-  soundInThread.setPeriod(m_TRperiod);
-  soundOutThread.setPeriod(m_TRperiod);
-  m_wide_graph_window->setMode65(m_mode65);
-  m_wide_graph_window->setPeriod(m_TRperiod);
-  lab5->setStyleSheet("QLabel{background-color: #66ffb2}");
-  lab5->setText("JT65C");
-  ui->actionJT65C->setChecked(true);
-}
-
-void MainWindow::on_actionNoQ65_triggered()
-{
-  m_modeQ65=0;
-  lab6->setStyleSheet("");
-  lab6->setText("");
 }
 
 void MainWindow::on_actionQ65A_triggered()
@@ -2025,7 +1826,6 @@ void MainWindow::on_actionQ65B_triggered()
   lab6->setStyleSheet("QLabel{background-color: #b2ff66}");
   lab6->setText("Q65B");
 }
-
 
 void MainWindow::on_actionQ65C_triggered()
 {
@@ -2060,48 +1860,9 @@ void MainWindow::on_NBslider_valueChanged(int n)
   m_NBslider=n;
 }
 
-void MainWindow::on_actionAdjust_IQ_Calibration_triggered()
-{
-  m_adjustIQ=1;
-}
-
-void MainWindow::on_actionApply_IQ_Calibration_triggered()
-{
-  m_applyIQcal= 1-m_applyIQcal;
-}
-
 void MainWindow::on_actionFUNcube_Dongle_triggered()
 {
   proc_qthid.start (QDir::toNativeSeparators(m_appDir + "/qthid"), QStringList {});
-}
-
-void MainWindow::on_actionEdit_wsjt_log_triggered()
-{
-  proc_editor.start (QDir::toNativeSeparators (m_editorCommand), {QDir::toNativeSeparators (m_appDir + "/wsjt.log"), });
-}
-
-void MainWindow::on_actionTx_Tune_triggered()
-{
-  if(g_pTxTune==NULL) {
-    g_pTxTune = new TxTune(0);
-  }
-  g_pTxTune->set_iqAmp(iqAmp);
-  g_pTxTune->set_iqPhase(iqPhase);
-  g_pTxTune->set_txPower(txPower);
-  g_pTxTune->show();
-}
-
-void MainWindow::on_pbTxMode_clicked()
-{
-  if(m_modeTx=="Q65") {
-    m_modeTx="JT65";
-    ui->pbTxMode->setText("Tx JT65   #");
-  } else {
-    m_modeTx="Q65";
-    ui->pbTxMode->setText("Tx Q65  :");
-  }
-//  m_wideGraph->setModeTx(m_modeTx);
-//  statusChanged();
 }
 
 bool MainWindow::isGrid4(QString g)

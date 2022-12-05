@@ -417,37 +417,6 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </widget>
-            <widget class="QPushButton" name="genStdMsgsPushButton">
-             <property name="geometry">
-              <rect>
-               <x>40</x>
-               <y>80</y>
-               <width>90</width>
-               <height>23</height>
-              </rect>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>90</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>70</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>&amp;GenStdMsgs</string>
-             </property>
-            </widget>
            </widget>
           </item>
           <item>
@@ -516,63 +485,6 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="txFirstCheckBox">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>23</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>80</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Tx first</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbTxMode">
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>80</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Tx Q65  $</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="setTxFreqButton">
-            <property name="minimumSize">
-             <size>
-              <width>90</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>80</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Set Tx Freq</string>
-            </property>
-           </widget>
           </item>
           <item>
            <widget class="QSpinBox" name="sbMaxDrift">
@@ -1099,8 +1011,6 @@ p, li { white-space: pre-wrap; }
      <addaction name="actionCuteSDR"/>
     </widget>
     <addaction name="actionAstro_Data"/>
-    <addaction name="actionBand_Map"/>
-    <addaction name="actionMessages"/>
     <addaction name="actionWide_Waterfall"/>
     <addaction name="separator"/>
     <addaction name="menuWaterfall_palette"/>
@@ -1109,8 +1019,6 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Decode</string>
     </property>
-    <addaction name="actionOnly_EME_calls"/>
-    <addaction name="actionNo_shorthands_if_Tx1"/>
     <addaction name="separator"/>
     <addaction name="actionNo_Deep_Search"/>
     <addaction name="actionNormal_Deep_Search"/>
@@ -1128,26 +1036,14 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionRelease_Notes"/>
-    <addaction name="actionOnline_Users_Guide"/>
-    <addaction name="actionQSG_Q65"/>
-    <addaction name="actionQSG_MAP65_v3"/>
-    <addaction name="actionQ65_Sensitivity_in_MAP65_3_0"/>
-    <addaction name="actionKeyboard_shortcuts"/>
-    <addaction name="actionSpecial_mouse_commands"/>
-    <addaction name="actionAvailable_suffixes_and_add_on_prefixes"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuMode">
     <property name="title">
      <string>Mode</string>
     </property>
-    <addaction name="actionNoJT65"/>
-    <addaction name="actionJT65A"/>
-    <addaction name="actionJT65B"/>
-    <addaction name="actionJT65C"/>
     <addaction name="separator"/>
-    <addaction name="actionNoQ65"/>
+    <addaction name="separator"/>
     <addaction name="actionQ65A"/>
     <addaction name="actionQ65B"/>
     <addaction name="actionQ65C"/>
@@ -1186,7 +1082,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string> About MAP65</string>
+    <string> About Q65W</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F1</string>
@@ -1557,6 +1453,9 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionQ65C">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
