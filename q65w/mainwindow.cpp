@@ -211,8 +211,6 @@ MainWindow::MainWindow(QWidget *parent) :
   soundInThread.setBufSize(10*7056);
   soundInThread.setNetwork(m_network);
   soundInThread.setPort(m_udpPort);
-  if(!m_xpol) soundInThread.setNrx(1);
-  if(m_xpol) soundInThread.setNrx(2);
   soundInThread.start(QThread::HighestPriority);
 
   m_monitoring=true;                           // Start with Monitoring ON
@@ -292,8 +290,6 @@ void MainWindow::writeSettings()
   settings.setValue("MyGrid",m_myGrid);
   settings.setValue("IDint",m_idInt);
   settings.setValue("AstroFont",m_astroFont);
-  settings.setValue("Xpol",m_xpol);
-  settings.setValue("XpolX",m_xpolx);
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
   settings.setValue("Editor",m_editorCommand);
@@ -356,9 +352,6 @@ void MainWindow::readSettings()
   m_myGrid=settings.value("MyGrid","").toString();
   m_idInt=settings.value("IDint",0).toInt();
   m_astroFont=settings.value("AstroFont",20).toInt();
-  m_xpol=settings.value("Xpol",false).toBool();
-  ui->actionFind_Delta_Phi->setEnabled(m_xpol);
-  m_xpolx=settings.value("XpolX",false).toBool();
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
   m_editorCommand=settings.value("Editor","notepad").toString();
@@ -444,13 +437,13 @@ void MainWindow::dataSink(int k)
   static int ntrz=0;
   static int nkhz;
   static int nfsample=96000;
-  static int nxpol=0;
   static int nsec0=0;
   static int nsum=0;
   static float fgreen;
   static int ndiskdat;
   static int nb;
   static int nadj=0;
+  static int nxpol=0;
   static float px=0.0,py=0.0;
   static uchar lstrong[1024];
   static float rejectx;
@@ -470,8 +463,6 @@ void MainWindow::dataSink(int k)
   if(m_NB) nb=1;
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
-  nxpol=0;
-  if(m_xpol) nxpol=1;
   fgreen=m_wide_graph_window->fGreen();
   nadj++;
   if(m_adjustIQ==0) nadj=0;
@@ -494,21 +485,14 @@ void MainWindow::dataSink(int k)
 
   QString t;
   m_pctZap=nzap/178.3;
-  ui->yMeterFrame->setVisible(m_xpol);
-  if(m_xpol) {
-    lab4->setText (
-                  QString {" Rx noise: %1  %2 %3 %% "}
-                     .arg (px, 5, 'f', 1)
-                     .arg (py, 5, 'f', 1)
-                     .arg (m_pctZap, 5, 'f', 1)
-                  );
-  } else {
-    lab4->setText (
-                  QString {" Rx noise: %1  %2 %% "}
-                  .arg (px, 5, 'f', 1)
-                  .arg (m_pctZap, 5, 'f', 1)
-                  );
-  }
+  ui->yMeterFrame->setVisible(false);
+
+  lab4->setText (
+        QString {" Rx noise: %1  %2 %% "}
+        .arg (px, 5, 'f', 1)
+        .arg (m_pctZap, 5, 'f', 1)
+        );
+
   xSignalMeter->setValue(px);                   // Update the signal meters
   ySignalMeter->setValue(py);
   if(m_monitoring || m_diskData) {
@@ -516,20 +500,11 @@ void MainWindow::dataSink(int k)
   }
 
   if(nadj == 10) {
-    if(m_xpol) {
-      ui->decodedTextBrowser->append (
-                                      QString {"Amp: %1 %2   Phase: %3 %4"}
-                                         .arg (m_gainx, 6, 'f', 4).arg (m_gainy, 6, 'f', 4)
-                                         .arg (m_phasex, 6, 'f', 4)
-                                         .arg (m_phasey, 6, 'f', 4)
-                                      );
-    } else {
-      ui->decodedTextBrowser->append(
-                                     QString {"Amp: %1   Phase: %1"}
-                                        .arg (m_gainx, 6, 'f', 4)
-                                        .arg (m_phasex, 6, 'f', 4)
-                                     );
-    }
+    ui->decodedTextBrowser->append(
+          QString {"Amp: %1   Phase: %1"}
+          .arg (m_gainx, 6, 'f', 4)
+          .arg (m_phasex, 6, 'f', 4)
+          );
     ui->decodedTextBrowser->append(t);
     m_adjustIQ=0;
   }
@@ -572,9 +547,8 @@ void MainWindow::dataSink(int k)
     if(m_saveAll and !m_diskData) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
-      if(m_xpol) fname += ".tf2";
-      if(!m_xpol) fname += ".iq";
-      *future2 = QtConcurrent::run(savetf2, fname, m_xpol);
+      fname += ".iq";
+      *future2 = QtConcurrent::run(savetf2, fname, false);
       watcher2->setFuture(*future2);
     }
   }
@@ -595,8 +569,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_myGrid=m_myGrid;
   dlg.m_idInt=m_idInt;
   dlg.m_astroFont=m_astroFont;
-  dlg.m_xpol=m_xpol;
-  dlg.m_xpolx=m_xpolx;
   dlg.m_saveDir=m_saveDir;
   dlg.m_azelDir=m_azelDir;
   dlg.m_editorCommand=m_editorCommand;
@@ -625,9 +597,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_idInt=dlg.m_idInt;
     m_astroFont=dlg.m_astroFont;
     if(m_astro_window && m_astro_window->isVisible()) m_astro_window->setFontSize(m_astroFont);
-    m_xpol=dlg.m_xpol;
-    ui->actionFind_Delta_Phi->setEnabled(m_xpol);
-    m_xpolx=dlg.m_xpolx;
+    ui->actionFind_Delta_Phi->setEnabled(false);
     m_saveDir=dlg.m_saveDir;
     m_azelDir=dlg.m_azelDir;
     m_editorCommand=dlg.m_editorCommand;
@@ -662,8 +632,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
       if(m_fs96000) soundInThread.setRate(96000.0);
       if(!m_fs96000) soundInThread.setRate(95238.1);
       soundInThread.setFadd(m_fAdd);
-      if(!m_xpol) soundInThread.setNrx(1);
-      if(m_xpol) soundInThread.setNrx(2);
+      soundInThread.setNrx(1);
       soundInThread.setInputDevice(m_paInDevice);
       soundInThread.start(QThread::HighestPriority);
     }
@@ -883,18 +852,12 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
   m_monitoring=false;
   soundInThread.setMonitoring(m_monitoring);
   QString fname;
-  if(m_xpol) {
-    fname=QFileDialog::getOpenFileName(this, "Open File", m_path,
-                                       "MAP65 Files (*.tf2)");
-  } else {
-    fname=QFileDialog::getOpenFileName(this, "Open File", m_path,
-                                       "MAP65 Files (*.iq)");
-  }
+  fname=QFileDialog::getOpenFileName(this, "Open File", m_path,
+                                     "MAP65 Files (*.iq)");
   if(fname != "") {
     m_path=fname;
     int i;
     i=fname.indexOf(".iq") - 11;
-    if(m_xpol) i=fname.indexOf(".tf2") - 11;
     if(i>=0) {
       lab1->setStyleSheet("QLabel{background-color: #66ff66}");
       lab1->setText(" " + fname.mid(i,15) + " ");
@@ -903,7 +866,7 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
     m_diskData=true;
     int dbDgrd=0;
     if(m_myCall=="K1JT" and m_idInt<0) dbDgrd=m_idInt;
-    *future1 = QtConcurrent::run(getfile, fname, m_xpol, dbDgrd);
+    *future1 = QtConcurrent::run(getfile, fname, false, dbDgrd);
     watcher1->setFuture(*future1);
   }
 }
@@ -913,11 +876,7 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
   int i,len;
   QFileInfo fi(m_path);
   QStringList list;
-  if(m_xpol) {
-      list= fi.dir().entryList().filter(".tf2");
-  } else {
-      list= fi.dir().entryList().filter(".iq");
-  }
+  list= fi.dir().entryList().filter(".iq");
   for (i = 0; i < list.size()-1; ++i) {
     if(i==list.size()-2) m_loopall=false;
     len=list.at(i).length();
@@ -927,7 +886,6 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       m_path=fname;
       int i;
       i=fname.indexOf(".iq") - 11;
-      if(m_xpol) i=fname.indexOf(".tf2") - 11;
       if(i>=0) {
         lab1->setStyleSheet("QLabel{background-color: #66ff66}");
         lab1->setText(" " + fname.mid(i,len) + " ");
@@ -935,7 +893,7 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       m_diskData=true;
       int dbDgrd=0;
       if(m_myCall=="K1JT" and m_idInt<0) dbDgrd=m_idInt;
-      *future1 = QtConcurrent::run(getfile, fname, m_xpol, dbDgrd);
+      *future1 = QtConcurrent::run(getfile, fname, false, dbDgrd);
       watcher1->setFuture(*future1);
       return;
     }
@@ -1106,14 +1064,12 @@ void MainWindow::decode()                                       //decode()
   datcom_.ntimeout=m_timeout;
   datcom_.ntol=m_tol;
   datcom_.nxant=0;
-  if(m_xpolx) datcom_.nxant=1;
   if(datcom_.nutc < m_nutc0) m_map65RxLog |= 1;  //Date and Time to map65_rx.log
   m_nutc0=datcom_.nutc;
   datcom_.map65RxLog=m_map65RxLog;
   datcom_.nfsample=96000;
   if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
-  if(m_xpol) datcom_.nxpol=1;
   datcom_.nmode=10*m_modeQ65 + m_modeJT65;
 //  datcom_.nfast=1;                               //No longer used
   datcom_.nsave=m_nsave;
@@ -1346,8 +1302,8 @@ void MainWindow::guiUpdate()
         if(m_nrx==1) t="S1";
         if(m_nrx==2) t="S2";
       }
-      if((abs(m_nrx)==1 and m_xpol) or (abs(m_nrx)==2 and !m_xpol))
-        lab1->setStyleSheet("QLabel{background-color: #ff1493}");
+//      if((abs(m_nrx)==1 and m_xpol) or (abs(m_nrx)==2 and !m_xpol))
+//        lab1->setStyleSheet("QLabel{background-color: #ff1493}");
       if(khsym==m_hsym0) {
         t="Nil";
         lab1->setStyleSheet("QLabel{background-color: #ffc0cb}");

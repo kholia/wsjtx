@@ -80,17 +80,9 @@ void DevSetup::initDlg()
 
   ui.myCallEntry->setText(m_myCall);
   ui.myGridEntry->setText(m_myGrid);
-  ui.idIntSpinBox->setValue(m_idInt);
-  ui.pttComboBox->setCurrentIndex(m_pttPort);
   ui.astroFont->setValue(m_astroFont);
-  ui.cbXpol->setChecked(m_xpol);
-  ui.rbAntennaX->setChecked(m_xpolx);
   ui.saveDirEntry->setText(m_saveDir);
   ui.azelDirEntry->setText(m_azelDir);
-  ui.editorEntry->setText(m_editorCommand);
-  ui.dxccEntry->setText(m_dxccPfx);
-  ui.timeoutSpinBox->setValue(m_timeout);
-  ui.dPhiSpinBox->setValue(m_dPhi);
   ui.fCalSpinBox->setValue(m_fCal);
   ui.faddEntry->setText(QString::number(m_fAdd,'f',3));
   ui.networkRadioButton->setChecked(m_network);
@@ -145,22 +137,13 @@ void DevSetup::accept()
   if(m_network!=ui.networkRadioButton->isChecked() or
      m_nDevIn!=ui.comboBoxSndIn->currentIndex() or
      m_paInDevice!=m_inDevList[m_nDevIn] or
-     m_xpol!=ui.cbXpol->isChecked() or
      m_udpPort!=ui.sbPort->value()) m_restartSoundIn=true;
 
   m_myCall=ui.myCallEntry->text();
   m_myGrid=ui.myGridEntry->text();
-  m_idInt=ui.idIntSpinBox->value();
-  m_pttPort=ui.pttComboBox->currentIndex();
   m_astroFont=ui.astroFont->value();
-  m_xpol=ui.cbXpol->isChecked();
-  m_xpolx=ui.rbAntennaX->isChecked();
   m_saveDir=ui.saveDirEntry->text();
   m_azelDir=ui.azelDirEntry->text();
-  m_editorCommand=ui.editorEntry->text();
-  m_dxccPfx=ui.dxccEntry->text();
-  m_timeout=ui.timeoutSpinBox->value();
-  m_dPhi=ui.dPhiSpinBox->value();
   m_fCal=ui.fCalSpinBox->value();
   m_fAdd=ui.faddEntry->text().toDouble();
   m_network=ui.networkRadioButton->isChecked();
@@ -192,15 +175,6 @@ void DevSetup::on_soundCardRadioButton_toggled(bool checked)
   ui.sbPort->setEnabled(!checked);
   ui.cbIQswap->setEnabled(checked);
   ui.sb_dB->setEnabled(checked);
-}
-
-void DevSetup::on_cbXpol_stateChanged(int n)
-{
-  m_xpol = (n!=0);
-  ui.rbAntenna->setEnabled(m_xpol);
-  ui.rbAntennaX->setEnabled(m_xpol);
-  ui.dPhiSpinBox->setEnabled(m_xpol);
-  ui.labelDphi->setEnabled(m_xpol);
 }
 
 void DevSetup::on_cal570SpinBox_valueChanged(double ppm)
