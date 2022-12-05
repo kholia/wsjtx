@@ -197,8 +197,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 // Assign input device and start input thread
   soundInThread.setInputDevice(m_paInDevice);
-  if(m_fs96000) soundInThread.setRate(96000.0);
-  if(!m_fs96000) soundInThread.setRate(95238.1);
+  soundInThread.setRate(96000.0);
   soundInThread.setBufSize(10*7056);
   soundInThread.setNetwork(m_network);
   soundInThread.setPort(m_udpPort);
@@ -599,8 +598,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
       soundInThread.quit();
       soundInThread.wait(1000);
       soundInThread.setNetwork(m_network);
-      if(m_fs96000) soundInThread.setRate(96000.0);
-      if(!m_fs96000) soundInThread.setRate(95238.1);
+      soundInThread.setRate(96000.0);
       soundInThread.setFadd(m_fAdd);
       soundInThread.setNrx(1);
       soundInThread.setInputDevice(m_paInDevice);
@@ -874,8 +872,7 @@ void MainWindow::diskDat()                                   //diskDat()
     datcom_.fcenter=m_wide_graph_window->m_dForceCenterFreq;
   }
 
-  if(m_fs96000) hsym=2048.0*96000.0/11025.0;   //Samples per JT65 half-symbol
-  if(!m_fs96000) hsym=2048.0*95238.1/11025.0;
+  hsym=2048.0*96000.0/11025.0;   //Samples per JT65 half-symbol
   for(int i=0; i<304; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 2048.5;
     dataSink(k);
