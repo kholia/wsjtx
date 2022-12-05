@@ -102,17 +102,9 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   if(nutc.ne.nutc0) nfile=nfile+1
   nutc0=nutc
 
-!###
-!  do nqd=1,0,-1
-!###
-  do nqd=0,0,-1
-     if(nqd.eq.1) then                     !Quick decode, at fQSO
-        fa=1000.0*(fqso+0.001*mousedf) - ntol
-        fb=1000.0*(fqso+0.001*mousedf) + ntol + 4*53.8330078
-     else                                  !Wideband decode at all freqs
-        fa=-1000*0.5*(nfb-nfa) + 1000*nfshift
-        fb= 1000*0.5*(nfb-nfa) + 1000*nfshift
-     endif
+  nqd=0
+  fa=-1000*0.5*(nfb-nfa) + 1000*nfshift
+  fb= 1000*0.5*(nfb-nfa) + 1000*nfshift
      ia=nint(fa/df) + 16385
      ib=nint(fb/df) + 16385
      ia=max(51,ia)
@@ -173,7 +165,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
 !  Is there a shorthand tone above threshold?
            thresh0=1.0
 !  Use lower thresh0 at fQSO
-           if(nqd.eq.1 .and. ntol.le.100) thresh0=0.
            if(syncshort.gt.thresh0) then
 ! ### Do shorthand AFC here (or maybe after finding a pair?) ###
               short(1,i)=syncshort
@@ -188,7 +179,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
                  if(short(1,i0).gt.thresh0) then
                     fshort=0.001*(i0-16385)*df
                     noffset=0
-                    if(nqd.eq.1) noffset=nint(1000.0*(fshort-fqso)-mousedf)
                     if(abs(noffset).le.ntol) then
 !  Keep only the best candidate within ftol.
 !### NB: sync2 was not defined here!
@@ -230,9 +220,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
 !  Is sync1 above threshold?
            thresh1=1.0
 !  Use lower thresh1 at fQSO
-           if(nqd.eq.1 .and. ntol.le.100) thresh1=0.
            noffset=0
-           if(nqd.ge.1) noffset=nint(1000.0*(freq-fqso)-mousedf)
            if(newdat.eq.1 .and. sync1.gt.-99.0) then
               sync1=thresh1+1.0
               noffset=0
@@ -246,14 +234,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
                  nflip=nint(flipk)
                  f00=(i-1)*df          !Freq of detected sync tone (0-96000 Hz)
                  ntry=ntry+1
-                 if((nqd.eq.1 .and. ntry.ge.40) .or.                  &
-                          (nqd.eq.0 .and. ntry.ge.400)) then
-! Too many calls to decode1a!
-                    write(*,*) '! Signal too strong, or suspect data?  Decoding aborted.'
-                    write(13,*) 'Signal too strong, or suspect data?  Decoding aborted.'
-                    call flush(13)
-                    go to 900
-                 endif
 
                  call timer('decode1a',0)
                  ifreq=i
@@ -296,104 +276,13 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
         endif
      enddo  !i=ia,ib
 
-     if(nqd.eq.1) then
-        nwrite=0
-        if(mode65.eq.0) km=0
-        do k=1,km
-           decoded=msg(k)
-           if(decoded.ne.'                      ') then
-              nutc=sig(k,2)
-              freq=sig(k,3)
-              sync1=sig(k,4)
-              dt=sig(k,5)
-              npol=nint(57.2957795*sig(k,6))
-              flip=sig(k,7)
-              sync2=sig(k,8)
-              nkv=sig(k,9)
-              nqual=sig(k,10)
-!              idphi=nint(sig(k,11))
-              if(flip.lt.0.0) then
-                 do i=22,1,-1
-                    if(decoded(i:i).ne.' ') go to 8
-                 enddo
-                 stop 'Error in message format'
-8                if(i.le.18) decoded(i+2:i+4)='OOO'
-              endif
-              nkHz=nint(freq-foffset)-nfshift
-              mhz=fcenter                         ! ... +fadd ???
-              f0=mhz+0.001*nkHz
-              ndf=nint(1000.0*(freq-foffset-(nkHz+nfshift)))
-              nsync1=sync1
-
-              s2db=10.0*log10(sync2) - 40             !### empirical ###
-              nsync2=nint(s2db)
-              if(decoded(1:4).eq.'RO  ' .or. decoded(1:4).eq.'RRR  ' .or.  &
-                   decoded(1:4).eq.'73  ') then
-                 nsync2=nint(1.33*s2db + 2.0)
-              endif
-
-              nwrite=nwrite+1
-              if(nxant.ne.0) then
-                 npol=npol-45
-                 if(npol.lt.0) npol=npol+180
-              endif
-
-              call txpol(xpol,decoded,mygrid,npol,nxant,ntxpol,cp)
-
-           endif
-        enddo  ! k=1,km
-
-        if(bq65) then
-           q65b_called=.false.
-           do icand=1,ncand
-              if(cand(icand)%iflip.ne.0) cycle        !Keep only Q65 candidates
-              freq=cand(icand)%f+nkhz_center-48.0-1.27046
-              nhzdiff=nint(1000.0*(freq-mousefqso)-mousedf) - nfcal
-! Now looking for "quick decode" (nqd=1) candidates at cursor freq +/- ntol.
-              if(nqd.eq.1 .and. abs(nhzdiff).gt.ntol) cycle
-              ikhz=mousefqso
-              q65b_called=.true.
-              f0=cand(icand)%f
-              call timer('q65b    ',0)
-              call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,   &
-                   ntol,xpol,mycall,mygrid, hiscall,hisgrid,mode_q65,f0,fqso, &
-                   newdat,nagain,max_drift,nhsym,ndop00,idec)
-              call timer('q65b    ',1)
-              if(idec.ge.0) candec(icand)=.true.
-           enddo
-           if(.not.q65b_called) then
-              freq=mousefqso + 0.001*mousedf
-              ikhz=mousefqso
-              f0=freq - (nkhz_center-48.0-1.27046)
-              call timer('q65b    ',0)
-              call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,   &
-                   ntol,xpol,mycall,mygrid,hiscall,hisgrid,mode_q65,f0,fqso,  &
-                   newdat,nagain,max_drift,nhsym,ndop00,idec)
-              call timer('q65b    ',1)
-           endif
-        endif
-
-     endif  !nqd.eq.1
-
      if(ndphi.eq.1 .and.iloop.lt.12) then
         iloop=iloop+1
         go to 2
      endif
      
      if(ndphi.eq.1 .and.iloop.eq.12) call getdphi(qphi)
-     if(nqd.eq.1) then
-        call sec0(1,tdec)
-        write(*,1013) nsum,nsave,nstandalone,nhsym,tdec
-1013    format('<QuickDecodeDone>',3i4,i6,f6.2)
-        flush(6)
-        open(16,file='tquick.dat',status='unknown',access='append')
-        write(16,1016) nutc,tdec
-1016    format(i4.4,f7.1)
-        close(16)
-     endif
-     call sec0(1,tsec0)
      if(nhsym.eq.nhsym1 .and. tsec0.gt.3.0) go to 700
-     if(nqd.eq.1 .and. nagain.eq.1) go to 900
 
      if(nqd.eq.0 .and. bq65) then
 ! Do the wideband Q65 decode        
@@ -414,8 +303,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
         enddo  ! icand
      endif
      call sec0(1,tsec0)
-
-  enddo  ! nqd
 
 !  Trim the list and produce a sorted index and sizes of groups.
 !  (Should trimlist remove all but best SNR for given UTC and message content?)
