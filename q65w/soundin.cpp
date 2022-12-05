@@ -10,7 +10,6 @@
 #define NFFT 32768
 #define FRAMES_PER_BUFFER 1024
 
-#include <portaudio.h>
 extern "C"
 {
   struct

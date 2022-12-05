@@ -40,7 +40,7 @@ qt5_wrap_ui (q65w_GENUISRCS ${q65w_UISRCS})
 
 add_executable (q65w ${q65w_CXXSRCS} ${q65w_CSRCS} ${q65w_GENUISRCS} q65w.rc)
 target_include_directories (q65w PRIVATE ${CMAKE_SOURCE_DIR} ${FFTW3_INCLUDE_DIRS})
-target_link_libraries (q65w wsjt_qt m65impl ${FFTW3_LIBRARIES} Qt5::Widgets Qt5::Network Portaudio::Portaudio Usb::Usb)
+target_link_libraries (q65w wsjt_qt m65impl ${FFTW3_LIBRARIES} Qt5::Widgets Qt5::Network Usb::Usb)
 
 if (WSJT_CREATE_WINMAIN)
   set_target_properties (q65w PROPERTIES WIN32_EXECUTABLE ON)
