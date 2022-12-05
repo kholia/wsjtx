@@ -99,11 +99,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connect(m_gui_timer, &QTimer::timeout, this, &MainWindow::guiUpdate);
 
-  m_auto=false;
   m_waterfallAvg = 1;
   m_network = true;
   m_restart=false;
-  m_transmitting=false;
   m_widebandDecode=false;
   m_myCall="K1JT";
   m_myGrid="FN20qi";
@@ -137,8 +135,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
-  ySignalMeter = new SignalMeter(ui->yMeterFrame);
-  ySignalMeter->resize(50, 160);
 
 #ifdef WIN32
   while(true) {
@@ -219,12 +215,7 @@ MainWindow::MainWindow(QWidget *parent) :
   m_tol=500;
   m_wide_graph_window->setTol(m_tol);
   m_wide_graph_window->setFcal(m_fCal);
-  if(m_fs96000) m_wide_graph_window->setFsample(96000);
-  if(!m_fs96000) m_wide_graph_window->setFsample(95238);
-  m_wide_graph_window->m_mult570=m_mult570;
-  m_wide_graph_window->m_mult570Tx=m_mult570Tx;
-  m_wide_graph_window->m_cal570=m_cal570;
-  if(m_initIQplus) m_wide_graph_window->initIQplus();
+  m_wide_graph_window->setFsample(96000);
 
 // Create "m_worked", a dictionary of all calls in wsjt.log
   QFile f("wsjt.log");
@@ -329,8 +320,6 @@ void MainWindow::writeSettings()
   settings.setValue("GainY",(double)m_gainy);
   settings.setValue("PhaseX",(double)m_phasex);
   settings.setValue("PhaseY",(double)m_phasey);
-  settings.setValue("Mult570",m_mult570);
-  settings.setValue("Cal570",m_cal570);
   settings.setValue("Colors",m_colors);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
 }
@@ -413,8 +402,6 @@ void MainWindow::readSettings()
   m_gainy=settings.value("GainY",1.0).toFloat();
   m_phasex=settings.value("PhaseX",0.0).toFloat();
   m_phasey=settings.value("PhaseY",0.0).toFloat();
-  m_mult570=settings.value("Mult570",2).toInt();
-  m_cal570=settings.value("Cal570",0.0).toDouble();
   m_colors=settings.value("Colors","000066ff0000ffff00969696646464").toString();
 
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
@@ -488,13 +475,12 @@ void MainWindow::dataSink(int k)
   ui->yMeterFrame->setVisible(false);
 
   lab4->setText (
-        QString {" Rx noise: %1  %2 %% "}
+        QString {" Rx: %1  %2 %% "}
         .arg (px, 5, 'f', 1)
         .arg (m_pctZap, 5, 'f', 1)
         );
 
   xSignalMeter->setValue(px);                   // Update the signal meters
-  ySignalMeter->setValue(py);
   if(m_monitoring || m_diskData) {
     m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
@@ -585,11 +571,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_IQswap=m_IQswap;
   dlg.m_dB=m_dB;
   dlg.m_initIQplus=m_initIQplus;
-  dlg.m_bIQxt=m_bIQxt;
-  dlg.m_cal570=m_cal570;
-  dlg.m_mult570=m_mult570;
-  dlg.m_colors=m_colors;
-
   dlg.initDlg();
   if(dlg.exec() == QDialog::Accepted) {
     m_myCall=dlg.m_myCall;
@@ -617,11 +598,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_IQswap=dlg.m_IQswap;
     m_dB=dlg.m_dB;
     m_initIQplus=dlg.m_initIQplus;
-    m_bIQxt=dlg.m_bIQxt;
-    m_colors=dlg.m_colors;
-    m_cal570=dlg.m_cal570;
-    m_wide_graph_window->m_mult570=m_mult570;
-    m_wide_graph_window->m_cal570=m_cal570;
     soundInThread.setSwapIQ(m_IQswap);
     soundInThread.setScale(m_dB);
 
@@ -740,18 +716,6 @@ void MainWindow::createStatusBar()                           //createStatusBar
   lab1->setStyleSheet("QLabel{background-color: #00ff00}");
   lab1->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab1);
-
-  lab2 = new QLabel("QSO freq:  125");
-  lab2->setAlignment(Qt::AlignHCenter);
-  lab2->setMinimumSize(QSize(90,10));
-  lab2->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  statusBar()->addWidget(lab2);
-
-  lab3 = new QLabel("QSO DF:   0");
-  lab3->setAlignment(Qt::AlignHCenter);
-  lab3->setMinimumSize(QSize(80,10));
-  lab3->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  statusBar()->addWidget(lab3);
 
   lab4 = new QLabel("");
   lab4->setAlignment(Qt::AlignHCenter);
@@ -1234,41 +1198,11 @@ void MainWindow::guiUpdate()
   qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
   int nsec=ms/1000;
 
-  /*
-  if(nc1 <= 0) nc1++;
-  if(nc1 == 0) {
-    xSignalMeter->setValue(0);
-    ySignalMeter->setValue(0);
-    m_monitoring=false;
-    soundInThread.setMonitoring(false);
-    m_transmitting=true;
-    m_wide_graph_window->enableSetRxHardware(false);
-
-    QString t="  Tx " + m_modeTx + "   ";
-    t=t.left(11);
-    QFile f("map65_tx.log");
-    f.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
-    QTextStream out(&f);
-    out << QDateTime::currentDateTimeUtc().toString("yyyy-MMM-dd hh:mm")
-        << t << QString::fromLatin1(msgsent)
-#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
-        << Qt::endl
-#else
-        << endl
-#endif
-      ;
-    f.close();
-  }
-*/
-
   if(m_monitoring) {
     ui->monitorButton->setStyleSheet(m_pbmonitor_style);
   } else {
     ui->monitorButton->setStyleSheet("");
   }
-
-  lab2->setText("QSO Freq:  " + QString::number(m_wide_graph_window->QSOfreq()));
-  lab3->setText("QSO DF:  " + QString::number(m_wide_graph_window->DF()));
 
   m_wide_graph_window->updateFreqLabel();
 
@@ -1282,7 +1216,7 @@ void MainWindow::guiUpdate()
     soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
     soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
 
-    if(m_pctZap>30.0 and !m_transmitting) {
+    if(m_pctZap>30.0) {
       lab4->setStyleSheet("QLabel{background-color: #ff0000}");
     } else {
       lab4->setStyleSheet("");
@@ -1323,8 +1257,7 @@ void MainWindow::guiUpdate()
     ui->labUTC->setText(utc);
     if((!m_monitoring and !m_diskData) or (khsym==m_hsym0)) {
       xSignalMeter->setValue(0);
-      ySignalMeter->setValue(0);
-      lab4->setText(" Rx noise:    0.0     0.0  0.0% ");
+      lab4->setText(" Rx noise: 0.0  0.0% ");
     }
     m_hsym0=khsym;
     m_sec0=nsec;

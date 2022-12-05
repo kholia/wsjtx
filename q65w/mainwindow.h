@@ -128,8 +128,6 @@ private:
   qint32  m_NBslider;
   qint32  m_adjustIQ;
   qint32  m_applyIQcal;
-  qint32  m_mult570;
-  qint32  m_mult570Tx;
   qint32  m_nsum;
   qint32  m_nsave;
   qint32  m_TRperiod;
@@ -139,23 +137,13 @@ private:
   qint32  m_dB;
 
   double  m_fAdd;
-  //    double  m_IQamp;
-  //    double  m_IQphase;
-  double  m_cal570;
-  double  m_TxOffset;
   double  m_xavg;
 
   bool    m_monitoring;
-  bool    m_transmitting;
   bool    m_diskData;
   bool    m_loopall;
   bool    m_decoderBusy;
-  bool    m_txFirst;
-  bool    m_auto;
-  bool    m_txMute;
   bool    m_restart;
-  bool    m_xpol;
-  bool    m_xpolx;
   bool    m_call3Modified;
   bool    m_startAnother;
   bool    m_saveAll;
