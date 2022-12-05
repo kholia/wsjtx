@@ -277,7 +277,6 @@ void MainWindow::writeSettings()
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
   settings.setValue("Editor",m_editorCommand);
-  settings.setValue("DXCCpfx",m_dxccPfx);
   settings.setValue("Timeout",m_timeout);
   settings.setValue("IQamp",iqAmp);
   settings.setValue("IQphase",iqPhase);
@@ -337,7 +336,6 @@ void MainWindow::readSettings()
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
   m_editorCommand=settings.value("Editor","notepad").toString();
-  m_dxccPfx=settings.value("DXCCpfx","").toString();
   m_timeout=settings.value("Timeout",20).toInt();
   iqAmp=settings.value("IQamp",0).toInt();
   iqPhase=settings.value("IQphase",0).toInt();
@@ -551,7 +549,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_saveDir=m_saveDir;
   dlg.m_azelDir=m_azelDir;
   dlg.m_editorCommand=m_editorCommand;
-  dlg.m_dxccPfx=m_dxccPfx;
   dlg.m_timeout=m_timeout;
   dlg.m_dPhi=m_dPhi;
   dlg.m_fCal=m_fCal;
@@ -575,7 +572,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_saveDir=dlg.m_saveDir;
     m_azelDir=dlg.m_azelDir;
     m_editorCommand=dlg.m_editorCommand;
-    m_dxccPfx=dlg.m_dxccPfx;
     m_timeout=dlg.m_timeout;
     m_dPhi=dlg.m_dPhi;
     m_fCal=dlg.m_fCal;

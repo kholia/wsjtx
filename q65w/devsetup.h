@@ -43,7 +43,6 @@ public:
   QString m_myGrid;
   QString m_saveDir;
   QString m_azelDir;
-  QString m_dxccPfx;
   QString m_editorCommand;
 
 public slots:
