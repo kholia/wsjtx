@@ -67,6 +67,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      call timer('get_cand',1)
      candec=.false.
   endif
+  print*,'~ncand:',ncand
 !###
 !  do k=1,ncand
 !     freq=cand(k)%f+nkhz_center-48.0
@@ -101,7 +102,10 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   if(nutc.ne.nutc0) nfile=nfile+1
   nutc0=nutc
 
-  do nqd=1,0,-1
+!###
+!  do nqd=1,0,-1
+!###
+  do nqd=0,0,-1
      if(nqd.eq.1) then                     !Quick decode, at fQSO
         fa=1000.0*(fqso+0.001*mousedf) - ntol
         fb=1000.0*(fqso+0.001*mousedf) + ntol + 4*53.8330078
@@ -162,7 +166,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            ssmax=1.e30
            call ccf65(ss(1,1,i),nhsym,ssmax,sync1,ipol,jpz,dt,     &
                 flipk,syncshort,snr2,ipol2,dt2)
-!###           if(dt.lt.-2.6 .or. dt.gt.2.5) sync1=-99.0  !###
            call timer('ccf65   ',1)
            if(mode65.eq.0) syncshort=-99.0     !If "No JT65", don't waste time
 
@@ -337,18 +340,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
 
               call txpol(xpol,decoded,mygrid,npol,nxant,ntxpol,cp)
 
-              if(ndphi.eq.0) then
-                 write(*,1010) nkHz,ndf,npol,nutc,dt,nsync2,    &
-                      cm,decoded,nkv,nqual,ntxpol,cp
-1010             format('!',i3,i5,i4,i6.4,f5.1,i5,1x,a1,1x,a22,i2,i5,i5,1x,a1)
-              else
-                 if(iloop.ge.1) qphi(iloop)=sig(k,10)
-                 write(*,1010) nkHz,ndf,npol,nutc,dt,nsync2,    &
-                      cm,decoded,nkv,nqual,30*iloop
-                 write(27,1011) 30*iloop,nkHz,ndf,npol,nutc,  &
-                      dt,sync2,nkv,nqual,cm,decoded
-1011             format(i3,i4,i5,i4,i6.4,1x,f5.1,f7.1,i3,i5,a1,1x,a22)
-              endif
            endif
         enddo  ! k=1,km
 
@@ -373,7 +364,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            if(.not.q65b_called) then
               freq=mousefqso + 0.001*mousedf
               ikhz=mousefqso
-              f0=freq - (nkhz_center-48.0-1.27046)   !### ??? ###
+              f0=freq - (nkhz_center-48.0-1.27046)
               call timer('q65b    ',0)
               call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,   &
                    ntol,xpol,mycall,mygrid,hiscall,hisgrid,mode_q65,f0,fqso,  &
@@ -382,10 +373,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
            endif
         endif
 
-        if(nwrite.eq.0 .and. nwrite_q65.eq.0) then
-           write(*,1012) mousefqso,nutc
-1012       format('!',i3,9x,i6.4,'  ')
-        endif
      endif  !nqd.eq.1
 
      if(ndphi.eq.1 .and.iloop.lt.12) then

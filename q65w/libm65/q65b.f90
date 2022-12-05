@@ -191,6 +191,8 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         fsked=frx - 0.001*ndop00/2.0 - 1.5
         write(12,1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
 1120    format(i4.4,f9.3,f7.2,i5,2x,a,i6)
+        write(*,1121) nutc,fsked,xdt0,nsnr0,trim(msg0)
+1121    format('~',i4.4,f9.3,f7.2,i5,2x,a,i6)
      endif
   endif
 

@@ -138,8 +138,10 @@ subroutine display(nkeep,ftol)
 ! Suppress listing duplicate (same time, decoded message, and frequency)
         if(out(14:17).ne.out0(14:17) .or. out(26:50).ne.out0(26:50) .or.  &
              out(1:3).ne.out0(1:3)) then
-           write(*,1030) out                  !Messages
-1030       format('@',a52)
+!###
+!           write(*,1030) out                  !Messages
+!1030       format('@',a52)
+!###
            out0=out
         endif
 
@@ -169,11 +171,13 @@ subroutine display(nkeep,ftol)
   freqcall(nc+1)='            '
   freqcall(nc+2)='            '
 
-  do i=1,nc
-  write(*,1042) freqcall(i)                         !Band Map
-1042 format('&',a12)
-  enddo
+!###
+!  do i=1,nc
+!  write(*,1042) freqcall(i)                         !Band Map
+!1042 format('&',a12)
+!  enddo
+!###
 
-999  continue
+999 continue
   return
 end subroutine display

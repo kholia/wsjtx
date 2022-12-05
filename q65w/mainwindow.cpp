@@ -1361,6 +1361,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
   while(proc_m65.canReadLine())
   {
     QByteArray t=proc_m65.readLine();
+    qDebug() << "aa" << t.trimmed();
     if(t.indexOf("<QuickDecodeDone>") >= 0) {
       m_nsum=t.mid(17,4).toInt();
       m_nsave=t.mid(21,4).toInt();
@@ -1387,7 +1388,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 
     read_log();
 
-    if(t.indexOf("@") >= 0) {
+    if(t.indexOf("~") >= 0) {
       int n=t.length();
       int m=2;
 #ifdef WIN32
@@ -1566,7 +1567,7 @@ void MainWindow::guiUpdate()
   if(m_modeJT65==0  and m_modeTx=="JT65")  on_pbTxMode_clicked();
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "A" << nsec%60 << m_mode65 << m_modeQ65 << m_modeTx;
+//    qDebug() << "AAA" << nsec%60 << m_mode65 << m_modeQ65 << m_modeTx;
     soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
     soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
 
