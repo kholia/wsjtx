@@ -15,7 +15,6 @@
 #include "about.h"
 #include "astro.h"
 #include "widegraph.h"
-#include "txtune.h"
 #include "sleep.h"
 #include <portaudio.h>
 
@@ -23,20 +22,16 @@
 
 short int iwave[2*60*12000];          //Wave file for Tx audio
 int nwave;                            //Length of Tx waveform
-bool btxok;                           //True if OK to transmit
 bool bTune;
 bool bIQxt;
 double outputLatency;                 //Latency in seconds
-int txPower;
 int iqAmp;
 int iqPhase;
 qint16 id[4*60*96000];
 
-TxTune*    g_pTxTune = NULL;
 QSharedMemory mem_m65("mem_m65");
 
 extern const int RxDataFrequency = 96000;
-extern const int TxDataFrequency = 11025;
 
 //-------------------------------------------------- MainWindow constructor
 MainWindow::MainWindow(QWidget *parent) :
@@ -107,20 +102,14 @@ MainWindow::MainWindow(QWidget *parent) :
   m_auto=false;
   m_waterfallAvg = 1;
   m_network = true;
-  m_txFirst=false;
-  m_txMute=false;
-  btxok=false;
   m_restart=false;
   m_transmitting=false;
   m_widebandDecode=false;
-  m_ntx=1;
   m_myCall="K1JT";
   m_myGrid="FN20qi";
   m_saveDir="/users/joe/map65/install/save";
   m_azelDir="/users/joe/map65/install/";
   m_editorCommand="notepad";
-  m_txFreq=125;
-  m_setftx=0;
   m_loopall=false;
   m_startAnother=false;
   m_saveAll=false;
@@ -143,9 +132,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_modeJT65=0;
   m_modeQ65=0;
   m_TRperiod=60;
-  m_modeTx="JT65";
-  bTune=false;
-  txPower=100;
   iqAmp=0;
   iqPhase=0;
 
@@ -229,10 +215,6 @@ MainWindow::MainWindow(QWidget *parent) :
   if(m_xpol) soundInThread.setNrx(2);
   soundInThread.start(QThread::HighestPriority);
 
-  // Assign output device and start output thread
-  soundOutThread.setOutputDevice(m_paOutDevice);
-//  soundOutThread.start(QThread::HighPriority);
-
   m_monitoring=true;                           // Start with Monitoring ON
   soundInThread.setMonitoring(m_monitoring);
   m_diskData=false;
@@ -244,7 +226,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_wide_graph_window->m_mult570=m_mult570;
   m_wide_graph_window->m_mult570Tx=m_mult570Tx;
   m_wide_graph_window->m_cal570=m_cal570;
-  m_wide_graph_window->m_TxOffset=m_TxOffset;
   if(m_initIQplus) m_wide_graph_window->initIQplus();
 
 // Create "m_worked", a dictionary of all calls in wsjt.log
@@ -285,10 +266,6 @@ MainWindow::~MainWindow()
     soundInThread.quit();
     soundInThread.wait(3000);
   }
-  if (soundOutThread.isRunning()) {
-    soundOutThread.quitExecution=true;
-    soundOutThread.wait(3000);
-  }
   Pa_Terminate();
   fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
   if(!m_decoderBusy) {
@@ -306,7 +283,6 @@ void MainWindow::writeSettings()
     SettingsGroup g {&settings, "MainWindow"};
     settings.setValue("geometry", saveGeometry());
     settings.setValue("MRUdir", m_path);
-    settings.setValue("TxFirst",m_txFirst);
     settings.setValue("DXcall",ui->dxCallEntry->text());
     settings.setValue("DXgrid",ui->dxGridEntry->text());
   }
@@ -315,7 +291,6 @@ void MainWindow::writeSettings()
   settings.setValue("MyCall",m_myCall);
   settings.setValue("MyGrid",m_myGrid);
   settings.setValue("IDint",m_idInt);
-  settings.setValue("PTTport",m_pttPort);
   settings.setValue("AstroFont",m_astroFont);
   settings.setValue("Xpol",m_xpol);
   settings.setValue("XpolX",m_xpolx);
@@ -324,7 +299,6 @@ void MainWindow::writeSettings()
   settings.setValue("Editor",m_editorCommand);
   settings.setValue("DXCCpfx",m_dxccPfx);
   settings.setValue("Timeout",m_timeout);
-  settings.setValue("TxPower",txPower);
   settings.setValue("IQamp",iqAmp);
   settings.setValue("IQphase",iqPhase);
   settings.setValue("ApplyIQcal",m_applyIQcal);
@@ -335,7 +309,6 @@ void MainWindow::writeSettings()
   settings.setValue("FSam96000", m_fs96000);
   settings.setValue("SoundInIndex",m_nDevIn);
   settings.setValue("paInDevice",m_paInDevice);
-  settings.setValue("SoundOutIndex",m_nDevOut);
   settings.setValue("paOutDevice",m_paOutDevice);
   settings.setValue("IQswap",m_IQswap);
   settings.setValue("Scale_dB",m_dB);
@@ -349,7 +322,6 @@ void MainWindow::writeSettings()
   settings.setValue("Mode",m_mode);
   settings.setValue("nModeJT65",m_modeJT65);
   settings.setValue("nModeQ65",m_modeQ65);
-  settings.setValue("TxMode",m_modeTx);
   settings.setValue("SaveNone",ui->actionNone->isChecked());
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
   settings.setValue("NDepth",m_ndepth);
@@ -362,9 +334,7 @@ void MainWindow::writeSettings()
   settings.setValue("PhaseX",(double)m_phasex);
   settings.setValue("PhaseY",(double)m_phasey);
   settings.setValue("Mult570",m_mult570);
-  settings.setValue("Mult570Tx",m_mult570Tx);
   settings.setValue("Cal570",m_cal570);
-  settings.setValue("TxOffset",m_TxOffset);
   settings.setValue("Colors",m_colors);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
 }
@@ -379,14 +349,12 @@ void MainWindow::readSettings()
     ui->dxCallEntry->setText(settings.value("DXcall","").toString());
     ui->dxGridEntry->setText(settings.value("DXgrid","").toString());
     m_path = settings.value("MRUdir", m_appDir + "/save").toString();
-    m_txFirst = settings.value("TxFirst",false).toBool();
   }
 
   SettingsGroup g {&settings, "Common"};
   m_myCall=settings.value("MyCall","").toString();
   m_myGrid=settings.value("MyGrid","").toString();
   m_idInt=settings.value("IDint",0).toInt();
-  m_pttPort=settings.value("PTTport",0).toInt();
   m_astroFont=settings.value("AstroFont",20).toInt();
   m_xpol=settings.value("Xpol",false).toBool();
   ui->actionFind_Delta_Phi->setEnabled(m_xpol);
@@ -396,7 +364,6 @@ void MainWindow::readSettings()
   m_editorCommand=settings.value("Editor","notepad").toString();
   m_dxccPfx=settings.value("DXCCpfx","").toString();
   m_timeout=settings.value("Timeout",20).toInt();
-  txPower=settings.value("TxPower",100).toInt();
   iqAmp=settings.value("IQamp",0).toInt();
   iqPhase=settings.value("IQphase",0).toInt();
   m_applyIQcal=settings.value("ApplyIQcal",0).toInt();
@@ -409,7 +376,6 @@ void MainWindow::readSettings()
   m_fs96000 = settings.value("FSam96000",true).toBool();
   m_nDevIn = settings.value("SoundInIndex", 0).toInt();
   m_paInDevice = settings.value("paInDevice",0).toInt();
-  m_nDevOut = settings.value("SoundOutIndex", 0).toInt();
   m_paOutDevice = settings.value("paOutDevice",0).toInt();
   m_IQswap = settings.value("IQswap",false).toBool();
   m_dB = settings.value("Scale_dB",0).toInt();
@@ -431,7 +397,6 @@ void MainWindow::readSettings()
   if(m_modeJT65==3) ui->actionJT65C->setChecked(true);
 
   m_modeQ65=settings.value("nModeQ65",2).toInt();
-  m_modeTx=settings.value("TxMode","JT65").toString();
   if(m_modeQ65==0) ui->actionNoQ65->setChecked(true);
   if(m_modeQ65==1) ui->actionQ65A->setChecked(true);
   if(m_modeQ65==2) ui->actionQ65B->setChecked(true);
@@ -446,7 +411,6 @@ void MainWindow::readSettings()
   m_onlyEME=settings.value("NEME",false).toBool();
   ui->actionOnly_EME_calls->setChecked(m_onlyEME);
   m_kb8rq=settings.value("KB8RQ",false).toBool();
-  ui->actionF4_sets_Tx6->setChecked(m_kb8rq);
   m_NB=settings.value("NB",false).toBool();
   ui->NBcheckBox->setChecked(m_NB);
   ui->sbMaxDrift->setValue(settings.value("MaxDrift",0).toInt());
@@ -457,9 +421,7 @@ void MainWindow::readSettings()
   m_phasex=settings.value("PhaseX",0.0).toFloat();
   m_phasey=settings.value("PhaseY",0.0).toFloat();
   m_mult570=settings.value("Mult570",2).toInt();
-  m_mult570Tx=settings.value("Mult570Tx",1).toInt();
   m_cal570=settings.value("Cal570",0.0).toDouble();
-  m_TxOffset=settings.value("TxOffset",130.9).toDouble();
   m_colors=settings.value("Colors","000066ff0000ffff00969696646464").toString();
 
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
@@ -632,7 +594,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_myCall=m_myCall;
   dlg.m_myGrid=m_myGrid;
   dlg.m_idInt=m_idInt;
-  dlg.m_pttPort=m_pttPort;
   dlg.m_astroFont=m_astroFont;
   dlg.m_xpol=m_xpol;
   dlg.m_xpolx=m_xpolx;
@@ -654,9 +615,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_initIQplus=m_initIQplus;
   dlg.m_bIQxt=m_bIQxt;
   dlg.m_cal570=m_cal570;
-  dlg.m_TxOffset=m_TxOffset;
   dlg.m_mult570=m_mult570;
-  dlg.m_mult570Tx=m_mult570Tx;
   dlg.m_colors=m_colors;
 
   dlg.initDlg();
@@ -664,7 +623,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_myCall=dlg.m_myCall;
     m_myGrid=dlg.m_myGrid;
     m_idInt=dlg.m_idInt;
-    m_pttPort=dlg.m_pttPort;
     m_astroFont=dlg.m_astroFont;
     if(m_astro_window && m_astro_window->isVisible()) m_astro_window->setFontSize(m_astroFont);
     m_xpol=dlg.m_xpol;
@@ -692,10 +650,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_bIQxt=dlg.m_bIQxt;
     m_colors=dlg.m_colors;
     m_cal570=dlg.m_cal570;
-    m_TxOffset=dlg.m_TxOffset;
-    m_mult570Tx=dlg.m_mult570Tx;
     m_wide_graph_window->m_mult570=m_mult570;
-    m_wide_graph_window->m_mult570Tx=m_mult570Tx;
     m_wide_graph_window->m_cal570=m_cal570;
     soundInThread.setSwapIQ(m_IQswap);
     soundInThread.setScale(m_dB);
@@ -711,13 +666,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
       if(m_xpol) soundInThread.setNrx(2);
       soundInThread.setInputDevice(m_paInDevice);
       soundInThread.start(QThread::HighestPriority);
-    }
-
-    if(dlg.m_restartSoundOut) {
-      soundOutThread.quitExecution=true;
-      soundOutThread.wait(1000);
-      soundOutThread.setOutputDevice(m_paOutDevice);
-//      soundOutThread.start(QThread::HighPriority);
     }
   }
 }
@@ -758,9 +706,6 @@ void MainWindow::keyPressEvent( QKeyEvent *e )                //keyPressEvent
 {
   switch(e->key())
   {
-  case Qt::Key_F3:
-    m_txMute=!m_txMute;
-    break;
   case Qt::Key_F4:
     ui->dxCallEntry->setText("");
     ui->dxGridEntry->setText("");
@@ -1328,45 +1273,18 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
 //------------------------------------------------------------- //guiUpdate()
 void MainWindow::guiUpdate()
 {
-  static int iptt0=0;
-  static int iptt=0;
-  static bool btxok0=false;
-  static bool bTune0=false;
-  static bool bMonitoring0=false;
-  static int nc0=1;
-  static int nc1=1;
-  static char msgsent[23];
-  static int nsendingsh=0;
   int khsym=0;
 
-  double tx1=0.0;
-  double tx2=126.0*4096.0/11025.0 + 1.8;
-  if(m_modeTx=="Q65") tx2=85.0*7200.0/12000.0 + 1.8;
-
-  if(!m_txFirst) {
-    tx1 += m_TRperiod;
-    tx2 += m_TRperiod;
-  }
   qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
   int nsec=ms/1000;
 
-  if(bTune0 and !bTune) {
-    btxok=false;
-    m_monitoring=bMonitoring0;
-    soundInThread.setMonitoring(m_monitoring);
-  }
-  if(bTune and !bTune0) bMonitoring0=m_monitoring;
-  bTune0=bTune;
-
-// If PTT was just raised, start a countdown for raising TxOK:
-  if(iptt==1 && iptt0==0) nc1=-9;    // TxDelay = 0.8 s
+  /*
   if(nc1 <= 0) nc1++;
   if(nc1 == 0) {
     xSignalMeter->setValue(0);
     ySignalMeter->setValue(0);
     m_monitoring=false;
     soundInThread.setMonitoring(false);
-    btxok=true;
     m_transmitting=true;
     m_wide_graph_window->enableSetRxHardware(false);
 
@@ -1385,30 +1303,7 @@ void MainWindow::guiUpdate()
       ;
     f.close();
   }
-
-// If btxok was just lowered, start a countdown for lowering PTT
-  if(!btxok && btxok0 && iptt==1) nc0=-11;  //RxDelay = 1.0 s
-  btxok0=btxok;
-  if(nc0 <= 0) nc0++;
-  if(nc0 == 0) {
-    if(m_bIQxt) m_wide_graph_window->rx570();     // Set Si570 back to Rx Freq
-    int itx=0;
-    ptt_(&m_pttPort,&itx,&iptt);       // Lower PTT
-    if(!m_txMute) {
-      soundOutThread.quitExecution=true;\
-    }
-    m_transmitting=false;
-    m_wide_graph_window->enableSetRxHardware(true);
-    if(m_auto) {
-      m_monitoring=true;
-      soundInThread.setMonitoring(m_monitoring);
-    }
-  }
-
-  if(iptt == 0 && !btxok) {
-    // sending=""
-    // nsendingsh=0
-  }
+*/
 
   if(m_monitoring) {
     ui->monitorButton->setStyleSheet(m_pbmonitor_style);
@@ -1427,7 +1322,7 @@ void MainWindow::guiUpdate()
   }
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec%60 << m_mode65 << m_modeQ65 << m_modeTx;
+//    qDebug() << "AAA" << nsec%60 << m_modeQ65;
     soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
     soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
 
@@ -1437,18 +1332,7 @@ void MainWindow::guiUpdate()
       lab4->setStyleSheet("");
     }
 
-    if(m_transmitting) {
-      if(nsendingsh==1) {
-        lab1->setStyleSheet("QLabel{background-color: #66ffff}");
-      } else if(nsendingsh==-1) {
-        lab1->setStyleSheet("QLabel{background-color: #ffccff}");
-      } else {
-        lab1->setStyleSheet("QLabel{background-color: #ffff33}");
-      }
-      char s[37];
-      sprintf(s,"Tx: %s",msgsent);
-      lab1->setText(s);
-    } else if(m_monitoring) {
+    if(m_monitoring) {
       lab1->setStyleSheet("QLabel{background-color: #00ff00}");
       m_nrx=soundInThread.nrx();
       khsym=soundInThread.mhsym();
@@ -1489,7 +1373,6 @@ void MainWindow::guiUpdate()
     m_hsym0=khsym;
     m_sec0=nsec;
   }
-  iptt0=iptt;
   bIQxt=m_bIQxt;
 }
 
@@ -1506,11 +1389,6 @@ void MainWindow::ba2msg(QByteArray ba, char message[])             //ba2msg()
     }
   }
   message[22] = '\0';
-}
-
-void MainWindow::set_ntx(int n)                                   //set_ntx()
-{
-  m_ntx=n;
 }
 
 void MainWindow::lookup()                                       //lookup()
@@ -1646,6 +1524,7 @@ void MainWindow::on_addButton_clicked()                       //Add button
   }
 }
 
+/*
 void MainWindow::msgtype(QString t, QLineEdit* tx)                //msgtype()
 {
 //  if(t.length()<1) return 0;
@@ -1684,6 +1563,7 @@ void MainWindow::msgtype(QString t, QLineEdit* tx)                //msgtype()
     tx->setText(t);
   }
 }
+*/
 
 void MainWindow::on_dxCallEntry_textChanged(const QString &t) //dxCall changed
 {

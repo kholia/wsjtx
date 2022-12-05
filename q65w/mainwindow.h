@@ -10,7 +10,6 @@
 #include <QProcess>
 #include "getfile.h"
 #include "soundin.h"
-#include "soundout.h"
 #include "signalmeter.h"
 #include "commons.h"
 #include "sleep.h"
@@ -78,7 +77,6 @@ private slots:
   void decode();
   void decodeBusy(bool b);
   void on_EraseButton_clicked();
-  void set_ntx(int n);
   void on_lookupButton_clicked();
   void on_addButton_clicked();
   void on_dxCallEntry_textChanged(const QString &arg1);
@@ -111,8 +109,6 @@ private:
   qint32  m_DF;
   qint32  m_tol;
   qint32  m_QSOfreq0;
-  qint32  m_ntx;
-  qint32  m_pttPort;
   qint32  m_astroFont;
   qint32  m_timeout;
   qint32  m_dPhi;
@@ -225,7 +221,6 @@ private:
 
 
   SoundInThread soundInThread;             //Instantiate the audio threads
-  SoundOutThread soundOutThread;
 
   //---------------------------------------------------- private functions
   void readSettings();
@@ -265,8 +260,6 @@ extern "C" {
   void gen_q65_wave_(char* msg, int* ntxFreq, int* mode64,
               char* msgsent, short iwave[], int* nwave,
               int len1, int len2);
-
-  int ptt_(int* nport, int* itx, int* iptt);
 
   void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
                     const char* mygrid, int* ndop00, int len1);

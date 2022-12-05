@@ -12,8 +12,6 @@ set (q65w_CXXSRCS
   set570.cpp
   signalmeter.cpp
   soundin.cpp
-  soundout.cpp
-  txtune.cpp
   widegraph.cpp
   )
 
@@ -26,7 +24,6 @@ set (q65w_UISRCS
   astro.ui
   devsetup.ui
   mainwindow.ui
-  txtune.ui
   widegraph.ui
 )
 
