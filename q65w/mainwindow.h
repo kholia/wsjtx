@@ -166,7 +166,7 @@ private:
   QLabel* lab4;
   QLabel* lab5;
   QLabel* lab6;
-  QLabel* lab7;
+  QLabel* lab7;                   //Why still needed?
 
   QMessageBox msgBox0;
 
@@ -193,7 +193,7 @@ private:
   QString m_mode;
   QString m_colors;                     //Why still needed?
   QString m_editorCommand;              //Why still needed?
-  QString m_modeTx;
+  QString m_modeTx;                     //Why still needed?
 
   QHash<QString,bool> m_worked;
 

@@ -707,12 +707,6 @@ void MainWindow::createStatusBar()                           //createStatusBar
   lab6->setMinimumSize(QSize(50,10));
   lab6->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab6);
-
-  lab7 = new QLabel("Avg: 0");
-  lab7->setAlignment(Qt::AlignHCenter);
-  lab7->setMinimumSize(QSize(50,10));
-  lab7->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  statusBar()->addWidget(lab7);
 }
 
 void MainWindow::on_tolSpinBox_valueChanged(int i)             //tolSpinBox
@@ -1068,13 +1062,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
   while(proc_m65.canReadLine())
   {
     QByteArray t=proc_m65.readLine();
-    if(t.indexOf("<QuickDecodeDone>") >= 0) {
-      m_nsum=t.mid(17,4).toInt();
-      m_nsave=t.mid(21,4).toInt();
-      lab7->setText (QString {"Avg: %1"}.arg (m_nsum));
-      if(m_modeQ65>0) m_wide_graph_window->setDecodeFinished();
-    }
-
     if((t.indexOf("<EarlyFinished>") >= 0) or (t.indexOf("<DecodeFinished>") >= 0)) {
       if(m_widebandDecode) {
         m_widebandDecode=false;
