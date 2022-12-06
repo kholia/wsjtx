@@ -45,7 +45,6 @@ public slots:
   void freezeDecode(int n);
   void readFromStdout();
   void m65_error (QProcess::ProcessError);
-  void editor_error();
   void guiUpdate();
 
 private:
@@ -193,7 +192,7 @@ private:
   QString m_dateTime;
   QString m_mode;
   QString m_colors;                     //Why still needed?
-  QString m_editorCommand;
+  QString m_editorCommand;              //Why still needed?
   QString m_modeTx;
 
   QHash<QString,bool> m_worked;

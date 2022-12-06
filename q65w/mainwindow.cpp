@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
   m_myGrid="FN20qi";
   m_saveDir="/users/joe/map65/install/save";
   m_azelDir="/users/joe/map65/install/";
-  m_editorCommand="notepad";
+//  m_editorCommand="notepad";
   m_loopall=false;
   m_startAnother=false;
   m_saveAll=false;
@@ -263,7 +263,7 @@ void MainWindow::writeSettings()
   settings.setValue("AstroFont",m_astroFont);
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
-  settings.setValue("Editor",m_editorCommand);
+//  settings.setValue("Editor",m_editorCommand);
   settings.setValue("Timeout",m_timeout);
   settings.setValue("IQamp",iqAmp);
   settings.setValue("IQphase",iqPhase);
@@ -321,7 +321,7 @@ void MainWindow::readSettings()
   m_astroFont=settings.value("AstroFont",20).toInt();
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
-  m_editorCommand=settings.value("Editor","notepad").toString();
+//  m_editorCommand=settings.value("Editor","notepad").toString();
   m_timeout=settings.value("Timeout",20).toInt();
   iqAmp=settings.value("IQamp",0).toInt();
   iqPhase=settings.value("IQphase",0).toInt();
@@ -533,7 +533,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
   dlg.m_astroFont=m_astroFont;
   dlg.m_saveDir=m_saveDir;
   dlg.m_azelDir=m_azelDir;
-  dlg.m_editorCommand=m_editorCommand;
+//  dlg.m_editorCommand=m_editorCommand;
   dlg.m_timeout=m_timeout;
   dlg.m_dPhi=m_dPhi;
   dlg.m_fCal=m_fCal;
@@ -556,7 +556,7 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     ui->actionFind_Delta_Phi->setEnabled(false);
     m_saveDir=dlg.m_saveDir;
     m_azelDir=dlg.m_azelDir;
-    m_editorCommand=dlg.m_editorCommand;
+//    m_editorCommand=dlg.m_editorCommand;
     m_timeout=dlg.m_timeout;
     m_dPhi=dlg.m_dPhi;
     m_fCal=dlg.m_fCal;
@@ -1061,11 +1061,6 @@ void MainWindow::m65_error (QProcess::ProcessError)
   msgBox("Error starting or running\n" + m_appDir + "/m65 -s\n\n"
          + proc_m65.errorString ());
   QTimer::singleShot (0, this, SLOT (close ()));
-}
-
-void MainWindow::editor_error()                                 //editor_error
-{
-  msgBox("Error starting or running\n" + m_appDir + "/" + m_editorCommand);
 }
 
 void MainWindow::readFromStdout()                             //readFromStdout
