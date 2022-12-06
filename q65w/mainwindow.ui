@@ -181,16 +181,12 @@ p, li { white-space: pre-wrap; }
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
          <widget class="QFrame" name="xMeterFrame">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QFrame" name="yMeterFrame">
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
           </property>
@@ -642,9 +638,6 @@ p, li { white-space: pre-wrap; }
      <string>Setup</string>
     </property>
     <addaction name="actionDeviceSetup"/>
-    <addaction name="separator"/>
-    <addaction name="separator"/>
-    <addaction name="actionFUNcube_Dongle"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">

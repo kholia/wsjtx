@@ -446,7 +446,6 @@ void MainWindow::dataSink(int k)
 
   QString t;
   m_pctZap=nzap/178.3;
-  ui->yMeterFrame->setVisible(false);
 
   lab4->setText (
         QString {" Rx: %1  %2 % "}
