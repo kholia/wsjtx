@@ -9209,7 +9209,6 @@ void MainWindow::readWidebandDecodes()
       }
       t+=t1;
     }
-    qDebug() << "bb" << t;
     if(m_ActiveStationsWidget != NULL) {
       m_ActiveStationsWidget->erase();
       m_ActiveStationsWidget->displayRecentStations(t);
