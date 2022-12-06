@@ -93,9 +93,6 @@ MainWindow::MainWindow(QWidget *parent) :
               }
           });
 
-  connect(&proc_editor, SIGNAL(error(QProcess::ProcessError)),
-          this, SLOT(editor_error()));
-
   connect(m_gui_timer, &QTimer::timeout, this, &MainWindow::guiUpdate);
 
   m_waterfallAvg = 1;
@@ -124,7 +121,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_udpPort=50004;
   m_adjustIQ=0;
   m_applyIQcal=0;
-  m_colors="000066ff0000ffff00969696646464";
   m_nsave=0;
   m_modeJT65=0;
   m_modeQ65=0;
@@ -312,7 +308,6 @@ void MainWindow::writeSettings()
   settings.setValue("GainY",(double)m_gainy);
   settings.setValue("PhaseX",(double)m_phasex);
   settings.setValue("PhaseY",(double)m_phasey);
-  settings.setValue("Colors",m_colors);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
 }
 
@@ -393,7 +388,6 @@ void MainWindow::readSettings()
   m_gainy=settings.value("GainY",1.0).toFloat();
   m_phasex=settings.value("PhaseX",0.0).toFloat();
   m_phasey=settings.value("PhaseY",0.0).toFloat();
-  m_colors=settings.value("Colors","000066ff0000ffff00969696646464").toString();
 
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
     !ui->actionAFMHot->isChecked() && !ui->actionBlue->isChecked()) {
@@ -1448,11 +1442,6 @@ void MainWindow::on_NBcheckBox_toggled(bool checked)
 void MainWindow::on_NBslider_valueChanged(int n)
 {
   m_NBslider=n;
-}
-
-void MainWindow::on_actionFUNcube_Dongle_triggered()
-{
-  proc_qthid.start (QDir::toNativeSeparators(m_appDir + "/qthid"), QStringList {});
 }
 
 bool MainWindow::isGrid4(QString g)

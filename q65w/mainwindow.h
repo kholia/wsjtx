@@ -87,7 +87,6 @@ private slots:
   void on_NBslider_valueChanged(int value);
   void on_actionAFMHot_triggered();
   void on_actionBlue_triggered();
-  void on_actionFUNcube_Dongle_triggered();
   void on_actionQ65A_triggered();
   void on_actionQ65B_triggered();
   void on_actionQ65C_triggered();
@@ -165,8 +164,6 @@ private:
   QRect   m_wideGraphGeom;
 
   QLabel* lab1;                            // labels in status bar
-  QLabel* lab2;
-  QLabel* lab3;
   QLabel* lab4;
   QLabel* lab5;
   QLabel* lab6;
@@ -180,9 +177,6 @@ private:
   QFutureWatcher<void>* watcher2;
 
   QProcess proc_m65;
-  QProcess proc_qthid;
-  QProcess proc_editor;
-
 
   QString m_path;
   QString m_pbdecoding_style1;
@@ -198,7 +192,7 @@ private:
   QString m_palette;
   QString m_dateTime;
   QString m_mode;
-  QString m_colors;
+  QString m_colors;                     //Why still needed?
   QString m_editorCommand;
   QString m_modeTx;
 
