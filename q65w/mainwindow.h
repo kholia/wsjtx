@@ -224,9 +224,6 @@ private:
 extern void getfile(QString fname, bool xpol, int idInt);
 extern void savetf2(QString fname, bool xpol);
 extern int killbyname(const char* progName);
-extern void getDev(int* numDevices,char hostAPI_DeviceName[][50],
-                   int minChan[], int maxChan[],
-                   int minSpeed[], int maxSpeed[]);
 
 extern "C" {
 //----------------------------------------------------- C and Fortran routines
