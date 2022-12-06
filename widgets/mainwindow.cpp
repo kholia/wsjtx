@@ -4589,7 +4589,7 @@ void MainWindow::guiUpdate()
           if(m_ntx==2 or m_ntx==3) {
             QStringList t=ui->tx2->text().split(' ', SkipEmptyParts);
             int n=t.size();
-            m_xSent=t.at(n-2) + " " + t.at(n-1);
+            if (n > 3) m_xSent=t.at(n-2) + " " + t.at(n-1);
           }
         }
       }
