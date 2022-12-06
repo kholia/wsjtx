@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
 {
   QApplication a {argc, argv};
   // Override programs executable basename as application name.
-  a.setApplicationName ("MAP65");
-  a.setApplicationVersion ("3.0.1");
+  a.setApplicationName ("Q65W");
+  a.setApplicationVersion ("0.1");
   // switch off as we share an Info.plist file with WSJT-X
   a.setAttribute (Qt::AA_DontUseNativeMenuBar);
   MainWindow w;
