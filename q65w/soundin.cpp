@@ -202,7 +202,8 @@ void SoundInThread::inputUDP()
     qe = quitExecution;
     if (qe) break;
     if (!udpSocket->hasPendingDatagrams()) {
-      msleep(2);                  // Sleep if no packet available
+//      msleep(2);                  // Sleep if no packet available
+      QObject().thread()->usleep(2000);
     } else {
       int nBytesRead = udpSocket->readDatagram((char *)&b,1416);
       if (nBytesRead != 1416) qDebug() << "UDP Read Error:" << nBytesRead;
@@ -217,6 +218,7 @@ void SoundInThread::inputUDP()
         nhsym0=0;
         m_TRperiod0=m_TRperiod;
       }
+
       ntr0=ntr;
 
       if(m_monitoring) {

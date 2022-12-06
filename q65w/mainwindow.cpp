@@ -187,6 +187,7 @@ MainWindow::MainWindow(QWidget *parent) :
   soundInThread.setBufSize(10*7056);
   soundInThread.setNetwork(m_network);
   soundInThread.setPort(m_udpPort);
+  soundInThread.setPeriod(m_TRperiod);
   soundInThread.start(QThread::HighestPriority);
 
   m_monitoring=true;                           // Start with Monitoring ON
@@ -448,7 +449,7 @@ void MainWindow::dataSink(int k)
   ui->yMeterFrame->setVisible(false);
 
   lab4->setText (
-        QString {" Rx: %1  %2 %% "}
+        QString {" Rx: %1  %2 % "}
         .arg (px, 5, 'f', 1)
         .arg (m_pctZap, 5, 'f', 1)
         );
@@ -1080,7 +1081,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
 #ifdef WIN32
       m=3;
 #endif
-//      qDebug() << "aa" << n << m << t.trimmed();
       if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
@@ -1130,7 +1130,7 @@ void MainWindow::guiUpdate()
   }
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec%60 << m_modeQ65;
+//    qDebug() << "AAA" << nsec%60 << m_TRperiod;
     soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
     soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
 
