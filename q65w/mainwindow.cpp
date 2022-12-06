@@ -19,14 +19,9 @@
 
 #define NFFT 32768
 
-short int iwave[2*60*12000];          //Wave file for Tx audio
-int nwave;                            //Length of Tx waveform
-bool bTune;
-bool bIQxt;
-double outputLatency;                 //Latency in seconds
 int iqAmp;
 int iqPhase;
-qint16 id[4*60*96000];
+qint16 id[2*60*96000];
 
 QSharedMemory mem_m65("mem_m65");
 
@@ -1233,7 +1228,6 @@ void MainWindow::guiUpdate()
     m_hsym0=khsym;
     m_sec0=nsec;
   }
-  bIQxt=m_bIQxt;
 }
 
 void MainWindow::lookup()                                       //lookup()
