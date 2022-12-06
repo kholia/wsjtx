@@ -19,6 +19,7 @@ subroutine decode0(dd,ss,savg,nstandalone)
   save
 
   call sec0(0,tquick)
+  ncand=0
   call timer('decode0 ',0)
   if(newdat.ne.0) then
      nz=96000*nhsym/5.3833
@@ -56,15 +57,12 @@ subroutine decode0(dd,ss,savg,nstandalone)
        mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,          &
        nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                 &
        neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,             &
-       ndiskdat,nxpol,nmode,ndop00)
+       ndiskdat,nxpol,nmode,ndop00,ncand)
   call timer('map65a  ',1)
   call timer('decode0 ',1)
 
-  call sec0(1,tdec)
-  if(nhsym.eq.nhsym1) write(*,1010) nsum,nsave,nstandalone,nhsym,tdec
-1010 format('<EarlyFinished>',3i4,i6,f6.2)
-  if(nhsym.eq.nhsym2) write(*,1012) nsum,nsave,nstandalone,nhsym,tdec,ndecodes
-1012 format('<DecodeFinished>',3i4,i6,f6.2,i5)
+  if(nhsym.eq.nhsym2) write(*,1012) ndecodes,ncand
+1012 format('<DecodeFinished>',2i4)
   flush(6)
 
   return

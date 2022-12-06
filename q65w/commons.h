@@ -31,7 +31,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int nfsample;                     //Input sample rate
   int nxpol;                        //1 if using xpol antennas, 0 otherwise
   int nmode;                        //nmode = 10*m_modeQ65 + m_modeJT65
-  int nfast;                        //No longer used
+  int ndop00;                       //EME Self Doppler
   int nsave;                        //Number of s3(64,63) spectra saved
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
   int nhsym;                        //Number of available JT65 half-symbols

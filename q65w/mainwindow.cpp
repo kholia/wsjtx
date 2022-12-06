@@ -90,7 +90,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_waterfallAvg = 1;
   m_network = true;
   m_restart=false;
-  m_widebandDecode=false;
   m_myCall="K1JT";
   m_myGrid="FN20qi";
   m_saveDir="/users/joe/map65/install/save";
@@ -495,7 +494,7 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-    if(ihsym>=302) {   //Decode at t=56 s (for Q65 and data from disk)
+    if(ihsym==302) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
     datcom_.newdat=1;
     datcom_.nagain=0;
@@ -958,7 +957,7 @@ void MainWindow::decode()                                       //decode()
       int nfreq=(int)datcom_.fcenter;
       int ndop00;
       astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
-      datcom_.nfast=ndop00;               //Send self Doppler to decoder, via datcom
+      datcom_.ndop00=ndop00;               //Send self Doppler to decoder, via datcom
     }
   }
   datcom_.neme=0;
@@ -987,7 +986,6 @@ void MainWindow::decode()                                       //decode()
   if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
   datcom_.nmode=10*m_modeQ65 + m_modeJT65;
-//  datcom_.nfast=1;                               //No longer used
   datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
 
@@ -1053,22 +1051,17 @@ void MainWindow::m65_error (QProcess::ProcessError)
 }
 
 void MainWindow::readFromStdout()                             //readFromStdout
-{
+{  
   while(proc_m65.canReadLine())
   {
     QByteArray t=proc_m65.readLine();
-    if((t.indexOf("<EarlyFinished>") >= 0) or (t.indexOf("<DecodeFinished>") >= 0)) {
-      if(m_widebandDecode) {
-        m_widebandDecode=false;
-      }
+    if(t.indexOf("<DecodeFinished>") >= 0) {
       QFile lockFile(m_appDir + "/.lock");
       lockFile.open(QIODevice::ReadWrite);
-      if(t.indexOf("<DecodeFinished>") >= 0) {
-        int ndecodes=t.mid(40,5).toInt();
-        lab5->setText(QString::number(ndecodes));
-        m_map65RxLog=0;
-        m_startAnother=m_loopall;
-      }
+      QString t1=t.mid(16,8);
+      lab5->setText(t1);
+      m_map65RxLog=0;
+      m_startAnother=m_loopall;
       ui->DecodeButton->setStyleSheet("");
       decodeBusy(false);
       return;
@@ -1083,7 +1076,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m).trimmed());
       n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
-      m_widebandDecode=true;
     }
   }
 }

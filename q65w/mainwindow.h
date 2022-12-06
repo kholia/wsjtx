@@ -146,7 +146,6 @@ private:
   bool    m_startAnother;
   bool    m_saveAll;
   bool    m_onlyEME;
-  bool    m_widebandDecode;
   bool    m_kb8rq;
   bool    m_NB;
   bool    m_fs96000;
