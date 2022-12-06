@@ -273,7 +273,6 @@ void MainWindow::writeSettings()
   settings.setValue("FSam96000", m_fs96000);
   settings.setValue("SoundInIndex",m_nDevIn);
   settings.setValue("paInDevice",m_paInDevice);
-  settings.setValue("paOutDevice",m_paOutDevice);
   settings.setValue("IQswap",m_IQswap);
   settings.setValue("Scale_dB",m_dB);
   settings.setValue("IQxt",m_bIQxt);
@@ -332,7 +331,6 @@ void MainWindow::readSettings()
   m_fs96000 = settings.value("FSam96000",true).toBool();
   m_nDevIn = settings.value("SoundInIndex", 0).toInt();
   m_paInDevice = settings.value("paInDevice",0).toInt();
-  m_paOutDevice = settings.value("paOutDevice",0).toInt();
   m_IQswap = settings.value("IQswap",false).toBool();
   m_dB = settings.value("Scale_dB",0).toInt();
   m_initIQplus = settings.value("InitIQplus",false).toBool();
@@ -561,7 +559,6 @@ void MainWindow::on_actionDeviceSetup_triggered()               //Setup Dialog
     m_nDevIn=dlg.m_nDevIn;
     m_paInDevice=dlg.m_paInDevice;
     m_nDevOut=dlg.m_nDevOut;
-    m_paOutDevice=dlg.m_paOutDevice;
     m_udpPort=dlg.m_udpPort;
     m_IQswap=dlg.m_IQswap;
     m_dB=dlg.m_dB;
@@ -1162,10 +1159,6 @@ void MainWindow::guiUpdate()
     m_setftx=0;
     QString utc = t.date().toString(" yyyy MMM dd \n") + t.time().toString();
     ui->labUTC->setText(utc);
-    if((!m_monitoring and !m_diskData) or (khsym==m_hsym0)) {
-      xSignalMeter->setValue(0);
-      lab4->setText(" Rx noise: 0.0  0.0% ");
-    }
     m_hsym0=khsym;
     m_sec0=nsec;
   }
