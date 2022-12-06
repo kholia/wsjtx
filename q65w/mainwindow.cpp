@@ -1091,23 +1091,6 @@ void MainWindow::readFromStdout()                             //readFromStdout
       ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
       m_widebandDecode=true;
     }
-
-    if(t.indexOf("&") >= 0) {
-      QString q(t);
-      QString callsign=q.mid(5);
-      callsign=callsign.mid(0,callsign.indexOf(" "));
-      if(callsign.length()>2) {
-        if(m_worked[callsign]) {
-          q=q.mid(1,4) + "  " + q.mid(5);
-        } else {
-          q=q.mid(1,4) + " *" + q.mid(5);
-        }
-      }
-    }
-    if(t.indexOf("=") >= 0) {
-      int n=t.size();
-      qDebug() << t.mid(1,n-3).trimmed();
-    }
   }
 }
 
