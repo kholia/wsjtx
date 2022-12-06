@@ -24,7 +24,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>2048</width>
+    <width>550</width>
     <height>800</height>
    </size>
   </property>
@@ -1166,11 +1166,4 @@ p, li { white-space: pre-wrap; }
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroup">
-   <property name="exclusive">
-    <bool>true</bool>
-   </property>
-  </buttongroup>
- </buttongroups>
 </ui>
