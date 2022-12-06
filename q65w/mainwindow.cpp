@@ -70,12 +70,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   setWindowTitle (program_title ());
 
-  connect(&soundInThread, SIGNAL(readyForFFT(int)),
-             this, SLOT(dataSink(int)));
-  connect(&soundInThread, SIGNAL(error(QString)), this,
-          SLOT(showSoundInError(QString)));
-  connect(&soundInThread, SIGNAL(status(QString)), this,
-          SLOT(showStatusMessage(QString)));
+  connect(&soundInThread, SIGNAL(readyForFFT(int)), this, SLOT(dataSink(int)));
+  connect(&soundInThread, SIGNAL(error(QString)), this, SLOT(showSoundInError(QString)));
+  connect(&soundInThread, SIGNAL(status(QString)), this, SLOT(showStatusMessage(QString)));
   createStatusBar();
 
   connect(&proc_m65, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
@@ -130,8 +127,7 @@ MainWindow::MainWindow(QWidget *parent) :
   while(true) {
       int iret=killbyname("m65.exe");
       if(iret == 603) break;
-      if(iret != 0) msgBox("KillByName return code: " +
-                           QString::number(iret));
+      if(iret != 0) msgBox("KillByName return code: " + QString::number(iret));
   }
 #endif
 
@@ -946,8 +942,6 @@ void MainWindow::decode()                                       //decode()
 {
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
-//  QFile f("mockRTfiles.txt");
-//  if(datcom_.nagain==0 && (!m_diskData) && !f.exists()) {
   if(datcom_.nagain==0 && (!m_diskData)) {
     qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
     int imin=ms/60000;
@@ -963,8 +957,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.ndiskdat=0;
   if(m_diskData) {
     datcom_.ndiskdat=1;
-    int i0=m_path.indexOf(".tf2");
-    if(i0<0) i0=m_path.indexOf(".iq");
+    int i0=m_path.indexOf(".iq");
     if(i0>0) {
       // Compute self Doppler using the filename for Date and Time
       int nyear=m_path.mid(i0-11,2).toInt()+2000;
@@ -975,7 +968,6 @@ void MainWindow::decode()                                       //decode()
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
       int ndop00;
-
       astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
       datcom_.nfast=ndop00;               //Send self Doppler to decoder, via datcom
     }
