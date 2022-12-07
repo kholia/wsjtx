@@ -19,7 +19,7 @@ class ActiveStations
 public:
   explicit ActiveStations(QSettings *, QFont const&, QWidget * parent = 0);
   ~ActiveStations();
-  void displayRecentStations(QString const&);
+  void displayRecentStations(QString mode, QString const&);
   void changeFont (QFont const&);
   int  maxRecent();
   int  maxAge();
@@ -44,6 +44,7 @@ private:
   Q_SLOT void on_cbReadyOnly_toggled(bool b);
 
   qint64 m_msec0=0;
+  QString m_mode="";
   QSettings * settings_;
 
   QScopedPointer<Ui::ActiveStations> ui;

@@ -1369,7 +1369,6 @@ void MainWindow::readSettings()
   if (displayContestLog) on_contest_log_action_triggered ();
   if(displayActiveStations) {
     on_actionActiveStations_triggered();
-//    QFile f {m_config.writeable_data_dir ().absoluteFilePath ("activeCalls.txt")};
   }
 }
 
@@ -3645,7 +3644,7 @@ void MainWindow::ARRL_Digi_Display()
     t += (t1 + list[k] + "\n");
     if(i>=maxRecent) break;
   }
-  if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(t);
+  if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(m_mode,t);
   m_ActiveStationsWidget->setClickOK(true);
 }
 
@@ -9183,18 +9182,10 @@ void MainWindow::readWidebandDecodes()
       QString w3=msg.mid(i2+1,-1);
       m_EMECall[dxcall].fsked=fsked;
       m_EMECall[dxcall].t=60*nhr + nmin;
-      m_EMECall[dxcall].worked=false;
+      m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
       if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
     }
     f.close();
-
-    /*
-     if(m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();
-
-     if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(t);
-     QString t1;
-     if(!bReady) t1 = t1.asprintf("  %3d  %+2.2d  %4d  %1d %2d %4d",az,snr,freq,itx,age,points);
-     */
 
     QMap<QString,EMECall>::iterator i;
     QString t="";
@@ -9203,20 +9194,23 @@ void MainWindow::readWidebandDecodes()
     QStringList list;
     float f[100];
     int indx[100];
+    int maxAge=m_ActiveStationsWidget->maxAge();
 
     int k=0;
     for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
       int age=60*nhr + nmin - (i->t);
       if(age<0) age += 1440;
-      dxcall=(i.key()+"     ").left(8);
-      if(i->worked) {
-        t1=t1.asprintf("%5.1f    %8s %4d\n",i->fsked,dxcall.toLatin1().constData(),age);
-      } else {
-        t1=t1.asprintf("%5.1f  * %8s %4d\n",i->fsked,dxcall.toLatin1().constData(),age);
+      if(age<=maxAge) {
+        dxcall=(i.key()+"     ").left(8);
+        if(i->worked) {
+          t1=t1.asprintf("%5.1f    %8s %4d\n",i->fsked,dxcall.toLatin1().constData(),age);
+        } else {
+          t1=t1.asprintf("%5.1f  * %8s %4d\n",i->fsked,dxcall.toLatin1().constData(),age);
+        }
+        f[k]=i->fsked;
+        list.append(t1);
+        k++;
       }
-      f[k]=i->fsked;
-      list.append(t1);
-      k++;
     }
 
     if(k>0) {
@@ -9225,7 +9219,7 @@ void MainWindow::readWidebandDecodes()
       indexx_(f,&kz,indx);
       for(int k=0; k<kz; k++) {
         int j=indx[k]-1;
-        t1=t1.asprintf("%3d ",k+1);
+        t1=t1.asprintf("%2d ",k+1);
         t1+=list[j];
         t+=t1;
       }
@@ -9233,7 +9227,7 @@ void MainWindow::readWidebandDecodes()
 
     if(m_ActiveStationsWidget != NULL) {
       m_ActiveStationsWidget->erase();
-      m_ActiveStationsWidget->displayRecentStations(t);
+      m_ActiveStationsWidget->displayRecentStations(m_mode,t);
     }
   }
 }
