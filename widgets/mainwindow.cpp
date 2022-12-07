@@ -5373,9 +5373,9 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
       MessageBox::information_message (this, tr ("Should you switch to RTTY contest mode?"));
     }
 
-    if(SpecOp::EU_VHF==m_specOp and message.string().contains("<...>")) {
-      return;
-    }
+    // This is necessary to prevent crashes caused by double-clicking messages with <...> in certain QSO situations.
+    if((SpecOp::EU_VHF==m_specOp or SpecOp::RTTY==m_specOp or SpecOp::FIELD_DAY==m_specOp)
+        and message.string().contains("<...>")) return;
 
     if(SpecOp::EU_VHF==m_specOp and message_words.at(2).contains(m_baseCall) and
        (!message_words.at(3).contains(qso_partner_base_call)) and (!m_bDoubleClicked)) {
