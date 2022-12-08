@@ -455,6 +455,7 @@ void MainWindow::dataSink(int k)
     m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
 
+  /*
   if(nadj == 10) {
     ui->decodedTextBrowser->append(
           QString {"Amp: %1   Phase: %1"}
@@ -464,6 +465,7 @@ void MainWindow::dataSink(int k)
     ui->decodedTextBrowser->append(t);
     m_adjustIQ=0;
   }
+*/
 
   //Average over specified number of spectra
   if (n==0) {
@@ -492,7 +494,9 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-    if(ihsym==302) {   //Decode at t=56 s (for Q65 and data from disk)
+  qDebug() << "aa" << ihsym << k << px;
+
+  if(ihsym==302) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
     datcom_.newdat=1;
     datcom_.nagain=0;
@@ -996,7 +1000,7 @@ void MainWindow::decode()                                       //decode()
   memcpy(datcom_.hiscall, hcall.toLatin1(), 12);
   memcpy(datcom_.hisgrid, hgrid.toLatin1(), 6);
   memcpy(datcom_.datetime, m_dateTime.toLatin1(), 17);
-  datcom_.junk1=1234;
+  datcom_.junk1=1234;                                     //Cecck for these values in m65
   datcom_.junk2=5678;
 
   char *to = (char*)mem_m65.data();
@@ -1013,7 +1017,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.ndiskdat=0;
   m_map65RxLog=0;
   m_call3Modified=false;
-  qDebug() << "aa" << 10.0*log10(m_xavg);
 
   QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
   lockFile.remove();

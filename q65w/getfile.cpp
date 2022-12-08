@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-extern qint16 id[4*60*96000];
+extern qint16 id[2*60*96000];
 
 void getfile(QString fname, bool xpol, int dbDgrd)
 {
