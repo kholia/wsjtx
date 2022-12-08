@@ -1046,6 +1046,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
 void MainWindow::not_GA_warning_message ()
 {
+  /*       ### TEMPORARY ###
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X 2.6.0 made\n"
                                 "available for testing purposes.  By design it will\n"
@@ -1054,6 +1055,7 @@ void MainWindow::not_GA_warning_message ()
   if (now >= QDateTime {{2023, 03, 31}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
+  */
 }
 
 void MainWindow::initialize_fonts ()
@@ -3652,15 +3654,26 @@ void MainWindow::callSandP2(int n)
 {
   if(m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
-  m_deCall=w[0];
-  m_deGrid=w[1];
+  if(m_mode=="Q65") {
+    int nkhz=int(w[0].toFloat()+0.5);
+    m_freqNominal=(1296*1000 + nkhz)* 1000;
+    int i0=1;
+    if(w[1]=="*") i0=2;
+    m_deCall=w[i0];
+    m_deGrid="";
+    m_txFirst=(w[i0+1]=="0");
+    ui->TxFreqSpinBox->setValue(1500);
+  } else {
+    m_deCall=w[0];
+    m_deGrid=w[1];
+    ui->RxFreqSpinBox->setValue(w[4].toInt());
+    m_txFirst = (w[5]=="0");
+  }
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
   ui->dxGridEntry->setText(m_deGrid);
   genStdMsgs(w[3]);                   //### real SNR would be better here?
-  ui->RxFreqSpinBox->setValue(w[4].toInt());
   setTxMsg(1);
-  m_txFirst = (w[5]=="0");
   ui->txFirstCheckBox->setChecked(m_txFirst);
   if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
   if(m_transmitting) m_restart=true;
@@ -9161,6 +9174,7 @@ void MainWindow::write_transmit_entry (QString const& file_name)
 
 void MainWindow::readWidebandDecodes()
 {
+  if(m_ActiveStationsWidget==NULL) return;
 // Update "m_wEMECall" by reading q65w_decodes.txt
   int nhr=0;
   int nmin=0;
@@ -9196,21 +9210,24 @@ void MainWindow::readWidebandDecodes()
     int indx[100];
     int maxAge=m_ActiveStationsWidget->maxAge();
 
+    m_ActiveStationsWidget->setClickOK(false);
     int k=0;
     for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
+      int odd=1 - (i->t)%2;
       int age=60*nhr + nmin - (i->t);
       if(age<0) age += 1440;
       if(age<=maxAge) {
         dxcall=(i.key()+"     ").left(8);
         if(i->worked) {
-          t1=t1.asprintf("%5.1f    %8s %4d\n",i->fsked,dxcall.toLatin1().constData(),age);
+          t1=t1.asprintf("%5.1f    %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
         } else {
-          t1=t1.asprintf("%5.1f  * %8s %4d\n",i->fsked,dxcall.toLatin1().constData(),age);
+          t1=t1.asprintf("%5.1f  * %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
         }
         f[k]=i->fsked;
         list.append(t1);
         k++;
       }
+      m_ActiveStationsWidget->setClickOK(true);
     }
 
     if(k>0) {
@@ -9221,6 +9238,7 @@ void MainWindow::readWidebandDecodes()
         int j=indx[k]-1;
         t1=t1.asprintf("%2d ",k+1);
         t1+=list[j];
+        m_ready2call[k]=list[j];
         t+=t1;
       }
     }

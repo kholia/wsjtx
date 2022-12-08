@@ -1013,6 +1013,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.ndiskdat=0;
   m_map65RxLog=0;
   m_call3Modified=false;
+  qDebug() << "aa" << 10.0*log10(m_xavg);
 
   QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
   lockFile.remove();

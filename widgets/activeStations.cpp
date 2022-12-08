@@ -62,7 +62,7 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
   m_mode=mode;
   bool b=(m_mode=="Q65");
   if(b) {
-    ui->header_label2->setText("  N  Freq    Call       Age");
+    ui->header_label2->setText("  N  Freq    Call      Tx  Age");
     ui->label->setText("QSOs:");
   } else {
     ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");

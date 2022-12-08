@@ -195,7 +195,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="header_label2">
        <property name="text">
-        <string>Call  Grid  Age   Points</string>
+        <string/>
        </property>
       </widget>
      </item>
