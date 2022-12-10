@@ -44,7 +44,7 @@ public slots:
   void diskWriteFinished();
   void decoderFinished();
   void freezeDecode(int n);
-  void readFromStdout();
+//  void readFromStdout();
   void m65_error (QProcess::ProcessError);
   void guiUpdate();
 
@@ -133,6 +133,7 @@ private:
   qint32  m_modeQ65;
   qint32  m_RxState;
   qint32  m_dB;
+  qint32  m_fetched=0;
 
   double  m_fAdd;
   double  m_xavg;

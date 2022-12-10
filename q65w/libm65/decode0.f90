@@ -9,17 +9,17 @@ subroutine decode0(dd,ss,savg,nstandalone)
   logical ldecoded
   character mycall*12,hiscall*12,mygrid*6,hisgrid*6,datetime*20
   character mycall0*12,hiscall0*12,hisgrid0*6
+  character*60 result
+  common/decodes/ndecodes,ncand,result(50)
   common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,                &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
        ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
   common/early/nhsym1,nhsym2,ldecoded(32768)
-  common/decodes/ndecodes
   data neme0/-99/,mcall3b/1/
   save
 
   call sec0(0,tquick)
-  ncand=0
   if(newdat.ne.0) then
      nz=96000*nhsym/5.3833
      hist=0
@@ -56,11 +56,8 @@ subroutine decode0(dd,ss,savg,nstandalone)
        mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,          &
        nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                 &
        neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,             &
-       ndiskdat,nxpol,nmode,ndop00,ncand)
+       ndiskdat,nxpol,nmode,ndop00)
   call timer('map65a  ',1)
-
-  if(nhsym.eq.nhsym2) write(*,1012) ndecodes,ncand
-1012 format('<DecodeFinished>',2i4)
   flush(6)
 
   return

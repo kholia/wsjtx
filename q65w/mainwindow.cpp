@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(&soundInThread, SIGNAL(status(QString)), this, SLOT(showStatusMessage(QString)));
   createStatusBar();
 
-  connect(&proc_m65, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
+//  connect(&proc_m65, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
   connect(&proc_m65, &QProcess::errorOccurred, this, &MainWindow::m65_error);
   connect(&proc_m65, static_cast<void (QProcess::*) (int, QProcess::ExitStatus)> (&QProcess::finished),
           [this] (int exitCode, QProcess::ExitStatus status) {
@@ -499,8 +499,6 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-//  qDebug() << "aa" << ihsym << k << px;
-
   if(ihsym==302) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
     datcom_.newdat=1;
@@ -861,6 +859,10 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   m_startAnother=m_loopall;
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
+
+  QString t1;
+  t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
+  lab5->setText(t1);
 }
 
 //Delete ../save/*.tf2
@@ -1036,6 +1038,9 @@ void MainWindow::decode()                                       //decode()
 //  QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
 //  lockFile.remove();
 
+  decodes_.ndecodes=0;
+  decodes_.ncand=0;
+  m_fetched=0;
   int itimer=0;
   watcher3.setFuture(QtConcurrent::run (std::bind (m65c_, &itimer)));
 
@@ -1070,6 +1075,7 @@ void MainWindow::m65_error (QProcess::ProcessError)
   QTimer::singleShot (0, this, SLOT (close ()));
 }
 
+/*
 void MainWindow::readFromStdout()                             //readFromStdout
 {
   while(proc_m65.canReadLine())
@@ -1099,6 +1105,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
     }
   }
 }
+*/
 
 void MainWindow::on_EraseButton_clicked()
 {
@@ -1140,8 +1147,16 @@ void MainWindow::guiUpdate()
     on_actionOpen_next_in_directory_triggered();
   }
 
+  if(decodes_.ndecodes>m_fetched) {
+    while(m_fetched<decodes_.ndecodes) {
+      QString t=QString::fromLatin1(decodes_.result[m_fetched]);
+      ui->decodedTextBrowser->append(t.trimmed());
+      m_fetched++;
+    }
+  }
+
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec%60 << m_TRperiod;
+//    qDebug() << "AAA" << nsec%60 << decodes_.ndecodes << decodes_.ncand;
     soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
     soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
 

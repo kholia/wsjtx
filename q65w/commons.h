@@ -83,6 +83,12 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int junk2;
 } datcom2_;
 
+extern struct {
+  int ndecodes;
+  int ncand;
+  char result[50][60];
+} decodes_;
+
 }
 
 #endif // COMMONS_H

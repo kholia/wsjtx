@@ -2,7 +2,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,             &
      nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                    &
      neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,                &
-     ndiskdat,nxpol,nmode,ndop00,ncand)
+     ndiskdat,nxpol,nmode,ndop00)
 
 !  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
 
@@ -30,11 +30,11 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   real short(3,NFFT)                 !SNR dt ipol for potential shorthands
   real qphi(12)
   type(candidate) :: cand(MAX_CANDIDATES)
-  
+  character*60 result
+  common/decodes/ndecodes,ncand,result(50)
   common/c3com/ mcall3a
   common/testcom/ifreq
   common/early/nhsym1,nhsym2,ldecoded(32768)
-  common/decodes/ndecodes
 
   data blank/'                      '/,cm/'#'/
   data shmsg0/'ATT','RO ','RRR','73 '/
@@ -42,7 +42,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   save
 
   rewind 12
-  ndecodes=0
 
 ! Clean start for Q65 at early decode
   if(nhsym.eq.nhsym1 .or. nagain.ne.0) ldecoded=.false.

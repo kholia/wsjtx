@@ -33,9 +33,10 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   character*80 line
   character*80 wsjtx_dir
   character*1 cp,cmode*2
+  character*60 result
+  common/decodes/ndecodes,ncand,result(50)
   common/cacb/ca,cb
   common/early/nhsym1,nhsym2,ldecoded(32768)
-  common/decodes/ndecodes
   data nutc00/-1/,msg00/'                            '/
   save
 
@@ -189,10 +190,13 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         freq1_00=freq1
         frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
         fsked=frx - 0.001*ndop00/2.0 - 1.5
+        write(result(ndecodes),1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
         write(12,1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
 1120    format(i4.4,f9.3,f7.2,i5,2x,a,i6)
-        write(*,1121) nutc,fsked,xdt0,nsnr0,trim(msg0)
-1121    format('~',i4.4,f9.3,f7.2,i5,2x,a,i6)
+!        print*,ndecodes,result(ndecodes)
+        result(ndecodes)=trim(result(ndecodes))//char(0)
+!        write(*,1121) nutc,fsked,xdt0,nsnr0,trim(msg0)
+!1121    format('~',i4.4,f9.3,f7.2,i5,2x,a,i6)
      endif
   endif
   
