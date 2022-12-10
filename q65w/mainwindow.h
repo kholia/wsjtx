@@ -7,7 +7,6 @@
 #include <QLabel>
 #include <QDateTime>
 #include <QHash>
-#include <QProcess>
 #include "getfile.h"
 #include "soundin.h"
 #include "signalmeter.h"
@@ -44,8 +43,6 @@ public slots:
   void diskWriteFinished();
   void decoderFinished();
   void freezeDecode(int n);
-//  void readFromStdout();
-  void m65_error (QProcess::ProcessError);
   void guiUpdate();
 
 private:
@@ -177,8 +174,6 @@ private:
 
   QFutureWatcher<void> watcher3;     //For decoder
 
-  QProcess proc_m65;
-
   QString m_path;
   QString m_pbdecoding_style1;
   QString m_pbmonitor_style;
@@ -213,7 +208,6 @@ private:
   void msgBox(QString t);
   void lookup();
   bool isGrid4(QString g);
-  bool subProcessFailed (QProcess *, int exit_code, QProcess::ExitStatus);
 };
 
 extern void getfile(QString fname, bool xpol, int idInt);

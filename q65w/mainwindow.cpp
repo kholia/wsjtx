@@ -74,17 +74,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(&soundInThread, SIGNAL(error(QString)), this, SLOT(showSoundInError(QString)));
   connect(&soundInThread, SIGNAL(status(QString)), this, SLOT(showStatusMessage(QString)));
   createStatusBar();
-
-//  connect(&proc_m65, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
-  connect(&proc_m65, &QProcess::errorOccurred, this, &MainWindow::m65_error);
-  connect(&proc_m65, static_cast<void (QProcess::*) (int, QProcess::ExitStatus)> (&QProcess::finished),
-          [this] (int exitCode, QProcess::ExitStatus status) {
-            if (subProcessFailed (&proc_m65, exitCode, status))
-              {
-                QTimer::singleShot (0, this, SLOT (close ()));
-              }
-          });
-
   connect(m_gui_timer, &QTimer::timeout, this, &MainWindow::guiUpdate);
 
   m_waterfallAvg = 1;
@@ -146,11 +135,6 @@ MainWindow::MainWindow(QWidget *parent) :
   fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
 
   readSettings();		             //Restore user's setup params
-  QFile lockFile(m_appDir + "/.lock"); //Create .lock so m65 will wait
-  lockFile.open(QIODevice::ReadWrite);
-  QFile quitFile(m_appDir + "/.quit");
-  quitFile.remove();
-  proc_m65.start(QDir::toNativeSeparators(m_appDir + "/m65"), {"-s", });
 
   m_pbdecoding_style1="QPushButton{background-color: cyan; \
       border-style: outset; border-width: 1px; border-radius: 5px; \
@@ -241,10 +225,6 @@ MainWindow::~MainWindow()
     soundInThread.wait(3000);
   }
   fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
-  if(!m_decoderBusy) {
-    QFile lockFile(m_appDir + "/.lock");
-    lockFile.remove();
-  }
   delete ui;
 }
 
@@ -724,25 +704,6 @@ void MainWindow::closeEvent (QCloseEvent * e)
 {
   if (m_gui_timer) m_gui_timer->stop ();
   m_wide_graph_window->saveSettings();
-  QFile quitFile(m_appDir + "/.quit");
-  quitFile.open(QIODevice::ReadWrite);
-  QFile lockFile(m_appDir + "/.lock");
-  lockFile.remove();                      // Allow m65 to terminate
-
-  // close pipes
-  proc_m65.closeReadChannel (QProcess::StandardOutput);
-  proc_m65.closeReadChannel (QProcess::StandardError);
-
-  // flush all input
-  proc_m65.setReadChannel (QProcess::StandardOutput);
-  proc_m65.readAll ();
-  proc_m65.setReadChannel (QProcess::StandardError);
-  proc_m65.readAll ();
-
-  proc_m65.disconnect ();
-  if (!proc_m65.waitForFinished (1000)) proc_m65.kill();
-  quitFile.remove();
-  mem_m65.detach();
   if (m_astro_window) m_astro_window->close ();
   if (m_wide_graph_window) m_wide_graph_window->close ();
   QMainWindow::closeEvent (e);
@@ -1035,9 +996,6 @@ void MainWindow::decode()                                       //decode()
   m_map65RxLog=0;
   m_call3Modified=false;
 
-//  QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
-//  lockFile.remove();
-
   decodes_.ndecodes=0;
   decodes_.ncand=0;
   m_fetched=0;
@@ -1046,66 +1004,6 @@ void MainWindow::decode()                                       //decode()
 
   decodeBusy(true);
 }
-
-bool MainWindow::subProcessFailed (QProcess * process, int exit_code, QProcess::ExitStatus status)
-{
-  if (exit_code || QProcess::NormalExit != status)
-    {
-      QStringList arguments;
-      for (auto argument: process->arguments ())
-        {
-          if (argument.contains (' ')) argument = '"' + argument + '"';
-          arguments << argument;
-        }
-      MessageBox::critical_message (this, tr ("Subprocess Error")
-                                    , tr ("Subprocess failed with exit code %1")
-                                    .arg (exit_code)
-                                    , tr ("Running: %1\n%2")
-                                    .arg (process->program () + ' ' + arguments.join (' '))
-                                    .arg (QString {process->readAllStandardError()}));
-      return true;
-    }
-  return false;
-}
-
-void MainWindow::m65_error (QProcess::ProcessError)
-{
-  msgBox("Error starting or running\n" + m_appDir + "/m65 -s\n\n"
-         + proc_m65.errorString ());
-  QTimer::singleShot (0, this, SLOT (close ()));
-}
-
-/*
-void MainWindow::readFromStdout()                             //readFromStdout
-{
-  while(proc_m65.canReadLine())
-  {
-    QByteArray t=proc_m65.readLine();
-    if(t.indexOf("<DecodeFinished>") >= 0) {
-      QFile lockFile(m_appDir + "/.lock");
-      lockFile.open(QIODevice::ReadWrite);
-      QString t1=t.mid(16,8);
-      lab5->setText(t1);
-      m_map65RxLog=0;
-      m_startAnother=m_loopall;
-      ui->DecodeButton->setStyleSheet("");
-      decodeBusy(false);
-      return;
-    }
-
-    if(t.indexOf("~") >= 0) {
-      int n=t.length();
-      int m=2;
-#ifdef WIN32
-      m=3;
-#endif
-      if(n>=30 or t.indexOf("Best-fit")>=0) ui->decodedTextBrowser->append(t.mid(1,n-m).trimmed());
-      n=ui->decodedTextBrowser->verticalScrollBar()->maximum();
-      ui->decodedTextBrowser->verticalScrollBar()->setValue(n);
-    }
-  }
-}
-*/
 
 void MainWindow::on_EraseButton_clicked()
 {
