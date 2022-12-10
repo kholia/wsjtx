@@ -32,9 +32,7 @@ public:
 
   bool    m_network;
   bool    m_fs96000;
-  bool    m_IQswap;
   bool    m_restartSoundIn;
-  bool    m_initIQplus;
 
   QString m_myCall;
   QString m_myGrid;

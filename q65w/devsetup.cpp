@@ -25,7 +25,6 @@ void DevSetup::initDlg()
   ui.fCalSpinBox->setValue(m_fCal);
   ui.faddEntry->setText(QString::number(m_fAdd,'f',3));
   ui.sbPort->setValue(m_udpPort);
-  ui.cbIQswap->setChecked(m_IQswap);
   ui.sb_dB->setValue(m_dB);
 }
 
@@ -44,7 +43,6 @@ void DevSetup::accept()
   m_fCal=ui.fCalSpinBox->value();
   m_fAdd=ui.faddEntry->text().toDouble();
   m_udpPort=ui.sbPort->value();
-  m_IQswap=ui.cbIQswap->isChecked();
   m_dB=ui.sb_dB->value();
   QDialog::accept();
 }

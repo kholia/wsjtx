@@ -67,7 +67,6 @@ public:
   double m_dForceCenterFreq;
   double m_TxOffset;
 private:
-  bool   m_bIQxt;
   qint32 m_waterfallAvg;
   qint32 m_fCal;
   qint32 m_fSample;

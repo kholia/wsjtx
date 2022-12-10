@@ -19,7 +19,6 @@ WideGraph::WideGraph (QString const& settings_filename, QWidget * parent)
   setMaximumWidth(2048);
   setMaximumHeight(880);
   ui->widePlot->setMaximumHeight(800);
-  m_bIQxt=false;
   connect(ui->widePlot, SIGNAL(freezeDecode1(int)),this,
           SLOT(wideFreezeDecode(int)));
 

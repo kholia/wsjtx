@@ -19,8 +19,6 @@
 
 #define NFFT 32768
 
-int iqAmp;
-int iqPhase;
 qint16 id[2*60*96000];
 
 //QSharedMemory mem_m65("mem_m65");
@@ -98,14 +96,10 @@ MainWindow::MainWindow(QWidget *parent) :
   m_mode65=2;
   m_fs96000=true;
   m_udpPort=50004;
-  m_adjustIQ=0;
-  m_applyIQcal=0;
   m_nsave=0;
   m_modeJT65=0;
   m_modeQ65=0;
   m_TRperiod=60;
-  iqAmp=0;
-  iqPhase=0;
 
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
@@ -226,9 +220,6 @@ void MainWindow::writeSettings()
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
   settings.setValue("Timeout",m_timeout);
-  settings.setValue("IQamp",iqAmp);
-  settings.setValue("IQphase",iqPhase);
-  settings.setValue("ApplyIQcal",m_applyIQcal);
   settings.setValue("dPhi",m_dPhi);
   settings.setValue("Fcal",m_fCal);
   settings.setValue("Fadd",m_fAdd);
@@ -236,10 +227,7 @@ void MainWindow::writeSettings()
   settings.setValue("FSam96000", m_fs96000);
   settings.setValue("SoundInIndex",m_nDevIn);
   settings.setValue("paInDevice",m_paInDevice);
-  settings.setValue("IQswap",m_IQswap);
   settings.setValue("Scale_dB",m_dB);
-  settings.setValue("IQxt",m_bIQxt);
-  settings.setValue("InitIQplus",m_initIQplus);
   settings.setValue("UDPport",m_udpPort);
   settings.setValue("PaletteCuteSDR",ui->actionCuteSDR->isChecked());
   settings.setValue("PaletteLinrad",ui->actionLinrad->isChecked());
@@ -282,10 +270,6 @@ void MainWindow::readSettings()
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
   m_timeout=settings.value("Timeout",20).toInt();
-  iqAmp=settings.value("IQamp",0).toInt();
-  iqPhase=settings.value("IQphase",0).toInt();
-  m_applyIQcal=settings.value("ApplyIQcal",0).toInt();
-  ui->actionApply_IQ_Calibration->setChecked(m_applyIQcal!=0);
   m_dPhi=settings.value("dPhi",0).toInt();
   m_fCal=settings.value("Fcal",0).toInt();
   m_fAdd=settings.value("FAdd",0).toDouble();
@@ -294,12 +278,9 @@ void MainWindow::readSettings()
   m_fs96000 = settings.value("FSam96000",true).toBool();
   m_nDevIn = settings.value("SoundInIndex", 0).toInt();
   m_paInDevice = settings.value("paInDevice",0).toInt();
-  m_IQswap = settings.value("IQswap",false).toBool();
   m_dB = settings.value("Scale_dB",0).toInt();
-  m_initIQplus = settings.value("InitIQplus",false).toBool();
-  m_bIQxt = settings.value("IQxt",false).toBool();
   m_udpPort = settings.value("UDPport",50004).toInt();
-  soundInThread.setSwapIQ(m_IQswap);
+  soundInThread.setSwapIQ(0);     //###
   soundInThread.setScale(m_dB);
   soundInThread.setPort(m_udpPort);
   ui->actionCuteSDR->setChecked(settings.value(
@@ -363,7 +344,6 @@ void MainWindow::dataSink(int k)
   static float fgreen;
   static int ndiskdat;
   static int nb;
-  static int nadj=0;
   static int nxpol=0;
   static float px=0.0,py=0.0;
   static uchar lstrong[1024];
@@ -385,10 +365,9 @@ void MainWindow::dataSink(int k)
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
   fgreen=m_wide_graph_window->fGreen();
-  nadj++;
-  if(m_adjustIQ==0) nadj=0;
+  int zero=0;
   symspec_(&k, &nxpol, &ndiskdat, &nb, &m_NBslider, &m_dPhi,
-           &nfsample, &fgreen, &m_adjustIQ, &m_applyIQcal,
+           &nfsample, &fgreen, &zero, &zero,
            &m_gainx, &m_gainy, &m_phasex, &m_phasey, &rejectx, &rejecty,
            &px, &py, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
 
@@ -417,18 +396,6 @@ void MainWindow::dataSink(int k)
   if(m_monitoring || m_diskData) {
     m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
-
-  /*
-  if(nadj == 10) {
-    ui->decodedTextBrowser->append(
-          QString {"Amp: %1   Phase: %1"}
-          .arg (m_gainx, 6, 'f', 4)
-          .arg (m_phasex, 6, 'f', 4)
-          );
-    ui->decodedTextBrowser->append(t);
-    m_adjustIQ=0;
-  }
-*/
 
   //Average over specified number of spectra
   if (n==0) {
@@ -501,9 +468,7 @@ void MainWindow::on_actionSettings_triggered()
   dlg.m_nDevIn=m_nDevIn;
   dlg.m_nDevOut=m_nDevOut;
   dlg.m_udpPort=m_udpPort;
-  dlg.m_IQswap=m_IQswap;
   dlg.m_dB=m_dB;
-  dlg.m_initIQplus=m_initIQplus;
   dlg.initDlg();
   if(dlg.exec() == QDialog::Accepted) {
     m_myCall=dlg.m_myCall;
@@ -525,10 +490,7 @@ void MainWindow::on_actionSettings_triggered()
     m_paInDevice=dlg.m_paInDevice;
     m_nDevOut=dlg.m_nDevOut;
     m_udpPort=dlg.m_udpPort;
-    m_IQswap=dlg.m_IQswap;
     m_dB=dlg.m_dB;
-    m_initIQplus=dlg.m_initIQplus;
-    soundInThread.setSwapIQ(m_IQswap);
     soundInThread.setScale(m_dB);
 
     if(dlg.m_restartSoundIn) {

@@ -121,8 +121,6 @@ private:
   qint32  m_paInDevice;
   qint32  m_udpPort;
   qint32  m_NBslider;
-  qint32  m_adjustIQ;
-  qint32  m_applyIQcal;
   qint32  m_nsum;
   qint32  m_nsave;
   qint32  m_TRperiod;
@@ -147,9 +145,6 @@ private:
   bool    m_kb8rq;
   bool    m_NB;
   bool    m_fs96000;
-  bool    m_IQswap;
-  bool    m_initIQplus;
-  bool    m_bIQxt;
 
   float   m_gainx;
   float   m_gainy;
