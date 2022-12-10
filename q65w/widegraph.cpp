@@ -299,31 +299,6 @@ void WideGraph::on_fCenterLineEdit_editingFinished()
   m_dForceCenterFreq=ui->fCenterLineEdit->text().toDouble();
 }
 
-/*
-void WideGraph::on_pbSetRxHardware_clicked()
-{
-  int iret=set570(m_mult570*(1.0+0.000001*m_cal570)*m_dForceCenterFreq);
-  if(iret != 0) {
-    QMessageBox mb;
-    if(iret==-1) mb.setText("Failed to open Si570.");
-    if(iret==-2) mb.setText("Frequency out of permitted range.");
-    mb.exec();
-  }
-}
-
-void WideGraph::initIQplus()
-{
-  int iret=set570(288.0);
-  if(iret != 0) {
-    QMessageBox mb;
-    if(iret==-1) mb.setText("Failed to open Si570.");
-    if(iret==-2) mb.setText("Frequency out of permitted range.");
-    mb.exec();
-  } else {
-    on_pbSetRxHardware_clicked();
-  }
-}
-*/
 void WideGraph::on_cbSpec2d_toggled(bool b)
 {
   ui->widePlot->set2Dspec(b);
@@ -344,43 +319,12 @@ void WideGraph::on_cbLockTxRx_stateChanged(int n)
   m_bLockTxRx = (n!=0);
   ui->widePlot->setLockTxRx(m_bLockTxRx);
 }
-/*
-void WideGraph::rx570()
-{
-  double f=m_mult570*(1.0+0.000001*m_cal570)*m_dForceCenterFreq;
-  int iret=set570(f);
-  if(iret != 0) {
-    QMessageBox mb;
-    if(iret==-1) mb.setText("Failed to open Si570.");
-    if(iret==-2) mb.setText("Frequency out of permitted range.");
-    mb.exec();
-  }
-}
 
-void WideGraph::tx570()
-{
-  if(m_bForceCenterFreq) datcom_.fcenter=m_dForceCenterFreq;
-  m_bIQxt=true;
-  double f=ui->widePlot->txFreq();
-//  double f1=m_mult570Tx*(1.0+0.000001*m_cal570) * f;
-  double f1=m_mult570Tx*(1.0+0.000001*m_cal570) * (f - m_TxOffset);
-
-  int iret=set570(f1);
-  if(iret != 0) {
-    QMessageBox mb;
-    if(iret==-1) mb.setText("Failed to open Si570.");
-    if(iret==-2) mb.setText("Frequency out of permitted range.");
-    mb.exec();
-  }
-}
-*/
 void WideGraph::updateFreqLabel()
 {
   auto rxFreq = QString {"%1"}.arg (ui->widePlot->rxFreq (), 10, 'f', 6);
-  auto txFreq = QString {"%1"}.arg (ui->widePlot->txFreq (), 10, 'f', 6);
   rxFreq.insert (rxFreq.size () - 3, '.');
-  txFreq.insert (txFreq.size () - 3, '.');
-  ui->labFreq->setText (QString {"Rx:  %1\nTx:  %2"}.arg (rxFreq, txFreq));
+  ui->labFreq->setText (QString {"Rx:  %1"}.arg (rxFreq));
 }
 
 void WideGraph::enableSetRxHardware(bool b)

@@ -44,9 +44,9 @@
       <property name="geometry">
        <rect>
         <x>940</x>
-        <y>230</y>
+        <y>250</y>
         <width>211</width>
-        <height>41</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="font">
@@ -61,8 +61,7 @@
 }</string>
       </property>
       <property name="text">
-       <string>Rx:  144.118.200
-Tx:  144.127.317</string>
+       <string>Rx:  1296.065.200</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
