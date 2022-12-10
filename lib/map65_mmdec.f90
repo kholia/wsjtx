@@ -29,7 +29,7 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
 !  mygrid=transfer(params%mygrid,mygrid)
 !  hisgrid=transfer(params%hisgrid,hisgrid)
   datetime=' '
-  
+
   my_q65%decoded = 0
   ncontest=0
   nQSOprogress=0
@@ -42,9 +42,6 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
   emedelay=2.5
   ndepth=2                       !Does this make it too slow?
   ntrperiod=60
-
-  open(17,file=trim(temp_dir)//'/red.dat',status='unknown')
-  open(14,file=trim(temp_dir)//'/avemsg.txt',status='unknown')
 
   call timer('dec_q65 ',0)
   call my_q65%decode(q65_decoded,id2,nqd,nutc,ntrperiod,nsubmode,nfqso,       &

@@ -42,6 +42,7 @@ public slots:
   void dataSink(int k);
   void diskDat();
   void diskWriteFinished();
+  void decoderFinished();
   void freezeDecode(int n);
   void readFromStdout();
   void m65_error (QProcess::ProcessError);
@@ -173,6 +174,8 @@ private:
   QFutureWatcher<void>* watcher1;
   QFutureWatcher<void>* watcher2;
 
+  QFutureWatcher<void> watcher3;     //For decoder
+
   QProcess proc_m65;
 
   QString m_path;
@@ -227,6 +230,8 @@ extern "C" {
 
   void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
                     const char* mygrid, int* ndop00, int len1);
+
+  void m65c_(void);
   }
 
 #endif // MAINWINDOW_H

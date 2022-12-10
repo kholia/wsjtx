@@ -180,6 +180,8 @@ MainWindow::MainWindow(QWidget *parent) :
   watcher2 = new QFutureWatcher<void>;
   connect(watcher2, SIGNAL(finished()),this,SLOT(diskWriteFinished()));
 
+  connect(&watcher3, SIGNAL(finished()),this,SLOT(decoderFinished()));
+
 // Assign input device and start input thread
   soundInThread.setInputDevice(m_paInDevice);
   soundInThread.setRate(96000.0);
@@ -494,7 +496,7 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-  qDebug() << "aa" << ihsym << k << px;
+//  qDebug() << "aa" << ihsym << k << px;
 
   if(ihsym==302) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
@@ -849,7 +851,16 @@ void MainWindow::diskWriteFinished()                      //diskWriteFinished
 {
 //  qDebug() << "diskWriteFinished";
 }
-                                                        //Delete ../save/*.tf2
+
+void MainWindow::decoderFinished()                      //diskWriteFinished
+{
+  m_map65RxLog=0;
+  m_startAnother=m_loopall;
+  ui->DecodeButton->setStyleSheet("");
+  decodeBusy(false);
+}
+
+//Delete ../save/*.tf2
 void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
 {
   int i;
@@ -1003,7 +1014,8 @@ void MainWindow::decode()                                       //decode()
   datcom_.junk1=1234;                                     //Cecck for these values in m65
   datcom_.junk2=5678;
 
-  char *to = (char*)mem_m65.data();
+//  char *to = (char*)mem_m65.data();
+  char *to = (char*) datcom2_.d4;
   char *from = (char*) datcom_.d4;
   int size=sizeof(datcom_);
   if(datcom_.newdat==0) {
@@ -1012,14 +1024,17 @@ void MainWindow::decode()                                       //decode()
     from += noffset;
     size -= noffset;
   }
-  memcpy(to, from, qMin(mem_m65.size(), size-8));
+  memcpy(to, from, qMin(mem_m65.size(), size-4));
   datcom_.nagain=0;
   datcom_.ndiskdat=0;
   m_map65RxLog=0;
   m_call3Modified=false;
 
-  QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
-  lockFile.remove();
+//  QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
+//  lockFile.remove();
+
+  watcher3.setFuture(QtConcurrent::run (std::bind (m65c_)));
+
   decodeBusy(true);
 }
 

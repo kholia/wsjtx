@@ -40,10 +40,10 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   save
 
   if(newdat.eq.1) nutc00=-1
-  open(9,file='wsjtx_dir.txt',status='old')
-  read(9,'(a)') wsjtx_dir                      !Establish the working directory
-  close(9)
-
+!  open(9,file='wsjtx_dir.txt',status='old')
+!  read(9,'(a)') wsjtx_dir                      !Establish the working directory
+!  close(9)
+  
   if(mycall0(1:1).ne.' ') mycall=mycall0
   if(hiscall0(1:1).ne.' ') hiscall=hiscall0
   if(hisgrid(1:4).ne.'    ') grid4=hisgrid(1:4)
@@ -139,10 +139,10 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   nsnr0=-99             !Default snr for no decode
 
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
+
   call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
        newdat,nagain,max_drift,mycall,hiscall,hisgrid)
-
-  MHz=fcenter
+   MHz=fcenter
   freq0=MHz + 0.001d0*ikhz
 
   if(nsnr0.gt.-99) then
@@ -172,18 +172,18 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      cmode=': '
      cmode(2:2)=char(ichar('A') + mode_q65-1)
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
-     write(26,1014) freq1,ndf,0,0,0,xdt0,npol,0,nsnr0,nutc,msg0(1:22),   &
-          ':',cp,cmode
-1014 format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,1x,2a1,2x,a2)
+!     write(26,1014) freq1,ndf,0,0,0,xdt0,npol,0,nsnr0,nutc,msg0(1:22),   &
+!          ':',cp,cmode
+!1014 format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,1x,2a1,2x,a2)
 
 ! Suppress writing duplicates (same time, decoded message, and frequency)
 ! to map65_rx.log
      if(nutc.ne.nutc00 .or. msg0(1:28).ne.msg00 .or. freq1.ne.freq1_00) then
 ! Write to file map65_rx.log:
         ndecodes=ndecodes+1
-        write(21,1110)  freq1,ndf,xdt0,npol,nsnr0,nutc,msg0(1:28),   &
-             cmode(2:2),cq0
-1110    format(f8.3,i5,f5.1,2i4,i5.4,2x,a28,': ',a1,2x,a3)
+!        write(21,1110)  freq1,ndf,xdt0,npol,nsnr0,nutc,msg0(1:28),   &
+!             cmode(2:2),cq0
+!1110    format(f8.3,i5,f5.1,2i4,i5.4,2x,a28,': ',a1,2x,a3)
         nutc00=nutc
         msg00=msg0(1:28)
         freq1_00=freq1
@@ -195,9 +195,10 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
 1121    format('~',i4.4,f9.3,f7.2,i5,2x,a,i6)
      endif
   endif
-
-900 close(13)
-  close(17)
+  
+900 continue
+!  close(13)
+!  close(17)
   call flush(6)
   idec=-1
   read(cq0(2:2),*) idec

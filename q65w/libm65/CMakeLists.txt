@@ -54,6 +54,7 @@ set (libm65_FSRCS
   jt65code.f90
   k2grid.f90
   lorentzian.f90
+  m65c.f90
   map65a.f90
   moon2.f90
   moondop.f90

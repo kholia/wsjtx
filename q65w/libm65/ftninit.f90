@@ -1,20 +1,23 @@
-subroutine ftninit(appd)
+!subroutine ftninit()
+subroutine ftninit
 
   use timer_module, only: timer
   use, intrinsic :: iso_c_binding, only: C_NULL_CHAR
   use FFTW3
-  character*(*) appd
+!  character*(*) appd
+  character*1 appd
   character addpfx*8
   character wisfile*256
   common/pfxcom/addpfx
 
+  appd='.'
   addpfx='    '
   call pfxdump(appd//'/prefixes.txt')
   open(12,file=appd//'/q65w_decodes.txt',status='unknown')
-  open(13,file=appd//'/map65.log',status='unknown')
+  open(17,file=appd//'/red.dat',status='unknown')
   open(19,file=appd//'/livecq.txt',status='unknown')
-  open(21,file=appd//'/map65_rx.log',status='unknown',access='append',err=950)
-  open(26,file=appd//'/tmp26.txt',status='unknown')
+!  open(21,file=appd//'/map65_rx.log',status='unknown',access='append',err=950)
+!  open(26,file=appd//'/tmp26.txt',status='unknown')
 
 ! Import FFTW wisdom, if available:
   iret=fftwf_init_threads()            !Initialize FFTW threading 

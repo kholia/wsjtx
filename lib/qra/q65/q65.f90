@@ -217,11 +217,9 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
      if(i2.eq.-9999 .and. ccf1(-i).ge.0.5*smax) i2=-i
   enddo
   width=df*(i2-i1)
-
   if(ncw.eq.0) ccf1=0.
-
-  call q65_write_red(iz,xdt,ccf2_avg,ccf2)
-
+  call q65_write_red(iz,xdt,ccf2_avg,ccf2)   !### Need this call for WSJT-X
+  
   if(idec.lt.0 .and. (iavg.eq.0 .or. iavg.eq.2)) then
      call q65_dec_q012(s3,LL,snr2,dat4,idec,decoded)
   endif
