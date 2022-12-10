@@ -23,7 +23,7 @@ int iqAmp;
 int iqPhase;
 qint16 id[2*60*96000];
 
-QSharedMemory mem_m65("mem_m65");
+//QSharedMemory mem_m65("mem_m65");
 
 extern const int RxDataFrequency = 96000;
 
@@ -109,28 +109,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
-
-#ifdef WIN32
-  while(true) {
-      int iret=killbyname("m65.exe");
-      if(iret == 603) break;
-      if(iret != 0) msgBox("KillByName return code: " + QString::number(iret));
-  }
-#endif
-
-  if(!mem_m65.attach()) {
-    if (!mem_m65.create(sizeof(datcom_))) {
-      msgBox("Unable to create shared memory segment.");
-    }
-  }
-  char *to = (char*)mem_m65.data();
-  int size=sizeof(datcom_);
-  if(datcom_.newdat==0) {
-    int noffset = 4*4*5760000 + 4*4*322*32768 + 4*4*32768;
-    to += noffset;
-    size -= noffset;
-  }
-  memset(to,0,size);         //Zero all decoding params in shared memory
 
   fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
 
@@ -980,17 +958,9 @@ void MainWindow::decode()                                       //decode()
   datcom_.junk1=1234;                                     //Cecck for these values in m65
   datcom_.junk2=5678;
 
-//  char *to = (char*)mem_m65.data();
   char *to = (char*) datcom2_.d4;
   char *from = (char*) datcom_.d4;
-  int size=sizeof(datcom_);
-  if(datcom_.newdat==0) {
-    int noffset = 4*4*5760000 + 4*4*322*32768 + 4*4*32768;
-    to += noffset;
-    from += noffset;
-    size -= noffset;
-  }
-  memcpy(to, from, qMin(mem_m65.size(), size-4));
+  memcpy(to, from, sizeof(datcom_));
   datcom_.nagain=0;
   datcom_.ndiskdat=0;
   m_map65RxLog=0;

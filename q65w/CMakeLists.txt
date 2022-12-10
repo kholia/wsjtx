@@ -14,7 +14,7 @@ set (q65w_CXXSRCS
   )
 
 if (WIN32)
-  set (q65w_CXXSRCS ${q65w_CXXSRCS} killbyname.cpp)
+  set (q65w_CXXSRCS ${q65w_CXXSRCS})
 endif (WIN32)
 
 set (q65w_UISRCS

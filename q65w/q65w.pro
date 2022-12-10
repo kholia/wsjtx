@@ -35,10 +35,6 @@ SOURCES += main.cpp mainwindow.cpp plotter.cpp about.cpp \
     astro.cpp displaytext.cpp getdev.cpp \
     meterwidget.cpp signalmeter.cpp
 
-win32 {
-SOURCES += killbyname.cpp     set570.cpp
-}
-
 HEADERS  += mainwindow.h plotter.h soundin.h \
             about.h devsetup.h widegraph.h getfile.h \
             commons.h sleep.h astro.h displaytext.h \
