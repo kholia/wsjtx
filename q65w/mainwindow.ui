@@ -627,17 +627,12 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOpen_next_in_directory"/>
     <addaction name="actionDecode_remaining_files_in_directory"/>
     <addaction name="separator"/>
-    <addaction name="separator"/>
     <addaction name="actionDelete_all_tf2_files_in_SaveDir"/>
     <addaction name="actionErase_map65_rx_log"/>
     <addaction name="separator"/>
+    <addaction name="actionSettings"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuSetup">
-    <property name="title">
-     <string>Setup</string>
-    </property>
-    <addaction name="actionDeviceSetup"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -691,7 +686,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionQ65E"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuSetup"/>
    <addaction name="menuView"/>
    <addaction name="menuMode"/>
    <addaction name="menuDecode"/>
@@ -710,14 +704,6 @@ p, li { white-space: pre-wrap; }
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
-   </property>
-  </action>
-  <action name="actionDeviceSetup">
-   <property name="text">
-    <string>Options</string>
-   </property>
-   <property name="shortcut">
-    <string>F2</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -1136,6 +1122,14 @@ p, li { white-space: pre-wrap; }
   <action name="actionRelease_Notes">
    <property name="text">
     <string>Release Notes</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings ...</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
    </property>
   </action>
  </widget>

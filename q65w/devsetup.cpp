@@ -48,11 +48,3 @@ void DevSetup::accept()
   m_dB=ui.sb_dB->value();
   QDialog::accept();
 }
-
-void DevSetup::on_soundCardRadioButton_toggled(bool checked)
-{
-  ui.label_Port->setEnabled(!checked);
-  ui.sbPort->setEnabled(!checked);
-  ui.cbIQswap->setEnabled(checked);
-  ui.sb_dB->setEnabled(checked);
-}

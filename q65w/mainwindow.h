@@ -51,7 +51,6 @@ private:
   virtual void closeEvent (QCloseEvent *) override;
 
 private slots:
-  void on_actionDeviceSetup_triggered();
   void on_monitorButton_clicked();
   void on_actionExit_triggered();
   void on_actionAbout_triggered();
@@ -80,6 +79,7 @@ private slots:
   void on_dxGridEntry_textChanged(const QString &arg1);
   void bumpDF(int n);
   void on_actionErase_map65_rx_log_triggered();
+  void on_actionSettings_triggered();
   void on_NBcheckBox_toggled(bool checked);
   void on_NBslider_valueChanged(int value);
   void on_actionAFMHot_triggered();

@@ -234,7 +234,7 @@
           <item>
            <widget class="QLineEdit" name="saveDirEntry">
             <property name="text">
-             <string>C:\Users\joe\wsjt\map65\save</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -258,7 +258,7 @@
           <item>
            <widget class="QLineEdit" name="azelDirEntry">
             <property name="text">
-             <string>C:\Users\joe\wsjt\map65</string>
+             <string/>
             </property>
            </widget>
           </item>
