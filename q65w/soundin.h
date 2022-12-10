@@ -29,18 +29,14 @@ public:
   {
   }
 
-  void setSwapIQ(bool b);
   void setScale(qint32 n);
   void setPort(qint32 n);
-  void setInputDevice(qint32 n);
   void setRate(double rate);
   void setBufSize(unsigned bufSize);
   void setNetwork(bool b);
   void setMonitoring(bool b);
   void setFadd(double x);
   void setNrx(int n);
-  void setForceCenterFreqBool(bool b);
-  void setForceCenterFreqMHz(double d);
   void setPeriod(int n);
   int  nrx();
   int  mhsym();
@@ -60,12 +56,8 @@ private:
   double m_fAdd;
   bool   m_net;
   bool   m_monitoring;
-  bool   m_bForceCenterFreq;
-  bool   m_IQswap;
-  double m_dForceCenterFreq;
   qint32 m_nrx;
   qint32 m_hsym;
-  qint32 m_nDevIn;
   qint32 m_udpPort;
   qint32 m_TRperiod;
   qint32 m_TRperiod0;

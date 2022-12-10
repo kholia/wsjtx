@@ -139,7 +139,6 @@ MainWindow::MainWindow(QWidget *parent) :
   connect(&watcher3, SIGNAL(finished()),this,SLOT(decoderFinished()));
 
 // Assign input device and start input thread
-  soundInThread.setInputDevice(m_paInDevice);
   soundInThread.setRate(96000.0);
   soundInThread.setBufSize(10*7056);
   soundInThread.setNetwork(m_network);
@@ -277,10 +276,8 @@ void MainWindow::readSettings()
   m_network = settings.value("NetworkInput",true).toBool();
   m_fs96000 = settings.value("FSam96000",true).toBool();
   m_nDevIn = settings.value("SoundInIndex", 0).toInt();
-  m_paInDevice = settings.value("paInDevice",0).toInt();
   m_dB = settings.value("Scale_dB",0).toInt();
   m_udpPort = settings.value("UDPport",50004).toInt();
-  soundInThread.setSwapIQ(0);     //###
   soundInThread.setScale(m_dB);
   soundInThread.setPort(m_udpPort);
   ui->actionCuteSDR->setChecked(settings.value(
@@ -465,8 +462,6 @@ void MainWindow::on_actionSettings_triggered()
   dlg.m_fAdd=m_fAdd;
   dlg.m_network=m_network;
   dlg.m_fs96000=m_fs96000;
-  dlg.m_nDevIn=m_nDevIn;
-  dlg.m_nDevOut=m_nDevOut;
   dlg.m_udpPort=m_udpPort;
   dlg.m_dB=m_dB;
   dlg.initDlg();
@@ -486,9 +481,6 @@ void MainWindow::on_actionSettings_triggered()
     m_wide_graph_window->setFcal(m_fCal);
     m_fs96000=dlg.m_fs96000;
     m_network=dlg.m_network;
-    m_nDevIn=dlg.m_nDevIn;
-    m_paInDevice=dlg.m_paInDevice;
-    m_nDevOut=dlg.m_nDevOut;
     m_udpPort=dlg.m_udpPort;
     m_dB=dlg.m_dB;
     soundInThread.setScale(m_dB);
@@ -500,7 +492,6 @@ void MainWindow::on_actionSettings_triggered()
       soundInThread.setRate(96000.0);
       soundInThread.setFadd(m_fAdd);
       soundInThread.setNrx(1);
-      soundInThread.setInputDevice(m_paInDevice);
       soundInThread.start(QThread::HighestPriority);
     }
   }
@@ -987,8 +978,8 @@ void MainWindow::guiUpdate()
 
   if(nsec != m_sec0) {                                     //Once per second
 //    qDebug() << "AAA" << nsec%60 << decodes_.ndecodes << decodes_.ncand;
-    soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
-    soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
+//    soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
+//    soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
 
     if(m_pctZap>30.0) {
       lab4->setStyleSheet("QLabel{background-color: #ff0000}");

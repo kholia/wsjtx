@@ -79,11 +79,6 @@ void SoundInThread::run()                           //SoundInThread::run()
   }
 }
 
-void SoundInThread::setSwapIQ(bool b)
-{
-  m_IQswap=b;
-}
-
 void SoundInThread::setScale(qint32 n)
 {
   m_dB=n;
@@ -92,12 +87,6 @@ void SoundInThread::setPort(int n)                              //setPort()
 {
   if (isRunning()) return;
   this->m_udpPort=n;
-}
-
-void SoundInThread::setInputDevice(int n)                  //setInputDevice()
-{
-  if (isRunning()) return;
-  this->m_nDevIn=n;
 }
 
 void SoundInThread::setRate(double rate)                         //setRate()
@@ -131,17 +120,6 @@ void SoundInThread::setNetwork(bool b)                          //setNetwork()
 void SoundInThread::setMonitoring(bool b)                    //setMonitoring()
 {
   m_monitoring = b;
-}
-
-void SoundInThread::setForceCenterFreqBool(bool b)
-{
-  m_bForceCenterFreq=b;
-
-}
-
-void SoundInThread::setForceCenterFreqMHz(double d)
-{
-  m_dForceCenterFreq=d;
 }
 
 void SoundInThread::setNrx(int n)                              //setNrx()
@@ -232,11 +210,7 @@ void SoundInThread::inputUDP()
         if ((k+iz) <= 60*96000) {
           int nsam=-1;
           recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8, b.d8);
-          if(m_bForceCenterFreq) {
-            datcom_.fcenter=m_dForceCenterFreq;
-          } else {
-            datcom_.fcenter=b.cfreq + m_fAdd;
-          }
+          datcom_.fcenter=b.cfreq + m_fAdd;
         }
 
         m_hsym=(k-2048)*11025.0/(2048.0*m_rate);
