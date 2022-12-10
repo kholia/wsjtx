@@ -748,7 +748,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionWide_Waterfall">
    <property name="text">
-    <string>Wide Waterfall</string>
+    <string>Wideband Waterfall</string>
    </property>
   </action>
   <action name="actionOpen">
