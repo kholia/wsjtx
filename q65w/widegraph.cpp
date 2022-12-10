@@ -42,14 +42,6 @@ WideGraph::WideGraph (QString const& settings_filename, QWidget * parent)
   ui->widePlot->setBinsPerPixel(nbpp);
   m_waterfallAvg = settings.value("WaterfallAvg",10).toInt();
   ui->waterfallAvgSpinBox->setValue(m_waterfallAvg);
-  ui->freqOffsetSpinBox->setValue(settings.value("FreqOffset",0).toInt());
-  m_bForceCenterFreq=settings.value("ForceCenterFreqBool",false).toBool();
-  m_dForceCenterFreq=settings.value("ForceCenterFreqMHz",144.125).toDouble();
-  ui->cbFcenter->setChecked(m_bForceCenterFreq);
-  ui->cbLockTxRx->setChecked(m_bLockTxRx);
-  ui->fCenterLineEdit->setText(QString::number(m_dForceCenterFreq));
-  m_bLockTxRx=settings.value("LockTxRx",false).toBool();
-  ui->cbLockTxRx->setChecked(m_bLockTxRx);
 }
 
 WideGraph::~WideGraph()
@@ -80,10 +72,6 @@ void WideGraph::saveSettings()
   settings.setValue("PlotWidth",ui->widePlot->plotWidth());
   settings.setValue("FreqSpan",ui->freqSpanSpinBox->value());
   settings.setValue("WaterfallAvg",ui->waterfallAvgSpinBox->value());
-  settings.setValue("FreqOffset",ui->widePlot->freqOffset());
-  settings.setValue("ForceCenterFreqBool",m_bForceCenterFreq);
-  settings.setValue("ForceCenterFreqMHz",m_dForceCenterFreq);
-  settings.setValue("LockTxRx",m_bLockTxRx);
 }
 
 void WideGraph::dataSink2(float s[], int nkhz, int ihsym, int ndiskdata,
@@ -122,7 +110,7 @@ void WideGraph::dataSink2(float s[], int nkhz, int ihsym, int ndiskdata,
     n=0;
 
     int w=ui->widePlot->plotWidth();
-    qint64 sf = nkhz + ui->widePlot->freqOffset() - 0.5*w*nbpp*df/1000.0;
+    qint64 sf = nkhz - 0.5*w*nbpp*df/1000.0;
     if(sf != ui->widePlot->startFreq()) ui->widePlot->SetStartFreq(sf);
     int i0=16384.0+(ui->widePlot->startFreq()-nkhz+1.27046+0.001*m_fCal) *
         1000.0/df + 0.5;
@@ -151,22 +139,6 @@ void WideGraph::dataSink2(float s[], int nkhz, int ihsym, int ndiskdata,
     }
     ntrz=ntr;
     ui->widePlot->draw(swide,i0,splot);
-  }
-}
-
-void WideGraph::on_freqOffsetSpinBox_valueChanged(int f)
-{
-  ui->widePlot->SetFreqOffset(f);
-}
-
-void WideGraph::on_freqSpanSpinBox_valueChanged(int n)
-{
-  ui->widePlot->setNSpan(n);
-  int w = ui->widePlot->plotWidth();
-  int nbpp = n * 32768.0/(w*96.0) + 0.5;
-  if(nbpp < 1) nbpp=1;
-  if(w > 0) {
-    ui->widePlot->setBinsPerPixel(nbpp);
   }
 }
 
@@ -282,23 +254,6 @@ void WideGraph::setMode65(int n)
   ui->widePlot->setMode65(n);
 }
 
-void WideGraph::on_cbFcenter_stateChanged(int n)
-{
-  m_bForceCenterFreq = (n!=0);
-  if(m_bForceCenterFreq) {
-    ui->fCenterLineEdit->setEnabled(true);
-    ui->pbSetRxHardware->setEnabled(true);
-  } else {
-    ui->fCenterLineEdit->setDisabled(true);
-    ui->pbSetRxHardware->setDisabled(true);
-  }
-}
-
-void WideGraph::on_fCenterLineEdit_editingFinished()
-{
-  m_dForceCenterFreq=ui->fCenterLineEdit->text().toDouble();
-}
-
 void WideGraph::on_cbSpec2d_toggled(bool b)
 {
   ui->widePlot->set2Dspec(b);
@@ -314,20 +269,9 @@ void WideGraph::setPeriod(int n)
   m_TRperiod=n;
 }
 
-void WideGraph::on_cbLockTxRx_stateChanged(int n)
-{
-  m_bLockTxRx = (n!=0);
-  ui->widePlot->setLockTxRx(m_bLockTxRx);
-}
-
 void WideGraph::updateFreqLabel()
 {
   auto rxFreq = QString {"%1"}.arg (ui->widePlot->rxFreq (), 10, 'f', 6);
   rxFreq.insert (rxFreq.size () - 3, '.');
-  ui->labFreq->setText (QString {"Rx:  %1"}.arg (rxFreq));
-}
-
-void WideGraph::enableSetRxHardware(bool b)
-{
-  ui->pbSetRxHardware->setEnabled(b);
+  ui->labFreq->setText (QString {"Center freq:  %1"}.arg (rxFreq));
 }

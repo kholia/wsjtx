@@ -51,15 +51,10 @@ protected:
 
 private slots:
   void on_waterfallAvgSpinBox_valueChanged(int arg1);
-  void on_freqSpanSpinBox_valueChanged(int arg1);
-  void on_freqOffsetSpinBox_valueChanged(int arg1);
   void on_zeroSpinBox_valueChanged(int arg1);
   void on_gainSpinBox_valueChanged(int arg1);
   void on_autoZeroPushButton_clicked();
-  void on_cbFcenter_stateChanged(int arg1);
-  void on_fCenterLineEdit_editingFinished();
   void on_cbSpec2d_toggled(bool checked);
-  void on_cbLockTxRx_stateChanged(int arg1);
 
 private:
   Ui::WideGraph * ui;
