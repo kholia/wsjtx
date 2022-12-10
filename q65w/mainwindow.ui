@@ -628,7 +628,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionDecode_remaining_files_in_directory"/>
     <addaction name="separator"/>
     <addaction name="actionDelete_all_tf2_files_in_SaveDir"/>
-    <addaction name="actionErase_map65_rx_log"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
@@ -766,11 +765,6 @@ p, li { white-space: pre-wrap; }
   <action name="actionErase_Band_Map_and_Messages">
    <property name="text">
     <string>Erase Band Map and Messages</string>
-   </property>
-  </action>
-  <action name="actionErase_map65_rx_log">
-   <property name="text">
-    <string>Erase map65_rx.log</string>
    </property>
   </action>
   <action name="actionLinrad">
@@ -944,59 +938,6 @@ p, li { white-space: pre-wrap; }
     <string>Available suffixes and add-on-prefixes</string>
    </property>
   </action>
-  <action name="actionErase_map65_tx_log">
-   <property name="text">
-    <string>Erase map65_tx.log</string>
-   </property>
-  </action>
-  <action name="actionJT65A">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>JT65A</string>
-   </property>
-  </action>
-  <action name="actionJT65B">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>JT65B</string>
-   </property>
-  </action>
-  <action name="actionJT65C">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>JT65C</string>
-   </property>
-  </action>
-  <action name="actionI_Q_Calibration">
-   <property name="text">
-    <string>I/Q Calibration</string>
-   </property>
-   <property name="shortcut">
-    <string>F7</string>
-   </property>
-  </action>
-  <action name="actionAdjust_IQ_Calibration">
-   <property name="text">
-    <string>Adjust Rx I/Q Calibration</string>
-   </property>
-  </action>
-  <action name="actionApply_IQ_Calibration">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Apply Rx I/Q Calibration</string>
-   </property>
-  </action>
   <action name="actionAFMHot">
    <property name="checkable">
     <bool>true</bool>
@@ -1056,25 +997,6 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Q65B</string>
-   </property>
-  </action>
-  <action name="actionNoJT65">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>No JT65</string>
-   </property>
-  </action>
-  <action name="actionNoQ65">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>No Q65</string>
    </property>
   </action>
   <action name="actionQ65C">

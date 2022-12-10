@@ -35,7 +35,7 @@ extern "C"
     int ntimeout;                     //Max for timeouts in Messages and BandMap
     int ntol;                         //+/- decoding range around fQSO (Hz)
     int nxant;                        //1 ==> add 45 deg to measured pol angle
-    int map65RxLog;                   //Flags to control log files
+    int junk_1;                       //Flags to control log files
     int nfsample;                     //Input sample rate
     int nxpol;                        //1 if using xpol antennas, 0 otherwise
     int mode65;                       //JT65 sub-mode: A=1, B=2, C=4

@@ -78,7 +78,6 @@ private slots:
   void on_dxCallEntry_textChanged(const QString &arg1);
   void on_dxGridEntry_textChanged(const QString &arg1);
   void bumpDF(int n);
-  void on_actionErase_map65_rx_log_triggered();
   void on_actionSettings_triggered();
   void on_NBcheckBox_toggled(bool checked);
   void on_NBslider_valueChanged(int value);
@@ -98,8 +97,6 @@ private:
   QScopedPointer<WideGraph> m_wide_graph_window;
   QPointer<QTimer> m_gui_timer;
   qint64  m_msErase;
-  qint32  m_nDevIn;
-  qint32  m_nDevOut;
   qint32  m_idInt;
   qint32  m_waterfallAvg;
   qint32  m_DF;
@@ -113,9 +110,7 @@ private:
   qint32  m_setftx;
   qint32  m_ndepth;
   qint32  m_sec0;
-  qint32  m_map65RxLog;
   qint32  m_nutc0;
-  qint32  m_mode65;
   qint32  m_nrx;
   qint32  m_hsym0;
   qint32  m_paInDevice;
@@ -124,7 +119,6 @@ private:
   qint32  m_nsum;
   qint32  m_nsave;
   qint32  m_TRperiod;
-  qint32  m_modeJT65;
   qint32  m_modeQ65;
   qint32  m_RxState;
   qint32  m_dB;

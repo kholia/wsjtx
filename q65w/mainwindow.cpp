@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
   m_appDir {QApplication::applicationDirPath ()},
-  m_settings_filename {m_appDir + "/map65.ini"},
+  m_settings_filename {m_appDir + "/q65w.ini"},
   m_astro_window {new Astro {m_settings_filename}},
   m_wide_graph_window {new WideGraph {m_settings_filename}},
   m_gui_timer {new QTimer {this}}
@@ -79,8 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
   m_restart=false;
   m_myCall="K1JT";
   m_myGrid="FN20qi";
-  m_saveDir="/users/joe/map65/install/save";
-  m_azelDir="/users/joe/map65/install/";
+  m_saveDir="";
+  m_azelDir="";
   m_loopall=false;
   m_startAnother=false;
   m_saveAll=false;
@@ -88,23 +88,20 @@ MainWindow::MainWindow(QWidget *parent) :
   m_sec0=-1;
   m_hsym0=-1;
   m_palette="CuteSDR";
-  m_map65RxLog=1;                     //Write Date and Time to all65.txt
   m_nutc0=9999;
   m_kb8rq=false;
   m_NB=false;
-  m_mode="JT65B";
-  m_mode65=2;
+  m_mode="Q65";
   m_fs96000=true;
   m_udpPort=50004;
   m_nsave=0;
-  m_modeJT65=0;
   m_modeQ65=0;
   m_TRperiod=60;
 
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
 
-  fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
+  fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("q65w_wisdom.dat").toLocal8Bit ());
 
   readSettings();		             //Restore user's setup params
 
@@ -195,7 +192,7 @@ MainWindow::~MainWindow()
     soundInThread.quit();
     soundInThread.wait(3000);
   }
-  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("map65_wisdom.dat").toLocal8Bit ());
+  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("q65w_wisdom.dat").toLocal8Bit ());
   delete ui;
 }
 
@@ -224,7 +221,6 @@ void MainWindow::writeSettings()
   settings.setValue("Fadd",m_fAdd);
   settings.setValue("NetworkInput", m_network);
   settings.setValue("FSam96000", m_fs96000);
-  settings.setValue("SoundInIndex",m_nDevIn);
   settings.setValue("paInDevice",m_paInDevice);
   settings.setValue("Scale_dB",m_dB);
   settings.setValue("UDPport",m_udpPort);
@@ -233,7 +229,6 @@ void MainWindow::writeSettings()
   settings.setValue("PaletteAFMHot",ui->actionAFMHot->isChecked());
   settings.setValue("PaletteBlue",ui->actionBlue->isChecked());
   settings.setValue("Mode",m_mode);
-  settings.setValue("nModeJT65",m_modeJT65);
   settings.setValue("nModeQ65",m_modeQ65);
   settings.setValue("SaveNone",ui->actionNone->isChecked());
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
@@ -275,7 +270,6 @@ void MainWindow::readSettings()
   soundInThread.setFadd(m_fAdd);
   m_network = settings.value("NetworkInput",true).toBool();
   m_fs96000 = settings.value("FSam96000",true).toBool();
-  m_nDevIn = settings.value("SoundInIndex", 0).toInt();
   m_dB = settings.value("Scale_dB",0).toInt();
   m_udpPort = settings.value("UDPport",50004).toInt();
   soundInThread.setScale(m_dB);
@@ -284,15 +278,8 @@ void MainWindow::readSettings()
                                   "PaletteCuteSDR",true).toBool());
   ui->actionLinrad->setChecked(settings.value(
                                  "PaletteLinrad",false).toBool());
-  m_mode=settings.value("Mode","JT65B").toString();
-  m_modeJT65=settings.value("nModeJT65",2).toInt();
-  if(m_modeJT65==0) ui->actionNoJT65->setChecked(true);
-  if(m_modeJT65==1) ui->actionJT65A->setChecked(true);
-  if(m_modeJT65==2) ui->actionJT65B->setChecked(true);
-  if(m_modeJT65==3) ui->actionJT65C->setChecked(true);
 
   m_modeQ65=settings.value("nModeQ65",2).toInt();
-  if(m_modeQ65==0) ui->actionNoQ65->setChecked(true);
   if(m_modeQ65==1) ui->actionQ65A->setChecked(true);
   if(m_modeQ65==2) ui->actionQ65B->setChecked(true);
   if(m_modeQ65==3) ui->actionQ65C->setChecked(true);
@@ -669,7 +656,7 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
   soundInThread.setMonitoring(m_monitoring);
   QString fname;
   fname=QFileDialog::getOpenFileName(this, "Open File", m_path,
-                                     "MAP65 Files (*.iq)");
+                                     "MAP65/Q65W Files (*.iq)");
   if(fname != "") {
     m_path=fname;
     int i;
@@ -732,7 +719,7 @@ void MainWindow::diskDat()                                   //diskDat()
     datcom_.fcenter=m_wide_graph_window->m_dForceCenterFreq;
   }
 
-  hsym=2048.0*96000.0/11025.0;   //Samples per JT65 half-symbol
+  hsym=2048.0*96000.0/11025.0;         //Samples per JT65 half-symbol
   for(int i=0; i<304; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 2048.5;
     dataSink(k);
@@ -747,7 +734,6 @@ void MainWindow::diskWriteFinished()                      //diskWriteFinished
 
 void MainWindow::decoderFinished()                      //diskWriteFinished
 {
-  m_map65RxLog=0;
   m_startAnother=m_loopall;
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
@@ -888,13 +874,12 @@ void MainWindow::decode()                                       //decode()
   datcom_.ntimeout=m_timeout;
   datcom_.ntol=m_tol;
   datcom_.nxant=0;
-  if(datcom_.nutc < m_nutc0) m_map65RxLog |= 1;  //Date and Time to map65_rx.log
   m_nutc0=datcom_.nutc;
-  datcom_.map65RxLog=m_map65RxLog;
+  datcom_.map65RxLog=0;
   datcom_.nfsample=96000;
   if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
-  datcom_.nmode=10*m_modeQ65 + m_modeJT65;
+  datcom_.nmode=10*m_modeQ65;
   datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
 
@@ -916,7 +901,6 @@ void MainWindow::decode()                                       //decode()
   memcpy(to, from, sizeof(datcom_));
   datcom_.nagain=0;
   datcom_.ndiskdat=0;
-  m_map65RxLog=0;
   m_call3Modified=false;
 
   decodes_.ndecodes=0;
@@ -1172,16 +1156,6 @@ void MainWindow::on_dxGridEntry_textChanged(const QString &t) //dxGrid changed
   if(n==6) m_hisGrid=t.mid(0,2).toUpper() + t.mid(2,2) +
       t.mid(4,2).toLower();
   ui->dxGridEntry->setText(m_hisGrid);
-}
-
-void MainWindow::on_actionErase_map65_rx_log_triggered()     //Erase Rx log
-{
-  int ret = QMessageBox::warning(this, "Confirm Erase",
-      "Are you sure you want to erase file map65_rx.log ?",
-       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-  if(ret==QMessageBox::Yes) {
-    m_map65RxLog |= 2;                      // Rewind map65_rx.log
-  }
 }
 
 void MainWindow::on_actionQ65A_triggered()
