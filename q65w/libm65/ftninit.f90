@@ -1,7 +1,7 @@
 !subroutine ftninit()
 subroutine ftninit
 
-  use timer_module, only: timer
+  use timer_impl, only: init_timer !,fini_timer, limtrace
   use, intrinsic :: iso_c_binding, only: C_NULL_CHAR
   use FFTW3
 !  character*(*) appd
@@ -10,6 +10,9 @@ subroutine ftninit
   character wisfile*256
   common/pfxcom/addpfx
 
+  lu=8
+  call init_timer('./timer.out')
+  
   appd='.'
   addpfx='    '
   call pfxdump(appd//'/prefixes.txt')

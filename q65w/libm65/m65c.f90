@@ -1,7 +1,7 @@
-subroutine m65c
+subroutine m65c(itimer)
 
   use timer_module, only: timer
-  use timer_impl, only: init_timer !, limtrace
+  use timer_impl, only: fini_timer !, limtrace
   use, intrinsic :: iso_c_binding, only: C_NULL_CHAR
   use FFTW3
   use q65
@@ -29,21 +29,27 @@ subroutine m65c
   data first/.true./
   save first,cwd
 
+  if(itimer.ne.0) then
+!     call timer('q65w    ',1)
+!     call timer('q65w    ',101)
+     call timer('decode0 ',101)
+     call fini_timer
+     return
+  endif
+  
   lq65w=.true.
   lq65w2=.true.
   nparams=nparams0                     !Copy parameters into common/npar/
   datetime(18:20)=':00'
 
-!  if(first) then
-!     call getcwd(cwd)
-!     call ftninit(trim(cwd))
-!     call init_timer (trim(cwd)//'/timer.out')
-!     first=.false.
-!  endif
+!  if(first) call timer('q65w    ',0)
+!  first=.false.
 
   npatience=1
   nstandalone=0
-  if(sum(nparams).ne.0) call decode0(dd,ss,savg,nstandalone)
+  call timer('decode0 ',0)
+  call decode0(dd,ss,savg,nstandalone)
+  call timer('decode0 ',1)
 
   return
 end subroutine m65c

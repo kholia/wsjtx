@@ -233,6 +233,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   writeSettings();
+  int itimer=1;
+  m65c_(&itimer);
+
   if (soundInThread.isRunning()) {
     soundInThread.quit();
     soundInThread.wait(3000);
@@ -751,7 +754,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
 {
   m_monitoring=false;
   soundInThread.setMonitoring(m_monitoring);
-  m_loopall=false;  
+  m_loopall=false;
 }
 
 void MainWindow::msgBox(QString t)                             //msgBox
@@ -1033,7 +1036,8 @@ void MainWindow::decode()                                       //decode()
 //  QFile lockFile(m_appDir + "/.lock");       // Allow m65 to start
 //  lockFile.remove();
 
-  watcher3.setFuture(QtConcurrent::run (std::bind (m65c_)));
+  int itimer=0;
+  watcher3.setFuture(QtConcurrent::run (std::bind (m65c_, &itimer)));
 
   decodeBusy(true);
 }
@@ -1067,7 +1071,7 @@ void MainWindow::m65_error (QProcess::ProcessError)
 }
 
 void MainWindow::readFromStdout()                             //readFromStdout
-{  
+{
   while(proc_m65.canReadLine())
   {
     QByteArray t=proc_m65.readLine();
@@ -1302,7 +1306,7 @@ void MainWindow::on_addButton_clicked()                       //Add button
     } while(!s.isNull());
     if(hc>hc1 && !m_call3Modified) out << newEntry + "\n";
   }
-  
+
   if(m_call3Modified) {
     auto const& old_path = m_appDir + "/CALL3.OLD";
     QFile f0 {old_path};

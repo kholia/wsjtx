@@ -20,7 +20,6 @@ subroutine decode0(dd,ss,savg,nstandalone)
 
   call sec0(0,tquick)
   ncand=0
-  call timer('decode0 ',0)
   if(newdat.ne.0) then
      nz=96000*nhsym/5.3833
      hist=0
@@ -59,7 +58,6 @@ subroutine decode0(dd,ss,savg,nstandalone)
        neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,             &
        ndiskdat,nxpol,nmode,ndop00,ncand)
   call timer('map65a  ',1)
-  call timer('decode0 ',1)
 
   if(nhsym.eq.nhsym2) write(*,1012) ndecodes,ncand
 1012 format('<DecodeFinished>',2i4)
