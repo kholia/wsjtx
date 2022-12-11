@@ -289,7 +289,7 @@ void MainWindow::readSettings()
   ui->actionNone->setChecked(settings.value("SaveNone",true).toBool());
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
-  m_ndepth=settings.value("NDepth",0).toInt();
+  m_ndepth=settings.value("NDepth",2).toInt();
   m_onlyEME=settings.value("NEME",false).toBool();
   ui->actionOnly_EME_calls->setChecked(m_onlyEME);
   m_kb8rq=settings.value("KB8RQ",false).toBool();
@@ -766,17 +766,17 @@ void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
   }
 }
 
-void MainWindow::on_actionNo_Deep_Search_triggered()          //No Deep Search
+void MainWindow::on_actionNo_Deep_Search_triggered()
 {
   m_ndepth=0;
 }
 
-void MainWindow::on_actionNormal_Deep_Search_triggered()      //Normal DS
+void MainWindow::on_actionNormal_Deep_Search_triggered()
 {
   m_ndepth=1;
 }
 
-void MainWindow::on_actionAggressive_Deep_Search_triggered()  //Aggressive DS
+void MainWindow::on_actionAggressive_Deep_Search_triggered()
 {
   m_ndepth=2;
 }
@@ -875,7 +875,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.ntol=m_tol;
   datcom_.nxant=0;
   m_nutc0=datcom_.nutc;
-  datcom_.map65RxLog=0;
+  datcom_.junk_1=0;
   datcom_.nfsample=96000;
   if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
