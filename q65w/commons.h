@@ -16,7 +16,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int mousefqso;                    //User-selected QSO freq (kHz)
   int nagain;                       //1 ==> decode only at fQSO +/- Tol
   int ndepth;                       //How much hinted decoding to do?
-  int ndiskdat;                     //1 ==> data read from *.tf2 or *.iq file
+  int ndiskdat;                     //1 ==> data read from *.iq file
   int neme;                         //Hinted decoding tries only for EME calls
   int newdat;                       //1 ==> new data, must do long FFT
   int nfa;                          //Low decode limit (kHz)
@@ -55,7 +55,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int mousefqso;                    //User-selected QSO freq (kHz)
   int nagain;                       //1 ==> decode only at fQSO +/- Tol
   int ndepth;                       //How much hinted decoding to do?
-  int ndiskdat;                     //1 ==> data read from *.tf2 or *.iq file
+  int ndiskdat;                     //1 ==> data read from *.iq file
   int neme;                         //Hinted decoding tries only for EME calls
   int newdat;                       //1 ==> new data, must do long FFT
   int nfa;                          //Low decode limit (kHz)

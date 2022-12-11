@@ -627,7 +627,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionOpen_next_in_directory"/>
     <addaction name="actionDecode_remaining_files_in_directory"/>
     <addaction name="separator"/>
-    <addaction name="actionDelete_all_tf2_files_in_SaveDir"/>
+    <addaction name="actionDelete_all_iq_files_in_SaveDir"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
@@ -757,9 +757,9 @@ p, li { white-space: pre-wrap; }
     <string>Shift+F6</string>
    </property>
   </action>
-  <action name="actionDelete_all_tf2_files_in_SaveDir">
+  <action name="actionDelete_all_iq_files_in_SaveDir">
    <property name="text">
-    <string>Delete all *.tf2 and *.iq files in SaveDir</string>
+    <string>Delete all *.iq files in SaveDir</string>
    </property>
   </action>
   <action name="actionErase_Band_Map_and_Messages">

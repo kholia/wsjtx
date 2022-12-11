@@ -743,13 +743,12 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   lab5->setText(t1);
 }
 
-//Delete ../save/*.tf2
-void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
+void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
 {
   int i;
   QString fname;
   int ret = QMessageBox::warning(this, "Confirm Delete",
-      "Are you sure you want to delete all *.tf2 and *.iq files in\n" +
+      "Are you sure you want to delete all *.iq files in\n" +
        QDir::toNativeSeparators(m_saveDir) + " ?",
        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
   if(ret==QMessageBox::Yes) {
@@ -758,8 +757,6 @@ void MainWindow::on_actionDelete_all_tf2_files_in_SaveDir_triggered()
     QList<QString>::iterator f;
     for(f=files.begin(); f!=files.end(); ++f) {
       fname=*f;
-      i=(fname.indexOf(".tf2"));
-      if(i==11) dir.remove(fname);
       i=(fname.indexOf(".iq"));
       if(i==11) dir.remove(fname);
     }

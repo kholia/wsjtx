@@ -44,7 +44,7 @@ void getfile(QString fname, bool xpol, int dbDgrd)
 
     datcom_.ndiskdat=1;
     int nfreq=(int)datcom_.fcenter;
-    if(nfreq!=144 and nfreq != 432 and nfreq != 1296) datcom_.fcenter=144.125;
+    if(nfreq!=144 and nfreq != 432 and nfreq != 1296) datcom_.fcenter=1296.080;
     int i0=fname.indexOf(".tf2");
     if(i0<0) i0=fname.indexOf(".iq");
     datcom_.nutc=0;
@@ -77,8 +77,6 @@ void savetf2(QString fname, bool xpol)
   }
   free(buf);
 }
-
-//#define	MAX_RANDOM	0x7fffffff
 
 /* Generate gaussian random float with mean=0 and std_dev=1 */
 float gran()
