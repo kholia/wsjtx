@@ -21,7 +21,7 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
 !  type(hdr) h                            !Header for the .wav file
   integer*2 iwave(60*12000)
   complex ca(MAXFFT1),cb(MAXFFT1)          !FFTs of raw x,y data
-  complex cx(0:MAXFFT2-1),cy(0:MAXFFT2-1),cz(0:MAXFFT2)
+  complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
   logical xpol,ldecoded
   integer ipk1(1)
   real*8 fcenter,freq0,freq1
@@ -35,7 +35,7 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   character*1 cp,cmode*2
   character*60 result
   common/decodes/ndecodes,ncand,result(50)
-  common/cacb/ca,cb
+  common/cacb/ca
   common/early/nhsym1,nhsym2,ldecoded(32768)
   data nutc00/-1/,msg00/'                            '/
   save
@@ -59,7 +59,6 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   if(ldecoded(ipk)) go to 900
   snr1=sync(ipk)%ccfmax
   ipol=1
-  if(xpol) ipol=sync(ipk)%ipol
 
   nfft1=MAXFFT1
   nfft2=MAXFFT2
@@ -81,12 +80,8 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   fac=1.0/nfft2
   cx(0:nfft2-1)=ca(k0:k0+nfft2-1)
   cx=fac*cx
-  if(xpol) then
-     cy(0:nfft2-1)=cb(k0:k0+nfft2-1)
-     cy=fac*cy
-  endif
 
-! Here cx and cy (if xpol) are frequency-domain data around the selected
+! Here cx is frequency-domain data around the selected
 ! QSO frequency, taken from the full-length FFT computed in filbig().
 ! Values for fsample, nfft1, nfft2, df, and the downsampled data rate
 ! are as follows:
@@ -98,12 +93,7 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
 !   95238  5120000  0.018601172  322560   5999.994
 
   poldeg=0.
-  if(xpol) then
-     poldeg=sync(ipk)%pol
-     cz(0:MAXFFT2-1)=cos(poldeg/RAD)*cx + sin(poldeg/RAD)*cy
-  else
-     cz(0:MAXFFT2-1)=cx
-  endif
+  cz(0:MAXFFT2-1)=cx
 
   cz(MAXFFT2)=0.
 ! Roll off below 500 Hz and above 2500 Hz.
@@ -151,20 +141,14 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      nq65df=nint(1000*(0.001*k0*df+nkhz_center-48.0+1.000-1.27046-ikhz))-nfcal
      nq65df=nq65df + nfreq0 - 1000
      npol=nint(poldeg)
-     if(nxant.ne.0) then
-        npol=npol-45
-        if(npol.lt.0) npol=npol+180
-     endif
-     call txpol(xpol,msg0(1:22),mygrid,npol,nxant,ntxpol,cp)
      ikhz1=ikhz
      ndf=nq65df
      if(ndf.gt.500) ikhz1=ikhz + (nq65df+500)/1000
      if(ndf.lt.-500) ikhz1=ikhz + (nq65df-500)/1000
      ndf=nq65df - 1000*(ikhz1-ikhz)
      if(nqd.eq.1 .and. abs(nq65df-mousedf).lt.ntol) then
-        write(line,1020) ikhz1,ndf,npol,nutc,xdt0,nsnr0,msg0(1:27),cq0,  &
-             ntxpol,cp
-1020    format('!',i3.3,i5,i4,i6.4,f5.1,i5,' : ',a27,a3,i4,1x,a1)
+        write(line,1020) ikhz1,ndf,npol,nutc,xdt0,nsnr0,msg0(1:27),cq0
+1020    format('!',i3.3,i5,i4,i6.4,f5.1,i5,' : ',a27,a3)
         write(*,1100) trim(line)
 1100    format(a)
      endif

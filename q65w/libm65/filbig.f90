@@ -7,7 +7,7 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
   parameter (MAXFFT1=5376000,MAXFFT2=77175)
   real*4  dd(4,nmax)                         !Input data
   complex ca(MAXFFT1),cb(MAXFFT1)            !FFTs of input
-  complex c4a(MAXFFT2),c4b(MAXFFT2)          !Output data
+  complex c4a(MAXFFT2)                       !Output data
   real*8 df
   real halfpulse(8)                 !Impulse response of filter (one sided)
   complex cfilt(MAXFFT2)                     !Filter (complex; imag = 0)
@@ -15,7 +15,7 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
   integer*8 plan1,plan2,plan3,plan4,plan5
   logical first,xpol
   include 'fftw3.f'
-  common/cacb/ca,cb
+  common/cacb/ca
   equivalence (rfilt,cfilt)
   data first/.true./,npatience/1/
   data halfpulse/114.97547150,36.57879257,-20.93789101,                &
@@ -76,18 +76,15 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
      nz=min(nmax,nfft1)
      do i=1,nz
         ca(i)=cmplx(dd(1,i),dd(2,i))
-        if(xpol) cb(i)=cmplx(dd(3,i),dd(4,i))
      enddo
 
      if(nmax.lt.nfft1) then
         do i=nmax+1,nfft1
            ca(i)=0.
-           if(xpol) cb(i)=0.
         enddo
      endif
      call timer('FFTbig  ',0)
      call sfftw_execute(plan1)
-     if(xpol) call sfftw_execute(plan2)
      call timer('FFTbig  ',1)
      newdat=0
   endif
@@ -101,23 +98,19 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
      j=i0+i-1                              !and apply the filter function
      if(j.ge.1 .and. j.le.nfft1) then
         c4a(i)=rfilt(i)*ca(j)
-        if(xpol) c4b(i)=rfilt(i)*cb(j)
      else
         c4a(i)=0.
-        if(xpol) c4b(i)=0.
      endif
   enddo
   do i=nh+1,nfft2
      j=i0+i-1-nfft2
      if(j.lt.1) j=j+nfft1                  !nfft1 was nfft2
      c4a(i)=rfilt(i)*ca(j)
-     if(xpol) c4b(i)=rfilt(i)*cb(j)
   enddo
 
 ! Do the short reverse transform, to go back to time domain.
   call timer('FFTsmall',0)
   call sfftw_execute(plan3)
-  if(xpol) call sfftw_execute(plan4)
   call timer('FFTsmall',1)
   n4=min(nmax/64,nfft2)
   go to 999
