@@ -34,7 +34,7 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
 ! excised.  Candidates are returned in the structure array cand().
 
   parameter (MAX_PEAKS=100)
-  real ss(4,322,NFFT),savg(4,NFFT)
+  real ss(4,322,NFFT),savg(NFFT)
   real pavg(-20:20)
   integer indx(NFFT)
   logical xpol,skip,ldecoded
@@ -122,8 +122,8 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
   parameter (NFFT=32768)
   parameter (LAGMAX=30)
   real ss(4,322,NFFT)
-  real savg(4,NFFT)
-  real savg_med(4)
+  real savg(NFFT)
+  real savg_med
   real a(3)
   logical first,xpol
   integer isync(22)
@@ -164,7 +164,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
   if(ia.lt.1) ia=1
   if(ib.gt.NFFT-1) ib=NFFT-1
 
-  call pctile(savg(1,ia:ib),ib-ia+1,50,savg_med(1))
+  call pctile(savg(ia:ib),ib-ia+1,50,savg_med)
 
   lagbest=0
   ipolbest=1
@@ -181,7 +181,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
            ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1) &
                 + ss(1,k+2,i+1) 
         enddo
-        ccf4=ccf4 - savg(1,i+1)*3*22/float(jz)
+        ccf4=ccf4 - savg(i+1)*3*22/float(jz)
         ccf=ccf4
         ipol=1
         if(ccf.gt.ccfmax) then
@@ -198,7 +198,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
            k=jsync0(j) + lag
            ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1)
         enddo
-        ccf4=ccf4 - savg(1,i+1)*2*63/float(jz)
+        ccf4=ccf4 - savg(i+1)*2*63/float(jz)
         ccf=ccf4
         ipol=1
         if(ccf.gt.ccfmax) then
@@ -215,7 +215,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
            k=jsync1(j) + lag
            ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1)
         enddo
-        ccf4=ccf4 - savg(1,i+1)*2*63/float(jz)
+        ccf4=ccf4 - savg(i+1)*2*63/float(jz)
         ccf=ccf4
         ipol=1
         if(ccf.gt.ccfmax) then
@@ -235,7 +235,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
      sync(i)%ipol=ipolbest
      sync(i)%iflip=flip
      sync(i)%birdie=.false.
-     if(ccfmax/(savg(ipolbest,i)/savg_med(ipolbest)).lt.3.0) sync(i)%birdie=.true.
+     if(ccfmax/(savg(i)/savg_med).lt.3.0) sync(i)%birdie=.true.
   enddo  ! i (frequency bin)
 
   call pctile(sync(ia:ib)%ccfmax,ib-ia+1,50,base)

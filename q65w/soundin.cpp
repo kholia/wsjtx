@@ -16,7 +16,7 @@ extern "C"
   {
     double d8[2*60*96000];   //This is "common/datcom/..." in fortran
     float ss[4*322*NFFT];
-    float savg[4*NFFT];
+    float savg[NFFT];
     double fcenter;
     int nutc;
     int idphi;                        //Phase correction for Y pol'n, degrees

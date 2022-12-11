@@ -23,7 +23,7 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
   parameter (NFFT=32768)              !Length of FFTs
   real*8 ts,hsym
   real*8 fcenter
-  common/datcom/dd(4,5760000),ss(4,322,NFFT),savg(4,NFFT),fcenter,nutc,  &
+  common/datcom/dd(4,5760000),ss(4,322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
   complex z,zfac
@@ -181,41 +181,10 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
      do i=1,NFFT
         sx=real(cx(i))**2 + aimag(cx(i))**2  
         ss(1,n,i)=sx                    ! Pol = 0
-        savg(1,i)=savg(1,i) + sx
-
-        if(nxpol.ne.0) then
-           z=cx(i) + cy(i)
-           s45=0.5*(real(z)**2 + aimag(z)**2)
-           ss(2,n,i)=s45                   ! Pol = 45
-           savg(2,i)=savg(2,i) + s45
-
-           sy=real(cy(i))**2 + aimag(cy(i))**2
-           ss(3,n,i)=sy                    ! Pol = 90
-           savg(3,i)=savg(3,i) + sy
-        
-           z=cx(i) - cy(i)
-           s135=0.5*(real(z)**2 + aimag(z)**2)
-           ss(4,n,i)=s135                  ! Pol = 135
-           savg(4,i)=savg(4,i) + s135
-
-           z=cx(i)*conjg(cy(i))
-           q=sx - sy
-           u=2.0*real(z)
-           ssz5a(i)=0.707*sqrt(q*q + u*u)    !Spectrum of linear polarization
-! Leif's formula:
-!     ssz5a(i)=0.5*(sx+sy) + (real(z)**2 + aimag(z)**2 - sx*sy)/(sx+sy)
-        else
-           ssz5a(i)=sx
-        endif
+        savg(i)=savg(i) + sx
+        ssz5a(i)=sx
      enddo
   enddo
-
-  if(ihsym.eq.278) then
-     if(iqadjust.ne.0 .and. ipkx.ne.0 .and. ipky.ne.0) then
-        rejectx=10.0*log10(savg(1,1+nfft-ipkx)/savg(1,1+ipkx))
-        rejecty=10.0*log10(savg(3,1+nfft-ipky)/savg(3,1+ipky))
-     endif
-  endif
 
   nkhz=nint(1000.d0*(fcenter-int(fcenter)))
   if(fcenter.eq.0.d0) nkhz=125

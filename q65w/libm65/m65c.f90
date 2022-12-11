@@ -9,7 +9,6 @@ subroutine m65c(itimer)
 
   parameter (NFFT=32768)
   include 'njunk.f90'
-!  real*4 dd(4,5760000),ss(4,322,32768),savg(4,32768)
   real*8 fcenter
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
   logical ldecoded,first
@@ -17,7 +16,7 @@ subroutine m65c(itimer)
   character*6 mygrid,hisgrid
   character*20 datetime
 
-  common/datcom2/dd(4,5760000),ss(4,322,NFFT),savg(4,NFFT),nparams0
+  common/datcom2/dd(4,5760000),ss(4,322,NFFT),savg(NFFT),nparams0
 
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,                &

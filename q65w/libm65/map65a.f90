@@ -12,7 +12,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   parameter (MAXMSG=1000)            !Size of decoded message list
   parameter (NSMAX=60*96000)
   real dd(4,NSMAX)
-  real*4 ss(4,322,NFFT),savg(4,NFFT)
+  real*4 ss(4,322,NFFT),savg(NFFT)
   real tavg(-50:50)                  !Temp for finding local base level
   real base(4)                       !Local basel level at 4 pol'ns
   real sig(MAXMSG,30)                !Parameters of detected signals
@@ -119,7 +119,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      ntry=0
      short=0.                                 !Zero the whole short array
      jpz=1
-     if(xpol) jpz=4
+!     if(xpol) jpz=4
 
 ! First steps for JT65 decoding
      do i=ia,ib                               !Search over freq range
@@ -130,7 +130,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
               do ii=-50,50
                  iii=i+ii
                  if(iii.ge.1 .and. iii.le.32768) then
-                    tavg(ii)=savg(jp,iii)
+                    tavg(ii)=savg(iii)
                  else
                     write(13,*) 'Error in iii:',iii,ia,ib,fa,fb
                     flush(13)
@@ -144,8 +144,8 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
 !  Find max signal at this frequency
         smax=0.
         do jp=1,jpz
-           if(savg(jp,i)/base(jp).gt.smax) then
-              smax=savg(jp,i)/base(jp)
+           if(savg(i)/base(jp).gt.smax) then
+              smax=savg(i)/base(jp)
               jpmax=jp
            endif
         enddo
@@ -197,7 +197,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
                           sig(km,9)=0
                           sig(km,10)=0
 !                           sig(km,11)=rms0
-                          sig(km,12)=savg(ipol2,i)
+                          sig(km,12)=savg(i)
                           sig(km,13)=0
                           sig(km,14)=0
                           sig(km,15)=0
@@ -257,7 +257,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
                     sig(km,9)=nkv
                     sig(km,10)=qual
 !                    sig(km,11)=idphi
-                    sig(km,12)=savg(ipol,i)
+                    sig(km,12)=savg(i)
                     sig(km,13)=a(1)
                     sig(km,14)=a(2)
                     sig(km,15)=a(3)
