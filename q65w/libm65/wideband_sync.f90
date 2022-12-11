@@ -124,7 +124,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
   real ss(4,322,NFFT)
   real savg(4,NFFT)
   real savg_med(4)
-  real ccf4(4),ccf4best(4),a(3)
+  real a(3)
   logical first,xpol
   integer isync(22)
   integer jsync0(63),jsync1(63)
@@ -163,16 +163,8 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
   ib=nint(1000*nfb/df3) + 1
   if(ia.lt.1) ia=1
   if(ib.gt.NFFT-1) ib=NFFT-1
-  npol=1
-  if(xpol) npol=4
 
-  do i=1,npol
-     call pctile(savg(i,ia:ib),ib-ia+1,50,savg_med(i))
-  enddo
-!  do i=ia,ib
-!     write(14,3014) 0.001*(i-1)*df3,savg(1:npol,i)
-!3014 format(5f10.3)
-!  enddo
+  call pctile(savg(1,ia:ib),ib-ia+1,50,savg_med(1))
 
   lagbest=0
   ipolbest=1
@@ -186,13 +178,12 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
         ccf4=0.
         do j=1,22                        !Test for Q65 sync
            k=isync(j) + lag
-           ccf4(1:npol)=ccf4(1:npol) + ss(1:npol,k,i+1) +       &
-                ss(1:npol,k+1,i+1) + ss(1:npol,k+2,i+1) 
+           ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1) &
+                + ss(1,k+2,i+1) 
         enddo
-        ccf4(1:npol)=ccf4(1:npol) - savg(1:npol,i+1)*3*22/float(jz)
-        ccf=maxval(ccf4)
-        ip=maxloc(ccf4)
-        ipol=ip(1)
+        ccf4=ccf4 - savg(1,i+1)*3*22/float(jz)
+        ccf=ccf4
+        ipol=1
         if(ccf.gt.ccfmax) then
            ipolbest=ipol
            lagbest=lag
@@ -205,12 +196,11 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
         ccf4=0.
         do j=1,63                       !Test for JT65 sync, std msg
            k=jsync0(j) + lag
-           ccf4(1:npol)=ccf4(1:npol) + ss(1:npol,k,i+1) + ss(1:npol,k+1,i+1)
+           ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1)
         enddo
-        ccf4(1:npol)=ccf4(1:npol) - savg(1:npol,i+1)*2*63/float(jz)
-        ccf=maxval(ccf4)
-        ip=maxloc(ccf4)
-        ipol=ip(1)
+        ccf4=ccf4 - savg(1,i+1)*2*63/float(jz)
+        ccf=ccf4
+        ipol=1
         if(ccf.gt.ccfmax) then
            ipolbest=ipol
            lagbest=lag
@@ -223,12 +213,11 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
         ccf4=0.
         do j=1,63                       !Test for JT65 sync, OOO msg
            k=jsync1(j) + lag
-           ccf4(1:npol)=ccf4(1:npol) + ss(1:npol,k,i+1) + ss(1:npol,k+1,i+1)
+           ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1)
         enddo
-        ccf4(1:npol)=ccf4(1:npol) - savg(1:npol,i+1)*2*63/float(jz)
-        ccf=maxval(ccf4)
-        ip=maxloc(ccf4)
-        ipol=ip(1)
+        ccf4=ccf4 - savg(1,i+1)*2*63/float(jz)
+        ccf=ccf4
+        ipol=1
         if(ccf.gt.ccfmax) then
            ipolbest=ipol
            lagbest=lag
@@ -240,10 +229,6 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
      enddo  ! lag
 
      poldeg=0.
-     if(xpol .and. ccfmax.ge.SNR1_THRESHOLD) then
-        call polfit(ccf4best,4,a)
-        poldeg=a(3)
-     endif
      sync(i)%ccfmax=ccfmax
      sync(i)%xdt=lagbest*tstep-1.0
      sync(i)%pol=poldeg
@@ -251,12 +236,6 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
      sync(i)%iflip=flip
      sync(i)%birdie=.false.
      if(ccfmax/(savg(ipolbest,i)/savg_med(ipolbest)).lt.3.0) sync(i)%birdie=.true.
-!     if(sync(i)%iflip.eq.0 .and. sync(i)%ccfmax .gt. 20.0) then
-!        write(50,3050) i,lagbest,sync(i)%ccfmax,sync(i)%xdt,sync(i)%ipol,  &
-!             sync(i)%birdie,ccf4best
-!3050    format(2i5,f10.3,f8.2,i5,1x,L3,4f7.1)
-!     endif
-
   enddo  ! i (frequency bin)
 
   call pctile(sync(ia:ib)%ccfmax,ib-ia+1,50,base)
