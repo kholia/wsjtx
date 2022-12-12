@@ -20,7 +20,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
   parameter (NFFT=32768)              !Length of FFTs
   real*8 ts,hsym
   real*8 fcenter
-  common/datcom/dd(4,5760000),ss(4,322,NFFT),savg(NFFT),fcenter,nutc,  &
+  common/datcom/dd(4,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
   complex z
@@ -140,7 +140,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
      n=min(322,ihsym)
      do i=1,NFFT
         sx=real(cx(i))**2 + aimag(cx(i))**2  
-        ss(1,n,i)=sx                    ! Pol = 0
+        ss(n,i)=sx                    ! Pol = 0
         savg(i)=savg(i) + sx
         ssz5a(i)=sx
      enddo

@@ -13,7 +13,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
   parameter (NSMAX=60*96000)
   complex cx(NSMAX/64), cy(NSMAX/64)   !Data at 1378.125 samples/s
   real dd(4,NSMAX)
-  real*4 ss(4,322,NFFT),savg(NFFT)
+  real*4 ss(322,NFFT),savg(NFFT)
   real*8 fcenter
   character*3 shmsg0(4)
   character mycall*12,hiscall*12,mygrid*6,hisgrid*6,cm*1

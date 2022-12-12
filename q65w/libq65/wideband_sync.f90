@@ -34,7 +34,7 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
 ! excised.  Candidates are returned in the structure array cand().
 
   parameter (MAX_PEAKS=100)
-  real ss(4,322,NFFT),savg(NFFT)
+  real ss(322,NFFT),savg(NFFT)
   real pavg(-20:20)
   integer indx(NFFT)
   logical xpol,skip,ldecoded
@@ -72,10 +72,10 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
      ipol=sync(n)%ipol
      pavg=0.
      do j=1,j1
-        pavg=pavg + ss(ipol,j,n-20:n+20)
+        pavg=pavg + ss(j,n-20:n+20)
      enddo
      do j=j2,jz
-        pavg=pavg + ss(ipol,j,n-20:n+20)
+        pavg=pavg + ss(j,n-20:n+20)
      enddo
      jsum=j1 + (jz-j2+1)
      pmax=maxval(pavg(-2:2))              !### Why not just pavg(0) ?
@@ -121,7 +121,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
   use timer_module, only: timer
   parameter (NFFT=32768)
   parameter (LAGMAX=30)
-  real ss(4,322,NFFT)
+  real ss(322,NFFT)
   real savg(NFFT)
   real savg_med
   real a(3)
@@ -178,8 +178,8 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
         ccf4=0.
         do j=1,22                        !Test for Q65 sync
            k=isync(j) + lag
-           ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1) &
-                + ss(1,k+2,i+1) 
+           ccf4=ccf4 + ss(k,i+1) + ss(k+1,i+1) &
+                + ss(k+2,i+1) 
         enddo
         ccf4=ccf4 - savg(i+1)*3*22/float(jz)
         ccf=ccf4
@@ -196,7 +196,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
         ccf4=0.
         do j=1,63                       !Test for JT65 sync, std msg
            k=jsync0(j) + lag
-           ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1)
+           ccf4=ccf4 + ss(k,i+1) + ss(k+1,i+1)
         enddo
         ccf4=ccf4 - savg(i+1)*2*63/float(jz)
         ccf=ccf4
@@ -213,7 +213,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
         ccf4=0.
         do j=1,63                       !Test for JT65 sync, OOO msg
            k=jsync1(j) + lag
-           ccf4=ccf4 + ss(1,k,i+1) + ss(1,k+1,i+1)
+           ccf4=ccf4 + ss(k,i+1) + ss(k+1,i+1)
         enddo
         ccf4=ccf4 - savg(i+1)*2*63/float(jz)
         ccf=ccf4
@@ -255,12 +255,6 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
      sync(ja:jb)%ccfmax=0.
      sync(i0)%ccfmax=spk
   enddo
-
-!  do i=ia,ib
-!     write(15,3015) 0.001*(i-1)*df3+32.0,sync(i)%ccfmax,sync(i)%xdt,  &
-!          sync(i)%ipol,sync(i)%iflip,sync(i)%birdie
-!3015 format(3f10.3,2i6,L5)
-!  enddo
 
   return
 end subroutine wb_sync
