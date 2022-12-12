@@ -6,8 +6,6 @@ set (libm65_FSRCS
   astro.f90
   astro0.f90
   astrosub.f90
-  chkhist.f90
-  chkmsg.f90
   dcoord.f90
   decode0.f90
   dot.f90
@@ -20,8 +18,6 @@ set (libm65_FSRCS
   geocentric.f90
   grid2deg.f90
   indexx.f90
-  iqcal.f90
-  iqfix.f90
   lorentzian.f90
   moon2.f90
   moondop.f90
