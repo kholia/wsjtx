@@ -205,11 +205,8 @@ extern int killbyname(const char* progName);
 
 extern "C" {
 //----------------------------------------------------- C and Fortran routines
-  void symspec_(int* k, int* ndiskdat, int* nb,
-                int* m_NBslider, int* idphi, int* nfsample, float* fgreen,
-                float* gainx, float* gainy,
-                float* phasex, float* phasey, float* rejectx, float* rejecty,
-                float* px, float* py, float s[], int* nkhz, int* nhsym,
+  void symspec_(int* k, int* ndiskdat, int* nb, int* m_NBslider, int* nfsample,
+                float* px, float s[], int* nkhz, int* nhsym,
                 int* nzap, float* slimit, uchar lstrong[]);
 
   void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,

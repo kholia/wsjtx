@@ -1,15 +1,11 @@
-subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
-     fgreen,gainx,gainy,phasex,phasey,rejectx,rejecty,  &
-     pxdb,pydb,ssz5a,nkhz,ihsym,nzap,slimit,lstrong)
+subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
+     pxdb,ssz5a,nkhz,ihsym,nzap,slimit,lstrong)
 
 !  k        pointer to the most recent new data
 !  ndiskdat 0/1 to indicate if data from disk
 !  nb       0/1 status of noise blanker
-!  idphi    Phase correction for Y channel, degrees
 !  nfsample sample rate (Hz)
-!  fgreen   Frequency of green marker in I/Q calibrate mode (-48.0 to +48.0 kHz)
 !  pxdb     power in x channel (0-60 dB)
-!  pydb     power in y channel (0-60 dB)
 !  ssz5a    polarized spectrum, for waterfall display
 !  nkhz     integer kHz portion of center frequency, e.g., 125 for 144.125
 !  ihsym    index number of this half-symbol (1-322)
@@ -23,8 +19,6 @@ subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
   common/datcom/dd(4,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
-  complex z
-  complex zsumx,zsumy
   complex cx(NFFT)
   complex cx00(NFFT)
   complex cx0(0:1023),cx1(0:1023)
@@ -69,7 +63,6 @@ subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
   peaklimit=sigmas*max(10.0,rms)
   faclim=3.0
   px=0.
-  py=0.
 
   nwindow=2
   nfft2=1024
@@ -82,8 +75,8 @@ subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
         cx0(i)=cmplx(dd(1,j+i),dd(2,j+i))
      enddo
      call timf2(k,nfft2,nwindow,nb,peaklimit,       &
-          faclim,cx0,gainx,gainy,phasex,phasey,cx1,slimit,lstrong,   &
-          px,py,nzap)
+          faclim,cx0,cx1,slimit,lstrong,   &
+          px,nzap)
 
      do i=0,kstep-1
         dd(1,j+i)=real(cx1(i))
@@ -111,15 +104,11 @@ subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
      nsum=nblks*kstep - nzap
      if(nsum.le.0) nsum=1
      rmsx=sqrt(0.5*px/nsum)
-     rmsy=sqrt(0.5*py/nsum)
      rms=rmsx
   endif
   pxdb=0.
-  pydb=0.
   if(rmsx.gt.1.0) pxdb=20.0*log10(rmsx)
-  if(rmsy.gt.1.0) pydb=20.0*log10(rmsy)
   if(pxdb.gt.60.0) pxdb=60.0
-  if(pydb.gt.60.0) pydb=60.0
 
   cx00=cx
 

@@ -325,13 +325,10 @@ void MainWindow::dataSink(int k)
   static int nfsample=96000;
   static int nsec0=0;
   static int nsum=0;
-  static float fgreen;
   static int ndiskdat;
   static int nb;
-  static float px=0.0,py=0.0;
+  static float px=0.0;
   static uchar lstrong[1024];
-  static float rejectx;
-  static float rejecty;
   static float slimit;
   static double xsum=0.0;
 
@@ -347,10 +344,8 @@ void MainWindow::dataSink(int k)
   if(m_NB) nb=1;
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
-  fgreen=m_wide_graph_window->fGreen();
-  symspec_(&k, &ndiskdat, &nb, &m_NBslider, &m_dPhi, &nfsample, &fgreen,
-           &m_gainx, &m_gainy, &m_phasex, &m_phasey, &rejectx, &rejecty,
-           &px, &py, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
+  symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
+           &px, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
 
   int nsec=QDateTime::currentSecsSinceEpoch();
   if(nsec==nsec0) {

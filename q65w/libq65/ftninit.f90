@@ -27,9 +27,6 @@ subroutine ftninit
 ! Import FFTW wisdom, if available
   wisfile=trim(appd)//'/m65_wisdom.dat'// C_NULL_CHAR
   iret=fftwf_import_wisdom_from_filename(wisfile)
+
   return
-
-950 write(0,*) '!Error opening ALL65.TXT'
-  stop
-
 end subroutine ftninit

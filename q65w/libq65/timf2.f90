@@ -1,5 +1,5 @@
 subroutine timf2(k,nfft,nwindow,nb,peaklimit,faclim, &
-  cx0,gainx,gainy,phasex,phasey,cx1,slimit,lstrong,px,py,nzap)
+  cx0,cx1,slimit,lstrong,px,nzap)
 
 ! Sequential processing of time-domain I/Q data, using Linrad-like
 ! "first FFT" and "first backward FFT".  
@@ -7,8 +7,6 @@ subroutine timf2(k,nfft,nwindow,nb,peaklimit,faclim, &
 !  cx0       - complex input data
 !  nfft      - length of FFTs
 !  nwindow   - 0 for no window, 2 for sin^2 window
-!  gainx,y   - gain error in Q channel, relative to I
-!  phasex,y  - phase error
 !  cx1       - output data
 
 ! Non-windowed processing means no overlap, so kstep=nfft.  
@@ -29,7 +27,6 @@ subroutine timf2(k,nfft,nwindow,nb,peaklimit,faclim, &
   real*4 s(0:MAXFFT-1)
   logical*1 lstrong(0:MAXFFT-1),lprev
   integer ia(MAXSIGS),ib(MAXSIGS)
-  complex h,u,v
   logical first
   data first/.true./
   data k0/99999999/
