@@ -11,6 +11,7 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
 
   parameter (MAXMSG=1000)            !Size of decoded message list
   parameter (NSMAX=60*96000)
+  complex cx(NSMAX/64), cy(NSMAX/64)   !Data at 1378.125 samples/s
   real dd(4,NSMAX)
   real*4 ss(4,322,NFFT),savg(NFFT)
   real tavg(-50:50)                  !Temp for finding local base level
@@ -121,148 +122,9 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      jpz=1
 
      print*,'AAA',mode65
-
-!     if(xpol) jpz=4
-
-! First steps for JT65 decoding
-!     do i=ia,ib                               !Search over freq range
-     do i=ia,ia
-        if(mode65.eq.0) then
-           print*,'BBB'
-           go to 68
-        endif
-        freq=0.001*(i-16385)*df
-!  Find the local base level for each polarization; update every 10 bins.
-        if(mod(i-ia,10).eq.0) then
-           do jp=1,jpz
-              do ii=-50,50
-                 iii=i+ii
-                 if(iii.ge.1 .and. iii.le.32768) then
-                    tavg(ii)=savg(iii)
-                 else
-                    write(13,*) 'Error in iii:',iii,ia,ib,fa,fb
-                    flush(13)
-                    go to 900
-                 endif
-              enddo
-              call pctile(tavg,101,50,base(jp))
-           enddo
-        endif
-
-!  Find max signal at this frequency
-        smax=0.
-        do jp=1,jpz
-           if(savg(i)/base(jp).gt.smax) then
-              smax=savg(i)/base(jp)
-              jpmax=jp
-           endif
-        enddo
-
-        if(smax.gt.1.1 .or. ia.eq.ib) then
-!  Look for JT65 sync patterns and shorthand square-wave patterns.
-           call timer('ccf65   ',0)
-           ssmax=1.e30
-           call ccf65(ss(1,1,i),nhsym,ssmax,sync1,ipol,jpz,dt,     &
-                flipk,syncshort,snr2,ipol2,dt2)
-           call timer('ccf65   ',1)
-           if(mode65.eq.0) syncshort=-99.0     !If "No JT65", don't waste time
-
-! ########################### Search for Shorthand Messages #################
-!  Is there a shorthand tone above threshold?
-           thresh0=1.0
-!  Use lower thresh0 at fQSO
-           if(syncshort.gt.thresh0) then
-! ### Do shorthand AFC here (or maybe after finding a pair?) ###
-              short(1,i)=syncshort
-              short(2,i)=dt2
-              short(3,i)=ipol2
-
-!  Check to see if lower tone of shorthand pair was found.
-              do j=2,4
-                 i0=i-nint(j*mode65*10.0*(11025.0/4096.0)/df)
-!  Should this be i0 +/- 1, or just i0?
-!  Should we also insist that difference in DT be either 1.5 or -1.5 s?
-                 if(short(1,i0).gt.thresh0) then
-                    fshort=0.001*(i0-16385)*df
-                    noffset=0
-                    if(abs(noffset).le.ntol) then
-!  Keep only the best candidate within ftol.
-!### NB: sync2 was not defined here!
-!                       sync2=syncshort                   !### try this ???
-                       if(fshort-fshort0.le.ftol .and.         &
-                            syncshort.gt.syncshort0 .and. nkm.eq.2) km=km-1
-                       if(fshort-fshort0.gt.ftol .or.                     &
-                            syncshort.gt.syncshort0) then
-                          if(km.lt.MAXMSG) km=km+1
-                          sig(km,1)=nfile
-                          sig(km,2)=nutc
-                          sig(km,3)=fshort + 0.5*(nfa+nfb)
-                          sig(km,4)=syncshort
-                          sig(km,5)=dt2
-                          sig(km,6)=45*(ipol2-1)/57.2957795
-                          sig(km,7)=0
-                          sig(km,8)=snr2
-                          sig(km,9)=0
-                          sig(km,10)=0
-!                           sig(km,11)=rms0
-                          sig(km,12)=savg(i)
-                          sig(km,13)=0
-                          sig(km,14)=0
-                          sig(km,15)=0
-                          sig(km,16)=0
-!                           sig(km,17)=0
-                          sig(km,18)=0
-                          msg(km)=shmsg0(j)
-                          fshort0=fshort
-                          syncshort0=syncshort
-                          nkm=2
-                       endif
-                    endif
-                 endif
-              enddo
-           endif
-
-! ########################### Search for Normal Messages ###########
-!  Is sync1 above threshold?
-           thresh1=1.0
-!  Use lower thresh1 at fQSO
-           noffset=0
-           if(newdat.eq.1 .and. sync1.gt.-99.0) then
-              sync1=thresh1+1.0
-              noffset=0
-           endif
-           if(sync1.gt.thresh1 .and. abs(noffset).le.ntol) then
-!  Keep only the best candidate within ftol.
-!  (Am I deleting any good decodes by doing this?)
-              if(freq-freq0.le.ftol .and. sync1.gt.sync10 .and.       &
-                   nkm.eq.1) km=km-1
-              if(freq-freq0.gt.ftol .or. sync1.gt.sync10) then
-                 nflip=nint(flipk)
-                 f00=(i-1)*df          !Freq of detected sync tone (0-96000 Hz)
-                 ntry=ntry+1
-
-68               print*,'CCC'
-                 call timer('decode1a',0)
-                 ifreq=i
-                 ikhz=nint(freq+0.5*(nfa+nfb)-foffset)-nfshift
-                 idf=nint(1000.0*(freq+0.5*(nfa+nfb)-foffset-(ikHz+nfshift)))
-
-                 rewind 71
-                 write(71,*)newdat,f00,nflip,mode65,nfsample,       &
-                      xpol,mycall,hiscall,hisgrid,neme,ndepth,nqd,dphi,   &
-                      ndphi,nutc,ikHz,idf,ipol,ntol,sync2,                &
-                      a,dt,pol,nkv,nhist,nsum,nsave,qual,decoded
-
-                 call decode1a(dd,newdat,f00,nflip,mode65,nfsample,       &
-                      xpol,mycall,hiscall,hisgrid,neme,ndepth,nqd,dphi,   &
-                      ndphi,nutc,ikHz,idf,ipol,ntol,sync2,                &
-                      a,dt,pol,nkv,nhist,nsum,nsave,qual,decoded)
-                 call timer('decode1a',1)
-                 if(mode65.eq.0) exit      !### JHT ###
-              endif
-           endif
-        endif
-     enddo  !i=ia,ib
+     call timer('filbig  ',0)
+     call filbig(dd,NSMAX,f0,newdat,nfsample,xpol,cx,cy,n5)
+     call timer('filbig  ',1)
 
      if(nqd.eq.0 .and. bq65) then
 ! Do the wideband Q65 decode        

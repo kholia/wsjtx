@@ -17,7 +17,6 @@ set (libm65_FSRCS
   coord.f90
   dcoord.f90
   decode0.f90
-  decode1a.f90
   decode65b.f90
   deep65.f90
   deg2grid.f90
