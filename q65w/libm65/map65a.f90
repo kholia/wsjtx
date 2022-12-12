@@ -211,8 +211,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
               if(npol.lt.0) npol=npol+180
            endif
 
-           call txpol(xpol,decoded,mygrid,npol,nxant,ntxpol,cp)
-
            cmode='#A'
            if(mode65.eq.2) cmode='#B'
            if(mode65.eq.4) cmode='#C'
