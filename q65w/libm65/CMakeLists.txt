@@ -8,10 +8,8 @@ set (libm65_FSRCS
   astrosub.f90
   chkhist.f90
   chkmsg.f90
-  coord.f90
   dcoord.f90
   decode0.f90
-  deg2grid.f90
   dot.f90
   fchisq0.f90
   filbig.f90
@@ -22,7 +20,6 @@ set (libm65_FSRCS
   geocentric.f90
   graycode.f90
   grid2deg.f90
-  grid2k.f90
   indexx.f90
   interleave63.f90
   iqcal.f90
