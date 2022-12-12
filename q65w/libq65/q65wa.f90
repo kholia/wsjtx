@@ -1,7 +1,6 @@
-subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
+subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,             &
-     nfcal,nsum,nxant,mycall,                    &
-     hiscall,hisgrid,nhsym,nfsample,                &
+     nfcal,nsum,mycall,hiscall,hisgrid,nhsym,nfsample,                &
      ndiskdat,nmode,ndop00)
 
 !  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
