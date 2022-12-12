@@ -62,7 +62,6 @@ set (libm65_FSRCS
   noisegen.f90
   packjt.f90
   pfxdump.f90
-  polfit.f90
   recvpkt.f90
   rfile3a.f90
   s3avg.f90
@@ -74,7 +73,6 @@ set (libm65_FSRCS
   smo.f90
   sun.f90
   symspec.f90
-#  timer.f90
   timf2.f90
   tm2.f90
   toxyz.f90
