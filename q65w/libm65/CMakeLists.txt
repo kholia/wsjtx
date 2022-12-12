@@ -20,8 +20,6 @@ set (libm65_FSRCS
   ftnquit.f90
   q65b.f90
   geocentric.f90
-  getpfx1.f90
-  getpfx2.f90
   graycode.f90
   grid2deg.f90
   grid2k.f90
@@ -29,14 +27,11 @@ set (libm65_FSRCS
   interleave63.f90
   iqcal.f90
   iqfix.f90
-  k2grid.f90
   lorentzian.f90
   m65c.f90
   map65a.f90
   moon2.f90
   moondop.f90
-  nchar.f90
-  pfxdump.f90
   recvpkt.f90
   rfile3a.f90
   s3avg.f90

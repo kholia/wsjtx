@@ -15,7 +15,6 @@ subroutine ftninit
   
   appd='.'
   addpfx='    '
-  call pfxdump(appd//'/prefixes.txt')
   open(12,file=appd//'/q65w_decodes.txt',status='unknown')
   open(17,file=appd//'/red.dat',status='unknown')
   open(19,file=appd//'/livecq.txt',status='unknown')
