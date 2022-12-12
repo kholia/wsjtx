@@ -49,13 +49,13 @@ subroutine decode0(dd,ss,savg,nstandalone)
   hisgrid0=hisgrid
   neme0=neme
 
-  call timer('map65a  ',0)
-  call map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
+  call timer('q65wa   ',0)
+  call q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
        mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,          &
-       nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                 &
-       neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,             &
+       nfcal,mcall3b,nsum,nxant,mycall,mygrid,                 &
+       hiscall,hisgrid,nhsym,nfsample,             &
        ndiskdat,nxpol,nmode,ndop00)
-  call timer('map65a  ',1)
+  call timer('q65wa   ',1)
   flush(6)
 
   return

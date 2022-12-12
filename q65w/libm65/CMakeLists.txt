@@ -29,24 +29,16 @@ set (libm65_FSRCS
   iqfix.f90
   lorentzian.f90
   m65c.f90
-  map65a.f90
   moon2.f90
   moondop.f90
+  q65wa.f90
   recvpkt.f90
-  rfile3a.f90
-  s3avg.f90
-  set.f90
-  shell.f90
-  sleep_msec.f90
-  smo.f90
   sun.f90
   symspec.f90
   timf2.f90
   tm2.f90
   toxyz.f90
   trimlist.f90
-  twkfreq.f90
-  twkfreq_xy.f90
   wavhdr.f90
 
   f77_wisdom.f
