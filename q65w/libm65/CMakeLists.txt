@@ -41,7 +41,6 @@ set (libm65_FSRCS
   recvpkt.f90
   rfile3a.f90
   s3avg.f90
-  sec_midn.f90
   set.f90
   shell.f90
   sleep_msec.f90
@@ -59,35 +58,9 @@ set (libm65_FSRCS
   f77_wisdom.f
   )
 
-set (libm65_ka9q_CSRCS
-  decode_rs.c
-  encode_rs.c
-  init_rs.c
-)
-set_source_files_properties (${libm65_ka9q_CSRCS} PROPERTIES COMPILE_FLAGS -Wno-sign-compare)
-
-set (libm65_CSRCS
-  ${libm65_ka9q_CSRCS}
-  ftrsd2.c
-#  gran.c
-  igray.c
-  tmoonsub.c
-  usleep.c
-  wrapkarn.c
-)
-
-if (WIN32)
-  set (libm65_CSRCS ${libm65_CSRCS} ptt.c)
-else ()
-  set (libm65_CSRCS ${libm65_CSRCS} ptt_unix.c)
-endif ()
-
 set (libm65_CXXSRCS
   ipcomm.cpp
   )
-
-add_definitions (-DBIGSYM=1)
-set_source_files_properties (sec_midn.f90 PROPERTIES COMPILE_FLAGS -fno-second-underscore)
 
 set (libm65_C_and_CXXSRCS
   ${libm65_CSRCS}

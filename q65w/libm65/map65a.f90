@@ -121,7 +121,6 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      short=0.                                 !Zero the whole short array
      jpz=1
 
-     print*,'AAA',mode65
      call timer('filbig  ',0)
      call filbig(dd,NSMAX,f0,newdat,nfsample,xpol,cx,cy,n5)
      call timer('filbig  ',1)
