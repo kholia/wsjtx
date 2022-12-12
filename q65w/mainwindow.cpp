@@ -186,7 +186,7 @@ MainWindow::~MainWindow()
 {
   writeSettings();
   int itimer=1;
-  m65c_(&itimer);
+  q65c_(&itimer);
 
   if (soundInThread.isRunning()) {
     soundInThread.quit();
@@ -901,7 +901,7 @@ void MainWindow::decode()                                       //decode()
   decodes_.ncand=0;
   m_fetched=0;
   int itimer=0;
-  watcher3.setFuture(QtConcurrent::run (std::bind (m65c_, &itimer)));
+  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
 
   decodeBusy(true);
 }

@@ -1,4 +1,4 @@
-subroutine m65c(itimer)
+subroutine q65c(itimer)
 
   use timer_module, only: timer
   use timer_impl, only: fini_timer !, limtrace
@@ -38,8 +38,6 @@ subroutine m65c(itimer)
      return
   endif
 
-  lq65w=.true.
-  lq65w2=.true.
   datetime(18:20)=':00'
 
 !  if(first) call timer('q65w    ',0)
@@ -52,4 +50,4 @@ subroutine m65c(itimer)
   call timer('decode0 ',1)
 
   return
-end subroutine m65c
+end subroutine q65c

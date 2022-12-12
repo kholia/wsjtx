@@ -215,7 +215,7 @@ extern "C" {
   void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
                     const char* mygrid, int* ndop00, int len1);
 
-  void m65c_(int* itimer);
+  void q65c_(int* itimer);
   }
 
 #endif // MAINWINDOW_H

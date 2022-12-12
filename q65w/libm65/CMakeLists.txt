@@ -23,9 +23,9 @@ set (libm65_FSRCS
   iqcal.f90
   iqfix.f90
   lorentzian.f90
-  m65c.f90
   moon2.f90
   moondop.f90
+  q65c.f90
   q65wa.f90
   recvpkt.f90
   sun.f90
