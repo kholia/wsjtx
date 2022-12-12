@@ -131,9 +131,6 @@ set_property (SOURCE ${libm65_C_and_CXXSRCS} APPEND PROPERTY OBJECT_DEPENDS ${CM
 add_library (m65impl STATIC ${libm65_FSRCS} ${libm65_CSRCS} ${libm65_CXXSRCS})
 target_link_libraries (m65impl wsjt_fort wsjt_cxx Qt5::Core)
 
-add_executable (m65 m65.f90 m65a.f90)
-target_link_libraries (m65 m65impl ${FFTW3_LIBRARIES})
-
 add_executable (mapsim mapsim.f90)
 target_link_libraries (mapsim m65impl ${FFTW3_LIBRARIES})
 
@@ -142,7 +139,7 @@ target_link_libraries (mapsim m65impl ${FFTW3_LIBRARIES})
 
 if (WIN32)
   install (
-    TARGETS m65 mapsim
+    TARGETS mapsim
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
     BUNDLE DESTINATION . COMPONENT runtime
     )
