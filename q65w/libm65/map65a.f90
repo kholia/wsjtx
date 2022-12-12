@@ -103,14 +103,14 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
   nqd=0
   fa=-1000*0.5*(nfb-nfa) + 1000*nfshift
   fb= 1000*0.5*(nfb-nfa) + 1000*nfshift
-     ia=nint(fa/df) + 16385
-     ib=nint(fb/df) + 16385
-     ia=max(51,ia)
-     ib=min(32768-51,ib)
-     if(ndiskdat.eq.1 .and. mode65.eq.0) ib=ia
+  ia=nint(fa/df) + 16385
+  ib=nint(fb/df) + 16385
+  ia=max(51,ia)
+  ib=min(32768-51,ib)
+  if(ndiskdat.eq.1 .and. mode65.eq.0) ib=ia
 
-     km=0
-     nkm=1
+  km=0
+  nkm=1
      nz=n/8
      freq0=-999.
      sync10=-999.
@@ -119,10 +119,18 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
      ntry=0
      short=0.                                 !Zero the whole short array
      jpz=1
+
+     print*,'AAA',mode65
+
 !     if(xpol) jpz=4
 
 ! First steps for JT65 decoding
-     do i=ia,ib                               !Search over freq range
+!     do i=ia,ib                               !Search over freq range
+     do i=ia,ia
+        if(mode65.eq.0) then
+           print*,'BBB'
+           go to 68
+        endif
         freq=0.001*(i-16385)*df
 !  Find the local base level for each polarization; update every 10 bins.
         if(mod(i-ia,10).eq.0) then
@@ -233,54 +241,28 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
                  f00=(i-1)*df          !Freq of detected sync tone (0-96000 Hz)
                  ntry=ntry+1
 
+68               print*,'CCC'
                  call timer('decode1a',0)
                  ifreq=i
                  ikhz=nint(freq+0.5*(nfa+nfb)-foffset)-nfshift
                  idf=nint(1000.0*(freq+0.5*(nfa+nfb)-foffset-(ikHz+nfshift)))
+
+                 rewind 71
+                 write(71,*)newdat,f00,nflip,mode65,nfsample,       &
+                      xpol,mycall,hiscall,hisgrid,neme,ndepth,nqd,dphi,   &
+                      ndphi,nutc,ikHz,idf,ipol,ntol,sync2,                &
+                      a,dt,pol,nkv,nhist,nsum,nsave,qual,decoded
+
                  call decode1a(dd,newdat,f00,nflip,mode65,nfsample,       &
                       xpol,mycall,hiscall,hisgrid,neme,ndepth,nqd,dphi,   &
                       ndphi,nutc,ikHz,idf,ipol,ntol,sync2,                &
                       a,dt,pol,nkv,nhist,nsum,nsave,qual,decoded)
                  call timer('decode1a',1)
-
-! The case sync1=2.0 is just to make sure decode1a is called and bigfft done.
-                 if(mode65.ne.0 .and. sync1.ne.2.000000) then
-                    if(km.lt.MAXMSG) km=km+1
-                    sig(km,1)=nfile
-                    sig(km,2)=nutc
-                    sig(km,3)=freq + 0.5*(nfa+nfb)
-                    sig(km,4)=sync1
-                    sig(km,5)=dt
-                    sig(km,6)=pol
-                    sig(km,7)=flipk
-                    sig(km,8)=sync2
-                    sig(km,9)=nkv
-                    sig(km,10)=qual
-!                    sig(km,11)=idphi
-                    sig(km,12)=savg(i)
-                    sig(km,13)=a(1)
-                    sig(km,14)=a(2)
-                    sig(km,15)=a(3)
-                    sig(km,16)=a(4)
-!                     sig(km,17)=a(5)
-                    sig(km,18)=nhist
-                    msg(km)=decoded
-                    freq0=freq
-                    sync10=sync1
-                    nkm=1
-                 endif
+                 if(mode65.eq.0) exit      !### JHT ###
               endif
            endif
         endif
      enddo  !i=ia,ib
-
-     if(ndphi.eq.1 .and.iloop.lt.12) then
-        iloop=iloop+1
-        go to 2
-     endif
-     
-     if(ndphi.eq.1 .and.iloop.eq.12) call getdphi(qphi)
-     if(nhsym.eq.nhsym1 .and. tsec0.gt.3.0) go to 700
 
      if(nqd.eq.0 .and. bq65) then
 ! Do the wideband Q65 decode        
