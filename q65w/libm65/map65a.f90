@@ -1,5 +1,5 @@
-subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
-     mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,             &
+subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
+     mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,             &
      nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                    &
      neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,                &
      ndiskdat,nxpol,nmode,ndop00)
@@ -82,23 +82,16 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
 
   mcall3a=mcall3b
   mousefqso0=mousefqso
-  if(.not.xpol) ndphi=0
   nsum=0
-
-!### Should use AppDir! ###
-!  open(23,file='CALL3.TXT',status='unknown')
 
   df=96000.0/NFFT                     !df = 96000/NFFT = 2.930 Hz
   if(nfsample.eq.95238) df=95238.1/NFFT
   ftol=0.010                          !Frequency tolerance (kHz)
-  dphi=idphi/57.2957795
   foffset=0.001*(1270 + nfcal)              !Offset from sync tone, plus CAL
   fqso=mousefqso + foffset - 0.5*(nfa+nfb) + nfshift !fqso at baseband (khz)
   iloop=0
 
-2  if(ndphi.eq.1) dphi=30*iloop/57.2957795
-
-  if(nutc.ne.nutc0) nfile=nfile+1
+2 if(nutc.ne.nutc0) nfile=nfile+1
   nutc0=nutc
 
   nqd=0
@@ -204,39 +197,14 @@ subroutine map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,        &
                 decoded(1:4).eq.'73  ') then
               nsync2=nint(1.33*s2db + 2.0)
            endif
-
-           if(nxant.ne.0) then
-              npol=npol-45
-              if(npol.lt.0) npol=npol+180
-           endif
-
-           cmode='#A'
-           if(mode65.eq.2) cmode='#B'
-           if(mode65.eq.4) cmode='#C'
-!           write(26,1014) f0,ndf,ndf0,ndf1,ndf2,dt,npol,nsync1,       &
-!                nsync2,nutc,decoded,cp,cmode
-!1014       format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,2x,a1,3x,a2)
-           ndecodes=ndecodes+1
-!           write(21,1100) f0,ndf,dt,npol,nsync2,nutc,decoded,cp,          &
-!                cmode(1:1),cmode(2:2)
-!1100       format(f8.3,i5,f5.1,2i4,i5.4,2x,a22,2x,a1,3x,a1,1x,a1)
         endif
-
      endif
      j=j+nsiz(n)
   enddo  !i=1,km
-
-!  write(26,1015) nutc
-!1015 format(37x,i6.4,' ')
-!  call flush(21)
-!  call flush(26)
-!  call display(nkeep,ftol)
   ndecdone=2
 
 900 continue
-!  close(23)
   call flush(12)
-  ndphi=0
   mcall3b=mcall3a
 
   return

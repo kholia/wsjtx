@@ -26,7 +26,7 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
   common/datcom/dd(4,5760000),ss(4,322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
-  complex z,zfac
+  complex z
   complex zsumx,zsumy
   complex cx(NFFT),cy(NFFT)
   complex cx00(NFFT),cy00(NFFT)
@@ -113,8 +113,6 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
 
   i=0
   fac=0.0002
-  dphi=idphi/57.2957795
-  zfac=fac*cmplx(cos(dphi),sin(dphi))
   do j=ja,jb                          !Copy data into cx, cy
      x1=dd(1,j)
      x2=dd(2,j)
@@ -127,7 +125,7 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
      endif
      i=i+1
      cx(i)=fac*cmplx(x1,x2)
-     cy(i)=zfac*cmplx(x3,x4)          !NB: cy includes dphi correction
+     cy(i)=cmplx(x3,x4)          !NB: cy includes dphi correction
   enddo
 
   if(nzap/178.lt.50 .and. (ndiskdat.eq.0 .or. ihsym.lt.280)) then

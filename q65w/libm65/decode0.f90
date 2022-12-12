@@ -40,8 +40,6 @@ subroutine decode0(dd,ss,savg,nstandalone)
      enddo
 10   rmsdd=1.5*i
   endif
-  ndphi=0
-  if(iand(nrxlog,8).ne.0) ndphi=1
 
   if(mycall.ne.mycall0 .or. hiscall.ne.hiscall0 .or.         &
        hisgrid.ne.hisgrid0 .or. mcall3.ne.0 .or. neme.ne.neme0) mcall3b=1
@@ -52,8 +50,8 @@ subroutine decode0(dd,ss,savg,nstandalone)
   neme0=neme
 
   call timer('map65a  ',0)
-  call map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,idphi,nfa,nfb,           &
-       mousedf,mousefqso,nagain,ndecdone,nfshift,ndphi,max_drift,          &
+  call map65a(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
+       mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,          &
        nfcal,nkeep,mcall3b,nsum,nsave,nxant,mycall,mygrid,                 &
        neme,ndepth,nstandalone,hiscall,hisgrid,nhsym,nfsample,             &
        ndiskdat,nxpol,nmode,ndop00)

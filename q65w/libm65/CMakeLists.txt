@@ -20,7 +20,6 @@ set (libm65_FSRCS
   ftnquit.f90
   q65b.f90
   geocentric.f90
-  getdphi.f90
   getpfx1.f90
   getpfx2.f90
   graycode.f90
