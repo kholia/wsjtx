@@ -33,7 +33,7 @@ set_property (SOURCE ${q65w_C_and_CXXSRCS} APPEND_STRING PROPERTY COMPILE_FLAGS 
 set_property (SOURCE ${q65w_C_and_CXXSRCS} APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_BINARY_DIR}/wsjtx_config.h)
 
 # build the subdirectories
-add_subdirectory (libm65)
+add_subdirectory (libq65)
 
 # UI generation
 qt5_wrap_ui (q65w_GENUISRCS ${q65w_UISRCS})
