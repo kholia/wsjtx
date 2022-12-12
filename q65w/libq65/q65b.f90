@@ -1,13 +1,11 @@
-subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
-     mycall0,mygrid,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
-     max_drift,nhsym,ndop00,idec)
+subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
+     mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
+     max_drift,ndop00,idec)
 
 ! This routine provides an interface between MAP65 and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the MAP65 GUI.
 ! Raw Rx data are available as the 96 kHz complex spectrum ca(MAXFFT1)
-! in common/cacb.  If xpol is true, we also have cb(MAXFFT1) for the
-! orthogonal polarization.  Decoded messages are sent back to the GUI
-! on stdout.
+! in common/cacb.  Decoded messages are sent back to the GUI on stdout.
 
   use q65_decode
   use wideband_sync
@@ -19,19 +17,18 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   parameter (RAD=57.2957795)
 !  type(hdr) h                            !Header for the .wav file
   integer*2 iwave(60*12000)
-  complex ca(MAXFFT1),cb(MAXFFT1)          !FFTs of raw x,y data
+  complex ca(MAXFFT1)                      !FFTs of raw x,y data
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
-  logical xpol,ldecoded
+  logical ldecoded
   integer ipk1(1)
   real*8 fcenter,freq0,freq1
   character*12 mycall0,hiscall0
   character*12 mycall,hiscall
-  character*6 mygrid,hisgrid
+  character*6 hisgrid
   character*4 grid4
   character*28 msg00
   character*80 line
-  character*80 wsjtx_dir
-  character*1 cp,cmode*2
+  character*1 cmode*2
   character*60 result
   common/decodes/ndecodes,ncand,result(50)
   common/cacb/ca
@@ -39,11 +36,7 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
   data nutc00/-1/,msg00/'                            '/
   save
 
-  if(newdat.eq.1) nutc00=-1
-!  open(9,file='wsjtx_dir.txt',status='old')
-!  read(9,'(a)') wsjtx_dir                      !Establish the working directory
-!  close(9)
-  
+  if(newdat.eq.1) nutc00=-1  
   if(mycall0(1:1).ne.' ') mycall=mycall0
   if(hiscall0(1:1).ne.' ') hiscall=hiscall0
   if(hisgrid(1:4).ne.'    ') grid4=hisgrid(1:4)
@@ -156,18 +149,12 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      cmode=': '
      cmode(2:2)=char(ichar('A') + mode_q65-1)
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
-!     write(26,1014) freq1,ndf,0,0,0,xdt0,npol,0,nsnr0,nutc,msg0(1:22),   &
-!          ':',cp,cmode
-!1014 format(f8.3,i5,3i3,f5.1,i4,i3,i4,i5.4,4x,a22,1x,2a1,2x,a2)
 
 ! Suppress writing duplicates (same time, decoded message, and frequency)
 ! to map65_rx.log
      if(nutc.ne.nutc00 .or. msg0(1:28).ne.msg00 .or. freq1.ne.freq1_00) then
 ! Write to file map65_rx.log:
         ndecodes=ndecodes+1
-!        write(21,1110)  freq1,ndf,xdt0,npol,nsnr0,nutc,msg0(1:28),   &
-!             cmode(2:2),cq0
-!1110    format(f8.3,i5,f5.1,2i4,i5.4,2x,a28,': ',a1,2x,a3)
         nutc00=nutc
         msg00=msg0(1:28)
         freq1_00=freq1
@@ -176,10 +163,7 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
         write(result(ndecodes),1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
         write(12,1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
 1120    format(i4.4,f9.3,f7.2,i5,2x,a,i6)
-!        print*,ndecodes,result(ndecodes)
         result(ndecodes)=trim(result(ndecodes))//char(0)
-!        write(*,1121) nutc,fsked,xdt0,nsnr0,trim(msg0)
-!1121    format('~',i4.4,f9.3,f7.2,i5,2x,a,i6)
      endif
   endif
   

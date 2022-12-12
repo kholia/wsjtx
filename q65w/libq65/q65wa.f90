@@ -116,9 +116,9 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
      ikhz=nint(freq)
      f0=cand(icand)%f
      call timer('q65b    ',0)
-     call q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
-          xpol,mycall,mygrid,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
-          nagain,max_drift,nhsym,ndop00,idec)
+     call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
+          mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
+          nagain,max_drift,ndop00,idec)
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.
   enddo  ! icand
