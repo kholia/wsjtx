@@ -328,7 +328,6 @@ void MainWindow::dataSink(int k)
   static float fgreen;
   static int ndiskdat;
   static int nb;
-  static int nxpol=0;
   static float px=0.0,py=0.0;
   static uchar lstrong[1024];
   static float rejectx;
@@ -349,9 +348,7 @@ void MainWindow::dataSink(int k)
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
   fgreen=m_wide_graph_window->fGreen();
-  int zero=0;
-  symspec_(&k, &nxpol, &ndiskdat, &nb, &m_NBslider, &m_dPhi,
-           &nfsample, &fgreen, &zero, &zero,
+  symspec_(&k, &ndiskdat, &nb, &m_NBslider, &m_dPhi, &nfsample, &fgreen,
            &m_gainx, &m_gainy, &m_phasex, &m_phasey, &rejectx, &rejecty,
            &px, &py, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
 

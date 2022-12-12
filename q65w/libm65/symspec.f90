@@ -1,16 +1,13 @@
-subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
-     fgreen,iqadjust,iqapply,gainx,gainy,phasex,phasey,rejectx,rejecty,  &
+subroutine symspec(k,ndiskdat,nb,nbslider,idphi,nfsample,    &
+     fgreen,gainx,gainy,phasex,phasey,rejectx,rejecty,  &
      pxdb,pydb,ssz5a,nkhz,ihsym,nzap,slimit,lstrong)
 
 !  k        pointer to the most recent new data
-!  nxpol    0/1 to indicate single- or dual-polarization
 !  ndiskdat 0/1 to indicate if data from disk
 !  nb       0/1 status of noise blanker
 !  idphi    Phase correction for Y channel, degrees
 !  nfsample sample rate (Hz)
 !  fgreen   Frequency of green marker in I/Q calibrate mode (-48.0 to +48.0 kHz)
-!  iqadjust 0/1 to indicate whether IQ adjustment is active
-!  iqapply  0/1 to indicate whether to apply I/Q calibration
 !  pxdb     power in x channel (0-60 dB)
 !  pydb     power in y channel (0-60 dB)
 !  ssz5a    polarized spectrum, for waterfall display
@@ -28,10 +25,9 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
   complex z
   complex zsumx,zsumy
-  complex cx(NFFT),cy(NFFT)
-  complex cx00(NFFT),cy00(NFFT)
+  complex cx(NFFT)
+  complex cx00(NFFT)
   complex cx0(0:1023),cx1(0:1023)
-  complex cy0(0:1023),cy1(0:1023)
   logical*1 lstrong(0:1023)
   data rms/999.0/,k0/99999999/,nadjx/0/,nadjy/0/
   save
@@ -75,11 +71,7 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
   px=0.
   py=0.
 
-  iqapply0=0
-  iqadjust0=0
-  if(iqadjust.ne.0) iqapply0=0
   nwindow=2
-!  nwindow=0                                    !### No windowing ###
   nfft2=1024
   kstep=nfft2
   if(nwindow.ne.0) kstep=nfft2/2
@@ -88,19 +80,14 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
      j=k1+1
      do i=0,nfft2-1
         cx0(i)=cmplx(dd(1,j+i),dd(2,j+i))
-        if(nxpol.ne.0) cy0(i)=cmplx(dd(3,j+i),dd(4,j+i))
      enddo
-     call timf2(k,nxpol,nfft2,nwindow,nb,peaklimit,iqadjust0,iqapply0,       &
-          faclim,cx0,cy0,gainx,gainy,phasex,phasey,cx1,cy1,slimit,lstrong,   &
+     call timf2(k,nfft2,nwindow,nb,peaklimit,       &
+          faclim,cx0,gainx,gainy,phasex,phasey,cx1,slimit,lstrong,   &
           px,py,nzap)
 
      do i=0,kstep-1
         dd(1,j+i)=real(cx1(i))
         dd(2,j+i)=aimag(cx1(i))
-        if(nxpol.ne.0) then
-           dd(3,j+i)=real(cy1(i))
-           dd(4,j+i)=aimag(cy1(i))
-        endif
      enddo
      k1=k1+kstep
   enddo
@@ -113,19 +100,11 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
 
   i=0
   fac=0.0002
-  do j=ja,jb                          !Copy data into cx, cy
+  do j=ja,jb                          !Copy data into cx
      x1=dd(1,j)
      x2=dd(2,j)
-     if(nxpol.ne.0) then
-        x3=dd(3,j)
-        x4=dd(4,j)
-     else
-        x3=0.
-        x4=0.
-     endif
      i=i+1
      cx(i)=fac*cmplx(x1,x2)
-     cy(i)=cmplx(x3,x4)          !NB: cy includes dphi correction
   enddo
 
   if(nzap/178.lt.50 .and. (ndiskdat.eq.0 .or. ihsym.lt.280)) then
@@ -134,7 +113,6 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
      rmsx=sqrt(0.5*px/nsum)
      rmsy=sqrt(0.5*py/nsum)
      rms=rmsx
-     if(nxpol.ne.0) rms=sqrt((px+py)/(4.0*nsum))
   endif
   pxdb=0.
   pydb=0.
@@ -144,36 +122,20 @@ subroutine symspec(k,nxpol,ndiskdat,nb,nbslider,idphi,nfsample,    &
   if(pydb.gt.60.0) pydb=60.0
 
   cx00=cx
-  if(nxpol.ne.0) cy00=cy
 
   do mm=1,nfast
      ihsym=ihsym+1
      if(nfast.eq.1) then
         cx=w*cx00                           !Apply window for 2nd forward FFT
-        if(nxpol.ne.0) cy=w*cy00
      else
         if(mm.eq.1) then
            cx=w2a*cx00
-           if(nxpol.ne.0) cy=w2a*cy00
         else
            cx=w2b*cx00
-           if(nxpol.ne.0) cy=w2b*cy00
         endif
      endif
 
      call four2a(cx,NFFT,1,1,1)          !Second forward FFT (X)
-     if(iqadjust.eq.0) nadjx=0
-     if(iqadjust.ne.0 .and. nadjx.lt.50) call iqcal(nadjx,cx,NFFT,    &
-          gainx,phasex,zsumx,ipkx,rejectx0)
-     if(iqapply.ne.0) call iqfix(cx,NFFT,gainx,phasex)
-
-     if(nxpol.ne.0) then
-        call four2a(cy,NFFT,1,1,1)       !Second forward FFT (Y)
-        if(iqadjust.eq.0) nadjy=0
-        if(iqadjust.ne.0 .and. nadjy.lt.50) call iqcal(nadjy,cy,NFFT, &
-             gainy,phasey,zsumy,ipky,rejecty)
-        if(iqapply.ne.0) call iqfix(cy,NFFT,gainy,phasey)
-     endif
 
      n=min(322,ihsym)
      do i=1,NFFT
