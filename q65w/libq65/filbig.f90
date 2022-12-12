@@ -1,4 +1,4 @@
-subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
+subroutine filbig(dd,nmax,f0,newdat,nfsample,c4a,n4)
 
 ! Filter and downsample complex data stored in array dd(4,nmax).  
 ! Output is downsampled from 96000 Hz to 1375.125 Hz.
@@ -6,14 +6,14 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
   use timer_module, only: timer
   parameter (MAXFFT1=5376000,MAXFFT2=77175)
   real*4  dd(4,nmax)                         !Input data
-  complex ca(MAXFFT1),cb(MAXFFT1)            !FFTs of input
+  complex ca(MAXFFT1)                        !FFT of input
   complex c4a(MAXFFT2)                       !Output data
   real*8 df
   real halfpulse(8)                 !Impulse response of filter (one sided)
   complex cfilt(MAXFFT2)                     !Filter (complex; imag = 0)
   real rfilt(MAXFFT2)                        !Filter (real)
   integer*8 plan1,plan2,plan3,plan4,plan5
-  logical first,xpol
+  logical first
   include 'fftw3.f'
   common/cacb/ca
   equivalence (rfilt,cfilt)
@@ -41,9 +41,7 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
 ! Plan the FFTs just once
      call timer('FFTplans ',0)
      call sfftw_plan_dft_1d(plan1,nfft1,ca,ca,FFTW_BACKWARD,nflags)
-     call sfftw_plan_dft_1d(plan2,nfft1,cb,cb,FFTW_BACKWARD,nflags)
      call sfftw_plan_dft_1d(plan3,nfft2,c4a,c4a,FFTW_FORWARD,nflags)
-     call sfftw_plan_dft_1d(plan4,nfft2,c4b,c4b,FFTW_FORWARD,nflags)
      call sfftw_plan_dft_1d(plan5,nfft2,cfilt,cfilt,FFTW_BACKWARD,nflags)
      call timer('FFTplans ',1)
 
@@ -70,7 +68,7 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
   endif
 
 ! When new data comes along, we need to compute a new "big FFT"
-! If we just have a new f0, continue with the existing ca and cb.
+! If we just have a new f0, continue with the existing ca.
 
   if(newdat.ne.0 .or. sum(abs(ca)).eq.0.0) then  !### Test on ca should be unnecessary?
      nz=min(nmax,nfft1)
@@ -90,11 +88,11 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,xpol,c4a,c4b,n4)
   endif
 
 ! NB: f0 is the frequency at which we want our filter centered.
-!     i0 is the bin number in ca and cb closest to f0.
+!     i0 is the bin number in ca closest to f0.
 
   i0=nint(f0/df) + 1
   nh=nfft2/2
-  do i=1,nh                                !Copy data into c4a and c4b,
+  do i=1,nh                                !Copy data into c4a
      j=i0+i-1                              !and apply the filter function
      if(j.ge.1 .and. j.le.nfft1) then
         c4a(i)=rfilt(i)*ca(j)

@@ -44,9 +44,8 @@ subroutine q65c(itimer)
 !  first=.false.
 
   npatience=1
-  nstandalone=0
   call timer('decode0 ',0)
-  call decode0(dd,ss,savg,nstandalone)
+  call decode0(dd,ss,savg)
   call timer('decode0 ',1)
 
   return

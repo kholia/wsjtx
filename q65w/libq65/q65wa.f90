@@ -105,7 +105,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
   jpz=1
 
   call timer('filbig  ',0)
-  call filbig(dd,NSMAX,f0,newdat,nfsample,xpol,cx,cy,n5)
+  call filbig(dd,NSMAX,f0,newdat,nfsample,cx,n5)
   call timer('filbig  ',1)
 
 ! Do the wideband Q65 decode        
