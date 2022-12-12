@@ -16,7 +16,7 @@ subroutine decode0(dd,ss,savg,nstandalone)
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
        ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
   common/early/nhsym1,nhsym2,ldecoded(32768)
-  data neme0/-99/,mcall3b/1/
+  data neme0/-99/
   save
 
   call sec0(0,tquick)
@@ -40,9 +40,6 @@ subroutine decode0(dd,ss,savg,nstandalone)
      enddo
 10   rmsdd=1.5*i
   endif
-
-  if(mycall.ne.mycall0 .or. hiscall.ne.hiscall0 .or.         &
-       hisgrid.ne.hisgrid0 .or. mcall3.ne.0 .or. neme.ne.neme0) mcall3b=1
       
   mycall0=mycall
   hiscall0=hiscall
@@ -52,7 +49,7 @@ subroutine decode0(dd,ss,savg,nstandalone)
   call timer('q65wa   ',0)
   call q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
        mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,          &
-       nfcal,mcall3b,nsum,nxant,mycall,mygrid,                 &
+       nfcal,nsum,nxant,mycall,mygrid,                 &
        hiscall,hisgrid,nhsym,nfsample,             &
        ndiskdat,nxpol,nmode,ndop00)
   call timer('q65wa   ',1)

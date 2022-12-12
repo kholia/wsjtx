@@ -1,6 +1,6 @@
 subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
      mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,             &
-     nfcal,mcall3b,nsum,nxant,mycall,mygrid,                    &
+     nfcal,nsum,nxant,mycall,mygrid,                    &
      hiscall,hisgrid,nhsym,nfsample,                &
      ndiskdat,nxpol,nmode,ndop00)
 
@@ -25,7 +25,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
   common/decodes/ndecodes,ncand,result(50)
-  common/c3com/ mcall3a
   common/testcom/ifreq
   common/early/nhsym1,nhsym2,ldecoded(32768)
 
@@ -72,7 +71,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
   nwrite_q65=0
   bq65=mode_q65.gt.0
 
-  mcall3a=mcall3b
   mousefqso0=mousefqso
   nsum=0
 
@@ -126,9 +124,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
   enddo  ! icand
   call sec0(1,tsec0)
   ndecdone=2
-
   call flush(12)
-  mcall3b=mcall3a
 
   return
 end subroutine q65wa
