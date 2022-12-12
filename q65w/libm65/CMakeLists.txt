@@ -38,8 +38,6 @@ set (libm65_FSRCS
   timf2.f90
   tm2.f90
   toxyz.f90
-  trimlist.f90
-  wavhdr.f90
 
   f77_wisdom.f
   )

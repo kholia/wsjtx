@@ -9,7 +9,6 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
 ! orthogonal polarization.  Decoded messages are sent back to the GUI
 ! on stdout.
 
-!  use wavhdr
   use q65_decode
   use wideband_sync
   use timer_module, only: timer
