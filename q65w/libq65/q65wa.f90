@@ -54,7 +54,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
 
   if(nagain.eq.0) then
      call timer('get_cand',0)
-     call get_candidates(ss,savg,xpol,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
+     call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
      call timer('get_cand',1)
      candec=.false.
   endif

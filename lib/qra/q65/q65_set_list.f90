@@ -3,7 +3,7 @@ subroutine q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
   parameter (MAX_NCW=206)
   character*12 mycall,hiscall
   character*6 hisgrid
-  character*37 msg0,msg,msgsent
+  character*37 msg,msgsent
   logical my_std,his_std
   integer codewords(63,MAX_NCW)
   integer itone(85)
@@ -45,7 +45,7 @@ subroutine q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
         endif
      endif
 
-10   call genq65(msg,0,msgsent,itone,i3,n3)
+     call genq65(msg,0,msgsent,itone,i3,n3)
      i0=1
      j=0
      do k=1,85

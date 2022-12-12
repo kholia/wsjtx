@@ -26,7 +26,7 @@ module wideband_sync
 
   contains
 
-subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
+subroutine get_candidates(ss,savg,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
 
 ! Search symbol spectra ss() over frequency range nfa to nfb (in kHz) for
 ! JT65 and Q65 sync patterns. The nts_* variables are the submode tone
@@ -37,12 +37,12 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   real ss(322,NFFT),savg(NFFT)
   real pavg(-20:20)
   integer indx(NFFT)
-  logical xpol,skip,ldecoded
+  logical skip,ldecoded
   type(candidate) :: cand(MAX_CANDIDATES)
   type(candidate) :: cand0(MAX_CANDIDATES)
   common/early/nhsym1,nhsym2,ldecoded(32768)
 
-  call wb_sync(ss,savg,xpol,jz,nfa,nfb)          !Output to sync() array
+  call wb_sync(ss,savg,jz,nfa,nfb)          !Output to sync() array
 
   tstep=2048.0/11025.0        !0.185760 s: 0.5*tsym_jt65, 0.3096*tsym_q65
   df3=96000.0/NFFT
@@ -114,7 +114,7 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   return
 end subroutine get_candidates
 
-subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
+subroutine wb_sync(ss,savg,jz,nfa,nfb)
 
 ! Compute "orange sync curve" using the Q65 sync pattern
 
@@ -124,8 +124,7 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
   real ss(322,NFFT)
   real savg(NFFT)
   real savg_med
-  real a(3)
-  logical first,xpol
+  logical first
   integer isync(22)
   integer jsync0(63),jsync1(63)
   integer ip(1)
