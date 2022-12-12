@@ -18,10 +18,8 @@ set (libm65_FSRCS
   ftnquit.f90
   q65b.f90
   geocentric.f90
-  graycode.f90
   grid2deg.f90
   indexx.f90
-  interleave63.f90
   iqcal.f90
   iqfix.f90
   lorentzian.f90
