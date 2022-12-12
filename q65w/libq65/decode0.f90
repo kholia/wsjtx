@@ -49,9 +49,9 @@ subroutine decode0(dd,ss,savg)
   call timer('q65wa   ',0)
   call q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
        mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,          &
-       nfcal,nsum,nxant,mycall,mygrid,                 &
+       nfcal,nsum,nxant,mycall,                 &
        hiscall,hisgrid,nhsym,nfsample,             &
-       ndiskdat,nxpol,nmode,ndop00)
+       ndiskdat,nmode,ndop00)
   call timer('q65wa   ',1)
   flush(6)
 

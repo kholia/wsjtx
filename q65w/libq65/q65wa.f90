@@ -1,8 +1,8 @@
 subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
      mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,             &
-     nfcal,nsum,nxant,mycall,mygrid,                    &
+     nfcal,nsum,nxant,mycall,                    &
      hiscall,hisgrid,nhsym,nfsample,                &
-     ndiskdat,nxpol,nmode,ndop00)
+     ndiskdat,nmode,ndop00)
 
 !  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
 
@@ -11,13 +11,13 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
 
   parameter (MAXMSG=1000)            !Size of decoded message list
   parameter (NSMAX=60*96000)
-  complex cx(NSMAX/64), cy(NSMAX/64)   !Data at 1378.125 samples/s
+  complex cx(NSMAX/64)               !Data at 1378.125 samples/s
   real dd(4,NSMAX)
   real*4 ss(322,NFFT),savg(NFFT)
   real*8 fcenter
   character*3 shmsg0(4)
-  character mycall*12,hiscall*12,mygrid*6,hisgrid*6,cm*1
-  logical xpol,bq65
+  character mycall*12,hiscall*12,hisgrid*6,cm*1
+  logical bq65
   logical candec(MAX_CANDIDATES)
   logical ldecoded
   character blank*22
@@ -47,7 +47,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,        &
   mode_q65=nmode/10
   nts_jt65=mode65                     !JT65 tone separation factor
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
-  xpol=(nxpol.ne.0)
   
 ! No second decode for JT65?
   if(nhsym.eq.nhsym2 .and. nagain.eq.0 .and.ndiskdat.eq.0) mode65=0
