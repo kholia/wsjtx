@@ -14,7 +14,7 @@ extern "C"
 {
   struct
   {
-    double d8[2*60*96000];   //This is "common/datcom/..." in fortran
+    double d8[60*96000];              //This is "common/datcom/..." in fortran
     float ss[322*NFFT];
     float savg[NFFT];
     double fcenter;
@@ -210,6 +210,7 @@ void SoundInThread::inputUDP()
         if ((k+iz) <= 60*96000) {
           int nsam=-1;
           recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8, b.d8);
+//          if(nsam==-99) recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8, b.d8);
           datcom_.fcenter=b.cfreq + m_fAdd;
         }
 

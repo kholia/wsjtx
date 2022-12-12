@@ -31,13 +31,13 @@ void getfile(QString fname, bool xpol, int dbDgrd)
       for(int i=0; i<npts; i+=2) {
         datcom_.d4[j++]=fac*((float)id[i] + dgrd*gran());
         datcom_.d4[j++]=fac*((float)id[i+1] + dgrd*gran());
-        if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
+//        if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
       }
     } else {
       for(int i=0; i<npts; i+=2) {
         datcom_.d4[j++]=(float)id[i];
         datcom_.d4[j++]=(float)id[i+1];
-        if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
+//        if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
       }
     }
     fclose(fp);
@@ -70,7 +70,7 @@ void savetf2(QString fname, bool xpol)
     for(int i=0; i<npts; i+=2) {
       buf[i]=(qint16)datcom_.d4[j++];
       buf[i+1]=(qint16)datcom_.d4[j++];
-      if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
+//      if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
     }
     fwrite(buf,2,npts,fp);
     fclose(fp);

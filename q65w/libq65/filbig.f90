@@ -1,11 +1,11 @@
 subroutine filbig(dd,nmax,f0,newdat,nfsample,c4a,n4)
 
-! Filter and downsample complex data stored in array dd(4,nmax).  
+! Filter and downsample complex data stored in array dd(2,nmax).  
 ! Output is downsampled from 96000 Hz to 1375.125 Hz.
 
   use timer_module, only: timer
   parameter (MAXFFT1=5376000,MAXFFT2=77175)
-  real*4  dd(4,nmax)                         !Input data
+  real*4  dd(2,nmax)                         !Input data
   complex ca(MAXFFT1)                        !FFT of input
   complex c4a(MAXFFT2)                       !Output data
   real*8 df

@@ -11,7 +11,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   parameter (MAXMSG=1000)            !Size of decoded message list
   parameter (NSMAX=60*96000)
   complex cx(NSMAX/64)               !Data at 1378.125 samples/s
-  real dd(4,NSMAX)
+  real dd(2,NSMAX)
   real*4 ss(322,NFFT),savg(NFFT)
   real*8 fcenter
   character*3 shmsg0(4)

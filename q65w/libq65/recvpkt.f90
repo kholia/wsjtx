@@ -12,7 +12,7 @@ subroutine recvpkt(nsam,nblock2,userx_no,k,buf4,buf8,buf16)
   integer*2 jd(4),kd(2),nblock2
   real*4 xd(4),yd(2)
   real*8 fcenter
-  common/datcom/dd(4,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
+  common/datcom/dd(2,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   equivalence (kd,d4)
   equivalence (jd,d8,yd)
@@ -34,24 +34,6 @@ subroutine recvpkt(nsam,nblock2,userx_no,k,buf4,buf8,buf16)
            d4=buf4(i)
            dd(1,k)=kd(1)
            dd(2,k)=kd(2)
-        enddo
-     else if(userx_no.eq.-2) then
-        do i=1,87                    !Two RF channels, r*4 data
-           k=k+1
-           c16=buf16(i)
-           dd(1,k)=xd(1)
-           dd(2,k)=xd(2)
-           dd(3,k)=xd(3)
-           dd(4,k)=xd(4)
-        enddo
-     else if(userx_no.eq.2) then
-        do i=1,174                    !Two RF channels, i*2 data
-           k=k+1
-           d8=buf8(i)
-           dd(1,k)=jd(1)
-           dd(2,k)=jd(2)
-           dd(3,k)=jd(3)
-           dd(4,k)=jd(4)
         enddo
      endif
   else

@@ -16,7 +16,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   parameter (NFFT=32768)              !Length of FFTs
   real*8 ts,hsym
   real*8 fcenter
-  common/datcom/dd(4,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
+  common/datcom/dd(2,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
   complex cx(NFFT)
@@ -54,7 +54,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
      savg=0.
      ihsym=0
      k1=0
-     if(ndiskdat.eq.0) dd(1:4,k+1:5760000)=0.  !### Should not be needed ??? ###
+     if(ndiskdat.eq.0) dd(1:2,k+1:5760000)=0.  !### Should not be needed ??? ###
   endif
   k0=k
 

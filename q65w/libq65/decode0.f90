@@ -3,7 +3,7 @@ subroutine decode0(dd,ss,savg)
   use timer_module, only: timer
   parameter (NSMAX=60*96000)
 
-  real*4 dd(4,NSMAX),ss(322,NFFT),savg(NFFT)
+  real*4 dd(2,NSMAX),ss(322,NFFT),savg(NFFT)
   real*8 fcenter
   integer hist(0:32768)
   logical ldecoded
@@ -28,10 +28,10 @@ subroutine decode0(dd,ss,savg)
         hist(j1)=hist(j1)+1
         j2=min(abs(dd(2,i)),32768.0)
         hist(j2)=hist(j2)+1
-        j3=min(abs(dd(3,i)),32768.0)
-        hist(j3)=hist(j3)+1
-        j4=min(abs(dd(4,i)),32768.0)
-        hist(j4)=hist(j4)+1
+!        j3=min(abs(dd(3,i)),32768.0)
+!        hist(j3)=hist(j3)+1
+!        j4=min(abs(dd(4,i)),32768.0)
+!        hist(j4)=hist(j4)+1
      enddo
      m=0
      do i=0,32768
