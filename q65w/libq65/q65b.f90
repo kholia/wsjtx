@@ -104,11 +104,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   enddo
   iwave(2*nfft2+1:)=0
 
-!  open(30,file='000000_0001.wav',status='unknown',access='stream')
-!  h=default_header(12000,NMAX)
-!  write(30) h,iwave
-!  close(30)
-
   nsubmode=mode_q65-1
   nfa=990                   !Tight limits around ipk for the wideband decode
   nfb=1010
