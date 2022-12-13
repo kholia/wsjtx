@@ -20,7 +20,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   logical candec(MAX_CANDIDATES)
   logical ldecoded
   character blank*22
-  real short(3,NFFT)                 !SNR dt ipol for potential shorthands
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
   common/decodes/ndecodes,ncand,result(50)
@@ -32,6 +31,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   data nfile/0/,nutc0/-999/,nid/0/,ip000/1/,ip001/1/,mousefqso0/-999/
   save
 
+  nagain=0              !### TEMPORARY ###
   rewind 12
 
 ! Clean start for Q65 at early decode
@@ -41,21 +41,15 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
   mfb=nfb-nkhz_center+48
-  mode65=mod(nmode,10)
-  if(mode65.eq.3) mode65=4
   mode_q65=nmode/10
-  nts_jt65=mode65                     !JT65 tone separation factor
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
-  
-! No second decode for JT65?
-  if(nhsym.eq.nhsym2 .and. nagain.eq.0 .and.ndiskdat.eq.0) mode65=0
 
-  if(nagain.eq.0) then
+!  if(nagain.eq.0) then
      call timer('get_cand',0)
      call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
      call timer('get_cand',1)
      candec=.false.
-  endif
+!  endif
 !###
 !  do k=1,ncand
 !     freq=cand(k)%f+nkhz_center-48.0
@@ -83,24 +77,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nutc0=nutc
 
   nqd=0
-  fa=-1000*0.5*(nfb-nfa) + 1000*nfshift
-  fb= 1000*0.5*(nfb-nfa) + 1000*nfshift
-  ia=nint(fa/df) + 16385
-  ib=nint(fb/df) + 16385
-  ia=max(51,ia)
-  ib=min(32768-51,ib)
-  if(ndiskdat.eq.1 .and. mode65.eq.0) ib=ia
-
-  km=0
-  nkm=1
-  nz=n/8
-  freq0=-999.
-  sync10=-999.
-  fshort0=-999.
-  syncshort0=-999.
-  ntry=0
-  short=0.                                 !Zero the whole short array
-  jpz=1
 
   call timer('filbig  ',0)
   call filbig(dd,NSMAX,f0,newdat,nfsample,cx,n5)
@@ -113,6 +89,10 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
      f0=cand(icand)%f
+
+!     write(*,3301) nqd,ikhz,mousedf,ntol,newdat,nagain,max_drift,f0,fqso
+!3301 format('DDD',7i5,2f8.3)
+
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
