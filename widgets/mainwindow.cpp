@@ -4778,7 +4778,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << int(m_specOp) << ui->labDXped->text();
+//    qDebug() << "AAA" << nsec << m_bFastMode << m_bFast9;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -7007,7 +7007,8 @@ void MainWindow::on_actionQ65_triggered()
   fast_config(false);
   WSPR_config(false);
   setup_status_bar(true);
-//  ui->actionQuickDecode->setChecked(true);
+  m_bFastMode=false;
+  m_bFast9=false;
   m_nsps=6912;                   //For symspec only
   m_FFTSize = m_nsps / 2;
   Q_EMIT FFTSize(m_FFTSize);
@@ -7033,6 +7034,7 @@ void MainWindow::on_actionQ65_triggered()
   ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
+  fast_config(m_bFastMode);
   statusChanged();
 
   m_specOp=m_config.special_op_id();
