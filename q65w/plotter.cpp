@@ -102,8 +102,7 @@ void CPlotter::paintEvent(QPaintEvent *)                    // paintEvent()
   painter.drawPixmap(target,m_ZoomScalePixmap,source);
 
   float df=m_fSample/32768.0;
-  int x0=16384 + (0.001*(m_ZoomStartFreq+m_fCal)+m_fQSO-m_nkhz+1.27046) * \
-      1000.0/df + 0.5;
+  int x0=16384 + (0.001*(m_ZoomStartFreq+m_fCal)+m_fQSO-m_nkhz) * 1000.0/df + 0.5;
 
   QPainter painter1(&m_WaterfallPixmap);
   QPainter painter2(&m_ZoomWaterfallPixmap);
