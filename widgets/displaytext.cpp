@@ -19,6 +19,7 @@
 #include "Network/LotWUsers.hpp"
 #include "models/DecodeHighlightingModel.hpp"
 #include "logbook/logbook.h"
+#include "Logger.hpp"
 
 #include "qt_helpers.hpp"
 #include "moc_displaytext.cpp"
@@ -212,9 +213,25 @@ void DisplayText::insertText(QString const& text, QColor bg, QColor fg
 
 void DisplayText::extend_vertical_scrollbar (int min, int max)
 {
-  if (high_volume_
-      && m_config && m_config->decodes_from_top ())
+  static int mod_last;
+  static int height;
+  if (high_volume_ && m_config && m_config->decodes_from_top ())
     {
+      auto m = modified_vertical_scrollbar_max_;
+      if (m != mod_last) { height = m - mod_last;mod_last = m; }
+      //auto vp_margins2 = viewportMargins ();
+      if (height == 0 && m > viewport()->height()) height =  abs( - viewport()->height());
+      //LOG_INFO ("scrollbar min=" << min << " max="  << max << " mod=" << modified_vertical_scrollbar_max_ << " height=" << viewport()->height() << " top=" << vp_margins2.top() << " bottom=" << vp_margins2.bottom()) << " height=" << height << " mod_last=" << mod_last;
+      if (max > 60000)
+        {
+          QString tmp = toPlainText();
+          while (tmp != NULL && tmp.length() > 100 &&  max > 50000)
+          {
+            tmp.remove(0, tmp.indexOf("\n")+1);
+            max -= height;
+          }
+          setPlainText(tmp);
+        }
       if (max && max != modified_vertical_scrollbar_max_)
         {
           auto vp_margins = viewportMargins ();

@@ -3907,12 +3907,11 @@ void MainWindow::readFromStdout()                             //readFromStdout
             bool bProcessMsgNormally=ui->respondComboBox->currentText()=="CQ: First" or
                 (ui->respondComboBox->currentText()=="CQ: Max Dist" and m_ActiveStationsWidget==NULL) or
                 (m_ActiveStationsWidget!=NULL and !m_ActiveStationsWidget->isVisible());
-                 if (decodedtext.messageWords().length() >= 2) {
-              QString t=decodedtext.messageWords()[2];
-              if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
-            }
-            else {
-              bProcessMsgNormally=true;
+            if (decodedtext.messageWords().length() >= 3) {
+                QString t=decodedtext.messageWords()[2];
+                if(t.contains("R+") or t.contains("R-") or t=="R" or t=="RRR" or t=="RR73") bProcessMsgNormally=true;
+            } else {
+                bProcessMsgNormally=true;
             }
             if(bProcessMsgNormally) {
               m_bDoubleClicked=true;
@@ -4602,7 +4601,7 @@ void MainWindow::guiUpdate()
           if(m_ntx==2 or m_ntx==3) {
             QStringList t=ui->tx2->text().split(' ', SkipEmptyParts);
             int n=t.size();
-            m_xSent=t.at(n-2) + " " + t.at(n-1);
+            if (n > 3) m_xSent=t.at(n-2) + " " + t.at(n-1);
           }
         }
       }
@@ -5393,6 +5392,10 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
       // ### Should be in RTTY contest mode ??? ###
       MessageBox::information_message (this, tr ("Should you switch to RTTY contest mode?"));
     }
+
+    // This is necessary to prevent crashes caused by double-clicking messages with <...> in certain QSO situations.
+    if((SpecOp::EU_VHF==m_specOp or SpecOp::RTTY==m_specOp or SpecOp::FIELD_DAY==m_specOp)
+        and message.string().contains("<...>")) return;
 
     if(SpecOp::EU_VHF==m_specOp and message_words.at(2).contains(m_baseCall) and
        (!message_words.at(3).contains(qso_partner_base_call)) and (!m_bDoubleClicked)) {
@@ -9652,15 +9655,23 @@ list1Done:
     m_foxQSO[hc].tFoxRrpt = -1;           //Have not received R+rpt
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     rm_tb4(hc);                           //Remove this Hound from tb4
-    if(list2.size()==m_Nslots) goto list2Done;
-    if(m_foxQSO.count()>=2*m_Nslots) goto list2Done;
+
+    if(list2.size()==m_Nslots) {
+      break;
+    }
+
+    if(m_foxQSO.count()>=5*3 /* could have 5 slots * 3 states ([0-2],4,5) */) {
+      break;
+    }
   }
 
 list2Done:
+
   n1=list1.size();
   n2=list2.size();
   n3=qMax(n1,n2);
   if(n3>m_Nslots) n3=m_Nslots;
+
   for(int i=0; i<n3; i++) {
     hc1="";
     fm="";

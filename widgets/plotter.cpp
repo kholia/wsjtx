@@ -772,14 +772,18 @@ int CPlotter::rxFreq() {return m_rxFreq;}                      //rxFreq
 void CPlotter::mouseMoveEvent (QMouseEvent * event)
 {
   int x=event->x();
-  int y=event->y();
-  float pdB=10.0*(m_h-y)/m_vpixperdiv + 20.0;
-  if(y<(m_h-m_h2)) {
-    QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
+  if (!m_bTotalPower){
+      QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
   } else {
-    QString t;
-    t=t.asprintf("%4.1f dB",pdB);
-    QToolTip::showText(event->globalPos(),t);
+    int y=event->y();
+    float pdB=10.0*(m_h-y)/m_vpixperdiv + 20.0;
+    if(y<(m_h-m_h2)) {
+      QToolTip::showText(event->globalPos(),QString::number(int(FreqfromX(x))));
+    } else {
+      QString t;
+      t=t.asprintf("%4.1f dB",pdB);
+      QToolTip::showText(event->globalPos(),t);
+    }
   }
   QWidget::mouseMoveEvent(event);
 }

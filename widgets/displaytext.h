@@ -66,7 +66,7 @@ private:
   QHash<QString, QPair<QColor, QColor>> highlighted_calls_;
   bool high_volume_;
   QMetaObject::Connection vertical_scroll_connection_;
-  int modified_vertical_scrollbar_max_;
+  long long modified_vertical_scrollbar_max_;
 };
 
 #endif // DISPLAYTEXT_H
