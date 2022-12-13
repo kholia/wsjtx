@@ -11,7 +11,7 @@ subroutine q65c(itimer)
   include 'njunk.f90'
   real*8 fcenter
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
-  logical ldecoded,first
+  logical first
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
@@ -26,7 +26,6 @@ subroutine q65c(itimer)
        datetime,junk1,junk2
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
 
-  common/early/nhsym1,nhsym2,ldecoded(32768)
   equivalence (nparams,fcenter)
   data first/.true./
   save first

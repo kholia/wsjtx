@@ -37,10 +37,9 @@ subroutine get_candidates(ss,savg,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   real ss(322,NFFT),savg(NFFT)
   real pavg(-20:20)
   integer indx(NFFT)
-  logical skip,ldecoded
+  logical skip
   type(candidate) :: cand(MAX_CANDIDATES)
   type(candidate) :: cand0(MAX_CANDIDATES)
-  common/early/nhsym1,nhsym2,ldecoded(32768)
 
   call wb_sync(ss,savg,jz,nfa,nfb)          !Output to sync() array
 

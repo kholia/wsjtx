@@ -19,7 +19,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   integer*2 iwave(60*12000)
   complex ca(MAXFFT1)                      !FFTs of raw x,y data
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
-  logical ldecoded
   integer ipk1(1)
   real*8 fcenter,freq0,freq1
   character*12 mycall0,hiscall0
@@ -32,7 +31,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   character*60 result
   common/decodes/ndecodes,ncand,result(50)
   common/cacb/ca
-  common/early/nhsym1,nhsym2,ldecoded(32768)
   data nutc00/-1/,msg00/'                            '/
   save
 
@@ -48,7 +46,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   ib=nint(ifreq+ntol/df3)
   ipk1=maxloc(sync(ia:ib)%ccfmax)
   ipk=ia+ipk1(1)-1
-  if(ldecoded(ipk)) go to 900
   snr1=sync(ipk)%ccfmax
   ipol=1
 
@@ -129,7 +126,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   freq0=MHz + 0.001d0*ikhz
 
   if(nsnr0.gt.-99) then
-     ldecoded(ipk)=.true.
      nq65df=nint(1000*(0.001*k0*df+nkhz_center-48.0+1.000-1.27046-ikhz))-nfcal
      nq65df=nq65df + nfreq0 - 1000
      npol=nint(poldeg)

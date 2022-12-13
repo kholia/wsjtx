@@ -18,13 +18,11 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   character mycall*12,hiscall*12,hisgrid*6,cm*1
   logical bq65
   logical candec(MAX_CANDIDATES)
-  logical ldecoded
   character blank*22
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
   common/decodes/ndecodes,ncand,result(50)
   common/testcom/ifreq
-  common/early/nhsym1,nhsym2,ldecoded(32768)
 
   data blank/'                      '/,cm/'#'/
   data shmsg0/'ATT','RO ','RRR','73 '/
@@ -34,31 +32,16 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nagain=0              !### TEMPORARY ###
   rewind 12
 
-! Clean start for Q65 at early decode
-  if(nhsym.eq.nhsym1 .or. nagain.ne.0) ldecoded=.false.
-  if(ndiskdat.eq.1) ldecoded=.false.
-
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
   mfb=nfb-nkhz_center+48
   mode_q65=nmode/10
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
 
-!  if(nagain.eq.0) then
-     call timer('get_cand',0)
-     call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
-     call timer('get_cand',1)
-     candec=.false.
-!  endif
-!###
-!  do k=1,ncand
-!     freq=cand(k)%f+nkhz_center-48.0
-!     ipk=cand(k)%indx
-!     write(71,3071) k,db(cand(k)%snr),freq,cand(k)%xdt,    &
-!          cand(k)%ipol,cand(k)%iflip,ipk,ldecoded(ipk)
-!3071 format(i3,f8.2,f10.3,f8.2,2i3,i6,L4)
-!  enddo
-!###
+  call timer('get_cand',0)
+  call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
+  call timer('get_cand',1)
+  candec=.false.
 
   nwrite_q65=0
   bq65=mode_q65.gt.0

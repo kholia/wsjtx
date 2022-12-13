@@ -6,7 +6,6 @@ subroutine decode0(dd,ss,savg)
   real*4 dd(2,NSMAX),ss(322,NFFT),savg(NFFT)
   real*8 fcenter
   integer hist(0:32768)
-  logical ldecoded
   character mycall*12,hiscall*12,mygrid*6,hisgrid*6,datetime*20
   character mycall0*12,hiscall0*12,hisgrid0*6
   character*60 result
@@ -15,7 +14,6 @@ subroutine decode0(dd,ss,savg)
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
        ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,datetime
-  common/early/nhsym1,nhsym2,ldecoded(32768)
   data neme0/-99/
   save
 
