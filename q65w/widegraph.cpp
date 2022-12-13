@@ -104,15 +104,15 @@ void WideGraph::dataSink2(float s[], int nkhz, int ihsym, int ndiskdata,
   n++;
 
   if (n>=m_waterfallAvg) {
-    for (int i=0; i<NFFT; i++)
-        splot[i] /= n;                       //Normalize the average
+    for (int i=0; i<NFFT; i++) {
+      splot[i] /= n;                       //Normalize the average
+    }
     n=0;
 
     int w=ui->widePlot->plotWidth();
     qint64 sf = nkhz - 0.5*w*nbpp*df/1000.0;
     if(sf != ui->widePlot->startFreq()) ui->widePlot->SetStartFreq(sf);
-    int i0=16384.0+(ui->widePlot->startFreq()-nkhz+1.27046+0.001*m_fCal) *
-        1000.0/df + 0.5;
+    int i0=16384.0+(ui->widePlot->startFreq()-nkhz+0.001*m_fCal) * 1000.0/df + 0.5;
     int i=i0;
     for (int j=0; j<2048; j++) {
         smax=0;
