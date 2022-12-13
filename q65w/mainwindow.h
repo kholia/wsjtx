@@ -96,7 +96,6 @@ private:
   QScopedPointer<Astro> m_astro_window;
   QScopedPointer<WideGraph> m_wide_graph_window;
   QPointer<QTimer> m_gui_timer;
-  qint64  m_msErase;
   qint32  m_idInt;
   qint32  m_waterfallAvg;
   qint32  m_DF;

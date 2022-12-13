@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
   m_gui_timer {new QTimer {this}}
 {
   ui->setupUi(this);
-  on_EraseButton_clicked();
+//  ui->decodedTextBrowser->clear();
   ui->labUTC->setStyleSheet( \
         "QLabel { background-color : black; color : yellow; }");
   ui->labTol1->setStyleSheet( \
@@ -903,11 +903,8 @@ void MainWindow::decode()                                       //decode()
 
 void MainWindow::on_EraseButton_clicked()
 {
-  qint64 ms=QDateTime::currentMSecsSinceEpoch();
   ui->decodedTextBrowser->clear();
-  if((ms-m_msErase)<500) {
-  }
-  m_msErase=ms;
+  lab5->clear();
 }
 
 
