@@ -22,6 +22,7 @@
 qint16 id[2*60*96000];
 
 QSharedMemory mem_q65w("mem_q65w");            //Memory segment to be shared (optionally) with WSJT-X
+int* ipc_wsjtx;
 
 extern const int RxDataFrequency = 96000;
 
@@ -101,23 +102,17 @@ MainWindow::MainWindow(QWidget *parent) :
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
 
-//###
 //Attach or create a memory segment to be shared with WSJT-X.
   int memSize=4096;
   if(!mem_q65w.attach()) {
     if(!mem_q65w.create(memSize)) {
-      msgBox("Unable to create shared memory segment.");
+      msgBox("Unable to create shared memory segment mem_q65w.");
     }
   }
-  qDebug() << "aa" << memSize << mem_q65w.size();
-  char *to = (char*)mem_q65w.data();
-  int *to4 = (int*)mem_q65w.data();
+  ipc_wsjtx = (int*)mem_q65w.data();
   mem_q65w.lock();
-//  memset(to,0,memSize);         //Zero all of shared memory
-  memset(to,1,memSize);         //Zero all of shared memory
-  qDebug() << "bb" << int(to[0]) << int(to[10]) << to4[0] << to4[1];
+  memset(ipc_wsjtx,0,memSize);         //Zero all of shared memory
   mem_q65w.unlock();
-//###
 
   fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("q65w_wisdom.dat").toLocal8Bit ());
 
@@ -965,9 +960,10 @@ void MainWindow::guiUpdate()
   }
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec%60 << decodes_.ndecodes << decodes_.ncand;
-//    soundInThread.setForceCenterFreqMHz(m_wide_graph_window->m_dForceCenterFreq);
-//    soundInThread.setForceCenterFreqBool(m_wide_graph_window->m_bForceCenterFreq);
+//    mem_q65w.lock();
+//    ipc_wsjtx[1]=nsec%60;
+//    qDebug() << "AAA" << nsec%60 << ipc_wsjtx[0] << ipc_wsjtx[1];
+//    mem_q65w.unlock();
 
     if(m_pctZap>30.0) {
       lab4->setStyleSheet("QLabel{background-color: #ff0000}");

@@ -212,6 +212,9 @@ bool m_displayBand = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
 
+QSharedMemory mem_q65w("mem_q65w");         //Memory segment to be shared (optionally) with Q65W
+int* ipc_q65w;
+
 namespace
 {
   Radio::Frequency constexpr default_frequency {14076000};
@@ -452,6 +455,19 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_optimizingProgress.setWindowModality (Qt::WindowModal);
   m_optimizingProgress.setAutoReset (false);
   m_optimizingProgress.setMinimumDuration (15000); // only show after 15s delay
+
+  //Attach or create a memory segment to be shared with Q65W.
+    int memSize=4096;
+    if(!mem_q65w.attach()) {
+      if(!mem_q65w.create(memSize)) {
+        MessageBox::information_message (this,
+            "Unable to create shared memory segment mem_q65w.");
+      }
+    }
+    ipc_q65w = (int*)mem_q65w.data();
+    mem_q65w.lock();
+    memset(ipc_q65w,0,memSize);         //Zero all of shared memory
+    mem_q65w.unlock();
 
   // Closedown.
   connect (ui->actionExit, &QAction::triggered, this, &QMainWindow::close);
@@ -4790,7 +4806,10 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << m_bFastMode << m_bFast9;
+//    mem_q65w.lock();
+//    ipc_q65w[0]=nsec;
+//    qDebug() << "AAA" << nsec << ipc_q65w[0] << ipc_q65w[1];
+//    mem_q65w.unlock();
 
     if(m_mode=="Q65") {
       QFileInfo fi(m_appDir+"/q65w_decodes.txt");
