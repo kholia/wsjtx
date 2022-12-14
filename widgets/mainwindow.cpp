@@ -213,12 +213,12 @@ bool keep_frequency = false;
 
 QSharedMemory mem_q65w("mem_q65w");         //Memory segment to be shared (optionally) with Q65W
 struct {
-  int ndecodes;
-  int ncand;
-//  int nDecoderDone;
-//  int nDecoderBusy;
-//  int nTransmitting;
-  char result[50][60];
+  int ndecodes;          //Number of Q65W decodes available (so far)
+  int ncand;             //Number of Q65W candidates considered for decoding
+  int nQDecoderDone;     //Q65W decoder is finished (0 or 1)
+  int nWDecoderBusy;     //WSJT-X decoder is busy (0 or 1)
+  int nWTransmitting;    //WSJT-X is transmitting (0 or 1)
+  char result[50][60];   //Decodes as character*60 arrays
 } q65wcom;
 int* ipc_q65w;
 
@@ -3687,6 +3687,7 @@ void MainWindow::callSandP2(int n)
     m_deGrid="";
     m_txFirst=(w[i0+1]=="0");
     ui->TxFreqSpinBox->setValue(1500);
+    qDebug() << "bb" << n << w;
   } else {
     m_deCall=w[0];
     m_deGrid=w[1];
@@ -9222,58 +9223,59 @@ void MainWindow::readWidebandDecodes()
     m_EMECall[dxcall].t=60*nhr + nmin;
     m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
-    qDebug() << "aa" << q65wcom.ndecodes << m_fetched << line;
     m_fetched++;
+//    qDebug() << "aa" << q65wcom.ndecodes << m_fetched << q65wcom.nQDecoderDone << line;
   }
 
 // Update "m_wEMECall" by reading q65w_decodes.txt
-    QMap<QString,EMECall>::iterator i;
-    QString t="";
-    QString t1;
-    QString dxcall;
-    QStringList list;
-    float f[100];
-    int indx[100];
-    int maxAge=m_ActiveStationsWidget->maxAge();
+  QMap<QString,EMECall>::iterator i;
+  QString t="";
+  QString t1;
+  QString dxcall;
+  QStringList list;
+  float f[100];
+  int indx[100];
+  int maxAge=m_ActiveStationsWidget->maxAge();
 
-    m_ActiveStationsWidget->setClickOK(false);
-    int k=0;
-    for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
-      int odd=1 - (i->t)%2;
-      int age=60*nhr + nmin - (i->t);
-      if(age<0) age += 1440;
-      if(age<=maxAge) {
-        dxcall=(i.key()+"     ").left(8);
-        if(i->worked) {
-          t1=t1.asprintf("%5.1f    %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
-        } else {
-          t1=t1.asprintf("%5.1f  * %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
-        }
-        f[k]=i->fsked;
-        list.append(t1);
-        k++;
+  m_ActiveStationsWidget->setClickOK(false);
+  int k=0;
+  for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
+    int odd=1 - (i->t)%2;
+    int age=60*nhr + nmin - (i->t);
+    if(age<0) age += 1440;
+    if(age<=maxAge) {
+      dxcall=(i.key()+"     ").left(8);
+      if(i->worked) {
+        t1=t1.asprintf("%5.1f    %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
+      } else {
+        t1=t1.asprintf("%5.1f  * %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
       }
-      m_ActiveStationsWidget->setClickOK(true);
+      f[k]=i->fsked;
+      list.append(t1);
+      k++;
     }
+    m_ActiveStationsWidget->setClickOK(true);
+  }
 
-    if(k>0) {
-      t1="";
-      int kz=k;
-      indexx_(f,&kz,indx);
-      for(int k=0; k<kz; k++) {
-        int j=indx[k]-1;
-        t1=t1.asprintf("%2d ",k+1);
-        t1+=list[j];
-        m_ready2call[k]=list[j];
-        t+=t1;
-      }
+  if(k>0) {
+    t1="";
+    int kz=k;
+    indexx_(f,&kz,indx);
+    for(int k=0; k<kz; k++) {
+      int j=indx[k]-1;
+      t1=t1.asprintf("%2d ",k+1);
+      t1+=list[j];
+      m_ready2call[k]=list[j];
+      t+=t1;
     }
+  }
 
-    if(m_ActiveStationsWidget != NULL) {
-      m_ActiveStationsWidget->erase();
-      m_ActiveStationsWidget->displayRecentStations(m_mode,t);
-    }
-
+  if(m_ActiveStationsWidget != NULL) {
+    m_ActiveStationsWidget->erase();
+    m_ActiveStationsWidget->displayRecentStations(m_mode,t);
+    m_ActiveStationsWidget->setClickOK(true);
+  }
+  if(q65wcom.nQDecoderDone==1) m_fetched=0;
 }
 
 // -------------------------- Code for FT8 DXpedition Mode ---------------------------

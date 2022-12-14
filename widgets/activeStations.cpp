@@ -94,6 +94,10 @@ void ActiveStations::select()
     if((msec-m_msec0)<500) return;
     m_msec0=msec;
     int nline=ui->RecentStationsPlainTextEdit->textCursor().blockNumber();
+
+    qDebug() << "aa" << nline << ui->RecentStationsPlainTextEdit->textCursor().position();
+
+    if(nline!=-99) return;   //TEMPORARY
     emit callSandP(nline);
   }
 }
