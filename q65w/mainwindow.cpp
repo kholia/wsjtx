@@ -21,7 +21,7 @@
 
 qint16 id[2*60*96000];
 
-//QSharedMemory mem_m65("mem_m65");
+QSharedMemory mem_q65w("mem_q65w");            //Memory segment to be shared (optionally) with WSJT-X
 
 extern const int RxDataFrequency = 96000;
 
@@ -100,6 +100,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
   xSignalMeter = new SignalMeter(ui->xMeterFrame);
   xSignalMeter->resize(50, 160);
+
+//###
+//Attach or create a memory segment to be shared with WSJT-X.
+  int memSize=4096;
+  if(!mem_q65w.attach()) {
+    if(!mem_q65w.create(memSize)) {
+      msgBox("Unable to create shared memory segment.");
+    }
+  }
+  qDebug() << "aa" << memSize << mem_q65w.size();
+  char *to = (char*)mem_q65w.data();
+  int *to4 = (int*)mem_q65w.data();
+  mem_q65w.lock();
+//  memset(to,0,memSize);         //Zero all of shared memory
+  memset(to,1,memSize);         //Zero all of shared memory
+  qDebug() << "bb" << int(to[0]) << int(to[10]) << to4[0] << to4[1];
+  mem_q65w.unlock();
+//###
 
   fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("q65w_wisdom.dat").toLocal8Bit ());
 
