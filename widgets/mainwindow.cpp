@@ -215,6 +215,9 @@ QSharedMemory mem_q65w("mem_q65w");         //Memory segment to be shared (optio
 struct {
   int ndecodes;
   int ncand;
+//  int nDecoderDone;
+//  int nDecoderBusy;
+//  int nTransmitting;
   char result[50][60];
 } q65wcom;
 int* ipc_q65w;
@@ -4809,31 +4812,18 @@ void MainWindow::guiUpdate()
   }
   if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
+  mem_q65w.lock();
+  if(m_mode=="Q65" and (ipc_q65w[0] > m_fetched)) {             //ndecodes
+    memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
+    mem_q65w.unlock();
+    readWidebandDecodes();
+  } else {
+    mem_q65w.unlock();
+  }
+
 //Once per second (onesec)
   if(nsec != m_sec0) {
 //    qDebug() << "AAA" << nsec << ipc_q65w[0] << ipc_q65w[1];
-
-    if(m_mode=="Q65") {
-
-      mem_q65w.lock();
-      memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
-//      qDebug() << "AAA" << nsec << q65wcom.ndecodes << q65wcom.ncand << m_fetched;
-//      QString t0=QString::fromLatin1(q65wcom.result[0]);
-//      QString t1=QString::fromLatin1(q65wcom.result[1]);
-//      qDebug() << "BBB" << t0 << "\n" << t1;
-      mem_q65w.unlock();
-      if(q65wcom.ndecodes>m_fetched) {
-        readWidebandDecodes();
-      }
-
-      /*
-      QFileInfo fi(m_appDir+"/q65w_decodes.txt");
-      QDateTime fileTime=fi.lastModified();
-      QDateTime now = QDateTime::currentDateTimeUtc ();
-      int age=fileTime.msecsTo(now)/1000;
-      if(age==1) readWidebandDecodes();
-      */
-    }
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
