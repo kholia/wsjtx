@@ -24,8 +24,6 @@ subroutine q65c(itimer)
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
        ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,        &
        datetime,junk1,junk2
-!### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
-
   equivalence (nparams,fcenter)
   data first/.true./
   save first
@@ -38,10 +36,6 @@ subroutine q65c(itimer)
   endif
 
   datetime(18:20)=':00'
-
-!  if(first) call timer('q65w    ',0)
-!  first=.false.
-
   npatience=1
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)

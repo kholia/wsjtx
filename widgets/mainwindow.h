@@ -509,6 +509,7 @@ private:
   qint32  m_score=0;
   qint32  m_fDop=0;
   qint32  m_echoSec0=0;
+  qint32  m_fetched=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;

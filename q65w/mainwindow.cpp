@@ -957,6 +957,13 @@ void MainWindow::guiUpdate()
       ui->decodedTextBrowser->append(t.trimmed());
       m_fetched++;
     }
+    mem_q65w.lock();
+
+//    char *from = (char*) decodes_.ndecodes;
+//    char *from = (char*) &decodes_;
+    memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
+
+    mem_q65w.unlock();
   }
 
   if(nsec != m_sec0) {                                     //Once per second

@@ -191,7 +191,6 @@ int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
 int volatile itone0[MAX_NUM_SYMBOLS];  //Dummy array, data not actually used
 int volatile icw[NUM_CW_SYMBOLS];        //Dits for CW ID
 dec_data_t dec_data;                // for sharing with Fortran
-
 int outBufSize;
 int rc;
 qint32  g_iptt {0};
@@ -213,6 +212,11 @@ bool no_a7_decodes = false;
 bool keep_frequency = false;
 
 QSharedMemory mem_q65w("mem_q65w");         //Memory segment to be shared (optionally) with Q65W
+struct {
+  int ndecodes;
+  int ncand;
+  char result[50][60];
+} q65wcom;
 int* ipc_q65w;
 
 namespace
@@ -3404,6 +3408,7 @@ void MainWindow::decode()                                       //decode()
         narg[13]=-1;
         narg[14]=m_config.aggressive();
         memcpy(d2b,dec_data.d2,2*360000);
+        m_fetched=0;
         watcher3.setFuture (QtConcurrent::run (std::bind (fast_decode_, &d2b[0],
             &narg[0],&m_TRperiod, &m_msg[0][0], dec_data.params.mycall,
             dec_data.params.hiscall, (FCL)8000, (FCL)12, (FCL)12)));
@@ -4806,12 +4811,18 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    mem_q65w.lock();
-//    ipc_q65w[0]=nsec;
 //    qDebug() << "AAA" << nsec << ipc_q65w[0] << ipc_q65w[1];
-//    mem_q65w.unlock();
 
     if(m_mode=="Q65") {
+
+      mem_q65w.lock();
+      memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
+      qDebug() << "AAA" << nsec << q65wcom.ndecodes << q65wcom.ncand << m_fetched;
+      QString t0=QString::fromLatin1(q65wcom.result[0]);
+      QString t1=QString::fromLatin1(q65wcom.result[1]);
+      qDebug() << "BBB" << t0 << "\n" << t1;
+      mem_q65w.unlock();
+
       QFileInfo fi(m_appDir+"/q65w_decodes.txt");
       QDateTime fileTime=fi.lastModified();
       QDateTime now = QDateTime::currentDateTimeUtc ();

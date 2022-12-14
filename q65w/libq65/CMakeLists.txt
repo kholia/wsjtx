@@ -33,9 +33,9 @@ set (libq65_FSRCS
   f77_wisdom.f
   )
 
-set (libq65_CXXSRCS
-  ipcomm.cpp
-  )
+#set (libq65_CXXSRCS
+#  ipcomm.cpp
+#  )
 
 set (libq65_C_and_CXXSRCS
   ${libq65_CSRCS}
