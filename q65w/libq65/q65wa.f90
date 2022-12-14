@@ -18,7 +18,8 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   logical candec(MAX_CANDIDATES)
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
-  common/decodes/ndecodes,ncand,result(50)
+  common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
+       nWTransmitting,result(50)
   common/testcom/ifreq
   save
 
@@ -68,9 +69,8 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.
   enddo  ! icand
-  call sec0(1,tsec0)
   ndecdone=2
-  call flush(12)
+  nQDecoderDone=1
 
   return
 end subroutine q65wa

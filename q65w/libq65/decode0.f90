@@ -9,7 +9,8 @@ subroutine decode0(dd,ss,savg)
   character mycall*12,hiscall*12,mygrid*6,hisgrid*6,datetime*20
   character mycall0*12,hiscall0*12,hisgrid0*6
   character*60 result
-  common/decodes/ndecodes,ncand,result(50)
+  common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
+       nWTransmitting,result(50)
   common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,                &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
@@ -17,7 +18,7 @@ subroutine decode0(dd,ss,savg)
   data neme0/-99/
   save
 
-  call sec0(0,tquick)
+  nQDecoderDone=0
   if(newdat.ne.0) then
      nz=96000*nhsym/5.3833
      hist=0

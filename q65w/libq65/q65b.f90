@@ -26,7 +26,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   character*6 hisgrid
   character*4 grid4
   character*60 result
-  common/decodes/ndecodes,ncand,result(50)
+  common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
+       nWTransmitting,result(50)
   common/cacb/ca
   save
 
@@ -126,7 +127,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 1.5
      write(result(ndecodes),1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
-     write(12,1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
 1120 format(i4.4,f9.3,f7.2,i5,2x,a,i6)
      result(ndecodes)=trim(result(ndecodes))//char(0)
   endif
