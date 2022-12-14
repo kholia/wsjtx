@@ -958,11 +958,7 @@ void MainWindow::guiUpdate()
       m_fetched++;
     }
     mem_q65w.lock();
-
-//    char *from = (char*) decodes_.ndecodes;
-//    char *from = (char*) &decodes_;
     memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
-
     mem_q65w.unlock();
   }
 

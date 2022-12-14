@@ -4817,17 +4817,22 @@ void MainWindow::guiUpdate()
 
       mem_q65w.lock();
       memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
-      qDebug() << "AAA" << nsec << q65wcom.ndecodes << q65wcom.ncand << m_fetched;
-      QString t0=QString::fromLatin1(q65wcom.result[0]);
-      QString t1=QString::fromLatin1(q65wcom.result[1]);
-      qDebug() << "BBB" << t0 << "\n" << t1;
+//      qDebug() << "AAA" << nsec << q65wcom.ndecodes << q65wcom.ncand << m_fetched;
+//      QString t0=QString::fromLatin1(q65wcom.result[0]);
+//      QString t1=QString::fromLatin1(q65wcom.result[1]);
+//      qDebug() << "BBB" << t0 << "\n" << t1;
       mem_q65w.unlock();
+      if(q65wcom.ndecodes>m_fetched) {
+        readWidebandDecodes();
+      }
 
+      /*
       QFileInfo fi(m_appDir+"/q65w_decodes.txt");
       QDateTime fileTime=fi.lastModified();
       QDateTime now = QDateTime::currentDateTimeUtc ();
       int age=fileTime.msecsTo(now)/1000;
       if(age==1) readWidebandDecodes();
+      */
     }
 
     if(m_mode=="FST4") chk_FST4_freq_range();
@@ -9210,32 +9215,28 @@ void MainWindow::write_transmit_entry (QString const& file_name)
 void MainWindow::readWidebandDecodes()
 {
   if(m_ActiveStationsWidget==NULL) return;
-// Update "m_wEMECall" by reading q65w_decodes.txt
+
   int nhr=0;
   int nmin=0;
-  QFile f(m_appDir+"/q65w_decodes.txt");
-  f.open(QIODevice::ReadOnly);
-  if(f.isOpen()) {
-    QTextStream in(&f);
-    QString line,callsign;
-    for(int i=0; i<99999; i++) {
-      line=in.readLine();
-      if(line.length()<=0) break;
-      nhr=line.mid(0,2).toInt();
-      nmin=line.mid(2,2).toInt();
-      double fsked=line.mid(4,9).toDouble();
-      QString msg=line.mid(27,-1);
-      int i1=msg.indexOf(" ");
-      int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
-      QString dxcall=msg.mid(i1+1,i2-i1-1);
-      QString w3=msg.mid(i2+1,-1);
-      m_EMECall[dxcall].fsked=fsked;
-      m_EMECall[dxcall].t=60*nhr + nmin;
-      m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
-      if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
-    }
-    f.close();
+  while(m_fetched < q65wcom.ndecodes) {
+    QString line=QString::fromLatin1(q65wcom.result[m_fetched]);
+    nhr=line.mid(0,2).toInt();
+    nmin=line.mid(2,2).toInt();
+    double fsked=line.mid(4,9).toDouble();
+    QString msg=line.mid(27,-1);
+    int i1=msg.indexOf(" ");
+    int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
+    QString dxcall=msg.mid(i1+1,i2-i1-1);
+    QString w3=msg.mid(i2+1,-1);
+    m_EMECall[dxcall].fsked=fsked;
+    m_EMECall[dxcall].t=60*nhr + nmin;
+    m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
+    if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
+    qDebug() << "aa" << q65wcom.ndecodes << m_fetched << line;
+    m_fetched++;
+  }
 
+// Update "m_wEMECall" by reading q65w_decodes.txt
     QMap<QString,EMECall>::iterator i;
     QString t="";
     QString t1;
@@ -9282,7 +9283,7 @@ void MainWindow::readWidebandDecodes()
       m_ActiveStationsWidget->erase();
       m_ActiveStationsWidget->displayRecentStations(m_mode,t);
     }
-  }
+
 }
 
 // -------------------------- Code for FT8 DXpedition Mode ---------------------------
