@@ -76,8 +76,8 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
   ui->sbMaxRecent->setVisible(!b);
   ui->RecentStationsPlainTextEdit->setPlainText(t);
 
-  QString t1= " 1.  R7BI    KN96   41  -12   764  0  0   18\n 2.  LA6OP   JP67   29  +07   696  0  0*  13\n 3.  G0OUC   IO93   49  -20  1628  0  0   13\n 4.  G5EA    IO93   49  -13  1747  0  0   13\n 5.  G7BHU   IO93   49  -17  1191  0  0   13\n 6.  ON4EB   JO11   50  -01  2188  0  0   13\n 7.  K2AK    DM41  264  +03  1432  0  0    8\n 8.  N2DEE   DM79  277  -01  1297  0  0    7\n 9.  AK0MR   DM59  279  +07  2478  0  0    7\n10.  NK5G    EM20  245  -07  2149  0  0    6\n"; //TEMP
-  ui->RecentStationsPlainTextEdit->setPlainText(t1);
+//  QString t1= " 1.  R7BI    KN96   41  -12   764  0  0   18\n 2.  LA6OP   JP67   29  +07   696  0  0*  13\n 3.  G0OUC   IO93   49  -20  1628  0  0   13\n 4.  G5EA    IO93   49  -13  1747  0  0   13\n 5.  G7BHU   IO93   49  -17  1191  0  0   13\n 6.  ON4EB   JO11   50  -01  2188  0  0   13\n 7.  K2AK    DM41  264  +03  1432  0  0    8\n 8.  N2DEE   DM79  277  -01  1297  0  0    7\n 9.  AK0MR   DM59  279  +07  2478  0  0    7\n10.  NK5G    EM20  245  -07  2149  0  0    6\n"; //TEMP
+//  ui->RecentStationsPlainTextEdit->setPlainText(t1);
 
 
 }
@@ -101,7 +101,7 @@ void ActiveStations::select()
     int nline=ui->RecentStationsPlainTextEdit->textCursor().blockNumber();
 
     qDebug() << "aa" << nline << ui->RecentStationsPlainTextEdit->textCursor().position();
-    qDebug() << "bb" << ui->RecentStationsPlainTextEdit->toPlainText();
+//    qDebug() << "bb" << ui->RecentStationsPlainTextEdit->toPlainText();
 
 //    if(nline!=-99) return;   //TEMPORARY
     emit callSandP(nline);
