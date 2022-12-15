@@ -23,8 +23,8 @@ ActiveStations::ActiveStations(QSettings * settings, QFont const& font, QWidget 
   changeFont (font);
   read_settings ();
   ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
-  connect(ui->RecentStationsPlainTextEdit, SIGNAL(selectionChanged()), this, SLOT(select()));
   connect(ui->cbReadyOnly, SIGNAL(toggled(bool)), this, SLOT(on_cbReadyOnly_toggled(bool)));
+  connect(ui->RecentStationsPlainTextEdit, SIGNAL(cursorPositionChanged()), this, SLOT(on_textEdit_clicked()));
 }
 
 ActiveStations::~ActiveStations()
@@ -74,7 +74,8 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
   ui->label_3->setVisible(!b);
   ui->score->setVisible(!b);
   ui->sbMaxRecent->setVisible(!b);
-  ui->RecentStationsPlainTextEdit->setPlainText(t);
+//  ui->RecentStationsPlainTextEdit->setPlainText(t);
+  ui->RecentStationsPlainTextEdit->insertPlainText(t);
 
 //  QString t1= " 1.  R7BI    KN96   41  -12   764  0  0   18\n 2.  LA6OP   JP67   29  +07   696  0  0*  13\n 3.  G0OUC   IO93   49  -20  1628  0  0   13\n 4.  G5EA    IO93   49  -13  1747  0  0   13\n 5.  G7BHU   IO93   49  -17  1191  0  0   13\n 6.  ON4EB   JO11   50  -01  2188  0  0   13\n 7.  K2AK    DM41  264  +03  1432  0  0    8\n 8.  N2DEE   DM79  277  -01  1297  0  0    7\n 9.  AK0MR   DM59  279  +07  2478  0  0    7\n10.  NK5G    EM20  245  -07  2149  0  0    6\n"; //TEMP
 //  ui->RecentStationsPlainTextEdit->setPlainText(t1);
@@ -92,19 +93,20 @@ int ActiveStations::maxAge()
   return ui->sbMaxAge->value();
 }
 
-void ActiveStations::select()
+void ActiveStations::on_textEdit_clicked()
 {
   if(m_clickOK) {
-    qint64 msec=QDateTime::currentMSecsSinceEpoch();
-    if((msec-m_msec0)<500) return;
-    m_msec0=msec;
-    int nline=ui->RecentStationsPlainTextEdit->textCursor().blockNumber();
-
-    qDebug() << "aa" << nline << ui->RecentStationsPlainTextEdit->textCursor().position();
-//    qDebug() << "bb" << ui->RecentStationsPlainTextEdit->toPlainText();
-
-//    if(nline!=-99) return;   //TEMPORARY
-    emit callSandP(nline);
+    QTextCursor cursor;
+    QString text;
+    cursor = ui->RecentStationsPlainTextEdit->textCursor();
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+    text = cursor.selectedText();
+    if(text!="") {
+      int nline=text.left(2).toInt()-1;
+      qDebug() << "aa" << text << nline;
+      emit callSandP(nline);
+    }
   }
 }
 

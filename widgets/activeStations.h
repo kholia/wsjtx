@@ -29,7 +29,6 @@ public:
   void setRate(int n);
   void setBandChanges(int n);
   void setScore(int n);
-  Q_SLOT void select();
 
   bool m_clickOK=false;
   bool m_bReadyOnly;
@@ -37,6 +36,9 @@ public:
 signals:
   void callSandP(int nline);
   void activeStationsDisplay();
+
+private slots:
+  void on_textEdit_clicked();
 
 private:
   void read_settings ();
