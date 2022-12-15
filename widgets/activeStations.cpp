@@ -104,7 +104,7 @@ void ActiveStations::on_textEdit_clicked()
     text = cursor.selectedText();
     if(text!="") {
       int nline=text.left(2).toInt()-1;
-      qDebug() << "aa" << text << nline;
+//      qDebug() << "aa" << text << nline;
       emit callSandP(nline);
     }
   }
