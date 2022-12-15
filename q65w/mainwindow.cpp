@@ -963,10 +963,7 @@ void MainWindow::guiUpdate()
   }
 
   if(nsec != m_sec0) {                                     //Once per second
-//    mem_q65w.lock();
-//    ipc_wsjtx[1]=nsec%60;
 //    qDebug() << "AAA" << nsec%60 << ipc_wsjtx[0] << ipc_wsjtx[1];
-//    mem_q65w.unlock();
 
     if(m_pctZap>30.0) {
       lab4->setStyleSheet("QLabel{background-color: #ff0000}");

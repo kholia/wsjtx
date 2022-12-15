@@ -3676,18 +3676,16 @@ void MainWindow::ARRL_Digi_Display()
 
 void MainWindow::callSandP2(int n)
 {
-  if(m_ready2call[n]=="") return;
+  if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65") {
-    int nkhz=int(w[0].toFloat()+0.5);
-    m_freqNominal=(1296*1000 + nkhz)* 1000;
-    int i0=1;
-    if(w[1]=="*") i0=2;
-    m_deCall=w[i0];
-    m_deGrid="";
-    m_txFirst=(w[i0+1]=="0");
-    ui->TxFreqSpinBox->setValue(1500);
-//    qDebug() << "cc" << n << w;
+    double kHz=w[0].toDouble();
+    m_freqNominal=(1296*1000 + kHz)* 1000;
+    m_deCall=w[2];
+    m_deGrid=w[3];
+    m_txFirst=(w[4]=="0");
+//    ui->TxFreqSpinBox->setValue(1500);
+//    qDebug() << "aa" << n << w;
   } else {
     m_deCall=w[0];
     m_deGrid=w[1];
@@ -3697,7 +3695,11 @@ void MainWindow::callSandP2(int n)
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
   ui->dxGridEntry->setText(m_deGrid);
-  genStdMsgs(w[3]);                   //### real SNR would be better here?
+  if(m_mode=="Q65") {
+    genStdMsgs(w[1]);
+  } else {
+    genStdMsgs(w[3]);
+  }
   setTxMsg(1);
   ui->txFirstCheckBox->setChecked(m_txFirst);
   if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
@@ -9209,6 +9211,7 @@ void MainWindow::readWidebandDecodes()
 
   int nhr=0;
   int nmin=0;
+  int nsnr=0;
   while(m_fetched < q65wcom.ndecodes) {
     QString line=QString::fromLatin1(q65wcom.result[m_fetched]);
     nhr=line.mid(0,2).toInt();
@@ -9219,12 +9222,13 @@ void MainWindow::readWidebandDecodes()
     int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
     QString dxcall=msg.mid(i1+1,i2-i1-1);
     QString w3=msg.mid(i2+1,-1);
+    nsnr=line.mid(22,3).toInt();
     m_EMECall[dxcall].fsked=fsked;
+    m_EMECall[dxcall].nsnr=nsnr;
     m_EMECall[dxcall].t=60*nhr + nmin;
     m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
     m_fetched++;
-//    qDebug() << "aa" << q65wcom.ndecodes << m_fetched << q65wcom.nQDecoderDone << line;
   }
 
 // Update "m_wEMECall" by reading q65w_decodes.txt
@@ -9232,6 +9236,7 @@ void MainWindow::readWidebandDecodes()
   QString t="";
   QString t1;
   QString dxcall;
+  QString dxgrid4;
   QStringList list;
   float f[100];
   int indx[100];
@@ -9240,15 +9245,19 @@ void MainWindow::readWidebandDecodes()
   m_ActiveStationsWidget->setClickOK(false);
   int k=0;
   for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
+    int snr=i->nsnr;
     int odd=1 - (i->t)%2;
     int age=60*nhr + nmin - (i->t);
     if(age<0) age += 1440;
     if(age<=maxAge) {
       dxcall=(i.key()+"     ").left(8);
+      dxgrid4=(i->grid4+"... ").left(4);
       if(i->worked) {
-        t1=t1.asprintf("%5.1f    %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
+        t1=t1.asprintf("%5.1f  %+03d   %8s %4s %3d %3d\n",i->fsked,snr,dxcall.toLatin1().constData(),
+                       dxgrid4.toLatin1().constData(),odd,age);
       } else {
-        t1=t1.asprintf("%5.1f  * %8s %3d %3d\n",i->fsked,dxcall.toLatin1().constData(),odd,age);
+        t1=t1.asprintf("%5.1f  %+03d   %8s %4s %3d %3d*\n",i->fsked,snr,dxcall.toLatin1().constData(),
+                       dxgrid4.toLatin1().constData(),odd,age);
       }
       f[k]=i->fsked;
       list.append(t1);
@@ -9263,7 +9272,7 @@ void MainWindow::readWidebandDecodes()
     indexx_(f,&kz,indx);
     for(int k=0; k<kz; k++) {
       int j=indx[k]-1;
-      t1=t1.asprintf("%2d ",k+1);
+      t1=t1.asprintf("%2d.  ",k+1);
       t1+=list[j];
       m_ready2call[k]=list[j];
       t+=t1;

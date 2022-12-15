@@ -707,6 +707,7 @@ private:
   {
     QString grid4;
     double fsked;
+    qint32 nsnr;
     qint32 t;
     bool worked;
   };
