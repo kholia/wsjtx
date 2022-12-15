@@ -3423,8 +3423,8 @@ void MainWindow::decode()                                       //decode()
         decodeBusy(true);
       }
     }
-  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData) and
-     m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();
+  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData or m_mode=="Q65") and
+     m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();  //TEMP
 }
 
 void::MainWindow::fast_decode_done()
@@ -3687,7 +3687,7 @@ void MainWindow::callSandP2(int n)
     m_deGrid="";
     m_txFirst=(w[i0+1]=="0");
     ui->TxFreqSpinBox->setValue(1500);
-    qDebug() << "bb" << n << w;
+//    qDebug() << "cc" << n << w;
   } else {
     m_deCall=w[0];
     m_deGrid=w[1];
