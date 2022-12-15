@@ -382,8 +382,9 @@ void MainWindow::dataSink(int k)
         );
 
   xSignalMeter->setValue(px);                   // Update the signal meters
-  if(m_monitoring || m_diskData) {
-    m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
+  //Suppress scrolling if WSJT-X is transmitting
+  if((m_monitoring and ipc_wsjtx[4] != 1) or m_diskData) {
+      m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
 
   //Average over specified number of spectra
@@ -963,7 +964,7 @@ void MainWindow::guiUpdate()
   }
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec%60 << ipc_wsjtx[0] << ipc_wsjtx[1];
+//    qDebug() << "AAA" << nsec%60 << ipc_wsjtx[3] << ipc_wsjtx[4]<< m_monitoring;
 
     if(m_pctZap>30.0) {
       lab4->setStyleSheet("QLabel{background-color: #ff0000}");

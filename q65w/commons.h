@@ -86,6 +86,8 @@ extern struct {                     //This is "common/datcom/..." in Fortran
 extern struct {
   int ndecodes;
   int ncand;
+  int nQDecoderBusy;
+  int nWTransmitting;
   char result[50][60];
 } decodes_;
 

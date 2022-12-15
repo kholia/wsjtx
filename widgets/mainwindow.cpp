@@ -473,7 +473,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
     }
     ipc_q65w = (int*)mem_q65w.data();
     mem_q65w.lock();
-    memset(ipc_q65w,0,memSize);         //Zero all of shared memory
+    memset(ipc_q65w,0,memSize);         //Zero all of Q65W shared memory
     mem_q65w.unlock();
 
   // Closedown.
@@ -1134,6 +1134,7 @@ MainWindow::~MainWindow()
   m_audioThread.quit ();
   m_audioThread.wait ();
   remove_child_from_event_filter (this);
+  memset(ipc_q65w,0,4096);         //Zero all of Q65W shared memory
 }
 
 //-------------------------------------------------------- writeSettings()
@@ -3685,7 +3686,6 @@ void MainWindow::callSandP2(int n)
     m_deGrid=w[3];
     m_txFirst=(w[4]=="0");
 //    ui->TxFreqSpinBox->setValue(1500);
-//    qDebug() << "aa" << n << w;
   } else {
     m_deCall=w[0];
     m_deGrid=w[1];
@@ -4815,12 +4815,18 @@ void MainWindow::guiUpdate()
   }
   if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
-  mem_q65w.lock();
-  if(m_mode=="Q65" and (ipc_q65w[0] > m_fetched)) {             //ndecodes
-    memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
-    mem_q65w.unlock();
-    readWidebandDecodes();
-  } else {
+  if(m_mode=="Q65") {
+    mem_q65w.lock();
+    int n=0;
+    if(m_decoderBusy) n=1;
+    ipc_q65w[3]=n;
+    n=0;
+    if(m_transmitting) n=1;
+    ipc_q65w[4]=n;
+    if(ipc_q65w[0] > m_fetched) {             //ndecodes
+      memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
+      readWidebandDecodes();
+    }
     mem_q65w.unlock();
   }
 
