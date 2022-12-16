@@ -46,7 +46,6 @@ subroutine decode0(dd,ss,savg)
        mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,         &
        nfcal,mycall,hiscall,hisgrid,nhsym,nfsample,nmode,ndop00)
   call timer('q65wa   ',1)
-  flush(6)
 
   return
 end subroutine decode0

@@ -70,7 +70,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      if(idec.ge.0) candec(icand)=.true.
   enddo  ! icand
   ndecdone=2
-  nQDecoderDone=1
 
   return
 end subroutine q65wa

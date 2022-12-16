@@ -743,7 +743,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   m_startAnother=m_loopall;
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
-
+  decodes_.nQDecoderDone=1;
   QString t1;
   t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   lab5->setText(t1);
@@ -908,6 +908,7 @@ void MainWindow::decode()                                       //decode()
 
   decodes_.ndecodes=0;
   decodes_.ncand=0;
+  decodes_.nQDecoderDone=0;
   m_fetched=0;
   int itimer=0;
   watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
@@ -952,9 +953,10 @@ void MainWindow::guiUpdate()
     on_actionOpen_next_in_directory_triggered();
   }
 
-  if(decodes_.ndecodes>m_fetched) {
+  if(decodes_.ndecodes > m_fetched) {
     while(m_fetched<decodes_.ndecodes) {
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
+//      qDebug() << "CCC" << nsec%60 << decodes_.ndecodes << m_fetched << t;
       ui->decodedTextBrowser->append(t.trimmed());
       m_fetched++;
     }
@@ -965,6 +967,7 @@ void MainWindow::guiUpdate()
 
   if(nsec != m_sec0) {                                     //Once per second
 //    qDebug() << "AAA" << nsec%60 << ipc_wsjtx[3] << ipc_wsjtx[4]<< m_monitoring;
+//    qDebug() << "BBB" << nsec%60 << decodes_.ndecodes << m_fetched;
 
     if(m_pctZap>30.0) {
       lab4->setStyleSheet("QLabel{background-color: #ff0000}");
