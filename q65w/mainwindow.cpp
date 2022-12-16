@@ -744,6 +744,9 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
   decodes_.nQDecoderDone=1;
+  mem_q65w.lock();
+  memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
+  mem_q65w.unlock();
   QString t1;
   t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   lab5->setText(t1);
@@ -960,9 +963,6 @@ void MainWindow::guiUpdate()
       ui->decodedTextBrowser->append(t.trimmed());
       m_fetched++;
     }
-    mem_q65w.lock();
-    memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
-    mem_q65w.unlock();
   }
 
   if(nsec != m_sec0) {                                     //Once per second

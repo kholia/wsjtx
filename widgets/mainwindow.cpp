@@ -4824,7 +4824,7 @@ void MainWindow::guiUpdate()
     if(m_transmitting) n=1;
     ipc_q65w[4]=n;
     if(ipc_q65w[0] > m_fetched) {             //ndecodes
-      memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));
+      memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));  //Fetch the new decode(s)
       readWidebandDecodes();
     }
     mem_q65w.unlock();
@@ -4832,7 +4832,8 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << ipc_q65w[0] << ipc_q65w[1];
+//    qDebug() << "AAA" << nsec << ipc_q65w[0] << ipc_q65w[1] << ipc_q65w[2]
+//             << ipc_q65w[3] << ipc_q65w[4] << m_fetched;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -9290,7 +9291,11 @@ void MainWindow::readWidebandDecodes()
     m_ActiveStationsWidget->displayRecentStations(m_mode,t);
     m_ActiveStationsWidget->setClickOK(true);
   }
-  if(q65wcom.nQDecoderDone==1) m_fetched=0;
+  if(ipc_q65w[2]==1) {
+    m_fetched=0;
+    ipc_q65w[0]=0;
+    ipc_q65w[2]=0;
+  }
 }
 
 // -------------------------- Code for FT8 DXpedition Mode ---------------------------
