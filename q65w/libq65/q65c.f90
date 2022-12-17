@@ -37,6 +37,12 @@ subroutine q65c(itimer)
 
   datetime(18:20)=':00'
   npatience=1
+
+  if(newdat.eq.0 .and. nagain.eq.1) then
+     nfa=nint(mousefqso+0.001*mousedf) - 1  !Minimal solution for
+     nfb=nint(mousefqso+0.001*mousedf) + 1  !double-click decodes
+  endif
+
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
   call timer('decode0 ',1)
