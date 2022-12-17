@@ -375,7 +375,7 @@ void MainWindow::dataSink(int k)
   QString t;
   m_pctZap=nzap/178.3;
 
-  lab4->setText (
+  lab2->setText (
         QString {" Rx: %1  %2 % "}
         .arg (px, 5, 'f', 1)
         .arg (m_pctZap, 5, 'f', 1)
@@ -414,14 +414,18 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-  if(ihsym==302) {   //Decode at t=56 s (for Q65 and data from disk)
+  lab5->setText(QString::number(ihsym));
+  if(ihsym < m_hsymStop) m_decode_called=false;
+  if(ihsym >= m_hsymStop and !m_decode_called) {   //Decode at t=56 s (for Q65 and data from disk)
     m_RxState=2;
     datcom_.newdat=1;
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yyyy-MMM-dd hh:mm");
+    qDebug() << "aa" << "Decoder called" << ihsym;;
     decode();                                           //Start the decoder
+    m_decode_called=true;
     if(m_saveAll and !m_diskData) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
@@ -592,9 +596,21 @@ void MainWindow::createStatusBar()                           //createStatusBar
   lab1->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab1);
 
+  lab2 = new QLabel("");
+  lab2->setAlignment(Qt::AlignHCenter);
+  lab2->setMinimumSize(QSize(80,10));
+  lab2->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  statusBar()->addWidget(lab2);
+
+  lab3 = new QLabel("");
+  lab3->setAlignment(Qt::AlignHCenter);
+  lab3->setMinimumSize(QSize(50,10));
+  lab3->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  statusBar()->addWidget(lab3);
+
   lab4 = new QLabel("");
   lab4->setAlignment(Qt::AlignHCenter);
-  lab4->setMinimumSize(QSize(80,10));
+  lab4->setMinimumSize(QSize(50,10));
   lab4->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab4);
 
@@ -603,12 +619,6 @@ void MainWindow::createStatusBar()                           //createStatusBar
   lab5->setMinimumSize(QSize(50,10));
   lab5->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab5);
-
-  lab6 = new QLabel("");
-  lab6->setAlignment(Qt::AlignHCenter);
-  lab6->setMinimumSize(QSize(50,10));
-  lab6->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  statusBar()->addWidget(lab6);
 }
 
 void MainWindow::on_tolSpinBox_valueChanged(int i)             //tolSpinBox
@@ -749,7 +759,10 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   mem_q65w.unlock();
   QString t1;
   t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
-  lab5->setText(t1);
+  lab3->setText(t1);
+  QDateTime now=QDateTime::currentDateTimeUtc();
+  float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
+  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode;
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
@@ -801,8 +814,6 @@ void MainWindow::on_actionSave_all_triggered()                //Save All
                                           //Display list of keyboard shortcuts                                           //Display list of mouse commands                                             //Diaplay list of Add-On pfx/sfx
 void MainWindow::on_DecodeButton_clicked()                    //Decode request
 {
-  int n=m_sec0%m_TRperiod;
-  if(m_monitoring and n>47 and (n<52 or m_decoderBusy)) return;
   if(!m_decoderBusy) {
     datcom_.newdat=0;
     datcom_.nagain=1;
@@ -914,6 +925,7 @@ void MainWindow::decode()                                       //decode()
   decodes_.nQDecoderDone=0;
   m_fetched=0;
   int itimer=0;
+  m_decoder_start_time=QDateTime::currentDateTimeUtc();
   watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
 
   decodeBusy(true);
@@ -922,7 +934,7 @@ void MainWindow::decode()                                       //decode()
 void MainWindow::on_EraseButton_clicked()
 {
   ui->decodedTextBrowser->clear();
-  lab5->clear();
+  lab3->clear();
 }
 
 
@@ -970,10 +982,12 @@ void MainWindow::guiUpdate()
 //    qDebug() << "BBB" << nsec%60 << decodes_.ndecodes << m_fetched;
 
     if(m_pctZap>30.0) {
-      lab4->setStyleSheet("QLabel{background-color: #ff0000}");
+      lab2->setStyleSheet("QLabel{background-color: #ff0000}");
     } else {
-      lab4->setStyleSheet("");
+      lab2->setStyleSheet("");
     }
+//    lab5->setText("Q65A");
+
 
     if(m_monitoring) {
       lab1->setStyleSheet("QLabel{background-color: #00ff00}");
@@ -1165,36 +1179,36 @@ void MainWindow::on_dxGridEntry_textChanged(const QString &t) //dxGrid changed
 void MainWindow::on_actionQ65A_triggered()
 {
   m_modeQ65=1;
-  lab6->setStyleSheet("QLabel{background-color: #ffb266}");
-  lab6->setText("Q65A");
+  lab4->setStyleSheet("QLabel{background-color: #ffb266}");
+  lab4->setText("Q65A");
 }
 
 void MainWindow::on_actionQ65B_triggered()
 {
   m_modeQ65=2;
-  lab6->setStyleSheet("QLabel{background-color: #b2ff66}");
-  lab6->setText("Q65B");
+  lab4->setStyleSheet("QLabel{background-color: #b2ff66}");
+  lab4->setText("Q65B");
 }
 
 void MainWindow::on_actionQ65C_triggered()
 {
   m_modeQ65=3;
-  lab6->setStyleSheet("QLabel{background-color: #66ffff}");
-  lab6->setText("Q65C");
+  lab4->setStyleSheet("QLabel{background-color: #66ffff}");
+  lab4->setText("Q65C");
 }
 
 void MainWindow::on_actionQ65D_triggered()
 {
   m_modeQ65=4;
-  lab6->setStyleSheet("QLabel{background-color: #b266ff}");
-  lab6->setText("Q65D");
+  lab4->setStyleSheet("QLabel{background-color: #b266ff}");
+  lab4->setText("Q65D");
 }
 
 void MainWindow::on_actionQ65E_triggered()
 {
   m_modeQ65=5;
-  lab6->setStyleSheet("QLabel{background-color: #ff66ff}");
-  lab6->setText("Q65E");
+  lab4->setStyleSheet("QLabel{background-color: #ff66ff}");
+  lab4->setText("Q65E");
 }
 
 
