@@ -1,6 +1,7 @@
 subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,             &
-     nfcal,mycall,hiscall,hisgrid,nhsym,nfsample,nmode,ndop00)
+     nfcal,mycall,hiscall,hisgrid,nhsym,nfsample,nmode,ndepth,        &
+     datetime,ndop00)
 
 !  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
 
@@ -18,16 +19,14 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   logical candec(MAX_CANDIDATES)
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
+  character*20 datetime
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/testcom/ifreq
   save
 
-!  write(*,3001) newdat,ntol,nfa,nfb,mousedf,mousefqso,nagain,nfshift,max_drift
-!3001 format(9i6)
-
+  if(nagain.eq.1) ndepth=3
   nagain=0              !### TEMPORARY ? ###
-  rewind 12
 
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
@@ -65,7 +64,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
-          nagain,max_drift,ndop00)
+          nagain,max_drift,ndepth,datetime,ndop00)
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.
   enddo  ! icand

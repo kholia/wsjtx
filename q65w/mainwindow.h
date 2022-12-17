@@ -182,9 +182,6 @@ private:
   QString m_palette;
   QString m_dateTime;
   QString m_mode;
-  QString m_colors;                     //Why still needed?
-  QString m_editorCommand;              //Why still needed?
-  QString m_modeTx;                     //Why still needed?
 
   QHash<QString,bool> m_worked;
 

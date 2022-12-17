@@ -422,7 +422,7 @@ void MainWindow::dataSink(int k)
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
-    m_dateTime=t.toString("yyyy-MMM-dd hh:mm");
+    m_dateTime=t.toString("yymmdd_hhmm");
     qDebug() << "aa" << "Decoder called" << ihsym;;
     decode();                                           //Start the decoder
     m_decode_called=true;
@@ -762,7 +762,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   lab3->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
   float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
-  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode;
+  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode << now.toString("hh:mm:ss.z");
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
@@ -840,6 +840,7 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 
 void MainWindow::decode()                                       //decode()
 {
+  QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
   if(datcom_.nagain==0 && (!m_diskData)) {
@@ -853,7 +854,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.idphi=m_dPhi;
   datcom_.mousedf=m_wide_graph_window->DF();
   datcom_.mousefqso=m_wide_graph_window->QSOfreq();
-  datcom_.ndepth=m_ndepth;
+  datcom_.ndepth=m_ndepth+1;
   datcom_.ndiskdat=0;
   if(m_diskData) {
     datcom_.ndiskdat=1;
@@ -870,6 +871,7 @@ void MainWindow::decode()                                       //decode()
       int ndop00;
       astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
       datcom_.ndop00=ndop00;               //Send self Doppler to decoder, via datcom
+      fname=m_path.mid(i0-11,11);
     }
   }
   datcom_.neme=0;
@@ -909,7 +911,11 @@ void MainWindow::decode()                                       //decode()
   memcpy(datcom_.mygrid, mgrid.toLatin1(), 6);
   memcpy(datcom_.hiscall, hcall.toLatin1(), 12);
   memcpy(datcom_.hisgrid, hgrid.toLatin1(), 6);
-  memcpy(datcom_.datetime, m_dateTime.toLatin1(), 17);
+  if(m_diskData) {
+    memcpy(datcom_.datetime, fname.toLatin1(), 11);
+  } else {
+    memcpy(datcom_.datetime, m_dateTime.toLatin1(), 11);
+  }
   datcom_.junk1=1234;                                     //Cecck for these values in m65
   datcom_.junk2=5678;
 
@@ -971,7 +977,6 @@ void MainWindow::guiUpdate()
   if(decodes_.ndecodes > m_fetched) {
     while(m_fetched<decodes_.ndecodes) {
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
-//      qDebug() << "CCC" << nsec%60 << decodes_.ndecodes << m_fetched << t;
       ui->decodedTextBrowser->append(t.trimmed());
       m_fetched++;
     }
