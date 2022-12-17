@@ -299,7 +299,7 @@ void PSKReporter::impl::build_preamble (QDataStream& message)
           << quint16 (0xffff)       // Option 1 Field Length (variable)
           << quint32 (30351u)       // Option 1 Enterprise Number
           << quint16 (0x8000 + 5u)  // Option 2 Information Element ID (frequency)
-          << quint16 (4u)           // Option 2 Field Length
+          << quint16 (5u)           // Option 2 Field Length
           << quint32 (30351u)       // Option 2 Enterprise Number
           << quint16 (0x8000 + 6u)  // Option 3 Information Element ID (sNR)
           << quint16 (1u)           // Option 3 Field Length
@@ -423,8 +423,19 @@ void PSKReporter::impl::send_report (bool send_residue)
 
               // Sender information
               writeUtfString (tx_out, spot.call_);
-              tx_out
-                << static_cast<quint32> (spot.freq_)
+              uint8_t data[5];
+              long long int i64 = spot.freq_;
+              data[0] = ( i64 & 0xff);
+              data[1] = ((i64 >>  8) & 0xff);
+              data[2] = ((i64 >> 16) & 0xff);
+              data[3] = ((i64 >> 24) & 0xff);
+              data[4] = ((i64 >> 32) & 0xff);
+              tx_out // BigEndian
+                << static_cast<uint8_t> (data[4])
+                << static_cast<uint8_t> (data[3])
+                << static_cast<uint8_t> (data[2])
+                << static_cast<uint8_t> (data[1])
+                << static_cast<uint8_t> (data[0])
                 << static_cast<qint8> (spot.snr_);
               writeUtfString (tx_out, spot.mode_);
               writeUtfString (tx_out, spot.grid_);
