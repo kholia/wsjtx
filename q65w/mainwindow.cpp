@@ -416,16 +416,17 @@ void MainWindow::dataSink(int k)
 
   lab5->setText(QString::number(ihsym));
   if(ihsym < m_hsymStop) m_decode_called=false;
+
   if(ihsym >= m_hsymStop and !m_decode_called) {   //Decode at t=56 s (for Q65 and data from disk)
-    m_RxState=2;
+    m_decode_called=true;
     datcom_.newdat=1;
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yymmdd_hhmm");
-    qDebug() << "aa" << "Decoder called" << ihsym;;
+//    qDebug() << "aa" << "Decoder called" << ihsym << ipc_wsjtx[0] << ipc_wsjtx[1]
+//             << ipc_wsjtx[2] << ipc_wsjtx[3] << ipc_wsjtx[4] ;
     decode();                                           //Start the decoder
-    m_decode_called=true;
     if(m_saveAll and !m_diskData) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
@@ -762,7 +763,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   lab3->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
   float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
-  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode << now.toString("hh:mm:ss.z");
+//  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode << now.toString("hh:mm:ss.z");
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
@@ -1185,35 +1186,35 @@ void MainWindow::on_actionQ65A_triggered()
 {
   m_modeQ65=1;
   lab4->setStyleSheet("QLabel{background-color: #ffb266}");
-  lab4->setText("Q65A");
+  lab4->setText("Q65-60A");
 }
 
 void MainWindow::on_actionQ65B_triggered()
 {
   m_modeQ65=2;
   lab4->setStyleSheet("QLabel{background-color: #b2ff66}");
-  lab4->setText("Q65B");
+  lab4->setText("Q65-60B");
 }
 
 void MainWindow::on_actionQ65C_triggered()
 {
   m_modeQ65=3;
   lab4->setStyleSheet("QLabel{background-color: #66ffff}");
-  lab4->setText("Q65C");
+  lab4->setText("Q65-60C");
 }
 
 void MainWindow::on_actionQ65D_triggered()
 {
   m_modeQ65=4;
   lab4->setStyleSheet("QLabel{background-color: #b266ff}");
-  lab4->setText("Q65D");
+  lab4->setText("Q65-60D");
 }
 
 void MainWindow::on_actionQ65E_triggered()
 {
   m_modeQ65=5;
   lab4->setStyleSheet("QLabel{background-color: #ff66ff}");
-  lab4->setText("Q65E");
+  lab4->setText("Q65-60E");
 }
 
 

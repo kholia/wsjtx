@@ -119,7 +119,6 @@ private:
   qint32  m_nsave;
   qint32  m_TRperiod;
   qint32  m_modeQ65;
-  qint32  m_RxState;
   qint32  m_dB;
   qint32  m_fetched=0;
   qint32  m_hsymStop=302;
