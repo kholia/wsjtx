@@ -762,7 +762,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   lab3->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
-  float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
+//  float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
 //  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode << now.toString("hh:mm:ss.z");
 }
 
