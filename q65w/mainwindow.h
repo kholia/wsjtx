@@ -122,6 +122,7 @@ private:
   qint32  m_RxState;
   qint32  m_dB;
   qint32  m_fetched=0;
+  qint32  m_hsymStop=302;
 
   double  m_fAdd;
   double  m_xavg;
@@ -138,6 +139,7 @@ private:
   bool    m_kb8rq;
   bool    m_NB;
   bool    m_fs96000;
+  bool    m_decode_called=false;
 
   float   m_gainx;
   float   m_gainy;
@@ -148,6 +150,8 @@ private:
   QRect   m_wideGraphGeom;
 
   QLabel* lab1;                            // labels in status bar
+  QLabel* lab2;                            // labels in status bar
+  QLabel* lab3;                            // labels in status bar
   QLabel* lab4;
   QLabel* lab5;
   QLabel* lab6;
@@ -161,6 +165,8 @@ private:
   QFutureWatcher<void>* watcher2;
 
   QFutureWatcher<void> watcher3;     //For decoder
+
+  QDateTime m_decoder_start_time;
 
   QString m_path;
   QString m_pbdecoding_style1;
@@ -176,9 +182,6 @@ private:
   QString m_palette;
   QString m_dateTime;
   QString m_mode;
-  QString m_colors;                     //Why still needed?
-  QString m_editorCommand;              //Why still needed?
-  QString m_modeTx;                     //Why still needed?
 
   QHash<QString,bool> m_worked;
 

@@ -1,6 +1,6 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
-     max_drift,ndop00)
+     max_drift,ndepth,datetime,ndop00)
 
 ! This routine provides an interface between MAP65 and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the MAP65 GUI.
@@ -26,6 +26,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   character*6 hisgrid
   character*4 grid4
   character*60 result
+  character*20 datetime
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/cacb/ca
@@ -110,7 +111,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
 
   call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
-       newdat,nagain,max_drift,mycall,hiscall,hisgrid)
+       newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
    MHz=fcenter
   freq0=MHz + 0.001d0*ikhz
 
@@ -128,10 +129,12 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      fsked=frx - 0.001*ndop00/2.0 - 1.5
      write(result(ndecodes),1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
 1120 format(i4.4,f9.3,f7.2,i5,2x,a,i6)
+     write(12,1130) datetime,trim(result(ndecodes)(5:))
+1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
   endif
 
-900 call flush(6)
+900 flush(12)
 
   return
 end subroutine q65b
