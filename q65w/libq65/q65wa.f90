@@ -26,7 +26,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   save
 
   if(nagain.eq.1) ndepth=3
-  nagain=0              !### TEMPORARY ? ###
 
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
@@ -35,10 +34,16 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
 
   call timer('get_cand',0)
-  call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
+!  call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
+  call getcand2(savg,nts_q65,cand,ncand)
   call timer('get_cand',1)
-  candec=.false.
 
+  do i=1,ncand
+     write(71,3071) i,cand(i)%f,cand(i)%xdt,cand(i)%snr
+3071 format(i2,3f10.3)
+  enddo
+
+  candec=.false.
   nwrite_q65=0
   bq65=mode_q65.gt.0
   df=96000.0/NFFT                     !df = 96000/NFFT = 2.930 Hz
@@ -61,6 +66,9 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
 
+!     print*,'AAA',icand,nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
+!          mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
+!          nagain,max_drift,ndop00
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
@@ -72,3 +80,52 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   return
 end subroutine q65wa
+
+subroutine getcand2(savg0,nts_q65,cand,ncand)
+
+  use wideband_sync
+!  parameter(NFFT=32768)
+  real savg0(NFFT),savg(NFFT)
+  integer ipk1(1)
+  type(candidate) :: cand(MAX_CANDIDATES)
+
+  savg=savg0
+  df=96000.0/NFFT
+  bw=65*nts_q65*1.666666667
+  nbw=bw/df + 1
+  smin=140.0
+  nguard=5
+  j=0
+  sync(1:NFFT)%ccfmax=0.
+
+  do i=1,NFFT-2*nbw
+     if(savg(i).lt.smin) cycle
+     spk=maxval(savg(i:i+nbw))
+     ipk1=maxloc(savg(i:i+nbw))
+     i0=ipk1(1) + i - 1
+     fpk=0.001*i*df
+     j=j+1
+!     write(*,3020) j,fpk,spk
+!3020 format(i3,f12.6,f8.1)
+     cand(j)%f=fpk
+     cand(j)%xdt=2.5
+     cand(j)%snr=spk
+     cand(j)%iflip=0
+
+     sync(i0)%ccfmax=spk
+
+     ia=min(i,i0-nguard)
+     ib=i0+nbw+nguard
+     savg(ia:ib)=0.
+!     sync(ia:ib)%ccfmax=0.
+     if(j.ge.30) exit
+  enddo
+  ncand=j
+
+  do i=1,NFFT
+     write(72,3072) i,0.001*i*df,savg0(i),savg(i),sync(i)%ccfmax
+3072 format(i6,f15.6,3f15.3)
+  enddo
+
+  return
+end subroutine getcand2
