@@ -18,7 +18,9 @@ subroutine ftninit
   open(12,file=appd//'/all_q65w.txt',status='unknown',position='append')
   open(17,file=appd//'/red.dat',status='unknown')
   open(19,file=appd//'/livecq.txt',status='unknown')
-  open(71,file=appd//'/debug.tmp',status='unknown')
+  open(71,file=appd//'/fort.71',status='unknown')
+  open(72,file=appd//'/fort.72',status='unknown')
+  open(73,file=appd//'/fort.73',status='unknown')
 
 ! Import FFTW wisdom, if available:
   iret=fftwf_init_threads()            !Initialize FFTW threading 
