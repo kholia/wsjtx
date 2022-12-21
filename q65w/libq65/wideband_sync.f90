@@ -41,7 +41,7 @@ subroutine get_candidates(ss,savg,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   type(candidate) :: cand(MAX_CANDIDATES)
   type(candidate) :: cand0(MAX_CANDIDATES)
 
-  call wb_sync(ss,savg,jz,nfa,nfb)          !Output to sync() array
+  call wb_sync(ss,savg,jz,nfa,nfb,nts_q65)          !Output to sync() array
 
   tstep=2048.0/11025.0        !0.185760 s: 0.5*tsym_jt65, 0.3096*tsym_q65
   df3=96000.0/NFFT
@@ -113,7 +113,7 @@ subroutine get_candidates(ss,savg,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   return
 end subroutine get_candidates
 
-subroutine wb_sync(ss,savg,jz,nfa,nfb)
+subroutine wb_sync(ss,savg,jz,nfa,nfb,nts_q65)
 
 ! Compute "orange sync curve" using the Q65 sync pattern
 
@@ -239,7 +239,7 @@ subroutine wb_sync(ss,savg,jz,nfa,nfb)
   call pctile(sync(ia:ib)%ccfmax,ib-ia+1,50,base)
   sync(ia:ib)%ccfmax=sync(ia:ib)%ccfmax/base
 
-  bw=65*4*1.66666667                        !Q65-60C bandwidth
+  bw=65*nts_q65*1.66666667                        !Q65-60x bandwidth
   nbw=bw/df3 + 1                            !Number of bins to blank
   syncmin=2.0
   nguard=10

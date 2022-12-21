@@ -1,6 +1,6 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
-     max_drift,ndepth,datetime,ndop00)
+     max_drift,ndepth,datetime,ndop00,idec)
 
 ! This routine provides an interface between MAP65 and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the MAP65 GUI.
@@ -43,7 +43,10 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   ib=nint(ifreq+ntol/df3)
   ipk1=maxloc(sync(ia:ib)%ccfmax)
   ipk=ia+ipk1(1)-1
+!  f_ipk=ipk*df3
+  ipk2=(1000.0*f0-1.0)/df3
   snr1=sync(ipk)%ccfmax
+  ipk=ipk2                      !Substitute new ipk value
 
   nfft1=MAXFFT1
   nfft2=MAXFFT2
@@ -55,7 +58,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   endif
   nh=nfft2/2
   f_mouse=1000.0*(fqso+48.0) + mousedf
-  f_ipk=ipk*df3
   k0=nint((ipk*df3-1000.0)/df)
   if(nagain.eq.1) k0=nint((f_mouse-1000.0)/df)
 
@@ -132,6 +134,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      write(12,1130) datetime,trim(result(ndecodes)(5:))
 1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
+!     print*,'AAA',f_ipk,k0*df,f0,ipk,ipk2,trim(msg0)
+     idec=0
   endif
 
 900 flush(12)

@@ -38,10 +38,10 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   call getcand2(savg,nts_q65,cand,ncand)
   call timer('get_cand',1)
 
-  do i=1,ncand
-     write(71,3071) i,cand(i)%f,cand(i)%xdt,cand(i)%snr
-3071 format(i2,3f10.3)
-  enddo
+!  do i=1,ncand
+!     write(71,3071) i,cand(i)%f,cand(i)%xdt,cand(i)%snr
+!3071 format(i2,3f10.3)
+!  enddo
 
   candec=.false.
   nwrite_q65=0
@@ -65,6 +65,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      if(candec(icand)) cycle             !Skip if already decoded
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
+     idec=-1
 
 !     print*,'AAA',icand,nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
 !          mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
@@ -72,9 +73,14 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
-          nagain,max_drift,ndepth,datetime,ndop00)
+          nagain,max_drift,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.
+
+     write(71,3071) icand,cand(icand)%f,32.0+cand(icand)%f,   &
+          cand(icand)%xdt,cand(icand)%snr,idec,ndecodes
+3071 format(i2,4f10.3,2i5)
+
   enddo  ! icand
   ndecdone=2
 
@@ -93,8 +99,10 @@ subroutine getcand2(savg0,nts_q65,cand,ncand)
   df=96000.0/NFFT
   bw=65*nts_q65*1.666666667
   nbw=bw/df + 1
-  smin=140.0
+  smin=70.0
   nguard=5
+
+!  print*,'aaa',nts_q65,bw
   j=0
   sync(1:NFFT)%ccfmax=0.
 
@@ -108,7 +116,7 @@ subroutine getcand2(savg0,nts_q65,cand,ncand)
 !     write(*,3020) j,fpk,spk
 !3020 format(i3,f12.6,f8.1)
      cand(j)%f=fpk
-     cand(j)%xdt=2.5
+     cand(j)%xdt=2.8
      cand(j)%snr=spk
      cand(j)%iflip=0
 
@@ -123,7 +131,7 @@ subroutine getcand2(savg0,nts_q65,cand,ncand)
   ncand=j
 
   do i=1,NFFT
-     write(72,3072) i,0.001*i*df,savg0(i),savg(i),sync(i)%ccfmax
+     write(72,3072) i,0.001*i*df+32.0,savg0(i),savg(i),sync(i)%ccfmax
 3072 format(i6,f15.6,3f15.3)
   enddo
 
