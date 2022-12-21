@@ -1,6 +1,6 @@
 subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,ndecdone,nfshift,max_drift,             &
-     nfcal,mycall,hiscall,hisgrid,nhsym,nfsample,nmode,ndepth,        &
+     nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,        &
      datetime,ndop00)
 
 !  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
@@ -35,7 +35,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   call timer('get_cand',0)
 !  call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
-  call getcand2(savg,nts_q65,cand,ncand)
+  call getcand2(ss,savg,nts_q65,cand,ncand)
   call timer('get_cand',1)
 
 !  do i=1,ncand
@@ -77,9 +77,9 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.
 
-     write(71,3071) icand,cand(icand)%f,32.0+cand(icand)%f,   &
-          cand(icand)%xdt,cand(icand)%snr,idec,ndecodes
-3071 format(i2,4f10.3,2i5)
+!     write(71,3071) icand,cand(icand)%f,32.0+cand(icand)%f,   &
+!          cand(icand)%xdt,cand(icand)%snr,idec,ndecodes
+!3071 format(i2,4f10.3,2i5)
 
   enddo  ! icand
   ndecdone=2
@@ -87,22 +87,33 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   return
 end subroutine q65wa
 
-subroutine getcand2(savg0,nts_q65,cand,ncand)
+subroutine getcand2(ss,savg0,nts_q65,cand,ncand)
 
   use wideband_sync
 !  parameter(NFFT=32768)
+  real ss(322,NFFT)
   real savg0(NFFT),savg(NFFT)
   integer ipk1(1)
+  logical sync_ok
   type(candidate) :: cand(MAX_CANDIDATES)
+  data nseg/16/,npct/40/
 
   savg=savg0
+  nlen=NFFT/nseg
+  do iseg=1,nseg
+     ja=(iseg-1)*nlen + 1
+     jb=ja + nlen - 1
+     call pctile(savg(ja),nlen,npct,base)
+     savg(ja:jb)=savg(ja:jb)/(1.015*base)
+     savg0(ja:jb)=savg0(ja:jb)/(1.015*base)
+  enddo
+  
   df=96000.0/NFFT
   bw=65*nts_q65*1.666666667
   nbw=bw/df + 1
-  smin=70.0
+  smin=1.4
   nguard=5
 
-!  print*,'aaa',nts_q65,bw
   j=0
   sync(1:NFFT)%ccfmax=0.
 
@@ -111,29 +122,86 @@ subroutine getcand2(savg0,nts_q65,cand,ncand)
      spk=maxval(savg(i:i+nbw))
      ipk1=maxloc(savg(i:i+nbw))
      i0=ipk1(1) + i - 1
-     fpk=0.001*i*df
+     fpk=0.001*i0*df
+! Check to see if sync tone is present.
+     call q65_sync(ss,i0,nts_q65,sync_ok,snr_sync,xdt)
+     if(.not.sync_ok) cycle
      j=j+1
-!     write(*,3020) j,fpk,spk
-!3020 format(i3,f12.6,f8.1)
+!     write(73,3073) j,fpk+32.0-2.270,snr_sync,xdt
+!3073 format(i3,3f10.3)
      cand(j)%f=fpk
      cand(j)%xdt=2.8
      cand(j)%snr=spk
      cand(j)%iflip=0
-
      sync(i0)%ccfmax=spk
-
      ia=min(i,i0-nguard)
      ib=i0+nbw+nguard
      savg(ia:ib)=0.
-!     sync(ia:ib)%ccfmax=0.
      if(j.ge.30) exit
   enddo
   ncand=j
 
-  do i=1,NFFT
-     write(72,3072) i,0.001*i*df+32.0,savg0(i),savg(i),sync(i)%ccfmax
-3072 format(i6,f15.6,3f15.3)
-  enddo
+!  do i=1,NFFT
+!     write(72,3072) i,0.001*i*df+32.0,savg0(i),savg(i),sync(i)%ccfmax
+!3072 format(i6,f15.6,3f15.3)
+!  enddo
 
   return
 end subroutine getcand2
+
+subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
+
+  parameter (NFFT=32768)
+  parameter (LAGMAX=33)
+  real ss(322,NFFT)
+  real ccf(0:LAGMAX)
+  logical sync_ok
+  logical first
+  integer isync(22),ipk(1)
+
+! Q65 sync symbols
+  data isync/1,9,12,13,15,22,23,26,27,33,35,38,46,50,55,60,62,66,69,74,76,85/
+  data first/.true./
+  save first,isync
+
+  tstep=2048.0/11025.0        !0.185760 s: 0.5*tsym_jt65, 0.3096*tsym_q65
+  if(first) then
+     fac=0.6/tstep            !3.230
+     do i=1,22                                !Expand the Q65 sync stride
+        isync(i)=nint((isync(i)-1)*fac) + 1
+     enddo
+     first=.false.
+  endif
+
+  m=nts_q65/2
+  ccf=0.
+  do lag=0,LAGMAX
+     do j=1,22                        !Test for Q65 sync
+        k=isync(j) + lag
+!        ccf=ccf + ss(k,i0) + ss(k+1,i0) + ss(k+2,i0)
+        ccf(lag)=ccf(lag) + sum(ss(k,i0-m:i0+m)) + sum(ss(k+1,i0-m:i0+m)) &
+             + sum(ss(k+2,i0-m:i0+m))
+     enddo
+  enddo
+  ccfmax=maxval(ccf)
+  ipk=maxloc(ccf)
+  lagbest=ipk(1)-1
+  xdt=lagbest*tstep - 1.0
+
+  xsum=0.
+  sq=0.
+  nsum=0
+  do i=0,lagmax
+     if(abs(i-lagbest).gt.2) then
+        xsum=xsum+ccf(i)
+        sq=sq+ccf(i)**2
+        nsum=nsum+1
+     endif
+  enddo
+  ave=xsum/nsum
+  rms=sqrt(sq/nsum - ave*ave)
+  snr=(ccfmax-ave)/rms
+  sync_ok=snr.ge.5.0
+
+  return
+end subroutine q65_sync
