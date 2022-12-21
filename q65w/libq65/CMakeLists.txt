@@ -1,6 +1,6 @@
 set (libq65_FSRCS
 # Modules come first:
-  wideband_sync.f90
+wideband_sync.f90
 
 # Non-module Fortran routines:
   astro.f90
@@ -14,14 +14,16 @@ set (libq65_FSRCS
   four2a.f90
   ftninit.f90
   ftnquit.f90
-  q65b.f90
   geocentric.f90
+  getcand2.f90
   grid2deg.f90
   indexx.f90
   lorentzian.f90
   moon2.f90
   moondop.f90
+  q65b.f90
   q65c.f90
+  q65_sync.f90
   q65wa.f90
   recvpkt.f90
   sun.f90
