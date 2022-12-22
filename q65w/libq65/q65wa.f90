@@ -5,8 +5,17 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
 !  Processes timf2 data from Linrad to find and decode JT65 and Q65 signals.
 
-  use wideband_sync
+!  use wideband_sync
   use timer_module, only: timer
+
+  type candidate
+     real :: snr          !Relative S/N of sync detection
+     real :: f            !Freq of sync tone, 0 to 96000 Hz
+     real :: xdt          !DT of matching sync pattern, -1.0 to +4.0 s
+  end type candidate
+
+  parameter (NFFT=32768)
+  parameter (MAX_CANDIDATES=50)
 
   parameter (MAXMSG=1000)            !Size of decoded message list
   parameter (NSMAX=60*96000)
@@ -60,8 +69,8 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      idec=-1
 
      call timer('q65b    ',0)
-     call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
-          mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
+     call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,       &
+          mycall,hiscall,hisgrid,mode_q65,f0,fqso,nkhz_center,newdat,   &
           nagain,max_drift,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.

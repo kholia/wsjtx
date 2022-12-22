@@ -1,5 +1,5 @@
-subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
-     mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
+subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
+     mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
      max_drift,ndepth,datetime,ndop00,idec)
 
 ! This routine provides an interface between MAP65 and the Q65 decoder
@@ -8,7 +8,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
 ! in common/cacb.  Decoded messages are sent back to the GUI on stdout.
 
   use q65_decode
-  use wideband_sync
+!  use wideband_sync
   use timer_module, only: timer
 
   parameter (MAXFFT1=5376000)              !56*96000

@@ -1,6 +1,15 @@
 subroutine getcand2(ss,savg0,nts_q65,cand,ncand)
 
-  use wideband_sync
+!  use wideband_sync
+
+  type candidate
+     real :: snr          !Relative S/N of sync detection
+     real :: f            !Freq of sync tone, 0 to 96000 Hz
+     real :: xdt          !DT of matching sync pattern, -1.0 to +4.0 s
+  end type candidate
+
+  parameter (NFFT=32768)
+  parameter (MAX_CANDIDATES=50)
   real ss(322,NFFT)
   real savg0(NFFT),savg(NFFT)
   integer ipk1(1)
