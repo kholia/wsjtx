@@ -9248,6 +9248,10 @@ void MainWindow::readWidebandDecodes()
     }
   }
 
+  if (m_config.spot_to_psk_reporter ()) {
+    m_psk_Reporter.sendReport();                // Upload any queued spots
+  }
+
 // Update "m_wEMECall" by reading q65w_decodes.txt
   QMap<QString,EMECall>::iterator i;
   QString t="";
