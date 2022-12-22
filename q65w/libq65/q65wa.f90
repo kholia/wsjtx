@@ -26,7 +26,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   save
 
   if(nagain.eq.1) ndepth=3
-
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
   mfb=nfb-nkhz_center+48
@@ -34,14 +33,8 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
 
   call timer('get_cand',0)
-!  call get_candidates(ss,savg,nhsym,mfa,mfb,nts_jt65,nts_q65,cand,ncand)
   call getcand2(ss,savg,nts_q65,cand,ncand)
   call timer('get_cand',1)
-
-!  do i=1,ncand
-!     write(71,3071) i,cand(i)%f,cand(i)%xdt,cand(i)%snr
-!3071 format(i2,3f10.3)
-!  enddo
 
   candec=.false.
   nwrite_q65=0
@@ -61,26 +54,17 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 ! Do the wideband Q65 decode
   do icand=1,ncand
      f0=cand(icand)%f
-     if(cand(icand)%iflip.ne.0) cycle    !Do only Q65 candidates here
      if(candec(icand)) cycle             !Skip if already decoded
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
      idec=-1
 
-!     print*,'AAA',icand,nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
-!          mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
-!          nagain,max_drift,ndop00
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,newdat,   &
           nagain,max_drift,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)
      if(idec.ge.0) candec(icand)=.true.
-
-!     write(71,3071) icand,cand(icand)%f,32.0+cand(icand)%f,   &
-!          cand(icand)%xdt,cand(icand)%snr,idec,ndecodes
-!3071 format(i2,4f10.3,2i5)
-
   enddo  ! icand
   ndecdone=2
 

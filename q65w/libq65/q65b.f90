@@ -15,11 +15,9 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   parameter (MAXFFT2=336000)               !56*6000 (downsampled by 1/16)
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
-!  type(hdr) h                            !Header for the .wav file
   integer*2 iwave(60*12000)
   complex ca(MAXFFT1)                      !FFTs of raw x,y data
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
-  integer ipk1(1)
   real*8 fcenter,freq0,freq1
   character*12 mycall0,hiscall0
   character*12 mycall,hiscall
@@ -38,16 +36,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
 
 ! Find best frequency from sync_dat, the "orange sync curve".
   df3=96000.0/32768.0
-  ifreq=nint((1000.0*f0)/df3)
-  ia=nint(ifreq-ntol/df3)
-  ib=nint(ifreq+ntol/df3)
-  ipk1=maxloc(sync(ia:ib)%ccfmax)
-  ipk=ia+ipk1(1)-1
-!  f_ipk=ipk*df3
-  ipk2=(1000.0*f0-1.0)/df3
-  snr1=sync(ipk)%ccfmax
-  ipk=ipk2                      !Substitute new ipk value
-
+  ipk=(1000.0*f0-1.0)/df3
   nfft1=MAXFFT1
   nfft2=MAXFFT2
   df=96000.0/NFFT1
@@ -62,8 +51,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   if(nagain.eq.1) k0=nint((f_mouse-1000.0)/df)
 
   if(k0.lt.nh .or. k0.gt.MAXFFT1-nfft2+1) go to 900
-  if(snr1.lt.1.5) go to 900                      !### Threshold needs work? ###
-
   fac=1.0/nfft2
   cx(0:nfft2-1)=ca(k0:k0+nfft2-1)
   cx=fac*cx
@@ -111,7 +98,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   nsnr0=-99             !Default snr for no decode
 
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
-
   call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
        newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
    MHz=fcenter
@@ -134,11 +120,9 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      write(12,1130) datetime,trim(result(ndecodes)(5:))
 1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
-!     print*,'AAA',f_ipk,k0*df,f0,ipk,ipk2,trim(msg0)
      idec=0
   endif
 
 900 flush(12)
-
   return
 end subroutine q65b
