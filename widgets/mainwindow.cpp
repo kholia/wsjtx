@@ -9236,6 +9236,16 @@ void MainWindow::readWidebandDecodes()
     m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
     m_fetched++;
+
+    Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
+    bool bCQ=line.contains(" CQ ");
+    bool bFromDisk=q65wcom.nQDecoderDone==2;
+    if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
+      qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
+      if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
+        showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+      }
+    }
   }
 
 // Update "m_wEMECall" by reading q65w_decodes.txt

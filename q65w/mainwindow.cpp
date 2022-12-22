@@ -756,6 +756,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
   decodes_.nQDecoderDone=1;
+  if(m_diskData) decodes_.nQDecoderDone=2;
   mem_q65w.lock();
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
   mem_q65w.unlock();
@@ -763,8 +764,6 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   lab3->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
-//  float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
-//  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode << now.toString("hh:mm:ss.z");
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
