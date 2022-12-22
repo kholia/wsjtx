@@ -102,7 +102,7 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,c4a,n4)
   enddo
   do i=nh+1,nfft2
      j=i0+i-1-nfft2
-     if(j.lt.1) j=j+nfft1                  !nfft1 was nfft2
+     if(j.lt.1) j=j+nfft1
      c4a(i)=rfilt(i)*ca(j)
   enddo
 

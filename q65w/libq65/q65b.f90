@@ -2,13 +2,12 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
      max_drift,ndepth,datetime,ndop00,idec)
 
-! This routine provides an interface between MAP65 and the Q65 decoder
-! in WSJT-X.  All arguments are input data obtained from the MAP65 GUI.
+! This routine provides an interface between Q65W and the Q65 decoder
+! in WSJT-X.  All arguments are input data obtained from the Q65W GUI.
 ! Raw Rx data are available as the 96 kHz complex spectrum ca(MAXFFT1)
-! in common/cacb.  Decoded messages are sent back to the GUI on stdout.
+! in common/cacb.  Decoded messages are sent back to the GUI.
 
   use q65_decode
-!  use wideband_sync
   use timer_module, only: timer
 
   parameter (MAXFFT1=5376000)              !56*96000
@@ -16,7 +15,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
   integer*2 iwave(60*12000)
-  complex ca(MAXFFT1)                      !FFTs of raw x,y data
+  complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
   real*8 fcenter,freq0,freq1
   character*12 mycall0,hiscall0
@@ -64,10 +63,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 !    (Hz)              (Hz)                 (Hz)
 !----------------------------------------------------
 !   96000  5376000  0.017857143  336000   6000.000
-!   95238  5120000  0.018601172  322560   5999.994
 
   cz(0:MAXFFT2-1)=cx
-
   cz(MAXFFT2)=0.
 ! Roll off below 500 Hz and above 2500 Hz.
   ja=nint(500.0/df)

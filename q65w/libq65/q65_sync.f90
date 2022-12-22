@@ -1,9 +1,11 @@
 subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
 
+! Test for presence of Q65 sync tone
+
   parameter (NFFT=32768)
   parameter (LAGMAX=33)
-  real ss(322,NFFT)
-  real ccf(0:LAGMAX)
+  real ss(322,NFFT)                !Symbol spectra
+  real ccf(0:LAGMAX)               !The WSJT "blue curve", peak at DT
   logical sync_ok
   logical first
   integer isync(22),ipk(1)
@@ -24,12 +26,12 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
 
   m=nts_q65/2
   ccf=0.
-  do lag=0,LAGMAX
+  do lag=0,LAGMAX                     !Search over range of DT
      do j=1,22                        !Test for Q65 sync
         k=isync(j) + lag
-!        ccf=ccf + ss(k,i0) + ss(k+1,i0) + ss(k+2,i0)
         ccf(lag)=ccf(lag) + sum(ss(k,i0-m:i0+m)) + sum(ss(k+1,i0-m:i0+m)) &
              + sum(ss(k+2,i0-m:i0+m))
+! Q: Should we use weighted sums, perhaps a Lorentzian peak?
      enddo
   enddo
   ccfmax=maxval(ccf)
@@ -40,7 +42,7 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
   xsum=0.
   sq=0.
   nsum=0
-  do i=0,lagmax
+  do i=0,lagmax                       !Compute ave and rms of "blue curve"
      if(abs(i-lagbest).gt.2) then
         xsum=xsum+ccf(i)
         sq=sq+ccf(i)**2
@@ -50,7 +52,7 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
   ave=xsum/nsum
   rms=sqrt(sq/nsum - ave*ave)
   snr=(ccfmax-ave)/rms
-  sync_ok=snr.ge.5.0
+  sync_ok=snr.ge.5.0                  !Require snr > 5.0 for sync detection
 
   return
 end subroutine q65_sync
