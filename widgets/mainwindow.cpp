@@ -3681,7 +3681,8 @@ void MainWindow::callSandP2(int n)
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65") {
     double kHz=w[0].toDouble();
-    m_freqNominal=(1296*1000 + kHz)* 1000;
+    int nMHz=m_freqNominal/1000000;
+    m_freqNominal=(nMHz*1000 + kHz)* 1000;
     m_deCall=w[2];
     m_deGrid=w[3];
     m_txFirst=(w[4]=="0");
