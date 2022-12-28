@@ -7089,7 +7089,6 @@ void MainWindow::on_actionQ65_triggered()
   ui->rh_decodes_title_label->setText(tr ("Average Decodes"));
   ui->lh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
   ui->rh_decodes_headings_label->setText("UTC   dB   DT Freq    " + tr ("Message"));
-  fast_config(m_bFastMode);
   statusChanged();
 
   m_specOp=m_config.special_op_id();
