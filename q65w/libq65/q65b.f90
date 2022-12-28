@@ -1,25 +1,22 @@
-subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
-     mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,newdat,nagain,          &
+subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
+     mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
      max_drift,ndepth,datetime,ndop00,idec)
 
-! This routine provides an interface between MAP65 and the Q65 decoder
-! in WSJT-X.  All arguments are input data obtained from the MAP65 GUI.
+! This routine provides an interface between Q65W and the Q65 decoder
+! in WSJT-X.  All arguments are input data obtained from the Q65W GUI.
 ! Raw Rx data are available as the 96 kHz complex spectrum ca(MAXFFT1)
-! in common/cacb.  Decoded messages are sent back to the GUI on stdout.
+! in common/cacb.  Decoded messages are sent back to the GUI.
 
   use q65_decode
-  use wideband_sync
   use timer_module, only: timer
 
   parameter (MAXFFT1=5376000)              !56*96000
   parameter (MAXFFT2=336000)               !56*6000 (downsampled by 1/16)
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
-!  type(hdr) h                            !Header for the .wav file
   integer*2 iwave(60*12000)
-  complex ca(MAXFFT1)                      !FFTs of raw x,y data
+  complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
-  integer ipk1(1)
   real*8 fcenter,freq0,freq1
   character*12 mycall0,hiscall0
   character*12 mycall,hiscall
@@ -38,16 +35,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
 
 ! Find best frequency from sync_dat, the "orange sync curve".
   df3=96000.0/32768.0
-  ifreq=nint((1000.0*f0)/df3)
-  ia=nint(ifreq-ntol/df3)
-  ib=nint(ifreq+ntol/df3)
-  ipk1=maxloc(sync(ia:ib)%ccfmax)
-  ipk=ia+ipk1(1)-1
-!  f_ipk=ipk*df3
-  ipk2=(1000.0*f0-1.0)/df3
-  snr1=sync(ipk)%ccfmax
-  ipk=ipk2                      !Substitute new ipk value
-
+  ipk=(1000.0*f0-1.0)/df3
   nfft1=MAXFFT1
   nfft2=MAXFFT2
   df=96000.0/NFFT1
@@ -62,8 +50,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   if(nagain.eq.1) k0=nint((f_mouse-1000.0)/df)
 
   if(k0.lt.nh .or. k0.gt.MAXFFT1-nfft2+1) go to 900
-  if(snr1.lt.1.5) go to 900                      !### Threshold needs work? ###
-
   fac=1.0/nfft2
   cx(0:nfft2-1)=ca(k0:k0+nfft2-1)
   cx=fac*cx
@@ -77,10 +63,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
 !    (Hz)              (Hz)                 (Hz)
 !----------------------------------------------------
 !   96000  5376000  0.017857143  336000   6000.000
-!   95238  5120000  0.018601172  322560   5999.994
 
   cz(0:MAXFFT2-1)=cx
-
   cz(MAXFFT2)=0.
 ! Roll off below 500 Hz and above 2500 Hz.
   ja=nint(500.0/df)
@@ -111,7 +95,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
   nsnr0=-99             !Default snr for no decode
 
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
-
   call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
        newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
    MHz=fcenter
@@ -134,11 +117,9 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol, &
      write(12,1130) datetime,trim(result(ndecodes)(5:))
 1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
-!     print*,'AAA',f_ipk,k0*df,f0,ipk,ipk2,trim(msg0)
      idec=0
   endif
 
 900 flush(12)
-
   return
 end subroutine q65b

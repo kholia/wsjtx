@@ -3681,7 +3681,8 @@ void MainWindow::callSandP2(int n)
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65") {
     double kHz=w[0].toDouble();
-    m_freqNominal=(1296*1000 + kHz)* 1000;
+    int nMHz=m_freqNominal/1000000;
+    m_freqNominal=(nMHz*1000 + kHz)* 1000;
     m_deCall=w[2];
     m_deGrid=w[3];
     m_txFirst=(w[4]=="0");
@@ -9235,6 +9236,20 @@ void MainWindow::readWidebandDecodes()
     m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
     m_fetched++;
+
+    Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
+    bool bCQ=line.contains(" CQ ");
+    bool bFromDisk=q65wcom.nQDecoderDone==2;
+    if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
+      qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
+      if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
+        showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+      }
+    }
+  }
+
+  if (m_config.spot_to_psk_reporter ()) {
+    m_psk_Reporter.sendReport();                // Upload any queued spots
   }
 
 // Update "m_wEMECall" by reading q65w_decodes.txt

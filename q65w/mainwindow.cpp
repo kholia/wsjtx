@@ -352,7 +352,7 @@ void MainWindow::dataSink(int k)
     ndiskdat=0;
     datcom_.ndiskdat=0;
   }
-// Get x and y power, polarized spectrum, nkhz, and ihsym
+// Get power, spectrum, nkhz, and ihsym
   nb=0;
   if(m_NB) nb=1;
   nfsample=96000;
@@ -427,13 +427,14 @@ void MainWindow::dataSink(int k)
 //    qDebug() << "aa" << "Decoder called" << ihsym << ipc_wsjtx[0] << ipc_wsjtx[1]
 //             << ipc_wsjtx[2] << ipc_wsjtx[3] << ipc_wsjtx[4] ;
     decode();                                           //Start the decoder
-    if(m_saveAll and !m_diskData) {
+    if(m_saveAll and !m_diskData and m_nTransmitted<10) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
       *future2 = QtConcurrent::run(savetf2, fname, false);
       watcher2->setFuture(*future2);
     }
+    m_nTransmitted=0;
   }
 
   soundInThread.m_dataSinkBusy=false;
@@ -755,6 +756,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
   decodes_.nQDecoderDone=1;
+  if(m_diskData) decodes_.nQDecoderDone=2;
   mem_q65w.lock();
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
   mem_q65w.unlock();
@@ -762,8 +764,6 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   lab3->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
-//  float secToDecode=0.001*m_decoder_start_time.msecsTo(now);
-//  qDebug() << "bb" << "Decoder Finished" << t1 << secToDecode << now.toString("hh:mm:ss.z");
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
@@ -984,8 +984,17 @@ void MainWindow::guiUpdate()
   }
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec%60 << ipc_wsjtx[3] << ipc_wsjtx[4]<< m_monitoring;
-//    qDebug() << "BBB" << nsec%60 << decodes_.ndecodes << m_fetched;
+    static int n60z=99;
+    int n60=nsec%60;
+    int itest[5];
+    mem_q65w.lock();
+    memcpy(&itest, (char*)ipc_wsjtx, 20);
+    mem_q65w.unlock();
+    if(itest[4]==1) m_nTransmitted++;
+//    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4]
+//             << m_nTransmitted;
+    if(n60<n60z) m_nTransmitted=0;
+    n60z=n60;
 
     if(m_pctZap>30.0) {
       lab2->setStyleSheet("QLabel{background-color: #ff0000}");
