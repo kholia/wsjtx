@@ -827,6 +827,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         config_label.hide ();
       }
       statusUpdate ();
+      QTimer::singleShot (250, [=] {setRig (m_lastMonitoredFrequency);});   // This is needed for Hamradio Deluxe
     });
   m_multi_settings->create_menu_actions (this, ui->menuConfig);
   m_configurations_button = m_rigErrorMessageBox.addButton (tr ("Configurations...")
@@ -4353,15 +4354,17 @@ void MainWindow::guiUpdate()
 
     if(m_mode=="FT8" and SpecOp::FOX==m_specOp) {
 // Don't allow Fox mode in any of the default FT8 sub-bands.
-      qint32 ft8Freq[]={1840,3573,7074,10136,14074,18100,21074,24915,28074,50313,70100};
+      qint32 ft8Freq[]={1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
       for(int i=0; i<11; i++) {
-        int kHzdiff=m_freqNominal/1000 - ft8Freq[i];
-        if(qAbs(kHzdiff) < 4) {
+          int kHzdiff=m_freqNominal - ft8Freq[i];
+          if(qAbs(kHzdiff) < 3000 ) {
           m_bTxTime=false;
           if (m_auto) auto_tx_mode (false);
-          auto const& message = tr ("Please choose another dial frequency."
-                                    " WSJT-X will not operate in Fox mode"
-                                    " in the standard FT8 sub-bands.");
+          if (m_tune) stop_tuning();
+          auto const& message = tr ("Please choose another dial frequency.\n"
+                                    "Must be 3Khz away from %1.\n"
+                                    "WSJT-X will not operate in Fox mode\n"
+                                    "overlapping the standard FT8 sub-bands.").arg(ft8Freq[i]);
           QTimer::singleShot (0, [=] {               // don't block guiUpdate
             MessageBox::warning_message (this, tr ("Fox Mode warning"), message);
           });
