@@ -228,6 +228,22 @@ namespace
           |DC                              # District of Columbia
           |DX                              # anyone else
           |SCC                             # Slovenia Contest Club contest
+          |DR|FR|GD|GR|OV|ZH|ZL            # Dutch provinces (also FL,NH,UT,NB,LB)
+          |X01|X02|X03|X04|X05|X06|X07     # 99 neutral exchanges
+          |X08|X09|X10|X11|X12|X13|X14
+          |X15|X16|X17|X18|X19|X20|X21
+          |X22|X23|X24|X25|X26|X27|X28
+          |X29|X30|X31|X32|X33|X34|X35
+          |X36|X37|X38|X39|X40|X41|X42
+          |X43|X44|X45|X46|X47|X48|X49
+          |X50|X51|X52|X53|X54|X55|X56
+          |X57|X58|X59|X60|X61|X62|X63
+          |X64|X65|X66|X67|X68|X69|X70
+          |X71|X72|X73|X74|X75|X76|X77
+          |X78|X79|X80|X81|X82|X83|X84
+          |X85|X86|X87|X88|X89|X90|X91
+          |X92|X93|X94|X95|X96|X97|X98
+          |X99
         )
       )", QRegularExpression::CaseInsensitiveOption | QRegularExpression::ExtendedPatternSyntaxOption};
 
@@ -241,15 +257,15 @@ namespace
         [A-F]\ *                          # class and optional space
         (
            AB|AK|AL|AR|AZ|BC|CO|CT|DE|EB  # ARRL/RAC section
-          |EMA|ENY|EPA|EWA|GA|GTA|IA|ID
-          |IL|IN|KS|KY|LA|LAX|MAR|MB|MDC
-          |ME|MI|MN|MO|MS|MT|NC|ND|NE|NFL
-          |NH|NL|NLI|NM|NNJ|NNY|NT|NTX|NV
-          |OH|OK|ONE|ONN|ONS|OR|ORG|PAC|PE
-          |PR|QC|RI|SB|SC|SCV|SD|SDG|SF
-          |SFL|SJV|SK|SNJ|STX|SV|TN|UT|VA
-          |VI|VT|WCF|WI|WMA|WNY|WPA|WTX
-          |WV|WWA|WY
+          |EMA|ENY|EPA|EWA|GA|GH|IA|ID
+          |IL|IN|KS|KY|LA|LAX|MB|MDC|ME
+          |MI|MN|MO|MS|MT|NB|NC|ND|NE|NFL
+          |NH|NL|NLI|NM|NNJ|NNY|NS|NTX|NV
+          |OH|OK|ONE|ONN|ONS|OR|ORG|PAC
+          |PE|PR|QC|RI|SB|SC|SCV|SD|SDG
+          |SF|SFL|SJV|SK|SNJ|STX|SV|TER
+          |TN|UT|VA|VI|VT|WCF|WI|WMA|WNY
+          |WPA|WTX|WV|WWA|WY
           |DX                             # anyone else
         )
       )", QRegularExpression::CaseInsensitiveOption | QRegularExpression::ExtendedPatternSyntaxOption};
@@ -565,6 +581,7 @@ private:
   Q_SLOT void on_cbAutoLog_clicked(bool);
   Q_SLOT void on_Field_Day_Exchange_textEdited (QString const&);
   Q_SLOT void on_RTTY_Exchange_textEdited (QString const&);
+  Q_SLOT void on_Contest_Name_textEdited (QString const&);
 
   // typenames used as arguments must match registered type names :(
   Q_SIGNAL void start_transceiver (unsigned seqeunce_number) const;
@@ -660,6 +677,7 @@ private:
   QString my_grid_;
   QString FD_exchange_;
   QString RTTY_exchange_;
+  QString Contest_Name_;
 
   qint32 id_interval_;
   qint32 ntrials_;
@@ -693,6 +711,7 @@ private:
   bool decode_at_52s_;
   bool single_decode_;
   bool twoPass_;
+  bool Individual_Contest_Name_;
   bool bSpecialOp_;
   int  SelectedActivity_;
   bool x2ToneSpacing_;
@@ -800,6 +819,7 @@ bool Configuration::enable_VHF_features () const {return m_->enable_VHF_features
 bool Configuration::decode_at_52s () const {return m_->decode_at_52s_;}
 bool Configuration::single_decode () const {return m_->single_decode_;}
 bool Configuration::twoPass() const {return m_->twoPass_;}
+bool Configuration::Individual_Contest_Name() const {return m_->Individual_Contest_Name_;}
 bool Configuration::x2ToneSpacing() const {return m_->x2ToneSpacing_;}
 bool Configuration::x4ToneSpacing() const {return m_->x4ToneSpacing_;}
 bool Configuration::split_mode () const {return m_->split_mode ();}
@@ -958,6 +978,11 @@ void Configuration::setEU_VHF_Contest()
 QString Configuration::RTTY_Exchange() const
 {
   return m_->RTTY_exchange_;
+}
+
+QString Configuration::Contest_Name() const
+{
+  return m_->Contest_Name_;
 }
 
 auto Configuration::special_op_id () const -> SpecialOperatingActivity
@@ -1403,6 +1428,7 @@ void Configuration::impl::initialize_models ()
   ui_->decode_at_52s_check_box->setChecked(decode_at_52s_);
   ui_->single_decode_check_box->setChecked(single_decode_);
   ui_->cbTwoPass->setChecked(twoPass_);
+  ui_->cbContestName->setChecked(Individual_Contest_Name_);
   ui_->gbSpecialOpActivity->setChecked(bSpecialOp_);
   ui_->special_op_activity_button_group->button (SelectedActivity_)->setChecked (true);
   ui_->cbx2ToneSpacing->setChecked(x2ToneSpacing_);
@@ -1513,6 +1539,7 @@ void Configuration::impl::read_settings ()
   my_grid_ = settings_->value ("MyGrid", QString {}).toString ();
   FD_exchange_ = settings_->value ("Field_Day_Exchange",QString {}).toString ();
   RTTY_exchange_ = settings_->value ("RTTY_Exchange",QString {}).toString ();
+  Contest_Name_ = settings_->value ("Contest_Name",QString {}).toString ();
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
@@ -1662,6 +1689,7 @@ void Configuration::impl::read_settings ()
   decode_at_52s_ = settings_->value("Decode52",false).toBool ();
   single_decode_ = settings_->value("SingleDecode",false).toBool ();
   twoPass_ = settings_->value("TwoPass",true).toBool ();
+  Individual_Contest_Name_ = settings_->value("Individual_Contest_Name",true).toBool ();
   bSpecialOp_ = settings_->value("SpecialOpActivity",false).toBool ();
   SelectedActivity_ = settings_->value("SelectedActivity",1).toInt (); 
   x2ToneSpacing_ = settings_->value("x2ToneSpacing",false).toBool ();
@@ -1722,6 +1750,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("MyGrid", my_grid_);
   settings_->setValue ("Field_Day_Exchange", FD_exchange_);
   settings_->setValue ("RTTY_Exchange", RTTY_exchange_);
+  settings_->setValue ("Contest_Name", Contest_Name_);
   settings_->setValue ("Font", font_.toString ());
   settings_->setValue ("DecodedTextFont", decoded_text_font_.toString ());
   settings_->setValue ("IDint", id_interval_);
@@ -1796,6 +1825,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("Decode52", decode_at_52s_);
   settings_->setValue ("SingleDecode", single_decode_);
   settings_->setValue ("TwoPass", twoPass_);
+  settings_->setValue ("Individual_Contest_Name", Individual_Contest_Name_);
   settings_->setValue ("SelectedActivity", SelectedActivity_);
   settings_->setValue ("SpecialOpActivity", bSpecialOp_);
   settings_->setValue ("x2ToneSpacing", x2ToneSpacing_);
@@ -2186,6 +2216,7 @@ void Configuration::impl::accept ()
   my_grid_ = ui_->grid_line_edit->text ();
   FD_exchange_= ui_->Field_Day_Exchange->text ().toUpper ();
   RTTY_exchange_= ui_->RTTY_Exchange->text ().toUpper ();
+  Contest_Name_= ui_->Contest_Name->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
   psk_reporter_tcpip_ = ui_->psk_reporter_tcpip_check_box->isChecked ();
   id_interval_ = ui_->CW_id_interval_spin_box->value ();
@@ -2223,6 +2254,7 @@ void Configuration::impl::accept ()
   decode_at_52s_ = ui_->decode_at_52s_check_box->isChecked ();
   single_decode_ = ui_->single_decode_check_box->isChecked ();
   twoPass_ = ui_->cbTwoPass->isChecked ();
+  Individual_Contest_Name_ = ui_->cbContestName->isChecked ();
   bSpecialOp_ = ui_->gbSpecialOpActivity->isChecked ();
   SelectedActivity_ = ui_->special_op_activity_button_group->checkedId();
   x2ToneSpacing_ = ui_->cbx2ToneSpacing->isChecked ();
@@ -2308,6 +2340,8 @@ void Configuration::impl::accept ()
   use_dynamic_grid_ = ui_->use_dynamic_grid->isChecked();
   highlight_DXcall_ = ui_->cbHighlightDXcall->isChecked();
   highlight_DXgrid_ = ui_->cbHighlightDXgrid->isChecked();
+  Individual_Contest_Name_ = ui_->cbContestName->isChecked();
+
   write_settings ();		// make visible to all
 }
 
@@ -2890,6 +2924,11 @@ void Configuration::impl::on_Field_Day_Exchange_textEdited (QString const& excha
 void Configuration::impl::on_RTTY_Exchange_textEdited (QString const& exchange)
 {
   ui_->RTTY_Exchange->setText (exchange.toUpper ());
+}
+
+void Configuration::impl::on_Contest_Name_textEdited (QString const& exchange)
+{
+  ui_->Contest_Name->setText (exchange.toUpper ());
 }
 
 bool Configuration::impl::have_rig ()
