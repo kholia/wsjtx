@@ -1014,30 +1014,30 @@ void MainWindow::stub()                                        //stub()
 void MainWindow::on_actionRelease_Notes_triggered()
 {
   QDesktopServices::openUrl(QUrl(
-  "https://www.physics.princeton.edu/pulsar/K1JT/Release_Notes.txt",
+  "https://wsjt.sourceforge.io/Release_Notes.txt",
                               QUrl::TolerantMode));
 }
 
 void MainWindow::on_actionOnline_Users_Guide_triggered()      //Display manual
 {
   QDesktopServices::openUrl(QUrl(
-  "https://www.physics.princeton.edu/pulsar/K1JT/MAP65_Users_Guide.pdf",
+  "https://wsjt.sourceforge.io/MAP65_Users_Guide.pdf",
                               QUrl::TolerantMode));
 }
 
 void MainWindow::on_actionQSG_Q65_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/Q65_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Q65_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionQSG_MAP65_v3_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionQ65_Sensitivity_in_MAP65_3_0_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/Q65_Sensitivity_in_MAP65.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Q65_Sensitivity_in_MAP65.pdf"});
 }
 
 void MainWindow::on_actionAstro_Data_triggered()             //Display Astro
