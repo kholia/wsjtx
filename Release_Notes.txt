@@ -48,9 +48,15 @@ Other enhancements and bug fixes since 2.6.0-rc5 include the following:
 
  - Add tooltips to better explain the split operation options.
 
+ - Add some additional FT roundup exchanges which can be used for 
+   local contests or QSO parties.
+
+ - Update of some ARRL section abbreviations.
+
 For full details on changes since WSJT-X version 2.5.4, be sure to
 read the Release Notes sections for 2.6.0-rc1 through rc5, immediately
 following.
+
 
                       Release: WSJT-X 2.6.0-rc5
                           November 29, 2022
