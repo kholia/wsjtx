@@ -257,15 +257,15 @@ namespace
         [A-F]\ *                          # class and optional space
         (
            AB|AK|AL|AR|AZ|BC|CO|CT|DE|EB  # ARRL/RAC section
-          |EMA|ENY|EPA|EWA|GA|GTA|IA|ID
-          |IL|IN|KS|KY|LA|LAX|MAR|MB|MDC
-          |ME|MI|MN|MO|MS|MT|NC|ND|NE|NFL
-          |NH|NL|NLI|NM|NNJ|NNY|NT|NTX|NV
-          |OH|OK|ONE|ONN|ONS|OR|ORG|PAC|PE
-          |PR|QC|RI|SB|SC|SCV|SD|SDG|SF
-          |SFL|SJV|SK|SNJ|STX|SV|TN|UT|VA
-          |VI|VT|WCF|WI|WMA|WNY|WPA|WTX
-          |WV|WWA|WY
+          |EMA|ENY|EPA|EWA|GA|GH|IA|ID
+          |IL|IN|KS|KY|LA|LAX|MB|MDC|ME
+          |MI|MN|MO|MS|MT|NB|NC|ND|NE|NFL
+          |NH|NL|NLI|NM|NNJ|NNY|NS|NTX|NV
+          |OH|OK|ONE|ONN|ONS|OR|ORG|PAC
+          |PE|PR|QC|RI|SB|SC|SCV|SD|SDG
+          |SF|SFL|SJV|SK|SNJ|STX|SV|TER
+          |TN|UT|VA|VI|VT|WCF|WI|WMA|WNY
+          |WPA|WTX|WV|WWA|WY
           |DX                             # anyone else
         )
       )", QRegularExpression::CaseInsensitiveOption | QRegularExpression::ExtendedPatternSyntaxOption};

@@ -204,8 +204,8 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
 ! the value of nrx is used to decide when mycall13 or dxcall13 should
 ! be used in place of a callsign from the hashtable
 !
-  parameter (NSEC=85)      !Number of ARRL Sections
-  parameter (NUSCAN=171)    !Number of US states and Canadian provinces
+  parameter (NSEC=86)      !Number of ARRL Sections
+  parameter (NUSCAN=171)   !Number of States and Provinces
   parameter (MAXGRID4=32400)
   integer*8 n58
   integer ntel(3)
@@ -229,14 +229,14 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
   data c/' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ/'/
   data csec/                                                         &
        "AB ","AK ","AL ","AR ","AZ ","BC ","CO ","CT ","DE ","EB ",  &       
-       "EMA","ENY","EPA","EWA","GA ","GTA","IA ","ID ","IL ","IN ",  &       
-       "KS ","KY ","LA ","LAX","MAR","MB ","MDC","ME ","MI ","MN ",  &       
+       "EMA","ENY","EPA","EWA","GA ","GH ","IA ","ID ","IL ","IN ",  &
+       "KS ","KY ","LA ","LAX","NS ","MB ","MDC","ME ","MI ","MN ",  &
        "MO ","MS ","MT ","NC ","ND ","NE ","NFL","NH ","NL ","NLI",  &       
-       "NM ","NNJ","NNY","NT ","NTX","NV ","OH ","OK ","ONE","ONN",  &       
+       "NM ","NNJ","NNY","TER","NTX","NV ","OH ","OK ","ONE","ONN",  &
        "ONS","OR ","ORG","PAC","PR ","QC ","RI ","SB ","SC ","SCV",  &       
        "SD ","SDG","SF ","SFL","SJV","SK ","SNJ","STX","SV ","TN ",  &       
        "UT ","VA ","VI ","VT ","WCF","WI ","WMA","WNY","WPA","WTX",  &       
-       "WV ","WWA","WY ","DX ","PE "/
+       "WV ","WWA","WY ","DX ","PE ","NB "/
   data cmult/                                                        &
        "AL ","AK ","AZ ","AR ","CA ","CO ","CT ","DE ","FL ","GA ",  &
        "HI ","ID ","IL ","IN ","IA ","KS ","KY ","LA ","ME ","MD ",  &
@@ -903,7 +903,7 @@ subroutine pack77_03(nwords,w,i3,n3,c77)
 ! Check 0.3 and 0.4 (ARRL Field Day exchange)
 ! Example message:  WA9XYZ KA1ABC R 16A EMA       28 28 1 4 3 7    71  
 
-  parameter (NSEC=85)      !Number of ARRL Sections
+  parameter (NSEC=86)      !Number of ARRL Sections
   character*13 w(19)
   character*77 c77
   character*6 bcall_1,bcall_2
@@ -911,14 +911,14 @@ subroutine pack77_03(nwords,w,i3,n3,c77)
   logical ok1,ok2
   data csec/                                                         &
        "AB ","AK ","AL ","AR ","AZ ","BC ","CO ","CT ","DE ","EB ",  &       
-       "EMA","ENY","EPA","EWA","GA ","GTA","IA ","ID ","IL ","IN ",  &       
-       "KS ","KY ","LA ","LAX","MAR","MB ","MDC","ME ","MI ","MN ",  &       
+       "EMA","ENY","EPA","EWA","GA ","GH ","IA ","ID ","IL ","IN ",  &
+       "KS ","KY ","LA ","LAX","NS ","MB ","MDC","ME ","MI ","MN ",  &
        "MO ","MS ","MT ","NC ","ND ","NE ","NFL","NH ","NL ","NLI",  &       
-       "NM ","NNJ","NNY","NT ","NTX","NV ","OH ","OK ","ONE","ONN",  &       
+       "NM ","NNJ","NNY","TER","NTX","NV ","OH ","OK ","ONE","ONN",  &
        "ONS","OR ","ORG","PAC","PR ","QC ","RI ","SB ","SC ","SCV",  &       
        "SD ","SDG","SF ","SFL","SJV","SK ","SNJ","STX","SV ","TN ",  &       
        "UT ","VA ","VI ","VT ","WCF","WI ","WMA","WNY","WPA","WTX",  &       
-       "WV ","WWA","WY ","DX ","PE "/
+       "WV ","WWA","WY ","DX ","PE ","NB "/
 
   if(nwords.lt.4 .or. nwords.gt.5) return  
   call chkcall(w(1),bcall_1,ok1)
