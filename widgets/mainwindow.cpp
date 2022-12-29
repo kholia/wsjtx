@@ -5760,12 +5760,16 @@ void MainWindow::genCQMsg ()
        ( tlist.at(1)==my_callsign or
          tlist.at(2)==my_callsign ) and
        stdCall(my_callsign)) {
+      if(m_config.Individual_Contest_Name())  {
+           m_cqStr = m_config.Contest_Name();
+      } else {
       if(SpecOp::NA_VHF == m_specOp)    m_cqStr="TEST";
       if(SpecOp::EU_VHF == m_specOp)    m_cqStr="TEST";
       if(SpecOp::FIELD_DAY == m_specOp) m_cqStr="FD";
       if(SpecOp::RTTY == m_specOp)      m_cqStr="RU";
       if(SpecOp::WW_DIGI == m_specOp)   m_cqStr="WW";
       if(SpecOp::ARRL_DIGI == m_specOp) m_cqStr="TEST";
+      }
       if( tlist.at(1)==my_callsign ) {
          t="CQ " + m_cqStr + " " + tlist.at(1) + " " + tlist.at(2); 
       } else {
