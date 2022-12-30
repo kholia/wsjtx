@@ -224,7 +224,7 @@ int* ipc_q65w;
 
 namespace
 {
-  Radio::Frequency constexpr default_frequency {14076000};
+  Radio::Frequency constexpr default_frequency {14074000};
   QRegExp message_alphabet {"[- @A-Za-z0-9+./?#<>;$]*"};
   // grid exact match excluding RR73
   QRegularExpression grid_regexp {"\\A(?![Rr]{2}73)[A-Ra-r]{2}[0-9]{2}([A-Xa-x]{2}){0,1}\\z"};
@@ -366,7 +366,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_appDir {QApplication::applicationDirPath ()},
   m_cqStr {""},
   m_palette {"Linrad"},
-  m_mode {"JT9"},
+  m_mode {"FT8"},
   m_rpt {"-15"},
   m_pfx {
     "1A", "1S",
@@ -827,6 +827,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         config_label.hide ();
       }
       statusUpdate ();
+      QTimer::singleShot (250, [=] {setRig (m_lastMonitoredFrequency);});   // This is needed for Hamradio Deluxe
     });
   m_multi_settings->create_menu_actions (this, ui->menuConfig);
   m_configurations_button = m_rigErrorMessageBox.addButton (tr ("Configurations...")
@@ -1298,7 +1299,7 @@ void MainWindow::readSettings()
   ui->actionSplit_ALL_TXT_yearly->setChecked(m_settings->value("splitAllTxtYearly", false).toBool());
   ui->actionSplit_ALL_TXT_monthly->setChecked(m_settings->value("splitAllTxtMonthly", false).toBool());
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
-  m_mode=m_settings->value("Mode","JT9").toString();
+  m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
   ui->actionSave_all->setChecked(m_settings->value("SaveAll",false).toBool());
@@ -2654,27 +2655,27 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
 
 void MainWindow::on_actionRelease_Notes_triggered ()
 {
-  QDesktopServices::openUrl (QUrl {"http://physics.princeton.edu/pulsar/k1jt/Release_Notes.txt"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Release_Notes.txt"});
 }
 
 void MainWindow::on_actionFT8_DXpedition_Mode_User_Guide_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"http://physics.princeton.edu/pulsar/k1jt/FT8_DXpedition_Mode.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/FT8_DXpedition_Mode.pdf"});
 }
 
 void MainWindow::on_actionQSG_FST4_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/FST4_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/FST4_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionQSG_Q65_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/Q65_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Q65_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionQSG_X250_M3_triggered()
 {
-  QDesktopServices::openUrl (QUrl {"https://physics.princeton.edu/pulsar/k1jt/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
 }
 
 void MainWindow::on_actionOnline_User_Guide_triggered()      //Display manual
@@ -4353,15 +4354,17 @@ void MainWindow::guiUpdate()
 
     if(m_mode=="FT8" and SpecOp::FOX==m_specOp) {
 // Don't allow Fox mode in any of the default FT8 sub-bands.
-      qint32 ft8Freq[]={1840,3573,7074,10136,14074,18100,21074,24915,28074,50313,70100};
+      qint32 ft8Freq[]={1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
       for(int i=0; i<11; i++) {
-        int kHzdiff=m_freqNominal/1000 - ft8Freq[i];
-        if(qAbs(kHzdiff) < 4) {
+          int kHzdiff=m_freqNominal - ft8Freq[i];
+          if(qAbs(kHzdiff) < 3000 ) {
           m_bTxTime=false;
           if (m_auto) auto_tx_mode (false);
-          auto const& message = tr ("Please choose another dial frequency."
-                                    " WSJT-X will not operate in Fox mode"
-                                    " in the standard FT8 sub-bands.");
+          if (m_tune) stop_tuning();
+          auto const& message = tr ("Please choose another dial frequency.\n"
+                                    "Must be 3Khz away from %1.\n"
+                                    "WSJT-X will not operate in Fox mode\n"
+                                    "overlapping the standard FT8 sub-bands.").arg(ft8Freq[i]);
           QTimer::singleShot (0, [=] {               // don't block guiUpdate
             MessageBox::warning_message (this, tr ("Fox Mode warning"), message);
           });
@@ -5813,12 +5816,16 @@ void MainWindow::genCQMsg ()
        ( tlist.at(1)==my_callsign or
          tlist.at(2)==my_callsign ) and
        stdCall(my_callsign)) {
+      if(m_config.Individual_Contest_Name())  {
+           m_cqStr = m_config.Contest_Name();
+      } else {
       if(SpecOp::NA_VHF == m_specOp)    m_cqStr="TEST";
       if(SpecOp::EU_VHF == m_specOp)    m_cqStr="TEST";
       if(SpecOp::FIELD_DAY == m_specOp) m_cqStr="FD";
       if(SpecOp::RTTY == m_specOp)      m_cqStr="RU";
       if(SpecOp::WW_DIGI == m_specOp)   m_cqStr="WW";
       if(SpecOp::ARRL_DIGI == m_specOp) m_cqStr="TEST";
+      }
       if( tlist.at(1)==my_callsign ) {
          t="CQ " + m_cqStr + " " + tlist.at(1) + " " + tlist.at(2); 
       } else {

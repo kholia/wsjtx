@@ -4,26 +4,43 @@
 - _WSJT-X 2.6_ implements new features supporting the ARRL
 International Digital Contest and its distance based scoring.  The
 *Call 1st* checkbox has been replaced by a drop-down control offering
-*CQ Max Dist* as an alternative.  With this option selected, the
-program will select the reply to your CQ that yields the most contest
-points.  In addition, a new window labeled *Active Stations* displays
-a list of received but unworked callsigns, sorted in decreasing order
-of potential contest points.  Click on a line in this window to call
-that station.
+*CQ Max Dist* as an alternative.  A new window labeled *Active
+Stations* displays a list of received but unworked callsigns, sorted
+in decreasing order of potential contest points.  With option *CQ Max
+Dist* selected, the program will select the reply to your CQ that
+yields the most contest points.  You can click on a line in the Active
+Stations window to call that station.
 
 - Decoding performance for FT8 and Q65 has been improved in a variety
 of situations with available _a priori_ (AP) information.
 
 - *Echo* mode now offers a *Clear Avg* button and produces reliable
 measurements of SNR even when Doppler spread is large.  Its *Monitor*
-function can be used to measure SNR for a received unmodulated
-carrier such as a key-down test signal emitted by another station and
-reflected from the Moon, and to measure Sun, Moon, and ground noise as
-aids for optimizing an EME station's performance.
+function can be used to measure SNR for a received unmodulated carrier
+such as a key-down test signal emitted by another station and
+reflected from the Moon, and also to measure Sun, Moon, and ground
+noise as aids for optimizing an EME station's performance.
 
 - New buttons on the main window allow quick changes between modes
-FT4, FT8, MSK144, Q65, and JT65.  Another new button allows toggling
-FT8 Hound mode ON or OFF.
+FT4, FT8, MSK144, Q65, and JT65, and toggling FT8 Hound mode ON/OFF.
+
+- New convenience features allow Fox operators to react more quickly
+to particular QSO situations.  A two-column table in Tab 2 provides an
+overview of the queue and of callsigns with QSOs in progress.  Fox
+operator can change the ordering of callsigns in the queue, allowing
+reaction to changes in propagation.  Fox now responds automatically
+for another two cycles to stations whose report has not been received,
+increasing the success rate for difficult QSOs.
+
+- The Working frequency table now offers save/restore capability and
+better handling of more than one frequency per mode-band
+combination. You can set preferred frequencies, and WSJT-X will select
+these when you change band or mode.  You can label a tabled frequency
+with a description, for example a DXpedition callsign, and set Start
+and End date and time so the frequencies automatically appear and
+disappear from the displayed options.  You can load a publicly
+available frequency table from a file, to easily make such DXpedition
+data available to the program.
 
 - Optional color highlighting is provided for specified DX Call and DX
 Grid, and for messages containing RR73 or 73.
@@ -33,17 +50,19 @@ request automatic starting of a new file every month or every year,
 and you can disable writing altogether.
 
 - Settings for T/R period and Submode are remembered by mode when you
-switch directly between (for example) MSK144-15, Q65-60A, JT65-C, or
+switch directly between modes: for example, MSK144-15, Q65-60A, or
 FST4-120.
 
 - Tx and Rx audio frequencies are remembered and restored when you
 return from a mode that sets a default frequency 1500 Hz (MSK144,
 FST4W, Echo, WSPR, FreqCal), then switching back to FT4, FT8, Q65,
-JT65, or FST4.
+FST4, or JT65.
 
-- Other changes include bug fixes and rig control for some new radios.
+- Rig control is provided for some new radios, and bug fixes for
+controlling others.
 
-- _MAP65 3.0_ (available for Windows only) now sends additional
-information to file azel.dat and offers digital scaling of input I/Q
-data.
-
+- New features in _MAP65_ (available for Windows only) include an aid
+for measuring antenna pointing errors and an ability to read the file
+wsjtx.log (kept by _WSJT-X_) to recognize EME contest dupes.  In
+addition, _MAP65_ now sends additional information to file azel.dat
+and offers optional digital scaling of input I/Q data.
