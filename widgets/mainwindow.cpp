@@ -356,7 +356,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_appDir {QApplication::applicationDirPath ()},
   m_cqStr {""},
   m_palette {"Linrad"},
-  m_mode {"JT9"},
+  m_mode {"FT8"},
   m_rpt {"-15"},
   m_pfx {
     "1A", "1S",
@@ -1273,7 +1273,7 @@ void MainWindow::readSettings()
   ui->actionSplit_ALL_TXT_yearly->setChecked(m_settings->value("splitAllTxtYearly", false).toBool());
   ui->actionSplit_ALL_TXT_monthly->setChecked(m_settings->value("splitAllTxtMonthly", false).toBool());
   ui->actionDisable_writing_of_ALL_TXT->setChecked(m_settings->value("disableWritingOfAllTxt", false).toBool());
-  m_mode=m_settings->value("Mode","JT9").toString();
+  m_mode=m_settings->value("Mode","FT8").toString();
   ui->actionNone->setChecked(m_settings->value("SaveNone",true).toBool());
   ui->actionSave_decoded->setChecked(m_settings->value("SaveDecoded",false).toBool());
   ui->actionSave_all->setChecked(m_settings->value("SaveAll",false).toBool());
