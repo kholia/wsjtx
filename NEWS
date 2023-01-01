@@ -12,12 +12,14 @@
 Copyright 2001 - 2023 by Joe Taylor, K1JT, and the WSJT Development Team
 
                         Release: WSJT-X 2.6.0
-                           January 2, 2023
+                           January 6, 2023
                       -------------------------
 
 WSJT-X 2.6.0 is a General Availability (GA) release, the first since
 version 2.5.4.  Its major enhancements include the following:
 
+ - Mode selection buttons on main window for FT4, FT8, JT65, MSK144, 
+   Q65, and FT8's Hound mode
  - Support for the ARRL International DX Contest
  - Performance enhancements for the FT8 and Q65 modes
  - New features for EME Echo mode, including calibrated SNR reports
