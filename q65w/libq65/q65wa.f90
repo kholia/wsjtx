@@ -29,6 +29,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
        nWTransmitting,result(50)
   save
 
+  tsec0=sec_midn()
   if(nagain.eq.1) ndepth=3            !Use full depth for click-to-decode
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
@@ -62,6 +63,8 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,nkhz_center,newdat,   &
           nagain,max_drift,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)
+     tsec=sec_midn() - tsec0
+     if(tsec.gt.30.0) exit    !Don't start another decode attempt after t=30 s.
   enddo  ! icand
 
   return
