@@ -841,6 +841,10 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 
 void MainWindow::decode()                                       //decode()
 {
+
+//Don't attempt to decode if decoder is already busy, or if we transmitted for 10 s or more.
+  if(m_decoderBusy or m_nTransmitted>10) return;
+
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
