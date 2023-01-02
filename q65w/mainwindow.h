@@ -182,6 +182,7 @@ private:
   QString m_palette;
   QString m_dateTime;
   QString m_mode;
+  QString m_UTC0="";
 
   QHash<QString,bool> m_worked;
 
