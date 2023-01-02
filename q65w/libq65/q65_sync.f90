@@ -25,12 +25,14 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
   endif
 
   m=nts_q65/2
+  i1=max(1,i0-m)
+  i2=min(NFFT,i0+m)
   ccf=0.
   do lag=0,LAGMAX                     !Search over range of DT
      do j=1,22                        !Test for Q65 sync
         k=isync(j) + lag
-        ccf(lag)=ccf(lag) + sum(ss(k,i0-m:i0+m)) + sum(ss(k+1,i0-m:i0+m)) &
-             + sum(ss(k+2,i0-m:i0+m))
+        ccf(lag)=ccf(lag) + sum(ss(k,i1:i2)) + sum(ss(k+1,i1:i2)) &
+             + sum(ss(k+2,i1:i2))
 ! Q: Should we use weighted sums, perhaps a Lorentzian peak?
      enddo
   enddo
