@@ -516,9 +516,14 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
   lagpk=0
   lagbest=0
   idrift_best=0
+  stest_min=1.4
+
+! Special case for Q65W:
+  if(nfa.eq.990 .and. nfb.eq.1010 .and. nfqso.eq.1000) stest_min=0.0
+
   do i=ia,ib
-     stest=s1avg(i)/(1.015*base0)
-     if(stest.lt.1.4) cycle
+     stest=s1avg(i)/base0
+     if(stest.lt.stest_min) cycle
      ccfmax=0.
      do lag=lag1,lag2
         do idrift=-max_drift,max_drift
