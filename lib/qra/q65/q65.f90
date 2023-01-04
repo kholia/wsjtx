@@ -148,15 +148,15 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   ii1=max(1,i0-64)
   ii2=i0-65+LL
   call pctile(s1(ii1:ii2,1:jz),ii2-ii1+1*jz,45,base)
-  s1=s1/base
+!  s1=s1/base
   s1raw=s1
 
 ! Apply fast AGC to the symbol spectra
-  s1max=20.0                                  !Empirical choice
-  do j=1,jz                                   !### Maybe wrong way? ###
-     smax=maxval(s1(ii1:ii2,j))
-     if(smax.gt.s1max) s1(ii1:ii2,j)=s1(ii1:ii2,j)*s1max/smax
-  enddo
+!  s1max=20.0                                  !Empirical choice
+!  do j=1,jz                                   !### Maybe wrong way? ###
+!     smax=maxval(s1(ii1:ii2,j))
+!     if(smax.gt.s1max) s1(ii1:ii2,j)=s1(ii1:ii2,j)*s1max/smax
+!  enddo
 
   dat4=0
   if(ncw.gt.0 .and. iavg.le.1) then
@@ -219,7 +219,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   width=df*(i2-i1)
   if(ncw.eq.0) ccf1=0.
   call q65_write_red(iz,xdt,ccf2_avg,ccf2)   !### Need this call for WSJT-X
-  
+
   if(idec.lt.0 .and. (iavg.eq.0 .or. iavg.eq.2)) then
      call q65_dec_q012(s3,LL,snr2,dat4,idec,decoded)
   endif
@@ -489,11 +489,14 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
   real ccf2(iz)                               !Orange sync curve
   real, allocatable :: xdt2(:)
   real, allocatable :: s1avg(:)
+  real, allocatable :: ccf_lag(:)
   integer, allocatable :: indx(:)
+  integer ipk1(1)
 
   allocate(xdt2(iz))
   allocate(s1avg(iz))
   allocate(indx(iz))
+  allocate(ccf_lag(lag1:lag2))
 
   ia=max(nfa,100)/df
   ib=min(nfb,4900)/df
@@ -507,12 +510,15 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
      s1avg(i)=sum(s1(i,1:jz))
   enddo
 
+  call pctile(s1avg(ia:ib),ib-ia+1,40,base0)
   ccfbest=0.
   ibest=0
   lagpk=0
   lagbest=0
   idrift_best=0
   do i=ia,ib
+     stest=s1avg(i)/(1.015*base0)
+     if(stest.lt.1.4) cycle
      ccfmax=0.
      do lag=lag1,lag2
         do idrift=-max_drift,max_drift
@@ -533,6 +539,40 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
            endif
         enddo  ! idrift
      enddo  ! lag
+
+! Look at SNR on the "blue curve"
+     idrift=idrift_max
+     do lag=lag1,lag2
+        ccft=0.
+        do kk=1,22
+           k=isync(kk)
+           ii=i + nint(idrift*(k-43)/85.0)
+           if(ii.lt.1 .or. ii.gt.iz) cycle
+           n=NSTEP*(k-1) + 1
+           j=n+lag+j0
+           if(j.ge.1 .and. j.le.jz) ccft=ccft + s1(ii,j)
+        enddo  ! kk
+        ccf_lag(lag)=ccft - (22.0/jz)*s1avg(i)
+     enddo
+
+     pk=maxval(ccf_lag)
+     ipk1=maxloc(ccf_lag)
+     lag0=ipk1(1)-1+lag1
+     xsum=0.
+     sq=0.
+     nsum=0
+     do j=lag1,lag2
+        if(abs(j-lag0).gt.7) then
+           xsum=xsum+ccf_lag(j)
+           sq=sq+ccf_lag(j)**2
+           nsum=nsum+1
+        endif
+     enddo
+     ave=xsum/nsum
+     rms=sqrt(sq/nsum - ave*ave)
+     snr=(pk-ave)/rms
+     if(snr.lt.5.0) cycle              !Blue SNR must be at least 5
+
      ccf2(i)=ccfmax
      xdt2(i)=lagpk*dtstep
      if(ccfmax.gt.ccfbest .and. abs(i*df-nfqso).le.ftol) then
@@ -554,8 +594,6 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
 
 ! Save parameters for best candidates
   jzz=ib-ia+1
-  call pctile(ccf2(ia:ib),jzz,40,base)
-  ccf2=ccf2/base
   call indexx(ccf2(ia:ib),jzz,indx)
   ncand=0
   maxcand=20
@@ -563,7 +601,6 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
      k=jzz-j+1
      if(k.lt.1 .or. k.gt.iz) cycle
      i=indx(k)+ia-1
-     if(ccf2(i).lt.3.3) exit                !Candidate limit
      f=i*df
      i3=max(1, i-mode_q65)
      i4=min(iz,i+mode_q65)

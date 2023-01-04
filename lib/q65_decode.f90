@@ -70,6 +70,7 @@ contains
     character*80 fmt
     integer*2 iwave(NMAX)                 !Raw data
     real, allocatable :: dd(:)            !Raw data
+    real f0decodes(100)
     integer dat4(13)                      !Decoded message as 12 6-bit integers
     integer dgen(13)
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
@@ -83,8 +84,13 @@ contains
     call sec0(0,tdecode)
     ndecodes=0
     decodes=' '
+    f0decodes=0.
     nfa=nfa0
     nfb=nfb0
+    if(single_decode) then
+       nfa=nfqso-ntol
+       nfb=nfqso+ntol
+    endif
     nqd=nqd0
     lnewdat=lnewdat0
     max_drift=max_drift0
@@ -169,8 +175,6 @@ contains
     call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('q65_dec0',1)
-!    write(*,3001) '=a',nfqso,ntol,ndepth,xdt,f0,idec
-!3001 format(a2,3i5,f7.2,f7.1,i5)
 
     if(idec.ge.0) then
        dtdec=xdt                    !We have a q3 or q0 decode at nfqso
@@ -280,6 +284,7 @@ contains
        if(idupe.eq.0) then
           ndecodes=min(ndecodes+1,100)
           decodes(ndecodes)=decoded
+          f0decodes(ndecodes)=f0dec
           call q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
           nsnr=nint(snr2)
           call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
@@ -317,6 +322,10 @@ contains
        snr1=candidates(icand,1)
        xdt= candidates(icand,2)
        f0 = candidates(icand,3)
+       do i=1,ndecodes
+          fdiff=f0-f0decodes(i)
+          if(fdiff.gt.-baud*mode_q65 .and. fdiff.lt.65*baud*mode_q65) go to 800
+       enddo
        jpk0=(xdt+1.0)*6000                   !Index of nominal start of signal
        if(ntrperiod.le.30) jpk0=(xdt+0.5)*6000  !For shortest sequences
        if(jpk0.lt.0) jpk0=0
@@ -365,6 +374,7 @@ contains
           if(idupe.eq.0) then
              ndecodes=min(ndecodes+1,100)
              decodes(ndecodes)=decoded
+             f0decodes(ndecodes)=f0dec
              call q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
              nsnr=nint(snr2)
              call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
@@ -373,6 +383,7 @@ contains
              if(iand(ndepth,128).ne.0 .and. .not.lagain .and.      &
                   int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
              call sec0(1,tdecode)
+             ios=1
 !             open(22,file=trim(data_dir)//'/q65_decodes.dat',status='unknown',&
 !                  position='append',iostat=ios)
              if(ios.eq.0) then
@@ -394,6 +405,7 @@ contains
              endif
           endif
        endif
+800    continue
     enddo  ! icand
     if(iavg.eq.0 .and.navg(iseq).ge.2 .and. iand(ndepth,16).ne.0) go to 50
 900 return
