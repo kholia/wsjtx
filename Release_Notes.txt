@@ -20,7 +20,7 @@ version 2.5.4.  Its major enhancements include the following:
 
  - Mode selection buttons on main window for FT4, FT8, JT65, MSK144, 
    Q65, and FT8's Hound mode 
- - Support for the ARRL International DX Contest
+ - Support for the ARRL International Digital Contest
  - Performance enhancements for the FT8 and Q65 modes
  - New features for EME Echo mode, including calibrated SNR reports
  - Several new convenience features for Fox operators 
