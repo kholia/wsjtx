@@ -70,7 +70,7 @@ and slope of a straight line to the whole sequence of calibration
 measurements, as shown for these measurements in the graph plotted
 below.  Software tools for completing this task are included with the
 _WSJT-X_ installation, and detailed instructions for their use are
-available at https://physics.princeton.edu/pulsar/k1jt/FMT_User.pdf.
+available at https://wsjt.sourceforge.io/FMT_User.pdf.
 
 Using these tools and no specialized hardware beyond your
 CAT-interfaced radio, you can calibrate the radio to better than 1 Hz
