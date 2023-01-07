@@ -11,9 +11,9 @@
                                                          
                                                          
                                                          
-Copyright (C) 2001 - 2021 by Joe Taylor, K1JT.
+Copyright (C) 2001 - 2023 by Joe Taylor, K1JT.
 
-WSJT-X Version 2.5 offers eleven different protocols or modes: FT4,
+WSJT-X Version 2.6.1 offers eleven different protocols or modes: FT4,
 FT8, JT4, JT9, JT65, Q65, FST4, MSK144, WSPR, FST4W, and Echo. The
 first seven are designed for making reliable QSOs under weak-signal
 conditions. They use nearly identical message structure and source
@@ -99,7 +99,7 @@ https://wsjtx.groups.io/g/main email reflector.
 
 Project web site:
 
-https://www.physics.princeton.edu/pulsar/K1JT/wsjtx.html
+https://wsjt.sourceforge.io/wsjtx.html
 
 Project mailing list (shared with other applications from the same
 team):
