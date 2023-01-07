@@ -663,9 +663,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (ui->decodedTextBrowser2, &DisplayText::erased, this, &MainWindow::rx_frequency_activity_cleared);
 
   // initialize decoded text font and hook up font change signals
-  // defer initialization until after construction otherwise menu
-  // fonts do not get set
-  QTimer::singleShot (0, this, SLOT (initialize_fonts ()));
+  // defer initialization until after construction otherwise menu fonts do not get set
+  // with 50 ms delay we are on the save side
+  QTimer::singleShot (50, this, SLOT (initialize_fonts ()));
   connect (&m_config, &Configuration::text_font_changed, [this] (QFont const& font) {
       set_application_font (font);
     });
