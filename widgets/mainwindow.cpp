@@ -4819,9 +4819,9 @@ void MainWindow::guiUpdate()
     if(m_transmitting) {
       char s[42];
       if(SpecOp::FOX==m_specOp and ui->tabWidget->currentIndex()==1) {
-        snprintf(s,sizeof(s),"Tx:  %d Slots",foxcom_.nslots);
+        sprintf(s,"Tx:  %d Slots",foxcom_.nslots);
       } else {
-        snprintf(s,sizeof(s),"Tx: %s",msgsent);
+        sprintf(s,"Tx: %s",msgsent);
       }
       m_nsendingsh=0;
       if(s[4]==64) m_nsendingsh=1;
