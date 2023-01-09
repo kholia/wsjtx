@@ -686,9 +686,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (ui->decodedTextBrowser2, &DisplayText::erased, this, &MainWindow::rx_frequency_activity_cleared);
 
   // initialize decoded text font and hook up font change signals
-  // defer initialization until after construction otherwise menu
-  // fonts do not get set
-  QTimer::singleShot (0, this, SLOT (initialize_fonts ()));
+  // defer initialization until after construction otherwise menu fonts do not get set
+  // with 50 ms delay we are on the save side
+  QTimer::singleShot (50, this, SLOT (initialize_fonts ()));
   connect (&m_config, &Configuration::text_font_changed, [this] (QFont const& font) {
       set_application_font (font);
     });
@@ -827,7 +827,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
         config_label.hide ();
       }
       statusUpdate ();
+#if defined(Q_OS_WIN)
       QTimer::singleShot (250, [=] {setRig (m_lastMonitoredFrequency);});   // This is needed for Hamradio Deluxe
+#endif
     });
   m_multi_settings->create_menu_actions (this, ui->menuConfig);
   m_configurations_button = m_rigErrorMessageBox.addButton (tr ("Configurations...")
@@ -1060,6 +1062,12 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   }
 
   m_specOp=m_config.special_op_id();
+  // Starting in FT8 Hound mode needs this initialization
+  if (m_specOp==SpecOp::HOUND) {
+      on_ft8Button_clicked();
+      ui->houndButton->click();
+  }
+
   ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
@@ -4875,9 +4883,9 @@ void MainWindow::guiUpdate()
     if(m_transmitting) {
       char s[42];
       if(SpecOp::FOX==m_specOp and ui->tabWidget->currentIndex()==1) {
-        sprintf(s,"Tx:  %d Slots",foxcom_.nslots);
+        snprintf(s,sizeof(s),"Tx:  %d Slots",foxcom_.nslots);
       } else {
-        sprintf(s,"Tx: %s",msgsent);
+        snprintf(s,sizeof(s),"Tx: %s",msgsent);
       }
       m_nsendingsh=0;
       if(s[4]==64) m_nsendingsh=1;

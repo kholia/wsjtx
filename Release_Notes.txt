@@ -11,14 +11,38 @@
                                                          
 Copyright 2001 - 2023 by Joe Taylor, K1JT, and the WSJT Development Team
 
+                        Release: WSJT-X 2.6.1
+                           January 16, 2023
+                      -------------------------
+
+WSJT-X 2.6.1 is mostly a bug fix release for Q65.  It has the following  
+changes since release 2.6.0:
+
+ - Fix a flaw in Q65 mode that prevented proper display of the T/R 
+   period spinner.
+
+ - Make the initialization of the decoded text font more robust.
+
+ - Better initialization when starting the program in FT8 Hound mode.
+
+ - Fix a bug causing program crash with more than 100 decodes in a
+   single FT8 sequence.
+
+ - Fix a compiler warning on macOS.
+
+ - Correct the reference to "ARRL International Digital Contest" in the 
+   Release Notes.
+
                         Release: WSJT-X 2.6.0
-                           January 2, 2023
+                           January 6, 2023
                       -------------------------
 
 WSJT-X 2.6.0 is a General Availability (GA) release, the first since
 version 2.5.4.  Its major enhancements include the following:
 
- - Support for the ARRL International DX Contest
+ - Mode selection buttons on main window for FT4, FT8, JT65, MSK144, 
+   Q65, and FT8's Hound mode 
+ - Support for the ARRL International Digital Contest
  - Performance enhancements for the FT8 and Q65 modes
  - New features for EME Echo mode, including calibrated SNR reports
  - Several new convenience features for Fox operators 

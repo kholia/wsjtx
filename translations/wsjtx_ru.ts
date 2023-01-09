@@ -2545,7 +2545,7 @@ Yellow when too low</source>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1377"/>
         <source>▲</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1384"/>
@@ -4050,7 +4050,7 @@ list. The list can be maintained in Settings (F2).</source>
   &lt;/tr&gt;
 &lt;/table&gt;</source>
         <extracomment>Mouse commands help window contents</extracomment>
-        <translation>&lt;table cellpadding=5&gt;
+        <translation type="unfinished">&lt;table cellpadding=5&gt;
   &lt;tr&gt;
     &lt;th align=&quot;right&quot;&gt;Клик на&lt;/th&gt;
     &lt;th align=&quot;left&quot;&gt;Действие&lt;/th&gt;
@@ -4068,9 +4068,9 @@ list. The list can be maintained in Settings (F2).</source>
     &lt;td&gt;&lt;b&gt;Двойной-клик&lt;/b&gt; копирует второй позывной в окно Позывной DX l,&lt;br/&gt;
         локатор в  QTH локатор меняет Rx и Tx частоты к&lt;br/&gt;
         частоте декодированного сигнала ,формирует стандартные сообщения.&lt;br/&gt;
-......Если установлен флажок &lt;b&gt;Hold Tx Freq&lt;/b&gt; или первый позывной в сообщении&lt;br/&gt;
+Если установлен флажок &lt;b&gt;Hold Tx Freq&lt;/b&gt; или первый позывной в сообщении&lt;br/&gt;
         является вашим собственным вызовом, частота Tx не изменяется.&lt;br/&gt;
-......&lt;b&gt;Ctrl&lt;/b&gt; удерживается.&lt;br/&gt;
+&lt;b&gt;Ctrl&lt;/b&gt; удерживается.&lt;br/&gt;
     &lt;/td&gt;
   &lt;/tr&gt;
   &lt;tr&gt;
