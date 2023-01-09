@@ -1039,6 +1039,12 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   }
 
   m_specOp=m_config.special_op_id();
+  // Starting in FT8 Hound mode needs this initialization
+  if (m_specOp==SpecOp::HOUND) {
+      on_ft8Button_clicked();
+      ui->houndButton->click();
+  }
+
   ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
