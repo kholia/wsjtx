@@ -21,8 +21,8 @@ module q65
   real, allocatable :: s1(:,:)           !Symbol spectra w/suppressed peaks
   real, allocatable :: s1w(:,:)           !Symbol spectra w/suppressed peaks  !w3sz added
   real, allocatable,save :: s1a(:,:,:)   !Cumulative symbol spectra
-  real, allocatable,save :: ccf2(:)      !Max CCF(freq) at any lag, single seq
-  real, allocatable,save :: ccf2_avg(:)  !Like ccf2, but for accumulated average
+  real, allocatable,save :: ccf2(:)      !Max CCF(freq) at any lag (orange curve)
+  real, allocatable,save :: ccf2_avg(:)  !Like ccf2, but for avg (red curve)
   real sync(85)                          !sync vector
   real df,dtstep,dtdec,f0dec,ftol,plog,drift
 
@@ -126,7 +126,10 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
      lclearave=.false.
   endif
   ccf1=0.
-  if(iavg.eq.0) ccf2_avg=0.
+  if(iavg.eq.0) then
+     ccf2=0.
+     ccf2_avg=0.
+  endif
   dtstep=nsps/(NSTEP*12000.0)                 !Step size in seconds
   lag1=-1.0/dtstep
   lag2=1.0/dtstep + 0.9999
@@ -714,12 +717,18 @@ subroutine q65_write_red(iz,xdt,ccf2_avg,ccf2)
 
   rewind 17
   write(17,1000) xdt,minval(ccf2_avg),maxval(ccf2_avg)
-  do i=max(1,nint(nfa/df)),min(iz,int(nfb/df))
+  i1=max(1,nint(nfa/df))
+  i2=min(iz,int(nfb/df))
+  y0=minval(ccf2(i1:i2))
+  y0_avg=minval(ccf2_avg(i1:i2))
+  g=1.0/(maxval(ccf2(i1:i2))-y0)
+  g_avg=0.
+  if(maxval(ccf2_avg(i1:i2)).ne.y0_avg) g_avg=1.0/(maxval(ccf2_avg(i1:i2))-y0_avg)
+
+  do i=i1,i2
      freq=i*df
-     y1=ccf2_avg(i)
-     if(y1.gt.10.0) y1=10.0 + 2.0*log10(y1/10.0)
-     y2=ccf2(i)
-     if(y2.gt.10.0) y2=10.0 + 2.0*log10(y2/10.0)
+     y1=g_avg*(ccf2_avg(i)-y0_avg)
+     y2=g*(ccf2(i)-y0)
      write(17,1000) freq,y1,y2
 1000 format(3f10.3)
   enddo
