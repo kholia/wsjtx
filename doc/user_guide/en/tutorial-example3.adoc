@@ -35,7 +35,7 @@ Rx frequency along with any decodes addressed to *My Call* (K1JT in this case).
 The red marker on the waterfall scale indicates your
 Tx frequency.
 
-Twenty one FT8 signals are decoded from the example file. The number
+Twenty-one FT8 signals are decoded from the example file. The number
 of decodes is shown in a box at the bottom of the main window.
 When this file was recorded HA5WA was finishing a QSO with K1JT, and
 his 73 message is shown in red because it is addressed to *My Call* (in this case K1JT). 
