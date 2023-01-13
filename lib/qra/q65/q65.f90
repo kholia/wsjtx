@@ -138,11 +138,12 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   if(nsps.ge.7200) j0=1.0/dtstep              !Nominal start-signal index
 
   s3=0.
-  if(iavg.eq.0) then
+  if(iavg.eq.0 .and. lnewdat) then
      call timer('q65_syms',0)
 ! Compute symbol spectra with NSTEP time bins per symbol
      call q65_symspec(iwave,ntrperiod*12000,iz,jz,s1)
      call timer('q65_syms',1)
+     lnewdat=.false.
   else
      s1=s1a(:,:,iseq)
   endif
@@ -492,14 +493,12 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
   real ccf2(iz)                               !Orange sync curve
   real, allocatable :: xdt2(:)
   real, allocatable :: s1avg(:)
-  real, allocatable :: ccf_lag(:)
   integer, allocatable :: indx(:)
   integer ipk1(1)
 
   allocate(xdt2(iz))
   allocate(s1avg(iz))
   allocate(indx(iz))
-  allocate(ccf_lag(lag1:lag2))
 
   ia=max(nfa,100)/df
   ib=min(nfb,4900)/df
@@ -519,14 +518,8 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
   lagpk=0
   lagbest=0
   idrift_best=0
-  stest_min=1.4
-
-! Special case for Q65W:
-  if(nfa.eq.990 .and. nfb.eq.1010 .and. nfqso.eq.1000) stest_min=0.0
 
   do i=ia,ib
-     stest=s1avg(i)/base0
-     if(stest.lt.stest_min) cycle
      ccfmax=0.
      do lag=lag1,lag2
         do idrift=-max_drift,max_drift
@@ -548,43 +541,12 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
         enddo  ! idrift
      enddo  ! lag
 
-! Look at SNR on the "blue curve"
-     idrift=idrift_max
-     do lag=lag1,lag2
-        ccft=0.
-        do kk=1,22
-           k=isync(kk)
-           ii=i + nint(idrift*(k-43)/85.0)
-           if(ii.lt.1 .or. ii.gt.iz) cycle
-           n=NSTEP*(k-1) + 1
-           j=n+lag+j0
-           if(j.ge.1 .and. j.le.jz) ccft=ccft + s1(ii,j)
-        enddo  ! kk
-        ccf_lag(lag)=ccft - (22.0/jz)*s1avg(i)
-     enddo
-
-     pk=maxval(ccf_lag)
-     ipk1=maxloc(ccf_lag)
-     lag0=ipk1(1)-1+lag1
-     xsum=0.
-     sq=0.
-     nsum=0
-     do j=lag1,lag2
-        if(abs(j-lag0).gt.7) then
-           xsum=xsum+ccf_lag(j)
-           sq=sq+ccf_lag(j)**2
-           nsum=nsum+1
-        endif
-     enddo
-     ave=xsum/nsum
-     rms=sqrt(sq/nsum - ave*ave)
-     snr=(pk-ave)/rms
-     if(snr.lt.5.0) cycle              !Blue SNR must be at least 5
-
      ccf2(i)=ccfmax
      xdt2(i)=lagpk*dtstep
+
      if(ccfmax.gt.ccfbest .and. abs(i*df-nfqso).le.ftol) then
         ccfbest=ccfmax
+        snrbest=snr
         ibest=i
         lagbest=lagpk
         idrift_best=idrift_max
@@ -730,7 +692,7 @@ subroutine q65_write_red(iz,xdt,ccf2_avg,ccf2)
      y1=g_avg*(ccf2_avg(i)-y0_avg)
      y2=g*(ccf2(i)-y0)
      write(17,1000) freq,y1,y2
-1000 format(3f10.3)
+1000 format(f10.3,2f15.6)
   enddo
   flush(17)
 
