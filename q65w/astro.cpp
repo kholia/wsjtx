@@ -118,8 +118,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
         elOffset = +ui->sbOffset->value();
         ui->rb6->setChecked(true);
       }
-    }
-    if(ui->cbOnOff->isChecked()) {
+    } else if(ui->cbOnOff->isChecked()) {
       iCycle=(t.currentSecsSinceEpoch()%(2*nDwell))/nDwell + 1;
       if(iCycle==1) {
         azOffset = -ui->sbOffset->value()/cos(elsun/rad);
@@ -128,6 +127,11 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
       if(iCycle==2) {
         ui->rb2->setChecked(true);
       }
+    } else {
+      if(ui->rb1->isChecked()) azOffset = -ui->sbOffset->value()/cos(elsun/rad);
+      if(ui->rb3->isChecked()) azOffset =  ui->sbOffset->value()/cos(elsun/rad);
+      if(ui->rb4->isChecked()) elOffset = -ui->sbOffset->value();
+      if(ui->rb6->isChecked()) elOffset =  ui->sbOffset->value();
     }
     if(ui->cbAutoCycle->isChecked() or ui->cbOnOff->isChecked()) {
       QFile f("pointing.out");
@@ -148,6 +152,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
 
 // Write pointing data to azel.dat
   QString fname=azelDir+"/azel.dat";
+//  qDebug() << "aa" << fname << isec << bPointing << azOffset << elOffset;
   QFile f(fname);
   if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
     if(azelDir==m_AzElDir0) return;
