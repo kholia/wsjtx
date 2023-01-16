@@ -56,10 +56,10 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f
 !     if(f0-mfa.lt.0.0 .or. f0-mfb.gt.0.0) cycle
-     print*,'cc',nagain,ntol,fselected,f0+nkhz_center-48.0
+!     print*,'cc',nagain,ntol,fselected,f0+nkhz_center-48.0
      if(nagain.eq.1 .and. abs(f0+nkhz_center-48.0 - fselected).gt.0.001*ntol) cycle
      nagain2=0
-     print*,'dd',nagain,ntol,fselected,f0+nkhz_center-48.0
+!     print*,'dd',nagain,ntol,fselected,f0+nkhz_center-48.0
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
      idec=-1

@@ -37,16 +37,11 @@ subroutine q65c(itimer)
 
   datetime(18:20)=':00'
   npatience=1
+  newdat=1                          !Always on ??
 
-  if(nagain.eq.1) then
-!     nfa=127
-!     nfb=128
-     newdat=1
-!     nagain=0
-  endif
-  write(*,3001) 'aa',newdat,nagain,nfa,nfb,ntol,fselected
-3001 format(a2,5i6,f10.3)
-  write(*,3001) 'bb',newdat,nagain,nfa,nfb,ntol,fselected
+!  write(*,3001) 'aa',newdat,nagain,nfa,nfb,ntol,fselected
+!3001 format(a2,5i6,f10.3)
+!  write(*,3001) 'bb',newdat,nagain,nfa,nfb,ntol,fselected
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
