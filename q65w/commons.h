@@ -11,7 +11,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   float savg[NFFT];                 //Avg spectra at 0,45,90,135 deg pol
   double fcenter;                   //Center freq from Linrad (MHz)
   int nutc;                         //UTC as integer, HHMM
-  int idphi;                        //Phase correction for Y pol'n, degrees
+  float fselected;                  //Selected frequency for nagain decodes
   int mousedf;                      //User-selected DF
   int mousefqso;                    //User-selected QSO freq (kHz)
   int nagain;                       //1 ==> decode only at fQSO +/- Tol
@@ -50,7 +50,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   float savg[NFFT];                 //Avg spectra at 0,45,90,135 deg pol
   double fcenter;                   //Center freq from Linrad (MHz)
   int nutc;                         //UTC as integer, HHMM
-  int idphi;                        //Phase correction for Y pol'n, degrees
+  float fselected;                  //Selected frequency for nagain decodes
   int mousedf;                      //User-selected DF
   int mousefqso;                    //User-selected QSO freq (kHz)
   int nagain;                       //1 ==> decode only at fQSO +/- Tol

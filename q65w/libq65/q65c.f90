@@ -19,7 +19,7 @@ subroutine q65c(itimer)
   common/datcom2/dd(2,5760000),ss(322,NFFT),savg(NFFT),nparams0
 
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
-  common/npar/fcenter,nutc,idphi,mousedf,mousefqso,nagain,                &
+  common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,                &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
        ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,        &
@@ -35,21 +35,18 @@ subroutine q65c(itimer)
      return
   endif
 
-!  newdat=1
-!  nagain=0
-  write(*,3001) 'aa',newdat,nagain,nfa,nfb,ntol
-3001 format(a2,5i6)
-
   datetime(18:20)=':00'
   npatience=1
 
-!  if(newdat.eq.0 .and. nagain.eq.1) then
-!     nfa=nint(mousefqso+0.001*mousedf) - 1  !Minimal solution for
-!     nfb=nint(mousefqso+0.001*mousedf) + 1  !double-click decodes
-!     newdat=1
+  if(nagain.eq.1) then
+!     nfa=127
+!     nfb=128
+     newdat=1
 !     nagain=0
-!  endif
-  write(*,3001) 'bb',newdat,nagain,nfa,nfb,ntol
+  endif
+  write(*,3001) 'aa',newdat,nagain,nfa,nfb,ntol,fselected
+3001 format(a2,5i6,f10.3)
+  write(*,3001) 'bb',newdat,nagain,nfa,nfb,ntol,fselected
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)

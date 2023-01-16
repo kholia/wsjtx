@@ -103,7 +103,6 @@ private:
   qint32  m_QSOfreq0;
   qint32  m_astroFont;
   qint32  m_timeout;
-  qint32  m_dPhi;
   qint32  m_fCal;
   qint32  m_txFreq;
   qint32  m_setftx;
@@ -130,7 +129,7 @@ private:
   bool    m_monitoring;
   bool    m_diskData;
   bool    m_loopall;
-  bool    m_decoderBusy;
+  bool    m_decoderBusy=false;
   bool    m_restart;
   bool    m_call3Modified;
   bool    m_startAnother;

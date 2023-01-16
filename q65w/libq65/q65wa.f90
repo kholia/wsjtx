@@ -1,6 +1,6 @@
 subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,nfshift,max_drift,nfcal,mycall,         &
-     hiscall,hisgrid,nfsample,nmode,ndepth,datetime,ndop00)
+     hiscall,hisgrid,nfsample,nmode,ndepth,datetime,ndop00,fselected)
 
 !  Processes timf2 data received from Linrad to find and decode Q65 signals.
 
@@ -55,13 +55,18 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f
+!     if(f0-mfa.lt.0.0 .or. f0-mfb.gt.0.0) cycle
+     print*,'cc',nagain,ntol,fselected,f0+nkhz_center-48.0
+     if(nagain.eq.1 .and. abs(f0+nkhz_center-48.0 - fselected).gt.0.001*ntol) cycle
+     nagain2=0
+     print*,'dd',nagain,ntol,fselected,f0+nkhz_center-48.0
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
      idec=-1
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,       &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,nkhz_center,newdat,   &
-          nagain,max_drift,ndepth,datetime,ndop00,idec)
+          nagain2,max_drift,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)
      tsec=sec_midn() - tsec0
      if(tsec.gt.30.0) exit    !Don't start another decode attempt after t=30 s.

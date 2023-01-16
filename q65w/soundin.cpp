@@ -19,7 +19,7 @@ extern "C"
     float savg[NFFT];
     double fcenter;
     int nutc;
-    int idphi;                        //Phase correction for Y pol'n, degrees
+    float fselected;                  //Selected frequency for nagain decodes
     int mousedf;                      //User-selected DF
     int mousefqso;                    //User-selected QSO freq (kHz)
     int nagain;                       //1 ==> decode only at fQSO +/- Tol

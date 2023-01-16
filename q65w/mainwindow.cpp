@@ -229,7 +229,6 @@ void MainWindow::writeSettings()
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
   settings.setValue("Timeout",m_timeout);
-  settings.setValue("dPhi",m_dPhi);
   settings.setValue("Fcal",m_fCal);
   settings.setValue("Fadd",m_fAdd);
   settings.setValue("NetworkInput", m_network);
@@ -277,7 +276,6 @@ void MainWindow::readSettings()
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
   m_timeout=settings.value("Timeout",20).toInt();
-  m_dPhi=settings.value("dPhi",0).toInt();
   m_fCal=settings.value("Fcal",0).toInt();
   m_fAdd=settings.value("FAdd",0).toDouble();
   soundInThread.setFadd(m_fAdd);
@@ -456,7 +454,6 @@ void MainWindow::on_actionSettings_triggered()
   dlg.m_saveDir=m_saveDir;
   dlg.m_azelDir=m_azelDir;
   dlg.m_timeout=m_timeout;
-  dlg.m_dPhi=m_dPhi;
   dlg.m_fCal=m_fCal;
   dlg.m_fAdd=m_fAdd;
   dlg.m_network=m_network;
@@ -474,7 +471,6 @@ void MainWindow::on_actionSettings_triggered()
     m_saveDir=dlg.m_saveDir;
     m_azelDir=dlg.m_azelDir;
     m_timeout=dlg.m_timeout;
-    m_dPhi=dlg.m_dPhi;
     m_fCal=dlg.m_fCal;
     m_fAdd=dlg.m_fAdd;
     m_wide_graph_window->setFcal(m_fCal);
@@ -841,10 +837,8 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 
 void MainWindow::decode()                                       //decode()
 {
-
 //Don't attempt to decode if decoder is already busy, or if we transmitted for 10 s or more.
   if(m_decoderBusy or m_nTransmitted>10) return;
-
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
@@ -856,9 +850,9 @@ void MainWindow::decode()                                       //decode()
     datcom_.nutc=100*ihr + imin;
   }
 
-  datcom_.idphi=m_dPhi;
   datcom_.mousedf=m_wide_graph_window->DF();
   datcom_.mousefqso=m_wide_graph_window->QSOfreq();
+  datcom_.fselected=datcom_.mousefqso + 0.001*datcom_.mousedf;
   datcom_.ndepth=m_ndepth+1;
   datcom_.ndiskdat=0;
   if(m_diskData) {
@@ -891,7 +885,7 @@ void MainWindow::decode()                                       //decode()
 
   datcom_.nfa=nfa;
   datcom_.nfb=nfb;
-  qDebug() << "bbb" << datcom_.fcenter << datcom_.nfa << datcom_.nfb;
+  qDebug() << "bbb" << datcom_.fcenter << datcom_.nfa << datcom_.nfb << datcom_.fselected;
   datcom_.nfcal=m_fCal;
   datcom_.nfshift=nfshift;
   datcom_.mcall3=0;
