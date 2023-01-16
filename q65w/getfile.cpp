@@ -26,6 +26,7 @@ void getfile(QString fname, bool xpol, int dbDgrd)
     n = fread(id,2,npts,fp);
     Q_UNUSED (n);
     int j=0;
+    qDebug() << "aaa" << datcom_.fcenter;
 
     if(dbDgrd<0) {
       for(int i=0; i<npts; i+=2) {

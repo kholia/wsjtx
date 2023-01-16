@@ -891,6 +891,7 @@ void MainWindow::decode()                                       //decode()
 
   datcom_.nfa=nfa;
   datcom_.nfb=nfb;
+  qDebug() << "bbb" << datcom_.fcenter << datcom_.nfa << datcom_.nfb;
   datcom_.nfcal=m_fCal;
   datcom_.nfshift=nfshift;
   datcom_.mcall3=0;
