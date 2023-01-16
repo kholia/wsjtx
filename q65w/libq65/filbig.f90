@@ -84,7 +84,7 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,c4a,n4)
      call timer('FFTbig  ',0)
      call sfftw_execute(plan1)
      call timer('FFTbig  ',1)
-     newdat=0
+!###     newdat=0
   endif
 
 ! NB: f0 is the frequency at which we want our filter centered.
