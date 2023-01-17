@@ -138,12 +138,13 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   if(nsps.ge.7200) j0=1.0/dtstep              !Nominal start-signal index
 
   s3=0.
-  if(iavg.eq.0 .and. lnewdat) then
+!  if(iavg.eq.0 .and. lnewdat) then
+  if(iavg.eq.0) then
      call timer('q65_syms',0)
 ! Compute symbol spectra with NSTEP time bins per symbol
      call q65_symspec(iwave,ntrperiod*12000,iz,jz,s1)
      call timer('q65_syms',1)
-     lnewdat=.false.
+!     lnewdat=.false.
   else
      s1=s1a(:,:,iseq)
   endif
