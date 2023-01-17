@@ -87,10 +87,6 @@ contains
     f0decodes=0.
     nfa=nfa0
     nfb=nfb0
-    if(single_decode) then
-       nfa=nfqso-ntol
-       nfb=nfqso+ntol
-    endif
     nqd=nqd0
     lnewdat=lnewdat0
     max_drift=max_drift0
