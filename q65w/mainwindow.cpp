@@ -808,7 +808,7 @@ void MainWindow::on_actionSave_all_triggered()                //Save All
 {
   m_saveAll=true;
 }
-                                          //Display list of keyboard shortcuts                                           //Display list of mouse commands                                             //Diaplay list of Add-On pfx/sfx
+
 void MainWindow::on_DecodeButton_clicked()                    //Decode request
 {
   if(!m_decoderBusy) {
