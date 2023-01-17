@@ -293,8 +293,8 @@ contains
           if(iand(ndepth,128).ne.0 .and. .not.lagain .and.      &
                int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
           call sec0(1,tdecode)
-!          open(22,file=trim(data_dir)//'/q65_decodes.dat',status='unknown',  &
-!               position='append',iostat=ios)
+          open(22,file=trim(data_dir)//'/q65_decodes.txt',status='unknown',  &
+               position='append',iostat=ios)
           if(ios.eq.0) then
 ! Save decoding parameters to q65_decoded.dat, for later analysis.
              write(cmode,'(i3)') ntrperiod
@@ -307,10 +307,10 @@ contains
                   '1x,a6,1x,a6,1x,a4,1x,a)'
              if(ntrperiod.le.30) fmt(5:5)='6'
              if(idec.eq.3) nrc=0
-!             write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,idtbest, &
-!                  ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,f0,snr2,plog, &
-!                  tdecode,mycall(1:6),c6,c4,trim(decoded)
-!             close(22)
+             write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,idtbest, &
+                  ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,f0,snr2,plog, &
+                  tdecode,mycall(1:6),c6,c4,trim(decoded)
+             close(22)
           endif
        endif
     endif
@@ -384,8 +384,8 @@ contains
                   int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
              call sec0(1,tdecode)
              ios=1
-!             open(22,file=trim(data_dir)//'/q65_decodes.dat',status='unknown',&
-!                  position='append',iostat=ios)
+             open(22,file=trim(data_dir)//'/q65_decodes.txt',status='unknown',&
+                  position='append',iostat=ios)
              if(ios.eq.0) then
 ! Save decoding parameters to q65_decoded.dat, for later analysis.
                 write(cmode,'(i3)') ntrperiod
@@ -398,10 +398,10 @@ contains
                      '1x,a6,1x,a6,1x,a4,1x,a)'
                 if(ntrperiod.le.30) fmt(5:5)='6'
                 if(idec.eq.3) nrc=0
-!                write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,idtbest, &
-!                     ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,f0,snr2,plog, &
-!                     tdecode,mycall(1:6),c6,c4,trim(decoded)
-!                close(22)
+                write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,    &
+                     idtbest,ibw,ndistbest,nused,icand,ncand,nrc,ndepth,     &
+                     xdt,f0,snr2,plog,tdecode,mycall(1:6),c6,c4,trim(decoded)
+                close(22)
              endif
           endif
        endif
