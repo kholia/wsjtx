@@ -36,9 +36,11 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   mfb=nfb-nkhz_center+48
   mode_q65=nmode/10
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
+  f0_selected=fselected - nkhz_center + 48.0
 
   call timer('get_cand',0)
-  call getcand2(ss,savg,nts_q65,cand,ncand) !Get a list of decoding candidates
+! Get a list of decoding candidates
+  call getcand2(ss,savg,nts_q65,nagain,ntol,f0_selected,cand,ncand)
   call timer('get_cand',1)
 
   nwrite_q65=0
@@ -48,6 +50,7 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   foffset=0.001*(1270 + nfcal)        !Offset from sync tone, plus CAL
   fqso=mousefqso + foffset - 0.5*(nfa+nfb) + nfshift !fqso at baseband (khz)
   nqd=0
+  nagain2=0
 
   call timer('filbig  ',0)
   call filbig(dd,NSMAX,f0,newdat,nfsample,cx,n5) !Do the full-length FFT
@@ -55,11 +58,6 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f
-!     if(f0-mfa.lt.0.0 .or. f0-mfb.gt.0.0) cycle
-!     print*,'cc',nagain,ntol,fselected,f0+nkhz_center-48.0
-     if(nagain.eq.1 .and. abs(f0+nkhz_center-48.0 - fselected).gt.0.001*ntol) cycle
-     nagain2=0
-!     print*,'dd',nagain,ntol,fselected,f0+nkhz_center-48.0
      freq=cand(icand)%f+nkhz_center-48.0-1.27046
      ikhz=nint(freq)
      idec=-1

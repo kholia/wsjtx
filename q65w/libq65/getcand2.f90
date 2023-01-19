@@ -1,4 +1,4 @@
-subroutine getcand2(ss,savg0,nts_q65,cand,ncand)
+subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
 
 ! Get candidates for Q65 decodes, based on presence of sync tone.
   
@@ -33,9 +33,15 @@ subroutine getcand2(ss,savg0,nts_q65,cand,ncand)
   nb0=2*nts_q65                         !Range of peak search, in bins
   smin=1.4                              !First threshold
   nguard=5                              !Guard range in bins
+  i1=1
+  i2=NFFT-nbw-nguard
+  if(nagain.eq.1) then
+     i1=nint((1000.0*f0_selected-ntol)/df)
+     i2=nint((1000.0*f0_selected+ntol)/df)
+  endif
 
   j=0
-  do i=1,NFFT-nbw-nguard          !Look for local peaks in average spectrum
+  do i=i1,i2                         !Look for local peaks in average spectrum
      if(savg(i).lt.smin) cycle
      spk=maxval(savg(i:i+nb0))
      ipk1=maxloc(savg(i:i+nb0))
