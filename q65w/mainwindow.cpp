@@ -828,6 +828,8 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
     ui->tolSpinBox->setValue(qMin(3,ui->tolSpinBox->value()));
     datcom_.ntol=m_tol;
   }
+  m_nDoubleClicked++;
+//  qDebug() << "aa" << m_nDoubleClicked << m_decoderBusy << m_nTransmitted << n;
   if(!m_decoderBusy) {
     datcom_.nagain=1;
     datcom_.newdat=0;

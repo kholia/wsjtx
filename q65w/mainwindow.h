@@ -122,6 +122,7 @@ private:
   qint32  m_fetched=0;
   qint32  m_hsymStop=302;
   qint32  m_nTransmitted=0;
+  qint32  m_nDoubleClicked=0;
 
   double  m_fAdd;
   double  m_xavg;
