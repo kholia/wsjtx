@@ -134,18 +134,18 @@ contains
     baud=12000.0/nsps
     this%callback => callback
     nFadingModel=1
-    maxiters=33
+    maxiters=20
     ibwa=max(1,int(1.8*log(baud*mode_q65)) + 1)
     ibwb=min(10,ibwa+2)
     if(iand(ndepth,3).ge.2) then
        ibwa=max(1,int(1.8*log(baud*mode_q65)) + 1)
        ibwb=min(10,ibwa+5)
-       maxiters=67
+       maxiters=40
     endif
     if(iand(ndepth,3).eq.3) then
        ibwa=max(1,ibwa-1)
        ibwb=min(10,ibwb+1)
-       maxiters=100
+       maxiters=60
     endif
 ! Generate codewords for full-AP list decoding
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
