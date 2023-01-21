@@ -107,7 +107,7 @@
     <message>
         <location filename="../widgets/activeStations.ui" line="192"/>
         <source>Call  Grid  Age   Points</source>
-        <translation>Punti Indicativo etá della griglia</translation>
+        <translation>Punti   Nominativo  etá  della  griglia</translation>
     </message>
     <message>
         <location filename="../widgets/activeStations.cpp" line="21"/>
@@ -245,7 +245,7 @@
     <message>
         <location filename="../models/Bands.cpp" line="140"/>
         <source>Lower frequency limit</source>
-        <translation>Limite frequenza minore</translation>
+        <translation>Limite frequenza inferiore</translation>
     </message>
     <message>
         <location filename="../models/Bands.cpp" line="141"/>
@@ -355,7 +355,7 @@
     <message>
         <location filename="../GetUserId.cpp" line="29"/>
         <source>Callsign</source>
-        <translation>Indicativo</translation>
+        <translation>Nominativo</translation>
     </message>
 </context>
 <context>
@@ -388,7 +388,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="63"/>
         <source>My Call in message</source>
-        <translation>Il mio indicativo nel messaggio</translation>
+        <translation>Il mio Nominativo nel messaggio</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="70"/>
@@ -413,7 +413,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="150"/>
         <source>New Call</source>
-        <translation>Nuovo Indicativo</translation>
+        <translation>Nuovo Nominativo</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="157"/>
@@ -423,7 +423,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="203"/>
         <source>New Call on Band</source>
-        <translation>Nuovo indicativo sulla Banda</translation>
+        <translation>Nuovo Indicativo sulla Banda</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="210"/>
@@ -542,9 +542,9 @@ Formats:
         <translation>Nome host e porta del servizio di rete opzionali.
 Lascia vuoto per un&apos;impostazione predefinita ragionevole su questa macchina.
 Formati:
-	hostname: porta
-	IPv4-indirizzo: porta
-	[IPv6-address]: porta</translation>
+	hostname:porta
+	IPv4-indirizzo:porta
+	[IPv6-address]:porta</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="1834"/>
@@ -557,10 +557,10 @@ Formati:
 Leave blank for a sensible default for the rig.
 Format:
 	[VID[:PID[:VENDOR[:PRODUCT]]]]</source>
-        <translation>Identificazione del dispositivo opzionale.
+        <translation>Identificazione opzionale del dispositivo.
 Lasciare vuoto per un valore predefinito ragionevole per il rig.
 Formato:
-	[VID [: PID [: VENDOR [: PRODOTTI]]]]</translation>
+	[VID[:PID[:VENDOR[:PRODOTTO]]]]</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="1871"/>
@@ -752,7 +752,7 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="131"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly reading frequency: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente alla frequenza di lettura: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente alla lettura della frequenza: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="178"/>
@@ -762,7 +762,7 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="184"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly polling TX status: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente al polling dello stato TX: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente durante il polling dello stato TX: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="192"/>
@@ -777,17 +777,17 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="293"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly polling TX frequency: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente alla frequenza di polling TX: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente durante il polling della frequenza TX: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="312"/>
         <source>DX Lab Suite Commander sent an unrecognised split state: </source>
-        <translation>DX Lab Suite Commander ha inviato uno stato di divisione non riconosciuto: </translation>
+        <translation>DX Lab Suite Commander ha inviato uno stato di split non riconosciuto: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="318"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly polling split status: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente allo stato di suddivisione del polling: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente al polling dello stato di split: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="374"/>
@@ -829,7 +829,7 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="435"/>
         <source>DX Lab Suite Commander retries exhausted sending command &quot;%1&quot;</source>
-        <translation>DX Lab Suite Commander ripete il comando di invio esaurito &quot;%1&quot;</translation>
+        <translation>DX Lab Suite Commander esautiti i tentativi di riprova dell&apos;invio del comando &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="494"/>
@@ -886,7 +886,7 @@ Formato:
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="113"/>
         <source>My Call in message</source>
-        <translation>Il mio indicativo nel messaggio</translation>
+        <translation>Il mio Nominativo nel messaggio</translation>
     </message>
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="114"/>
@@ -916,12 +916,12 @@ Formato:
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="119"/>
         <source>New Call</source>
-        <translation>Nuovo Indicativo</translation>
+        <translation>Nuovo Nominativo</translation>
     </message>
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="120"/>
         <source>New Call on Band</source>
-        <translation>Nuovo indicativo sulla Banda</translation>
+        <translation>Nuovo Nominativo sulla Banda</translation>
     </message>
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="121"/>
@@ -1061,7 +1061,7 @@ Formato:
     <message>
         <location filename="../SampleDownloader/Directory.cpp" line="142"/>
         <source>Contents file top level must be a JSON array</source>
-        <translation>Il file di livello superiore deve essere un array JSON</translation>
+        <translation>Il livello superiore del file di contenuti deve essere un array JSON</translation>
     </message>
     <message>
         <location filename="../SampleDownloader/Directory.cpp" line="153"/>
@@ -1132,7 +1132,7 @@ Errore: %2 - %3</translation>
         <location filename="../widgets/echograph.ui" line="101"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compression factor for frequency scale&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fattore di compressione per scala di frequenza&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compression factor for frequency scale&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fattore di compressione per la scala di frequenza&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/echograph.ui" line="104"/>
@@ -2381,6 +2381,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="837"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: First&lt;/span&gt; to respond automatically to the first decoded reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Pts&lt;/span&gt; to respond automatically to the reply yielding most points in the ARRL International Digital Contest.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: None&lt;/span&gt; to choose callers manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translatorcomment>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: prima&lt;/span&gt; per rispondere automaticamente alla prima risposta decodificata al tuo CQ. &lt;/p&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Dist&lt;/span&gt; per rispondere automaticamente alla risposta che ha ottenuto più punti nell&apos;ARRL International Digital Contest.&lt;/p&gt;&lt; p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Nessuno&lt;/span&gt; per scegliere i chiamanti manualmente.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: prima&lt;/span&gt; per rispondere automaticamente alla prima risposta decodificata al tuo CQ. &lt;/p&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Dist&lt;/span&gt; per rispondere automaticamente alla risposta che ha ottenuto più punti nell&apos;ARRL International Digital Contest.&lt;/p&gt;&lt; p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Nessuno&lt;/span&gt; per scegliere i chiamanti manualmente.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -2653,7 +2654,8 @@ Giallo quando troppo basso</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1072"/>
         <source>Hold Tx Freq</source>
-        <translation>Blocca.la Freq.Tx</translation>
+        <translatorcomment>Blocca.la Freq.Tx</translatorcomment>
+        <translation>Blocca la Freq. Tx</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="984"/>
@@ -3810,7 +3812,7 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="8965"/>
         <source>Runaway Tx watchdog</source>
-        <translation>Timer.Tx</translation>
+        <translation>Temporizzatore Tx Superato</translation>
     </message>
     <message>
         <source>Allow multiple instances</source>
@@ -5670,7 +5672,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../Configuration.ui" line="43"/>
         <source>My C&amp;all:</source>
-        <translation>&amp;Mio indicativo:</translation>
+        <translation>Mio N&amp;ominativo:</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="53"/>
@@ -6492,7 +6494,7 @@ entrambi qui.</translation>
     <message>
         <location filename="../Configuration.ui" line="265"/>
         <source>Highlight DX Call in message</source>
-        <translation>Evidenzia Indicativo DX nel messaggio</translation>
+        <translation>Evidenzia Nominativo DX nel messaggio</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1451"/>
