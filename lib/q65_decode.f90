@@ -73,8 +73,9 @@ contains
     real f0decodes(100)
     integer dat4(13)                      !Decoded message as 12 6-bit integers
     integer dgen(13)
+    integer nq65param(0:7)
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
-    logical single_decode,lagain
+    logical single_decode,lagain,ex
     complex, allocatable :: c00(:)        !Analytic signal, 6000 Sa/s
     complex, allocatable :: c0(:)         !Analytic signal, 6000 Sa/s
     integer stageno                       !Added by W3SZ
@@ -147,6 +148,18 @@ contains
        ibwb=min(10,ibwb+1)
        maxiters=60
     endif
+    inquire(file='q65_params.txt',exist=ex)
+    if(ex) then
+       open(28,file='q65_params.txt',status='old')
+       read(28,*) nq65param
+       ibwa=max(1,nq65param(nsubmode))
+       ibwa=min(40,ibwa)
+       ibwb=ibwa
+       maxiters=nq65param(4+iand(ndepth,3))
+       close(28)
+    endif
+!    write(*,3001) iand(ndepth,3),nsubmode,ibwa,ibwb,maxiters
+!3001 format(5i5)
 ! Generate codewords for full-AP list decoding
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
     if(ichar(hisgrid(1:1)).eq.0) hisgrid=' '
