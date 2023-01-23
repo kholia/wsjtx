@@ -73,7 +73,7 @@ contains
     real f0decodes(100)
     integer dat4(13)                      !Decoded message as 12 6-bit integers
     integer dgen(13)
-    integer nq65param(0:7)
+    integer nq65param(3)
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
     logical single_decode,lagain,ex
     complex, allocatable :: c00(:)        !Analytic signal, 6000 Sa/s
@@ -135,27 +135,22 @@ contains
     baud=12000.0/nsps
     this%callback => callback
     nFadingModel=1
-    maxiters=20
-    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 1)
-    ibwb=min(10,ibwa+2)
-    if(iand(ndepth,3).ge.2) then
-       ibwa=max(1,int(1.8*log(baud*mode_q65)) + 1)
-       ibwb=min(10,ibwa+5)
-       maxiters=40
-    endif
+    ibwa=2*mode_q65
+    ibwb=ibwa+4
+    maxiters=40
+    if(iand(ndepth,3).eq.2) maxiters=60
     if(iand(ndepth,3).eq.3) then
-       ibwa=max(1,ibwa-1)
-       ibwb=min(10,ibwb+1)
-       maxiters=60
+       ibwa=max(1,ibwa-2)
+       ibwb=ibwb+2
+       maxiters=100
     endif
     inquire(file='q65_params.txt',exist=ex)
     if(ex) then
        open(28,file='q65_params.txt',status='old')
        read(28,*) nq65param
-       ibwa=max(1,nq65param(nsubmode))
-       ibwa=min(40,ibwa)
-       ibwb=ibwa
-       maxiters=nq65param(4+iand(ndepth,3))
+       ibwa=nq65param(1)
+       ibwb=nq65param(2)
+       maxiters=nq65param(3)
        close(28)
     endif
 !    write(*,3001) iand(ndepth,3),nsubmode,ibwa,ibwb,maxiters
