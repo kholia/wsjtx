@@ -294,7 +294,7 @@ subroutine q65_symspec(iwave,nmax,iz,jz,s1)
   allocate(c0(0:nsps-1))
   nfft=nsps
   fac=1/32767.0
-  do j=1,jz                              !Compute symbol spectra at step size
+  do j=1,jz,2                     !Compute symbol spectra at 2*step size
      i1=(j-1)*istep
      i2=i1+nsps-1
      k=-1
@@ -314,6 +314,8 @@ subroutine q65_symspec(iwave,nmax,iz,jz,s1)
      do i=1,nsmo
         call smo121(s1(1:iz,j),iz)
      enddo
+! Interpolate to fill in the skipped-over spectra.
+     if(j.ge.3) s1(1:iz,j-1)=0.5*(s1(1:iz,j-2)+s1(1:iz,j))
   enddo
   if(lnewdat) then
      navg(iseq)=navg(iseq) + 1
