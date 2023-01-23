@@ -396,18 +396,7 @@ subroutine q65_dec_q012(s3,LL,snr2,dat4,idec,decoded)
         read(c78,1060) apsymbols
      endif
 
-!     do ibw=ibwa,ibwb
-!###
-     ibw_mid=(ibwa+ibwb)/2
-     iimax=3
-     if(maxiters.eq.40) iimax=5
-     if(maxiters.eq.60) iimax=7
-!     print*,'a',maxiters,ibwa,ibwb,ibw_mid,iimax
-     do ii=1,iimax
-        n=ii/2
-        if(iand(ii,1).eq.0) n=-n
-        ibw=ibw_mid + n
-!###
+     do ibw=ibwa,ibwb
         b90=1.72**ibw
         b90ts=b90/baud
         call q65_dec2(s3,nsubmode,b90ts,esnodb,irc,dat4,decoded)
