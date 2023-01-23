@@ -56,8 +56,8 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
      cand(j)%f=fpk
      cand(j)%xdt=xdt
      cand(j)%snr=snr_sync
-     ia=min(i,i0-nguard)
-     ib=i0+nbw+nguard
+     ia=max(1,min(i,i0-nguard))
+     ib=min(i0+nbw+nguard,32768)
      savg(ia:ib)=0.
      if(j.ge.MAX_CANDIDATES) exit
   enddo
