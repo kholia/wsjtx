@@ -182,7 +182,7 @@ subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
 ! Get 2d CCF and ccf2 using sync symbols only
   if(iavg.eq.0) then
      call timer('ccf_22a ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
           f0a,xdta,ccf2)
      call timer('ccf_22a ',1)
   endif
@@ -190,7 +190,7 @@ subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
 ! Get 2d CCF and ccf2_avg using sync symbols only
   if(iavg.ge.1) then
      call timer('ccf_22b ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
           f0a,xdta,ccf2_avg)
      call timer('ccf_22b ',1)
   endif
@@ -486,7 +486,7 @@ subroutine q65_ccf_85(s1,iz,jz,nfqso,ia,ia2,ipk,jpk,f0,xdt,imsg_best,   &
   return
 end subroutine q65_ccf_85
 
-subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
+subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
      f0,xdt,ccf2)
 
 ! Attempt synchronization using only the 22 sync symbols.  Return ccf2
@@ -497,7 +497,6 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
   real, allocatable :: xdt2(:)
   real, allocatable :: s1avg(:)
   integer, allocatable :: indx(:)
-  integer ipk1(1)
 
   allocate(xdt2(iz))
   allocate(s1avg(iz))
@@ -520,6 +519,7 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
   ibest=0
   lagpk=0
   lagbest=0
+  idrift_max=0
   idrift_best=0
 
   do i=ia,ib
@@ -747,7 +747,7 @@ subroutine q65_bzap(s3,LL)
   return
 end subroutine q65_bzap
 
-subroutine q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
+subroutine q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
 
 ! Estimate SNR of a decoded transmission by aligning the spectra of
 ! all 85 symbols.
@@ -795,8 +795,6 @@ subroutine q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
   sig_area=sum(spec(ia+nsum:ib-nsum)-1.0)
   w_equiv=sig_area/(smax-1.0)
   snr2=db(max(1.0,sig_area)) - db(2500.0/df)
-! NB: No adjustment to SNR is now made for nused>1, because that process did
-! not seem to work as expected.
 
   return
 end subroutine q65_snr

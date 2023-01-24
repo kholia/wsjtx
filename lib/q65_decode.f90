@@ -289,7 +289,7 @@ contains
           ndecodes=min(ndecodes+1,100)
           decodes(ndecodes)=decoded
           f0decodes(ndecodes)=f0dec
-          call q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
+          call q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
           nsnr=nint(snr2)
           call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                idec,nused,ntrperiod)
@@ -379,7 +379,7 @@ contains
              ndecodes=min(ndecodes+1,100)
              decodes(ndecodes)=decoded
              f0decodes(ndecodes)=f0dec
-             call q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
+             call q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
              nsnr=nint(snr2)
              call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                   idec,nused,ntrperiod)
