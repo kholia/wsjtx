@@ -62,11 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->actionSave_all->setActionGroup(saveGroup);
   ui->actionNone->setActionGroup(saveGroup);
 
-  QActionGroup* DepthGroup = new QActionGroup(this);
-  ui->actionNo_Deep_Search->setActionGroup(DepthGroup);
-  ui->actionNormal_Deep_Search->setActionGroup(DepthGroup);
-  ui->actionAggressive_Deep_Search->setActionGroup(DepthGroup);
-
   setWindowTitle (program_title ());
 
   connect(&soundInThread, SIGNAL(readyForFFT(int)), this, SLOT(dataSink(int)));
@@ -244,7 +239,6 @@ void MainWindow::writeSettings()
   settings.setValue("nModeQ65",m_modeQ65);
   settings.setValue("SaveNone",ui->actionNone->isChecked());
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
-  settings.setValue("NDepth",m_ndepth);
   settings.setValue("NEME",m_onlyEME);
   settings.setValue("KB8RQ",m_kb8rq);
   settings.setValue("NB",m_NB);
@@ -300,7 +294,6 @@ void MainWindow::readSettings()
   ui->actionNone->setChecked(settings.value("SaveNone",true).toBool());
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
-  m_ndepth=settings.value("NDepth",2).toInt();
   m_onlyEME=settings.value("NEME",false).toBool();
   ui->actionOnly_EME_calls->setChecked(m_onlyEME);
   m_kb8rq=settings.value("KB8RQ",false).toBool();
@@ -319,9 +312,6 @@ void MainWindow::readSettings()
     on_actionLinrad_triggered();
     ui->actionLinrad->setChecked(true);
   }
-  if(m_ndepth==0) ui->actionNo_Deep_Search->setChecked(true);
-  if(m_ndepth==1) ui->actionNormal_Deep_Search->setChecked(true);
-  if(m_ndepth==2) ui->actionAggressive_Deep_Search->setChecked(true);
 }
 
 //-------------------------------------------------------------- dataSink()
@@ -782,21 +772,6 @@ void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
   }
 }
 
-void MainWindow::on_actionNo_Deep_Search_triggered()
-{
-  m_ndepth=0;
-}
-
-void MainWindow::on_actionNormal_Deep_Search_triggered()
-{
-  m_ndepth=1;
-}
-
-void MainWindow::on_actionAggressive_Deep_Search_triggered()
-{
-  m_ndepth=2;
-}
-
 void MainWindow::on_actionNone_triggered()                    //Save None
 {
   m_saveAll=false;
@@ -855,7 +830,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.mousedf=m_wide_graph_window->DF();
   datcom_.mousefqso=m_wide_graph_window->QSOfreq();
   datcom_.fselected=datcom_.mousefqso + 0.001*datcom_.mousedf;
-  datcom_.ndepth=m_ndepth+1;
   datcom_.ndiskdat=0;
   if(m_diskData) {
     datcom_.ndiskdat=1;
@@ -903,6 +877,8 @@ void MainWindow::decode()                                       //decode()
   datcom_.nmode=10*m_modeQ65;
   datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
+  datcom_.ndepth=1;
+  if(datcom_.nagain==1)   datcom_.ndepth=3;
 
   QString mcall=(m_myCall+"            ").mid(0,12);
   QString mgrid=(m_myGrid+"            ").mid(0,6);

@@ -64,9 +64,6 @@ private slots:
   void on_actionOpen_next_in_directory_triggered();
   void on_actionDecode_remaining_files_in_directory_triggered();
   void on_actionDelete_all_iq_files_in_SaveDir_triggered();
-  void on_actionNo_Deep_Search_triggered();
-  void on_actionNormal_Deep_Search_triggered();
-  void on_actionAggressive_Deep_Search_triggered();
   void on_actionNone_triggered();
   void on_actionSave_all_triggered();
   void on_DecodeButton_clicked();
@@ -106,7 +103,6 @@ private:
   qint32  m_fCal;
   qint32  m_txFreq;
   qint32  m_setftx;
-  qint32  m_ndepth;
   qint32  m_sec0;
   qint32  m_nutc0;
   qint32  m_nrx;
