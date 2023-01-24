@@ -2,8 +2,8 @@ module q65
 
   parameter (NSTEP=8)          !Number of time bins per symbol in s1, s1a, s1b
   parameter (PLOG_MIN=-242.0)        !List decoding threshold
-  integer nsave,nlist,LL0,iz0,jz0
-  integer listutc(10)
+  integer iz0,jz0
+!  integer listutc(10)
   integer apsym0(58),aph10(10)
   integer apmask1(78),apsymbols1(78)
   integer apmask(13),apsymbols(13)
@@ -19,7 +19,7 @@ module q65
   real candidates(20,3)                  !snr, xdt, and f0 of top candidates
   real, allocatable :: s1raw(:,:)        !Symbol spectra, 1/8-symbol steps
   real, allocatable :: s1(:,:)           !Symbol spectra w/suppressed peaks
-  real, allocatable :: s1w(:,:)           !Symbol spectra w/suppressed peaks  !w3sz added
+  real, allocatable :: s1w(:,:)       !Symbol spectra w/suppressed peaks (W3SZ)
   real, allocatable,save :: s1a(:,:,:)   !Cumulative symbol spectra
   real, allocatable,save :: ccf2(:)      !Max CCF(freq) at any lag (orange curve)
   real, allocatable,save :: ccf2_avg(:)  !Like ccf2, but for avg (red curve)
@@ -28,7 +28,7 @@ module q65
 
 contains
 
-subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
+subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
      emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
 
 ! Top-level routine in q65 module
@@ -67,7 +67,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
   real, allocatable :: s3(:,:)           !Data-symbol energies s3(LL,63)
   real, allocatable :: ccf1(:)           !CCF(freq) at fixed lag (red)
   data first/.true./
-  save first
+  save first,LL0
 
   integer w3t
   integer w3f
@@ -75,7 +75,6 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
   integer stageno
 
   NN=63
-  if(nutc.eq.-999) stop           !Silence compiler warnings
 
 ! Set some parameters and allocate storage for large arrays
   irc=-2
