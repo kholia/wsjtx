@@ -59,12 +59,8 @@ private slots:
 private:
   Ui::WideGraph * ui;
   QString m_settings_filename;
-public:
-  bool   m_bForceCenterFreq;
-private:
   bool   m_bLockTxRx;
 public:
-  double m_dForceCenterFreq;
   double m_TxOffset;
 private:
   qint32 m_waterfallAvg;

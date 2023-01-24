@@ -23,10 +23,10 @@ void getfile(QString fname, bool xpol, int dbDgrd)
 
   if(fp != NULL) {
     auto n = fread(&datcom_.fcenter,sizeof(datcom_.fcenter),1,fp);
+//    qDebug() << "aa0" << sizeof(datcom_.fcenter) << n << datcom_.fcenter;
     n = fread(id,2,npts,fp);
     Q_UNUSED (n);
     int j=0;
-//    qDebug() << "aaa" << datcom_.fcenter;
 
     if(dbDgrd<0) {
       for(int i=0; i<npts; i+=2) {

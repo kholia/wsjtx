@@ -701,14 +701,11 @@ void MainWindow::on_actionDecode_remaining_files_in_directory_triggered()
 
 void MainWindow::diskDat()                                   //diskDat()
 {
+//  qDebug() << "aa1" << datcom_.fcenter;
   double hsym;
   //These may be redundant??
   m_diskData=true;
   datcom_.newdat=1;
-  if(m_wide_graph_window->m_bForceCenterFreq) {
-    datcom_.fcenter=m_wide_graph_window->m_dForceCenterFreq;
-  }
-
   hsym=2048.0*96000.0/11025.0;         //Samples per JT65 half-symbol
   for(int i=0; i<304; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 2048.5;
