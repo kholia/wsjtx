@@ -135,10 +135,9 @@ end
 
 subroutine get_q65crc12(mc2,ncrc1,ncrc2)
 !
-   character c12*12,c6*6
+   character c6*6
    integer*1 mc(90),mc2(90),tmp(6)
    integer*1 r(13),p(13)
-   integer ncrc
 ! polynomial for 12-bit CRC 0xF01
    data p/1,1,0,0,0,0,0,0,0,1,1,1,1/
 
@@ -170,7 +169,6 @@ subroutine get_q65_tones(msg37,codeword,itone)
    implicit none
    character*37 msg37
    character*77 c77
-   character*12 c12
    character*6  c6
    integer codeword(65)
    integer sync(22)

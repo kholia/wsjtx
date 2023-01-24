@@ -209,8 +209,7 @@ void SoundInThread::inputUDP()
         // If buffer will not overflow, move data into datcom_
         if ((k+iz) <= 60*96000) {
           int nsam=-1;
-          recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8, b.d8);
-//          if(nsam==-99) recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8, b.d8);
+          recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8);
           datcom_.fcenter=b.cfreq + m_fAdd;
         }
 

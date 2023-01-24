@@ -1,4 +1,4 @@
-subroutine recvpkt(nsam,nblock2,userx_no,k,buf4,buf8,buf16)
+subroutine recvpkt(nsam,nblock2,userx_no,k,buf4,buf8)
 
 ! Reformat timf2 data from Linrad and stuff data into r*4 array dd().
 
@@ -8,15 +8,13 @@ subroutine recvpkt(nsam,nblock2,userx_no,k,buf4,buf8,buf16)
   integer*1 userx_no
   real*4 d4,buf4(*)                   !(348)
   real*8 d8,buf8(*)                   !(174)
-  complex*16 c16,buf16(*)             !(87)
   integer*2 jd(4),kd(2),nblock2
-  real*4 xd(4),yd(2)
+  real*4 yd(2)
   real*8 fcenter
   common/datcom/dd(2,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   equivalence (kd,d4)
   equivalence (jd,d8,yd)
-  equivalence (xd,c16)
 
   if(nblock2.eq.-9999) nblock2=-9998    !Silence a compiler warning
   if(nsam.eq.-1) then
