@@ -176,7 +176,7 @@ contains
     call timer('q65_dec0',0)
 ! Call top-level routine in q65 module: establish sync and try for a
 ! q3 or q0 decode.
-    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('q65_dec0',1)
 
@@ -227,7 +227,7 @@ contains
 ! Call top-level routine in q65 module: establish sync and try for a q3
 ! decode, this time using the cumulative 's1a' symbol spectra.
     iavg=1
-    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('list_avg',1)
 
@@ -244,7 +244,7 @@ contains
 
     call timer('q65_avg ',0)
     iavg=2
-    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('q65_avg ',1)
     if(idec.ge.0) then
@@ -258,7 +258,7 @@ contains
        call timer('q65_dec0',0)
        ! Call top-level routine in q65 module: establish sync and try for a
        ! q3 or q0 decode.
-       call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+       call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
             emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
        call timer('q65_dec0',1)
        if(idec.ge.0) then

@@ -28,7 +28,7 @@ module q65
 
 contains
 
-subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,lclearave,  &
      emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
 
 ! Top-level routine in q65 module
@@ -41,7 +41,6 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
 !         ntrperiod              T/R sequence length (s)
 !         nfqso                  Target frequency (Hz)
 !         ntol                   Search range around nfqso (Hz)
-!         ndepth                 Requested decoding depth
 !         lclearave              Flag to clear the accumulating array
 !         emedelay               Extra delay for EME signals
 ! Output: xdt                    Time offset from nominal (s)
@@ -76,7 +75,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   integer stageno
 
   NN=63
-  if(nutc+ndepth.eq.-999) stop           !Silence compiler warnings
+  if(nutc.eq.-999) stop           !Silence compiler warnings
 
 ! Set some parameters and allocate storage for large arrays
   irc=-2
@@ -184,7 +183,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
 ! Get 2d CCF and ccf2 using sync symbols only
   if(iavg.eq.0) then
      call timer('ccf_22a ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
           f0a,xdta,ccf2)
      call timer('ccf_22a ',1)
   endif
@@ -192,7 +191,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
 ! Get 2d CCF and ccf2_avg using sync symbols only
   if(iavg.ge.1) then
      call timer('ccf_22b ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
           f0a,xdta,ccf2_avg)
      call timer('ccf_22b ',1)
   endif
@@ -488,7 +487,7 @@ subroutine q65_ccf_85(s1,iz,jz,nfqso,ia,ia2,ipk,jpk,f0,xdt,imsg_best,   &
   return
 end subroutine q65_ccf_85
 
-subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
+subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ntrperiod,iavg,ipk,jpk,  &
      f0,xdt,ccf2)
 
 ! Attempt synchronization using only the 22 sync symbols.  Return ccf2
