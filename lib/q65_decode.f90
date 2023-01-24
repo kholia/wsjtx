@@ -135,8 +135,9 @@ contains
     baud=12000.0/nsps
     this%callback => callback
     nFadingModel=1
-    ibwa=2*mode_q65
-    ibwb=ibwa+4
+
+    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 5)
+    ibwb=min(15,ibwa+4)
     maxiters=40
     if(iand(ndepth,3).eq.2) maxiters=60
     if(iand(ndepth,3).eq.3) then
@@ -144,17 +145,7 @@ contains
        ibwb=ibwb+2
        maxiters=100
     endif
-    inquire(file='q65_params.txt',exist=ex)
-    if(ex) then
-       open(28,file='q65_params.txt',status='old')
-       read(28,*) nq65param
-       ibwa=nq65param(1)
-       ibwb=nq65param(2)
-       maxiters=nq65param(3)
-       close(28)
-    endif
-!    write(*,3001) iand(ndepth,3),nsubmode,ibwa,ibwb,maxiters
-!3001 format(5i5)
+
 ! Generate codewords for full-AP list decoding
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
     if(ichar(hisgrid(1:1)).eq.0) hisgrid=' '
