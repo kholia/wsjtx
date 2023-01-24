@@ -40,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent) :
 //  ui->decodedTextBrowser->clear();
   ui->labUTC->setStyleSheet( \
         "QLabel { background-color : black; color : yellow; }");
+  ui->labFreq->setStyleSheet( \
+        "QLabel { background-color : black; color : yellow; }");
   ui->labTol1->setStyleSheet( \
         "QLabel { background-color : white; color : black; }");
   ui->labTol1->setFrameStyle(QFrame::Panel | QFrame::Sunken);
@@ -397,7 +399,6 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
-  lab5->setText(QString::number(ihsym));
   if(ihsym < m_hsymStop) m_decode_called=false;
 
   if(ihsym >= m_hsymStop and !m_decode_called) {   //Decode at t=56 s (for Q65 and data from disk)
@@ -599,12 +600,6 @@ void MainWindow::createStatusBar()                           //createStatusBar
   lab4->setMinimumSize(QSize(50,10));
   lab4->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab4);
-
-  lab5 = new QLabel("");
-  lab5->setAlignment(Qt::AlignHCenter);
-  lab5->setMinimumSize(QSize(50,10));
-  lab5->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  statusBar()->addWidget(lab5);
 }
 
 void MainWindow::on_tolSpinBox_valueChanged(int i)             //tolSpinBox
@@ -738,8 +733,9 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
   mem_q65w.unlock();
   QString t1;
-  t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
-  lab3->setText(t1);
+//  t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
+  t1=t1.asprintf(" %d ",decodes_.ndecodes);
+  lab4->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
 }
 
@@ -905,7 +901,7 @@ void MainWindow::decode()                                       //decode()
 void MainWindow::on_EraseButton_clicked()
 {
   ui->decodedTextBrowser->clear();
-  lab3->clear();
+  lab4->clear();
 }
 
 
@@ -970,7 +966,6 @@ void MainWindow::guiUpdate()
     } else {
       lab2->setStyleSheet("");
     }
-//    lab5->setText("Q65A");
 
 
     if(m_monitoring) {
@@ -1012,36 +1007,36 @@ void MainWindow::guiUpdate()
 void MainWindow::on_actionQ65A_triggered()
 {
   m_modeQ65=1;
-  lab4->setStyleSheet("QLabel{background-color: #ffb266}");
-  lab4->setText("Q65-60A");
+  lab3->setStyleSheet("QLabel{background-color: #ffb266}");
+  lab3->setText("Q65-60A");
 }
 
 void MainWindow::on_actionQ65B_triggered()
 {
   m_modeQ65=2;
-  lab4->setStyleSheet("QLabel{background-color: #b2ff66}");
-  lab4->setText("Q65-60B");
+  lab3->setStyleSheet("QLabel{background-color: #b2ff66}");
+  lab3->setText("Q65-60B");
 }
 
 void MainWindow::on_actionQ65C_triggered()
 {
   m_modeQ65=3;
-  lab4->setStyleSheet("QLabel{background-color: #66ffff}");
-  lab4->setText("Q65-60C");
+  lab3->setStyleSheet("QLabel{background-color: #66ffff}");
+  lab3->setText("Q65-60C");
 }
 
 void MainWindow::on_actionQ65D_triggered()
 {
   m_modeQ65=4;
-  lab4->setStyleSheet("QLabel{background-color: #b266ff}");
-  lab4->setText("Q65-60D");
+  lab3->setStyleSheet("QLabel{background-color: #b266ff}");
+  lab3->setText("Q65-60D");
 }
 
 void MainWindow::on_actionQ65E_triggered()
 {
   m_modeQ65=5;
-  lab4->setStyleSheet("QLabel{background-color: #ff66ff}");
-  lab4->setText("Q65-60E");
+  lab3->setStyleSheet("QLabel{background-color: #ff66ff}");
+  lab3->setText("Q65-60E");
 }
 
 
