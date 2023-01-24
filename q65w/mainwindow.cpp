@@ -932,11 +932,12 @@ void MainWindow::guiUpdate()
     on_actionOpen_next_in_directory_triggered();
   }
 
+  QString t1;
   if(decodes_.ndecodes > m_fetched) {
     while(m_fetched<decodes_.ndecodes) {
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
       if(m_UTC0!="" and m_UTC0!=t.left(4)) {
-        QString t1="-";
+        t1="-";
         ui->decodedTextBrowser->append(t1.repeated(46));
       }
       m_UTC0=t.left(4);
@@ -944,6 +945,9 @@ void MainWindow::guiUpdate()
       m_fetched++;
     }
   }
+  t1="";
+  t1=t1.asprintf("%.3f",datcom_.fcenter);
+  ui->labFreq->setText(t1);
 
   if(nsec != m_sec0) {                                     //Once per second
     static int n60z=99;
