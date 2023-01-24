@@ -12,7 +12,7 @@ module q65
   integer codewords(63,206)
   integer ibwa,ibwb,ncw,nsps,mode_q65,nfa,nfb,nqd
   integer idfbest,idtbest,ibw,ndistbest,maxiters,max_drift
-  integer istep,nsmo,lag1,lag2,npasses,nused,iseq,ncand,nrc
+  integer istep,nsmo,lag1,lag2,npasses,iseq,ncand,nrc
   integer i0,j0
   integer navg(0:1)
   logical lnewdat
