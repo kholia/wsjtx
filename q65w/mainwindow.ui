@@ -127,7 +127,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="0" column="1" rowspan="2">
+        <item row="1" column="1" rowspan="2">
          <widget class="QLabel" name="labUTC">
           <property name="minimumSize">
            <size>
@@ -150,7 +150,7 @@ p, li { white-space: pre-wrap; }
            <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
-           <string> 2014 Dec 02
+           <string> 2023 Feb 02
 01:23:45 </string>
           </property>
           <property name="alignment">
@@ -348,6 +348,21 @@ p, li { white-space: pre-wrap; }
          <widget class="QCheckBox" name="NBcheckBox">
           <property name="text">
            <string>NB</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labFreq">
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>1296.080</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
