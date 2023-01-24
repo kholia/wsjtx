@@ -38,12 +38,12 @@ add_subdirectory (libq65)
 # UI generation
 qt5_wrap_ui (q65w_GENUISRCS ${q65w_UISRCS})
 
-add_executable (q65w ${q65w_CXXSRCS} ${q65w_CSRCS} ${q65w_GENUISRCS} q65w.rc)
-target_include_directories (q65w PRIVATE ${CMAKE_SOURCE_DIR} ${FFTW3_INCLUDE_DIRS})
-target_link_libraries (q65w wsjt_qt m65impl ${FFTW3_LIBRARIES} Qt5::Widgets Qt5::Network Usb::Usb)
+add_executable (qmap ${q65w_CXXSRCS} ${q65w_CSRCS} ${q65w_GENUISRCS} q65w.rc)
+target_include_directories (qmap PRIVATE ${CMAKE_SOURCE_DIR} ${FFTW3_INCLUDE_DIRS})
+target_link_libraries (qmap wsjt_qt m65impl ${FFTW3_LIBRARIES} Qt5::Widgets Qt5::Network Usb::Usb)
 
 if (WSJT_CREATE_WINMAIN)
-  set_target_properties (q65w PROPERTIES WIN32_EXECUTABLE ON)
+  set_target_properties (qmap PROPERTIES WIN32_EXECUTABLE ON)
 endif (WSJT_CREATE_WINMAIN)
 
 if (WIN32)
@@ -58,7 +58,7 @@ if (WIN32)
     )
 
   install (
-    TARGETS q65w
+    TARGETS qmap
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
     BUNDLE DESTINATION . COMPONENT runtime
     )

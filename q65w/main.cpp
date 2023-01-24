@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
   ftninit_();
 
   // Override programs executable basename as application name.
-  a.setApplicationName ("Q65W");
-  a.setApplicationVersion ("0.1");
+  a.setApplicationName ("QMAP");
+  a.setApplicationVersion ("0.2");
   // switch off as we share an Info.plist file with WSJT-X
   a.setAttribute (Qt::AA_DontUseNativeMenuBar);
   MainWindow w;
