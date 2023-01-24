@@ -58,7 +58,6 @@ private slots:
   void on_actionCuteSDR_triggered();
   void on_tolSpinBox_valueChanged(int arg1);
   void on_actionAstro_Data_triggered();
-  void on_stopButton_clicked();
   void on_actionWide_Waterfall_triggered();
   void on_actionOpen_triggered();
   void on_actionOpen_next_in_directory_triggered();

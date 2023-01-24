@@ -484,10 +484,17 @@ void MainWindow::on_actionSettings_triggered()
 
 void MainWindow::on_monitorButton_clicked()                  //Monitor
 {
-  m_monitoring=true;
-  soundInThread.setMonitoring(true);
-  m_diskData=false;
+  if(m_monitoring) {
+    m_monitoring=false;
+    soundInThread.setMonitoring(false);
+    m_loopall=false;
+  } else {
+    m_monitoring=true;
+    soundInThread.setMonitoring(true);
+    m_diskData=false;
+  }
 }
+
 void MainWindow::on_actionLinrad_triggered()                 //Linrad palette
 {
   if(m_wide_graph_window) m_wide_graph_window->setPalette("Linrad");
@@ -631,13 +638,6 @@ void MainWindow::closeEvent (QCloseEvent * e)
   QMainWindow::closeEvent (e);
 }
 
-void MainWindow::on_stopButton_clicked()                       //stopButton
-{
-  m_monitoring=false;
-  soundInThread.setMonitoring(m_monitoring);
-  m_loopall=false;
-}
-
 void MainWindow::msgBox(QString t)                             //msgBox
 {
   msgBox0.setText(t);
@@ -669,7 +669,7 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
       lab1->setStyleSheet("QLabel{background-color: #66ff66}");
       lab1->setText(" " + fname.mid(i,15) + " ");
     }
-    on_stopButton_clicked();
+    if(m_monitoring) on_monitorButton_clicked();
     m_diskData=true;
     int dbDgrd=0;
     if(m_myCall=="K1JT" and m_idInt<0) dbDgrd=m_idInt;
