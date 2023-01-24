@@ -69,10 +69,6 @@ private slots:
   void decode();
   void decodeBusy(bool b);
   void on_EraseButton_clicked();
-  void on_lookupButton_clicked();
-  void on_addButton_clicked();
-  void on_dxCallEntry_textChanged(const QString &arg1);
-  void on_dxGridEntry_textChanged(const QString &arg1);
   void bumpDF(int n);
   void on_actionSettings_triggered();
   void on_NBcheckBox_toggled(bool checked);
@@ -173,7 +169,6 @@ private:
   QString m_hisGrid;
   QString m_saveDir;
   QString m_azelDir;
-  QString m_dxccPfx;
   QString m_palette;
   QString m_dateTime;
   QString m_mode;
@@ -193,7 +188,6 @@ private:
   void createStatusBar();
   void updateStatusBar();
   void msgBox(QString t);
-  void lookup();
   bool isGrid4(QString g);
 };
 

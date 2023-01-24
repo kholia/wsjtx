@@ -43,7 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->labTol1->setStyleSheet( \
         "QLabel { background-color : white; color : black; }");
   ui->labTol1->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  ui->dxStationGroupBox->setStyleSheet("QFrame{border: 5px groove red}");
 
   QActionGroup* paletteGroup = new QActionGroup(this);
   ui->actionCuteSDR->setActionGroup(paletteGroup);
@@ -212,8 +211,6 @@ void MainWindow::writeSettings()
     SettingsGroup g {&settings, "MainWindow"};
     settings.setValue("geometry", saveGeometry());
     settings.setValue("MRUdir", m_path);
-    settings.setValue("DXcall",ui->dxCallEntry->text());
-    settings.setValue("DXgrid",ui->dxGridEntry->text());
   }
 
   SettingsGroup g {&settings, "Common"};
@@ -257,8 +254,6 @@ void MainWindow::readSettings()
   {
     SettingsGroup g {&settings, "MainWindow"};
     restoreGeometry(settings.value("geometry").toByteArray());
-    ui->dxCallEntry->setText(settings.value("DXcall","").toString());
-    ui->dxGridEntry->setText(settings.value("DXgrid","").toString());
     m_path = settings.value("MRUdir", m_appDir + "/save").toString();
   }
 
@@ -525,10 +520,6 @@ void MainWindow::keyPressEvent( QKeyEvent *e )                //keyPressEvent
 {
   switch(e->key())
   {
-  case Qt::Key_F4:
-    ui->dxCallEntry->setText("");
-    ui->dxGridEntry->setText("");
-    break;
   case Qt::Key_F6:
     if(e->modifiers() & Qt::ShiftModifier) {
       on_actionDecode_remaining_files_in_directory_triggered();
@@ -882,13 +873,9 @@ void MainWindow::decode()                                       //decode()
 
   QString mcall=(m_myCall+"            ").mid(0,12);
   QString mgrid=(m_myGrid+"            ").mid(0,6);
-  QString hcall=(ui->dxCallEntry->text()+"            ").mid(0,12);
-  QString hgrid=(ui->dxGridEntry->text()+"      ").mid(0,6);
 
   memcpy(datcom_.mycall, mcall.toLatin1(), 12);
   memcpy(datcom_.mygrid, mgrid.toLatin1(), 6);
-  memcpy(datcom_.hiscall, hcall.toLatin1(), 12);
-  memcpy(datcom_.hisgrid, hgrid.toLatin1(), 6);
   if(m_diskData) {
     memcpy(datcom_.datetime, fname.toLatin1(), 11);
   } else {
@@ -1020,157 +1007,6 @@ void MainWindow::guiUpdate()
     m_hsym0=khsym;
     m_sec0=nsec;
   }
-}
-
-void MainWindow::lookup()                                       //lookup()
-{
-  QString hiscall=ui->dxCallEntry->text().toUpper().trimmed();
-  ui->dxCallEntry->setText(hiscall);
-  QString call3File = m_appDir + "/CALL3.TXT";
-  QFile f(call3File);
-  if(!f.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    msgBox("Cannot open " + call3File);
-    return;
-  }
-  char c[132];
-  qint64 n=0;
-  for(int i=0; i<999999; i++) {
-    n=f.readLine(c,sizeof(c));
-    if(n <= 0) {
-      ui->dxGridEntry->setText("");
-      break;
-     }
-    QString t=QString(c);
-    if(t.indexOf(hiscall)==0) {
-      int i1=t.indexOf(",");
-      QString hisgrid=t.mid(i1+1,6);
-      i1=hisgrid.indexOf(",");
-      if(i1>0) {
-        hisgrid=hisgrid.mid(0,4);
-      } else {
-        hisgrid=hisgrid.mid(0,4) + hisgrid.mid(4,2).toLower();
-      }
-      ui->dxGridEntry->setText(hisgrid);
-      break;
-    }
-  }
-  f.close();
-}
-
-void MainWindow::on_lookupButton_clicked()                    //Lookup button
-{
-  lookup();
-}
-
-void MainWindow::on_addButton_clicked()                       //Add button
-{
-  if(ui->dxGridEntry->text()=="") {
-    msgBox("Please enter a valid grid locator.");
-    return;
-  }
-  m_call3Modified=false;
-  QString hiscall=ui->dxCallEntry->text().toUpper().trimmed();
-  QString hisgrid=ui->dxGridEntry->text().trimmed();
-  QString newEntry=hiscall + "," + hisgrid;
-
-  int ret = QMessageBox::warning(this, "Add",
-       newEntry + "\n" + "Is this station known to be active on EME?",
-       QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-  if(ret==QMessageBox::Yes) {
-    newEntry += ",EME,,";
-  } else {
-    newEntry += ",,,";
-  }
-  QString call3File = m_appDir + "/CALL3.TXT";
-  QFile f1(call3File);
-  if(!f1.open(QIODevice::ReadWrite | QIODevice::Text)) {
-    msgBox("Cannot open " + call3File);
-    return;
-  }
-
-  if(f1.size()==0) {
-    QTextStream out(&f1);
-    out << "ZZZZZZ"
-#if QT_VERSION >= QT_VERSION_CHECK (5, 15, 0)
-        << Qt::endl
-#else
-        << endl
-#endif
-      ;
-    f1.seek (0);
-  }
-
-  QString tmpFile = m_appDir + "/CALL3.TMP";
-  QFile f2(tmpFile);
-  if(!f2.open(QIODevice::ReadWrite | QIODevice::Truncate | QIODevice::Text)) {
-    msgBox("Cannot open " + tmpFile);
-    return;
-  }
-  {
-    QTextStream in(&f1);
-    QTextStream out(&f2);
-    QString hc=hiscall;
-    QString hc1="";
-    QString hc2="000000";
-    QString s;
-    do {
-      s=in.readLine();
-      hc1=hc2;
-      if(s.mid(0,2)=="//") {
-        out << s + "\n";
-      } else {
-        int i1=s.indexOf(",");
-        hc2=s.mid(0,i1);
-        if(hc>hc1 && hc<hc2) {
-          out << newEntry + "\n";
-          out << s + "\n";
-          m_call3Modified=true;
-        } else if(hc==hc2) {
-          QString t=s + "\n\n is already in CALL3.TXT\n" +
-            "Do you wish to replace it?";
-          int ret = QMessageBox::warning(this, "Add",t,
-                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-          if(ret==QMessageBox::Yes) {
-            out << newEntry + "\n";
-            m_call3Modified=true;
-          }
-        } else {
-          if(s!="") out << s + "\n";
-        }
-      }
-    } while(!s.isNull());
-    if(hc>hc1 && !m_call3Modified) out << newEntry + "\n";
-  }
-
-  if(m_call3Modified) {
-    auto const& old_path = m_appDir + "/CALL3.OLD";
-    QFile f0 {old_path};
-    if (f0.exists ()) f0.remove ();
-    f1.copy (old_path);         // copying as we want to preserve
-                                // symlinks
-    f1.open (QFile::WriteOnly | QFile::Text); // truncates
-    f2.seek (0);
-    f1.write (f2.readAll ());   // copy contents
-    f2.remove ();
-  }
-}
-
-void MainWindow::on_dxCallEntry_textChanged(const QString &t) //dxCall changed
-{
-  m_hisCall=t.toUpper().trimmed();
-  ui->dxCallEntry->setText(m_hisCall);
-}
-
-void MainWindow::on_dxGridEntry_textChanged(const QString &t) //dxGrid changed
-{
-  int n=t.length();
-  if(n!=4 and n!=6) return;
-  if(!t[0].isLetter() or !t[1].isLetter()) return;
-  if(!t[2].isDigit() or !t[3].isDigit()) return;
-  if(n==4) m_hisGrid=t.mid(0,2).toUpper() + t.mid(2,2);
-  if(n==6) m_hisGrid=t.mid(0,2).toUpper() + t.mid(2,2) +
-      t.mid(4,2).toLower();
-  ui->dxGridEntry->setText(m_hisGrid);
 }
 
 void MainWindow::on_actionQ65A_triggered()
