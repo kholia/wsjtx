@@ -3706,6 +3706,7 @@ void MainWindow::callSandP2(int n)
   ui->dxCallEntry->setText(m_deCall);
   ui->dxGridEntry->setText(m_deGrid);
   if(m_mode=="Q65") {
+    ui->rptSpinBox->setValue(w[2].toInt());
     genStdMsgs(w[2]);
   } else {
     genStdMsgs(w[3]);
