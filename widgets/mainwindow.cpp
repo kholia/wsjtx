@@ -7504,6 +7504,7 @@ void MainWindow::on_reset_cabrillo_log_action_triggered ()
       if(m_config.RTTY_Exchange()!="SCC") ui->sbSerialNumber->setValue(1);
       m_logBook.contest_log ()->reset ();
       m_activeCall.clear();                      //Erase the QMap of active calls
+      m_EMECall.clear();                         //ditto for EME calls
       m_score=0;
       if (m_ActiveStationsWidget) m_ActiveStationsWidget->setScore(0);
     }
