@@ -23,7 +23,7 @@ set (libq65_FSRCS
   q65b.f90
   q65c.f90
   q65_sync.f90
-  q65wa.f90
+  qmapa.f90
   recvpkt.f90
   sun.f90
   symspec.f90

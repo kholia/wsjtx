@@ -41,12 +41,12 @@ subroutine decode0(dd,ss,savg)
   hisgrid0=hisgrid
   neme0=neme
 
-  call timer('q65wa   ',0)
-  call q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
+  call timer('qmapa   ',0)
+  call qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
        mousedf,mousefqso,nagain,nfshift,max_drift,                  &
        nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,          &
        datetime,ndop00,fselected)
-  call timer('q65wa   ',1)
+  call timer('qmapa   ',1)
 
   return
 end subroutine decode0

@@ -1,4 +1,3 @@
-!subroutine ftninit()
 subroutine ftninit
 
   use timer_impl, only: init_timer !,fini_timer, limtrace
@@ -15,7 +14,7 @@ subroutine ftninit
   
   appd='.'
   addpfx='    '
-  open(12,file=appd//'/all_q65w.txt',status='unknown',position='append')
+  open(12,file=appd//'/all_qmap.txt',status='unknown',position='append')
   open(17,file=appd//'/red.dat',status='unknown')
   open(19,file=appd//'/livecq.txt',status='unknown')
   open(71,file=appd//'/fort.71',status='unknown')

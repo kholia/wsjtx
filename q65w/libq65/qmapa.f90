@@ -1,4 +1,4 @@
-subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
+subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,nfshift,max_drift,nfcal,mycall,         &
      hiscall,hisgrid,nfsample,nmode,ndepth,datetime,ndop00,fselected)
 
@@ -71,4 +71,4 @@ subroutine q65wa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   enddo  ! icand
 
   return
-end subroutine q65wa
+end subroutine qmapa
