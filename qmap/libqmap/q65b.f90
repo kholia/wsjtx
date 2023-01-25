@@ -2,8 +2,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
      max_drift,ndepth,datetime,ndop00,idec)
 
-! This routine provides an interface between Q65W and the Q65 decoder
-! in WSJT-X.  All arguments are input data obtained from the Q65W GUI.
+! This routine provides an interface between QMAP and the Q65 decoder
+! in WSJT-X.  All arguments are input data obtained from the QMAP GUI.
 ! Raw Rx data are available as the 96 kHz complex spectrum ca(MAXFFT1)
 ! in common/cacb.  Decoded messages are sent back to the GUI.
 
