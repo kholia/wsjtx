@@ -206,17 +206,14 @@ void DXLabSuiteCommanderTransceiver::do_frequency (Frequency f, MODE m, bool /*n
 {
   CAT_TRACE (f << ' ' << state ());
   auto f_string = frequency_to_string (f);
-  if (UNK != m && m != get_mode ())
+  auto params =  ("<xcvrfreq:%1>" + f_string).arg (f_string.size ());
+  simple_command (("<command:10>CmdSetFreq<parameters:%1>" + params).arg (params.size ()));
+  if (UNK != m)
     {
       auto m_string = map_mode (m);
       auto params =  ("<xcvrfreq:%1>" + f_string + "<xcvrmode:%2>" + m_string + "<preservesplitanddual:1>Y").arg (f_string.size ()).arg (m_string.size ());
       simple_command (("<command:14>CmdSetFreqMode<parameters:%1>" + params).arg (params.size ()));
       update_mode (m);
-    }
-  else
-    {
-      auto params =  ("<xcvrfreq:%1>" + f_string).arg (f_string.size ());
-      simple_command (("<command:10>CmdSetFreq<parameters:%1>" + params).arg (params.size ()));
     }
   update_rx_frequency (f);
 }
