@@ -211,16 +211,16 @@ bool m_displayBand = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
 
-QSharedMemory mem_q65w("mem_q65w");         //Memory segment to be shared (optionally) with Q65W
+QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
-  int ndecodes;          //Number of Q65W decodes available (so far)
-  int ncand;             //Number of Q65W candidates considered for decoding
-  int nQDecoderDone;     //Q65W decoder is finished (0 or 1)
+  int ndecodes;          //Number of QMAP decodes available (so far)
+  int ncand;             //Number of QMAP candidates considered for decoding
+  int nQDecoderDone;     //QMAP decoder is finished (0 or 1)
   int nWDecoderBusy;     //WSJT-X decoder is busy (0 or 1)
   int nWTransmitting;    //WSJT-X is transmitting (0 or 1)
   char result[50][60];   //Decodes as character*60 arrays
-} q65wcom;
-int* ipc_q65w;
+} qmapcom;
+int* ipc_qmap;
 
 namespace
 {
@@ -463,18 +463,18 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_optimizingProgress.setAutoReset (false);
   m_optimizingProgress.setMinimumDuration (15000); // only show after 15s delay
 
-  //Attach or create a memory segment to be shared with Q65W.
+  //Attach or create a memory segment to be shared with QMAP.
     int memSize=4096;
-    if(!mem_q65w.attach()) {
-      if(!mem_q65w.create(memSize)) {
+    if(!mem_qmap.attach()) {
+      if(!mem_qmap.create(memSize)) {
         MessageBox::information_message (this,
-            "Unable to create shared memory segment mem_q65w.");
+            "Unable to create shared memory segment mem_qmap.");
       }
     }
-    ipc_q65w = (int*)mem_q65w.data();
-    mem_q65w.lock();
-    memset(ipc_q65w,0,memSize);         //Zero all of Q65W shared memory
-    mem_q65w.unlock();
+    ipc_qmap = (int*)mem_qmap.data();
+    mem_qmap.lock();
+    memset(ipc_qmap,0,memSize);         //Zero all of QMAP shared memory
+    mem_qmap.unlock();
 
   // Closedown.
   connect (ui->actionExit, &QAction::triggered, this, &QMainWindow::close);
@@ -1143,7 +1143,7 @@ MainWindow::~MainWindow()
   m_audioThread.quit ();
   m_audioThread.wait ();
   remove_child_from_event_filter (this);
-  memset(ipc_q65w,0,4096);         //Zero all of Q65W shared memory
+  memset(ipc_qmap,0,4096);         //Zero all of QMAP shared memory
 }
 
 //-------------------------------------------------------- writeSettings()
@@ -4828,24 +4828,24 @@ void MainWindow::guiUpdate()
   if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
   if(m_mode=="Q65") {
-    mem_q65w.lock();
+    mem_qmap.lock();
     int n=0;
     if(m_decoderBusy) n=1;
-    ipc_q65w[3]=n;
+    ipc_qmap[3]=n;
     n=0;
     if(m_transmitting) n=1;
-    ipc_q65w[4]=n;
-    if(ipc_q65w[0] > m_fetched) {             //ndecodes
-      memcpy(&q65wcom, (char*)ipc_q65w, sizeof(q65wcom));  //Fetch the new decode(s)
+    ipc_qmap[4]=n;
+    if(ipc_qmap[0] > m_fetched) {             //ndecodes
+      memcpy(&qmapcom, (char*)ipc_qmap, sizeof(qmapcom));  //Fetch the new decode(s)
       readWidebandDecodes();
     }
-    mem_q65w.unlock();
+    mem_qmap.unlock();
   }
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << ipc_q65w[0] << ipc_q65w[1] << ipc_q65w[2]
-//             << ipc_q65w[3] << ipc_q65w[4] << m_fetched;
+//    qDebug() << "AAA" << nsec << ipc_qmap[0] << ipc_qmap[1] << ipc_qmap[2]
+//             << ipc_qmap[3] << ipc_qmap[4] << m_fetched;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -9234,8 +9234,8 @@ void MainWindow::readWidebandDecodes()
   int nhr=0;
   int nmin=0;
   int nsnr=0;
-  while(m_fetched < q65wcom.ndecodes) {
-    QString line=QString::fromLatin1(q65wcom.result[m_fetched]);
+  while(m_fetched < qmapcom.ndecodes) {
+    QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
     double fsked=line.mid(4,9).toDouble();
@@ -9254,7 +9254,7 @@ void MainWindow::readWidebandDecodes()
 
     Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
     bool bCQ=line.contains(" CQ ");
-    bool bFromDisk=q65wcom.nQDecoderDone==2;
+    bool bFromDisk=qmapcom.nQDecoderDone==2;
     if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
       qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
       if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
@@ -9267,7 +9267,7 @@ void MainWindow::readWidebandDecodes()
     m_psk_Reporter.sendReport();                // Upload any queued spots
   }
 
-// Update "m_wEMECall" by reading q65w_decodes.txt
+// Update "m_wEMECall" by reading qmap_decodes.txt
   QMap<QString,EMECall>::iterator i;
   QString t="";
   QString t1;
@@ -9320,10 +9320,10 @@ void MainWindow::readWidebandDecodes()
     m_ActiveStationsWidget->displayRecentStations(m_mode,t);
     m_ActiveStationsWidget->setClickOK(true);
   }
-  if(ipc_q65w[2]==1) {
+  if(ipc_qmap[2]==1) {
     m_fetched=0;
-    ipc_q65w[0]=0;
-    ipc_q65w[2]=0;
+    ipc_qmap[0]=0;
+    ipc_qmap[2]=0;
   }
 }
 
