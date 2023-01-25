@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
+    <width>550</width>
     <height>431</height>
    </rect>
   </property>
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>472</width>
+    <width>550</width>
     <height>0</height>
    </size>
   </property>
@@ -59,7 +59,7 @@
          </size>
         </property>
         <property name="title">
-         <string>     UTC                Freq               DT           dB       Message</string>
+         <string>     UTC               Freq           Fsked             DT            dB       Message</string>
         </property>
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="0">
@@ -72,7 +72,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>421</width>
+             <width>500</width>
              <height>100</height>
             </size>
            </property>
@@ -111,19 +111,79 @@ p, li { white-space: pre-wrap; }
       </item>
       <item row="1" column="0">
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0" rowspan="3">
-         <widget class="QFrame" name="xMeterFrame">
+        <item row="0" column="3" colspan="2">
+         <widget class="QPushButton" name="EraseButton">
           <property name="minimumSize">
            <size>
             <width>50</width>
-            <height>150</height>
+            <height>0</height>
            </size>
           </property>
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+          <property name="text">
+           <string>&amp;Erase</string>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+         </widget>
+        </item>
+        <item row="1" column="4" colspan="2">
+         <widget class="QSpinBox" name="sbMaxDrift">
+          <property name="toolTip">
+           <string>Maximum drift rate in units of symbol rate per transmissiion.</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="prefix">
+           <string>Max Drift  </string>
+          </property>
+          <property name="maximum">
+           <number>50</number>
+          </property>
+          <property name="singleStep">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labFreq">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>35</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
+          </property>
+          <property name="text">
+           <string>1296.080</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5">
+         <widget class="QPushButton" name="DecodeButton">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>&amp;Decode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QCheckBox" name="NBcheckBox">
+          <property name="text">
+           <string>NB</string>
           </property>
          </widget>
         </item>
@@ -158,6 +218,22 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
+        <item row="0" column="0" rowspan="3">
+         <widget class="QFrame" name="xMeterFrame">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>150</height>
+           </size>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="monitorButton">
           <property name="sizePolicy">
@@ -180,32 +256,6 @@ p, li { white-space: pre-wrap; }
           </property>
           <property name="text">
            <string>&amp;Monitor</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3" colspan="2">
-         <widget class="QPushButton" name="EraseButton">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>&amp;Erase</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QPushButton" name="DecodeButton">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>&amp;Decode</string>
           </property>
          </widget>
         </item>
@@ -294,25 +344,6 @@ p, li { white-space: pre-wrap; }
           </item>
          </layout>
         </item>
-        <item row="1" column="4" colspan="2">
-         <widget class="QSpinBox" name="sbMaxDrift">
-          <property name="toolTip">
-           <string>Maximum drift rate in units of symbol rate per transmissiion.</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="prefix">
-           <string>Max Drift  </string>
-          </property>
-          <property name="maximum">
-           <number>50</number>
-          </property>
-          <property name="singleStep">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="4" colspan="2">
          <widget class="QSlider" name="NBslider">
           <property name="enabled">
@@ -344,37 +375,6 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
-         <widget class="QCheckBox" name="NBcheckBox">
-          <property name="text">
-           <string>NB</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labFreq">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Panel</enum>
-          </property>
-          <property name="text">
-           <string>1296.080</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
@@ -386,7 +386,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>472</width>
+     <width>550</width>
      <height>21</height>
     </rect>
    </property>

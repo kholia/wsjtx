@@ -112,8 +112,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      ndecodes=ndecodes+1
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 1.5
-     write(result(ndecodes),1120) nutc,fsked,xdt0,nsnr0,trim(msg0)
-1120 format(i4.4,f9.3,f7.2,i5,2x,a,i6)
+     write(result(ndecodes),1120) nutc,frx,fsked,xdt0,nsnr0,trim(msg0)
+1120 format(i4.4,f9.3,f7.1,f7.2,i5,2x,a)
      write(12,1130) datetime,trim(result(ndecodes)(5:))
 1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)

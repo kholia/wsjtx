@@ -3689,12 +3689,12 @@ void MainWindow::callSandP2(int n)
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65") {
-    double kHz=w[0].toDouble();
+    double kHz=w[1].toDouble();
     int nMHz=m_freqNominal/1000000;
     m_freqNominal=(nMHz*1000 + kHz)* 1000;
-    m_deCall=w[2];
-    m_deGrid=w[3];
-    m_txFirst=(w[4]=="0");
+    m_deCall=w[3];
+    m_deGrid=w[4];
+    m_txFirst=(w[5]=="0");
 //    ui->TxFreqSpinBox->setValue(1500);
   } else {
     m_deCall=w[0];
@@ -3706,7 +3706,7 @@ void MainWindow::callSandP2(int n)
   ui->dxCallEntry->setText(m_deCall);
   ui->dxGridEntry->setText(m_deGrid);
   if(m_mode=="Q65") {
-    genStdMsgs(w[1]);
+    genStdMsgs(w[2]);
   } else {
     genStdMsgs(w[3]);
   }
@@ -9238,13 +9238,15 @@ void MainWindow::readWidebandDecodes()
     QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
-    double fsked=line.mid(4,9).toDouble();
-    QString msg=line.mid(27,-1);
+    double frx=line.mid(4,9).toDouble();
+    double fsked=line.mid(13,7).toDouble();
+    QString msg=line.mid(34,-1);
     int i1=msg.indexOf(" ");
     int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
     QString dxcall=msg.mid(i1+1,i2-i1-1);
     QString w3=msg.mid(i2+1,-1);
-    nsnr=line.mid(22,3).toInt();
+    nsnr=line.mid(29,3).toInt();
+    m_EMECall[dxcall].frx=frx;
     m_EMECall[dxcall].fsked=fsked;
     m_EMECall[dxcall].nsnr=nsnr;
     m_EMECall[dxcall].t=60*nhr + nmin;
@@ -9289,10 +9291,10 @@ void MainWindow::readWidebandDecodes()
       dxcall=(i.key()+"     ").left(8);
       dxgrid4=(i->grid4+"... ").left(4);
       if(i->worked) {
-        t1=t1.asprintf("%5.1f  %+03d   %8s %4s %3d %3d\n",i->fsked,snr,dxcall.toLatin1().constData(),
+        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
                        dxgrid4.toLatin1().constData(),odd,age);
       } else {
-        t1=t1.asprintf("%5.1f  %+03d   %8s %4s %3d %3d*\n",i->fsked,snr,dxcall.toLatin1().constData(),
+        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d*\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
                        dxgrid4.toLatin1().constData(),odd,age);
       }
       f[k]=i->fsked;
@@ -9308,7 +9310,7 @@ void MainWindow::readWidebandDecodes()
     indexx_(f,&kz,indx);
     for(int k=0; k<kz; k++) {
       int j=indx[k]-1;
-      t1=t1.asprintf("%2d.  ",k+1);
+      t1=t1.asprintf("%2d. ",k+1);
       t1+=list[j];
       m_ready2call[k]=list[j];
       t+=t1;

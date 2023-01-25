@@ -706,6 +706,7 @@ private:
   struct EMECall
   {
     QString grid4;
+    double frx;
     double fsked;
     qint32 nsnr;
     qint32 t;
