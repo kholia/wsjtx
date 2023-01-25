@@ -1,4 +1,4 @@
-set (q65w_CXXSRCS
+set (qmap_CXXSRCS
   about.cpp
   astro.cpp
   devsetup.cpp
@@ -14,10 +14,10 @@ set (q65w_CXXSRCS
   )
 
 if (WIN32)
-  set (q65w_CXXSRCS ${q65w_CXXSRCS})
+  set (qmap_CXXSRCS ${qmap_CXXSRCS})
 endif (WIN32)
 
-set (q65w_UISRCS
+set (qmap_UISRCS
   about.ui
   astro.ui
   devsetup.ui
@@ -25,20 +25,20 @@ set (q65w_UISRCS
   widegraph.ui
 )
 
-set (q65w_C_and_CXXSRCS
-  ${q65w_CSRCS}
-  ${q65w_CXXSRCS}
+set (qmap_C_and_CXXSRCS
+  ${qmap_CSRCS}
+  ${qmap_CXXSRCS}
   )
-set_property (SOURCE ${q65w_C_and_CXXSRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -include wsjtx_config.h")
-set_property (SOURCE ${q65w_C_and_CXXSRCS} APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_BINARY_DIR}/wsjtx_config.h)
+set_property (SOURCE ${qmap_C_and_CXXSRCS} APPEND_STRING PROPERTY COMPILE_FLAGS " -include wsjtx_config.h")
+set_property (SOURCE ${qmap_C_and_CXXSRCS} APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_BINARY_DIR}/wsjtx_config.h)
 
 # build the subdirectories
 add_subdirectory (libq65)
 
 # UI generation
-qt5_wrap_ui (q65w_GENUISRCS ${q65w_UISRCS})
+qt5_wrap_ui (qmap_GENUISRCS ${qmap_UISRCS})
 
-add_executable (qmap ${q65w_CXXSRCS} ${q65w_CSRCS} ${q65w_GENUISRCS} q65w.rc)
+add_executable (qmap ${qmap_CXXSRCS} ${qmap_CSRCS} ${qmap_GENUISRCS} qmap.rc)
 target_include_directories (qmap PRIVATE ${CMAKE_SOURCE_DIR} ${FFTW3_INCLUDE_DIRS})
 target_link_libraries (qmap wsjt_qt m65impl ${FFTW3_LIBRARIES} Qt5::Widgets Qt5::Network Usb::Usb)
 

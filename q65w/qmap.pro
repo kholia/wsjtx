@@ -9,7 +9,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG   += thread
 #CONFIG   += console
 
-TARGET = q65w
+TARGET = qmap
 VERSION = 0.1
 TEMPLATE = app
 DEFINES = QT5

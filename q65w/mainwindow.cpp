@@ -21,7 +21,7 @@
 
 qint16 id[2*60*96000];
 
-QSharedMemory mem_q65w("mem_q65w");            //Memory segment to be shared (optionally) with WSJT-X
+QSharedMemory mem_qmap("mem_qmap");            //Memory segment to be shared (optionally) with WSJT-X
 int* ipc_wsjtx;
 
 extern const int RxDataFrequency = 96000;
@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow),
   m_appDir {QApplication::applicationDirPath ()},
-  m_settings_filename {m_appDir + "/q65w.ini"},
+  m_settings_filename {m_appDir + "/qmap.ini"},
   m_astro_window {new Astro {m_settings_filename}},
   m_wide_graph_window {new WideGraph {m_settings_filename}},
   m_gui_timer {new QTimer {this}}
@@ -100,17 +100,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //Attach or create a memory segment to be shared with WSJT-X.
   int memSize=4096;
-  if(!mem_q65w.attach()) {
-    if(!mem_q65w.create(memSize)) {
-      msgBox("Unable to create shared memory segment mem_q65w.");
+  if(!mem_qmap.attach()) {
+    if(!mem_qmap.create(memSize)) {
+      msgBox("Unable to create shared memory segment mem_qmap.");
     }
   }
-  ipc_wsjtx = (int*)mem_q65w.data();
-  mem_q65w.lock();
+  ipc_wsjtx = (int*)mem_qmap.data();
+  mem_qmap.lock();
   memset(ipc_wsjtx,0,memSize);         //Zero all of shared memory
-  mem_q65w.unlock();
+  mem_qmap.unlock();
 
-  fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("q65w_wisdom.dat").toLocal8Bit ());
+  fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
 
   readSettings();		             //Restore user's setup params
 
@@ -201,7 +201,7 @@ MainWindow::~MainWindow()
     soundInThread.quit();
     soundInThread.wait(3000);
   }
-  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("q65w_wisdom.dat").toLocal8Bit ());
+  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
   delete ui;
 }
 
@@ -646,7 +646,7 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
   soundInThread.setMonitoring(m_monitoring);
   QString fname;
   fname=QFileDialog::getOpenFileName(this, "Open File", m_path,
-                                     "MAP65/Q65W Files (*.iq)");
+                                     "MAP65/QMAP Files (*.iq)");
   if(fname != "") {
     m_path=fname;
     int i;
@@ -726,9 +726,9 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   decodeBusy(false);
   decodes_.nQDecoderDone=1;
   if(m_diskData) decodes_.nQDecoderDone=2;
-  mem_q65w.lock();
+  mem_qmap.lock();
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
-  mem_q65w.unlock();
+  mem_qmap.unlock();
   QString t1;
 //  t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   t1=t1.asprintf(" %d ",decodes_.ndecodes);
@@ -953,9 +953,9 @@ void MainWindow::guiUpdate()
     static int n60z=99;
     int n60=nsec%60;
     int itest[5];
-    mem_q65w.lock();
+    mem_qmap.lock();
     memcpy(&itest, (char*)ipc_wsjtx, 20);
-    mem_q65w.unlock();
+    mem_qmap.unlock();
     if(itest[4]==1) m_nTransmitted++;
 //    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4]
 //             << m_nTransmitted;
