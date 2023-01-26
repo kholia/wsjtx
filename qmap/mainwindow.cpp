@@ -934,7 +934,7 @@ void MainWindow::guiUpdate()
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
       if(m_UTC0!="" and m_UTC0!=t.left(4)) {
         t1="-";
-        ui->decodedTextBrowser->append(t1.repeated(46));
+        ui->decodedTextBrowser->append(t1.repeated(56));
       }
       m_UTC0=t.left(4);
       ui->decodedTextBrowser->append(t.trimmed());
