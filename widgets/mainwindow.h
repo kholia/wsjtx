@@ -714,6 +714,8 @@ private:
   };
   QMap<QString,EMECall> m_EMECall;
 
+  QMap<QString,bool> m_EMEworked;
+
   struct RecentCall
   {
     qint64 dialFreq;
@@ -861,6 +863,7 @@ private:
   Q_SLOT void ARRL_Digi_Display();
   void ARRL_Digi_Update(DecodedText dt);
   void activeWorked(QString call, QString band);
+  void read_log();
 };
 
 extern int killbyname(const char* progName);

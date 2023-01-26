@@ -903,6 +903,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->lh_decodes_headings_label->setText(t);
   ui->rh_decodes_headings_label->setText(t);
   readSettings();            //Restore user's setup parameters
+  if(m_mode=="Q65") read_log();
   m_audioThread.start (m_audioThreadPriority);
 
 #ifdef WIN32
@@ -3256,6 +3257,7 @@ void MainWindow::msgAvgDecode2()
 void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;                          //Don't start decoder if it's already busy.
+  m_fetched=0;
   QDateTime now = QDateTime::currentDateTimeUtc ();
   if( m_dateTimeLastTX.isValid () ) {
     qint64 isecs_since_tx = m_dateTimeLastTX.secsTo(now);
@@ -3421,7 +3423,6 @@ void MainWindow::decode()                                       //decode()
         narg[13]=-1;
         narg[14]=m_config.aggressive();
         memcpy(d2b,dec_data.d2,2*360000);
-        m_fetched=0;
         watcher3.setFuture (QtConcurrent::run (std::bind (fast_decode_, &d2b[0],
             &narg[0],&m_TRperiod, &m_msg[0][0], dec_data.params.mycall,
             dec_data.params.hiscall, (FCL)8000, (FCL)12, (FCL)12)));
@@ -3547,6 +3548,28 @@ void MainWindow::decodeDone ()
     ARRL_Digi_Display();  // Update the ARRL_DIGI display
   }
   if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
+}
+
+void MainWindow::read_log()
+{
+  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
+  f.open(QIODevice::ReadOnly);
+  m_score=0;
+  if(f.isOpen()) {
+    QTextStream in(&f);
+    QString line,callsign;
+    for(int i=0; i<99999; i++) {
+      line=in.readLine();
+      if(line.length()<=0) break;
+      callsign=line.mid(40,6);
+      int n=callsign.indexOf(",");
+      if(n>0) callsign=callsign.left(n);
+      m_EMEworked[callsign]=true;
+      m_score++;
+      qDebug() << "aa" << m_score << callsign;
+    }
+    f.close();
+  }
 }
 
 void MainWindow::ARRL_Digi_Update(DecodedText dt)
@@ -4845,8 +4868,8 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << ipc_qmap[0] << ipc_qmap[1] << ipc_qmap[2]
-//             << ipc_qmap[3] << ipc_qmap[4] << m_fetched;
+    qDebug() << "AAA" << nsec << ipc_qmap[0] << ipc_qmap[1] << ipc_qmap[2]
+             << ipc_qmap[3] << ipc_qmap[4] << m_fetched;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -6536,15 +6559,21 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
   }
 
   if(m_ActiveStationsWidget!=NULL) {
-    QString band=m_config.bands()->find(dial_freq);
-    activeWorked(call,band);
-    int points=m_activeCall[call].points;
-    m_score += points;
-    ARRL_logged al;
-    al.time=QDateTime::currentDateTimeUtc();
-    al.band=band;
-    al.points=points;
-    m_arrl_log.append(al);
+    if(m_mode=="Q65") {
+      m_score++;
+      m_EMEworked[call]=true;
+      qDebug() << "bb" << m_score << call;
+    } else {
+      QString band=m_config.bands()->find(dial_freq);
+      activeWorked(call,band);
+      int points=m_activeCall[call].points;
+      m_score += points;
+      ARRL_logged al;
+      al.time=QDateTime::currentDateTimeUtc();
+      al.band=band;
+      al.points=points;
+      m_arrl_log.append(al);
+    }
     updateRate();
   }
 
@@ -9231,6 +9260,7 @@ void MainWindow::write_transmit_entry (QString const& file_name)
 
 void MainWindow::readWidebandDecodes()
 {
+  qDebug() << "dd" << m_fetched << qmapcom.ndecodes;
   if(m_ActiveStationsWidget==NULL) return;
 
   int nhr=0;
@@ -9252,7 +9282,6 @@ void MainWindow::readWidebandDecodes()
     m_EMECall[dxcall].fsked=fsked;
     m_EMECall[dxcall].nsnr=nsnr;
     m_EMECall[dxcall].t=60*nhr + nmin;
-    m_EMECall[dxcall].worked=false;        //### TEMPORARY ###
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
     m_fetched++;
 
@@ -9292,7 +9321,9 @@ void MainWindow::readWidebandDecodes()
     if(age<=maxAge) {
       dxcall=(i.key()+"     ").left(8);
       dxgrid4=(i->grid4+"... ").left(4);
-      if(i->worked) {
+//      if(i->worked) {
+      qDebug() << "cc" << dxcall.trimmed();
+      if(m_EMEworked[dxcall.trimmed()]) {
         t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
                        dxgrid4.toLatin1().constData(),odd,age);
       } else {
