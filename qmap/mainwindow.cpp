@@ -408,8 +408,6 @@ void MainWindow::dataSink(int k)
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yymmdd_hhmm");
-//    qDebug() << "aa" << "Decoder called" << ihsym << ipc_wsjtx[0] << ipc_wsjtx[1]
-//             << ipc_wsjtx[2] << ipc_wsjtx[3] << ipc_wsjtx[4] ;
     decode();                                           //Start the decoder
     if(m_saveAll and !m_diskData and m_nTransmitted<10) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
@@ -701,7 +699,6 @@ void MainWindow::on_actionDecode_remaining_files_in_directory_triggered()
 
 void MainWindow::diskDat()                                   //diskDat()
 {
-//  qDebug() << "aa1" << datcom_.fcenter;
   double hsym;
   //These may be redundant??
   m_diskData=true;
@@ -727,10 +724,11 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   decodes_.nQDecoderDone=1;
   if(m_diskData) decodes_.nQDecoderDone=2;
   mem_qmap.lock();
-  memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_));
+  decodes_.nWDecoderBusy=ipc_wsjtx[3];                   //Prevent overwriting values
+  decodes_.nWTransmitting=ipc_wsjtx[4];                  //written here by WSJT-X
+  memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_)); //Send decodes and flags to WSJT-X
   mem_qmap.unlock();
   QString t1;
-//  t1=t1.asprintf(" %3d/%d  ",decodes_.ndecodes,decodes_.ncand);
   t1=t1.asprintf(" %d ",decodes_.ndecodes);
   lab4->setText(t1);
   QDateTime now=QDateTime::currentDateTimeUtc();
@@ -788,7 +786,6 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
     datcom_.ntol=m_tol;
   }
   m_nDoubleClicked++;
-//  qDebug() << "aa" << m_nDoubleClicked << m_decoderBusy << m_nTransmitted << n;
   if(!m_decoderBusy) {
     datcom_.nagain=1;
     datcom_.newdat=0;
@@ -845,7 +842,6 @@ void MainWindow::decode()                                       //decode()
 
   datcom_.nfa=nfa;
   datcom_.nfb=nfb;
-//  qDebug() << "bbb" << datcom_.fcenter << datcom_.nfa << datcom_.nfb << datcom_.fselected;
   datcom_.nfcal=m_fCal;
   datcom_.nfshift=nfshift;
   datcom_.mcall3=0;

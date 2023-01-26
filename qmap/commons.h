@@ -84,12 +84,12 @@ extern struct {                     //This is "common/datcom/..." in Fortran
 } datcom2_;
 
 extern struct {
-  int ndecodes;
-  int ncand;
-  int nQDecoderDone;
-  int nWDecoderBusy;
-  int nWTransmitting;
-  char result[50][60];
+  int ndecodes;          //These are flags for inter-process communication
+  int ncand;             //between QMAP and WSJT-X
+  int nQDecoderDone;     //1 for real-time decodes, 2 for data from disk
+  int nWDecoderBusy;     //Set to 1 when WSJT-X decoder is busy
+  int nWTransmitting;    //Set to 1 when WSJT-X is transmitting
+  char result[50][60];   //Staging area for QMAP decodes
 } decodes_;
 
 }

@@ -131,6 +131,7 @@ void ActiveStations::setRate(int n)
 
 void ActiveStations::setScore(int n)
 {
+  qDebug() << "FF" << n;
   ui->score->setText(QLocale(QLocale::English).toString(n));
 }
 

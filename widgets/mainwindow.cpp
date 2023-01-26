@@ -903,7 +903,10 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->lh_decodes_headings_label->setText(t);
   ui->rh_decodes_headings_label->setText(t);
   readSettings();            //Restore user's setup parameters
-  if(m_mode=="Q65") read_log();
+  if(m_mode=="Q65") {
+    m_score=0;
+    read_log();
+  }
   m_audioThread.start (m_audioThreadPriority);
 
 #ifdef WIN32
@@ -2940,6 +2943,7 @@ void MainWindow::on_actionActiveStations_triggered()
   connect(m_ActiveStationsWidget.data(), SIGNAL(callSandP(int)),this,SLOT(callSandP2(int)));
   connect(m_ActiveStationsWidget.data(), SIGNAL(activeStationsDisplay()),this,SLOT(ARRL_Digi_Display()));
   m_ActiveStationsWidget->setScore(m_score);
+  if(m_mode=="Q65") m_ActiveStationsWidget->setRate(m_score);
 }
 
 void MainWindow::on_actionOpen_triggered()                     //Open File
@@ -3554,7 +3558,6 @@ void MainWindow::read_log()
 {
   static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
   f.open(QIODevice::ReadOnly);
-  m_score=0;
   if(f.isOpen()) {
     QTextStream in(&f);
     QString line,callsign;
@@ -3566,9 +3569,12 @@ void MainWindow::read_log()
       if(n>0) callsign=callsign.left(n);
       m_EMEworked[callsign]=true;
       m_score++;
-      qDebug() << "aa" << m_score << callsign;
     }
     f.close();
+  }
+  if(m_ActiveStationsWidget!=NULL) {
+    m_ActiveStationsWidget->setScore(m_score);
+    if(m_mode=="Q65") m_ActiveStationsWidget->setRate(m_score);
   }
 }
 
@@ -4859,7 +4865,7 @@ void MainWindow::guiUpdate()
     n=0;
     if(m_transmitting) n=1;
     ipc_qmap[4]=n;
-    if(ipc_qmap[0] > m_fetched) {             //ndecodes
+    if(ipc_qmap[0] > 0) {             //ndecodes
       memcpy(&qmapcom, (char*)ipc_qmap, sizeof(qmapcom));  //Fetch the new decode(s)
       readWidebandDecodes();
     }
@@ -4868,8 +4874,8 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-    qDebug() << "AAA" << nsec << ipc_qmap[0] << ipc_qmap[1] << ipc_qmap[2]
-             << ipc_qmap[3] << ipc_qmap[4] << m_fetched;
+//    qDebug() << "AAA" << nsec%60 << ipc_qmap[0] << ipc_qmap[1] << ipc_qmap[2]
+//             << ipc_qmap[3] << ipc_qmap[4] << m_fetched;
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -6562,7 +6568,7 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     if(m_mode=="Q65") {
       m_score++;
       m_EMEworked[call]=true;
-      qDebug() << "bb" << m_score << call;
+      m_ActiveStationsWidget->setRate(m_score);
     } else {
       QString band=m_config.bands()->find(dial_freq);
       activeWorked(call,band);
@@ -6573,8 +6579,8 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
       al.band=band;
       al.points=points;
       m_arrl_log.append(al);
+      updateRate();
     }
-    updateRate();
   }
 
   m_xSent.clear ();
@@ -7535,7 +7541,10 @@ void MainWindow::on_reset_cabrillo_log_action_triggered ()
       m_activeCall.clear();                      //Erase the QMap of active calls
       m_EMECall.clear();                         //ditto for EME calls
       m_score=0;
-      if (m_ActiveStationsWidget) m_ActiveStationsWidget->setScore(0);
+      if (m_ActiveStationsWidget) {
+        m_ActiveStationsWidget->setScore(0);
+        if(m_mode=="Q65") m_ActiveStationsWidget->setRate(0);
+      }
     }
 }
 
@@ -9260,7 +9269,6 @@ void MainWindow::write_transmit_entry (QString const& file_name)
 
 void MainWindow::readWidebandDecodes()
 {
-  qDebug() << "dd" << m_fetched << qmapcom.ndecodes;
   if(m_ActiveStationsWidget==NULL) return;
 
   int nhr=0;
@@ -9321,8 +9329,6 @@ void MainWindow::readWidebandDecodes()
     if(age<=maxAge) {
       dxcall=(i.key()+"     ").left(8);
       dxgrid4=(i->grid4+"... ").left(4);
-//      if(i->worked) {
-      qDebug() << "cc" << dxcall.trimmed();
       if(m_EMEworked[dxcall.trimmed()]) {
         t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
                        dxgrid4.toLatin1().constData(),odd,age);
@@ -9355,7 +9361,7 @@ void MainWindow::readWidebandDecodes()
     m_ActiveStationsWidget->displayRecentStations(m_mode,t);
     m_ActiveStationsWidget->setClickOK(true);
   }
-  if(ipc_qmap[2]==1) {
+  if(ipc_qmap[2]!=0) {
     m_fetched=0;
     ipc_qmap[0]=0;
     ipc_qmap[2]=0;
