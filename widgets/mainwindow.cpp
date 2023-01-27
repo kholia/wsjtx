@@ -4109,7 +4109,7 @@ void MainWindow::auto_sequence (DecodedText const& message, unsigned start_toler
                || message_words.contains (ui->dxCallEntry->text ())
                || message_words.contains (Radio::base_callsign (ui->dxCallEntry->text ()))
                || message_words.contains ("DE")))
-          || !message.isStandardMessage ()); // free text 73/RR73
+          || (!message.isStandardMessage () && m_mode != "MSK144")); // free text 73/RR73 except for MSK
 
     auto const& w = msg_no_hash.split(" ",SkipEmptyParts);
     QString w2;
