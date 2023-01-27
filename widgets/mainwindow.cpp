@@ -1075,6 +1075,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
+  ui->readFreq->setEnabled(true);            //To enable manual rig-control option
+
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
@@ -7795,6 +7797,15 @@ void MainWindow::on_readFreq_clicked()
 {
   if (m_transmitting) return;
 
+// CTRL+click on the rig-mode button to allow temporary manual rig control.
+  bool b=QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
+  if(b and m_config.is_transceiver_online()) {
+      m_config.transceiver_offline();
+      update_dynamic_property (ui->readFreq, "state", "manual");
+      ui->readFreq->setText("M");
+      return;
+  }
+
   if (m_config.transceiver_online ())
     {
       m_config.sync_transceiver (true, true);
@@ -7934,7 +7945,7 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
 
   displayDialFrequency ();
   update_dynamic_property (ui->readFreq, "state", "ok");
-  ui->readFreq->setEnabled (false);
+//  ui->readFreq->setEnabled (false);    //Leave it enabled to allow Manual rig control option
   ui->readFreq->setText (s.split () ? "S" : "");
 }
 
