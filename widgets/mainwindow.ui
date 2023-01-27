@@ -42,6 +42,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -185,6 +186,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -3100,10 +3102,10 @@ QLabel[oob=&quot;true&quot;] {
               <bool>false</bool>
              </property>
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If orange or red there has been a rig control failure, click to reset and read the dial frequency.  S implies split mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If orange or red there has been a rig control failure, click to reset and read the dial frequency. S implies split mode.  CTRL-click for temporary manual rig control, signified by yellow.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="accessibleDescription">
-              <string>If orange or red there has been a rig control failure, click to reset and read the dial frequency. S implies split mode.</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If orange or red there has been a rig control failure, click to reset and read the dial frequency. S implies split mode. CTRL-click for temporary manual rig control, signified by yellow.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
               <string notr="true">QPushButton {
@@ -3126,6 +3128,9 @@ QPushButton[state=&quot;error&quot;] {
 }
 QPushButton[state=&quot;warning&quot;] {
  background-color: orange;
+}
+QPushButton[state=&quot;manual&quot;] {
+ background-color: yellow;
 }
 QPushButton[state=&quot;ok&quot;] {
  background-color: #00ff00;
@@ -3151,7 +3156,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
