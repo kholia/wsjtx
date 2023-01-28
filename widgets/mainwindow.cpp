@@ -7799,17 +7799,18 @@ void MainWindow::on_readFreq_clicked()
 
 // CTRL+click on the rig-mode button to allow temporary manual rig control.
   bool b=QApplication::keyboardModifiers().testFlag(Qt::ControlModifier);
-  if(b and m_config.is_transceiver_online()) {
+  if(b) {
+    if(m_config.is_transceiver_online()) {
       m_config.transceiver_offline();
       update_dynamic_property (ui->readFreq, "state", "manual");
       ui->readFreq->setText("M");
-      return;
-  }
-
-  if (m_config.transceiver_online ())
-    {
-      m_config.sync_transceiver (true, true);
+    } else {
+      m_config.transceiver_online();
+      update_dynamic_property (ui->readFreq, "state", "ok");
+      ui->readFreq->setText(m_rigState.split() ? "S" : "");
     }
+  }
+  if (m_config.is_transceiver_online()) m_config.sync_transceiver(true, true);
 }
 
 void MainWindow::setXIT(int n, Frequency base)
@@ -7879,6 +7880,7 @@ void MainWindow::setFreq4(int rxFreq, int txFreq)
 
 void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const& s)
 {
+  if(ui->readFreq->text()=="M") return;   //Manual rig control is active, do nothing here
   Transceiver::TransceiverState old_state {m_rigState};
   //transmitDisplay (s.ptt ());
   if (s.ptt () // && !m_rigState.ptt ()
