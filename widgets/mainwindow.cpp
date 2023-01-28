@@ -4181,7 +4181,7 @@ void MainWindow::auto_sequence (DecodedText const& message, unsigned start_toler
                || message_words.contains (ui->dxCallEntry->text ())
                || message_words.contains (Radio::base_callsign (ui->dxCallEntry->text ()))
                || message_words.contains ("DE")))
-          || !message.isStandardMessage ()); // free text 73/RR73
+          || (!message.isStandardMessage () && m_mode != "MSK144")); // free text 73/RR73 except for MSK
 
     auto const& w = msg_no_hash.split(" ",SkipEmptyParts);
     QString w2;
@@ -4884,7 +4884,10 @@ void MainWindow::guiUpdate()
     if( SpecOp::HOUND == m_specOp ) {
       qint32 tHound=QDateTime::currentMSecsSinceEpoch()/1000 - m_tAutoOn;
       //To keep calling Fox, Hound must reactivate Enable Tx at least once every 2 minutes
-      if(tHound >= 120 and m_ntx==1) auto_tx_mode(false);
+      if(tHound >= 120 and m_ntx==1) {
+      auto_tx_mode(false);
+      statusUpdate ();
+      }
     }
 
     progressBar.setVisible(true);
