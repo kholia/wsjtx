@@ -55,9 +55,13 @@ contains
     use, intrinsic :: iso_c_binding
     use q65                               !Shared variables
     use prog_args
+    use types
  
-    parameter (NMAX=300*12000)            !Max TRperiod is 300 s
+    parameter (NMAX=300*12000)  !Max TRperiod is 300 s
+    parameter (MAX_CALLERS=40)  !For multiple q3 decodes in NA VHf Contest mode
+
     class(q65_decoder), intent(inout) :: this
+
     procedure(q65_decode_callback) :: callback
     character(len=12) :: mycall, hiscall  !Used for AP decoding
     character(len=6) :: hisgrid
@@ -74,15 +78,17 @@ contains
     integer dat4(13)                      !Decoded message as 12 6-bit integers
     integer dgen(13)
     integer nq65param(3)
+    integer stageno                       !Added by W3SZ
+    integer time
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
     logical single_decode,lagain,ex
     complex, allocatable :: c00(:)        !Analytic signal, 6000 Sa/s
     complex, allocatable :: c0(:)         !Analytic signal, 6000 Sa/s
-    integer stageno                       !Added by W3SZ
-    stageno=0
+    type(q3list) callers(MAX_CALLERS)
 
 ! Start by setting some parameters and allocating storage for large arrays
     call sec0(0,tdecode)
+    stageno=0
     ndecodes=0
     decodes=' '
     f0decodes=0.
@@ -103,9 +109,25 @@ contains
     if(lagain) ndepth=ior(ndepth,3)       !Use 'Deep' for manual Q65 decodes
     dxcall13=hiscall  ! initialize for use in packjt77
     mycall13=mycall
+    nhist2=0
+    if(ncontest.eq.1) then
+! NA VHF Contest or ARRL Digi Contest
+       open(24,file=trim(data_dir)//'/q3list.bin',status='unknown',     &
+            form='unformatted')
+       read(24,end=2) nhist2,callers(1:nhist2)
+       now=time()
+       do i=1,nhist2
+          hours=(now - callers(i)%nsec)/3600.0
+          if(hours.gt.18.0) then
+             callers(i:nhist2-1)=callers(i+1:nhist2)
+             nhist2=nhist2-1
+          endif
+       enddo
+!       print*,'a nhist2:',nhist2
+    endif
 
 ! Determine the T/R sequence: iseq=0 (even), or iseq=1 (odd)
-    n=nutc
+2   n=nutc
     if(ntrperiod.ge.60 .and. nutc.le.2359) n=100*n
     write(cutc,'(i6.6)') n
     read(cutc,'(3i2)') ih,im,is
@@ -151,7 +173,11 @@ contains
     if(ichar(hisgrid(1:1)).eq.0) hisgrid=' '
     ncw=0
     if(nqd.eq.1 .or. lagain) then
-       call q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
+       if(ncontest.eq.1) then
+          call q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,codewords,ncw)
+       else
+          call q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
+       endif
     endif
     dgen=0
     call q65_enc(dgen,codewords)         !Initialize the Q65 codec
@@ -284,7 +310,11 @@ contains
           nsnr=nint(snr2)
           call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                idec,nused,ntrperiod)
-          call q65_hist(nint(f0dec),msg0=decoded)
+          if(ncontest.eq.1) then
+             call q65_hist2(decoded,callers,nhist2)
+          else
+             call q65_hist(nint(f0dec),msg0=decoded)
+          endif
           if(iand(ndepth,128).ne.0 .and. .not.lagain .and.      &
                int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
           call sec0(1,tdecode)
@@ -374,7 +404,11 @@ contains
              nsnr=nint(snr2)
              call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                   idec,nused,ntrperiod)
-             call q65_hist(nint(f0dec),msg0=decoded)
+             if(ncontest.eq.1) then
+                call q65_hist2(decoded,callers,nhist2)
+             else
+                call q65_hist(nint(f0dec),msg0=decoded)
+             endif
              if(iand(ndepth,128).ne.0 .and. .not.lagain .and.      &
                   int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
              call sec0(1,tdecode)
@@ -403,7 +437,9 @@ contains
 800    continue
     enddo  ! icand
     if(iavg.eq.0 .and.navg(iseq).ge.2 .and. iand(ndepth,16).ne.0) go to 50
-900 return
+
+900 close(24)
+    return
   end subroutine decode
 
 end module q65_decode

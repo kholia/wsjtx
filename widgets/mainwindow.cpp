@@ -3314,7 +3314,9 @@ void MainWindow::decode()                                       //decode()
   dec_data.params.ndiskdat=0;
   if(m_diskData) dec_data.params.ndiskdat=1;
   dec_data.params.nfa=m_wideGraph->nStartFreq();
-  dec_data.params.nfSplit=m_wideGraph->Fmin();
+  dec_data.params.nfSplit=m_wideGraph->Fmin();  // Not used any more?
+  if(dec_data.params.nfSplit==8) dec_data.params.nfSplit=1;
+
   dec_data.params.nfb=m_wideGraph->Fmax();
   if(m_mode=="FT8" and SpecOp::HOUND == m_specOp and !ui->cbRxAll->isChecked()) dec_data.params.nfb=1000;
   if(m_mode=="FT8" and SpecOp::FOX == m_specOp ) dec_data.params.nfqso=200;
@@ -3370,7 +3372,8 @@ void MainWindow::decode()                                       //decode()
   dec_data.params.emedelay=0.0;
   if(m_config.decode_at_52s()) dec_data.params.emedelay=2.5;
   dec_data.params.minSync=ui->syncSpinBox->isVisible () ? m_minSync : 0;
-  dec_data.params.nexp_decode = static_cast<int> (m_specOp);
+  dec_data.params.nexp_decode=int(m_specOp);
+  if(dec_data.params.nexp_decode==8) dec_data.params.nexp_decode=1;  //NA VHF and ARRL Digi are same
   if(m_config.single_decode()) dec_data.params.nexp_decode += 32;
   if(m_config.enable_VHF_features()) dec_data.params.nexp_decode += 64;
   if(m_mode.startsWith("FST4")) dec_data.params.nexp_decode += 256*(ui->sbNB->value()+3);
@@ -4874,8 +4877,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec%60 << ipc_qmap[0] << ipc_qmap[1] << ipc_qmap[2]
-//             << ipc_qmap[3] << ipc_qmap[4] << m_fetched;
+//    qDebug() << "AAA" << nsec%60 << int(m_specOp);
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);

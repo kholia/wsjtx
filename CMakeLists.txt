@@ -509,6 +509,7 @@ set (wsjt_FSRCS
   lib/qra/q65/q65_ap.f90
   lib/qra/q65/q65_loops.f90
   lib/qra/q65/q65_set_list.f90
+  lib/qra/q65/q65_set_list2.f90
   lib/refspectrum.f90
   lib/savec2.f90
   lib/save_dxbase.f90

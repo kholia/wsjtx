@@ -397,7 +397,6 @@ subroutine q65_dec_q012(s3,LL,snr2,dat4,idec,decoded)
         read(c78,1060) apsymbols
      endif
 
-!     print*,'a',ibwa,ibwb,maxiters,iimax
      do ibw=ibwa,ibwb
         b90=1.72**ibw
         b90ts=b90/baud
@@ -852,5 +851,56 @@ subroutine q65_hist(if0,msg0,dxcall,dxgrid)
 
 900 return
 end subroutine q65_hist
+
+subroutine q65_hist2(msg0,callers,nhist2)
+
+  use types
+  parameter (MAX_CALLERS=40)  !For multiple q3 decodes in NA VHf Contest mode
+  character*37 msg0,msg
+  type(q3list) callers(MAX_CALLERS)
+  character*6 c6
+  character*4 g4
+  logical newcall,isgrid
+
+  isgrid(g4)=g4(1:1).ge.'A' .and. g4(1:1).le.'R' .and. g4(2:2).ge.'A' .and. &
+       g4(2:2).le.'R' .and. g4(3:3).ge.'0' .and. g4(3:3).le.'9' .and.       &
+       g4(4:4).ge.'0' .and. g4(4:4).le.'9' .and. g4(1:4).ne.'RR73'
+
+  msg=msg0
+  if(index(msg,'/').gt.0) goto 900            !Ignore messages withcompound calls
+  i0=index(msg,' R ')
+  if(i0.ge.7) msg=msg(1:i0)//msg(i0+3:)
+  i1=index(msg,' ')
+  c6='      '
+  g4='    '
+  if(i1.ge.4 .and. i1.le.13) then
+     i2=index(msg(i1+1:),' ') + i1
+     c6=msg(i1+1:i2-1)                     !Extract DX call
+     g4=msg(i2+1:i2+4)                     !Extract DX grid
+  endif
+
+  newcall=.true.
+  do i=1,nhist2
+     if(callers(i)%call .eq. c6) then
+        newcall=.false.
+        callers(i)%nsec=time()
+        exit
+     endif
+  enddo
+
+  if(newcall .and. isgrid(g4)) then
+     nhist2=nhist2+1
+     callers(nhist2)%call=c6
+     callers(nhist2)%grid=g4
+     callers(nhist2)%nsec=time()
+     rewind(24)
+     write(24) nhist2,callers(1:nhist2)
+     rewind(24)
+  endif
+
+!  print*,'c',nhist2,trim(msg),' ',c6,' ',g4
+
+900 return
+end subroutine q65_hist2
 
 end module q65
