@@ -112,9 +112,12 @@ contains
     nhist2=0
     if(ncontest.eq.1) then
 ! NA VHF Contest or ARRL Digi Contest
-       open(24,file=trim(data_dir)//'/q3list.bin',status='unknown',     &
-            form='unformatted')
-       read(24,end=2) nhist2,callers(1:nhist2)
+!       open(24,file=trim(data_dir)//'/q3list.bin',status='unknown',     &
+!            form='unformatted')
+!       read(24,end=2) nhist2,callers(1:nhist2)
+       open(24,file=trim(data_dir)//'/q3list.bin',status='unknown')
+       read(24,3024,end=2) nhist2,callers(1:nhist2)
+3024   format(i5/(a6,2x,a4,2x,i10))
        now=time()
        do i=1,nhist2
           hours=(now - callers(i)%nsec)/3600.0

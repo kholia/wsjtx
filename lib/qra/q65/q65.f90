@@ -598,7 +598,7 @@ subroutine q65_dec1(s3,nsubmode,b90ts,esnodb,irc,dat4,decoded)
   integer dat4(13)
   character c77*77,decoded*37
   logical unpk77_success
-  
+
   nFadingModel=1
   decoded='                                     '
   call q65_intrinsics_ff(s3,nsubmode,b90ts,nFadingModel,s3prob)
@@ -894,11 +894,10 @@ subroutine q65_hist2(msg0,callers,nhist2)
      callers(nhist2)%grid=g4
      callers(nhist2)%nsec=time()
      rewind(24)
-     write(24) nhist2,callers(1:nhist2)
+     write(24,3024) nhist2,callers(1:nhist2)
+3024 format(i5/(a6,2x,a4,2x,i10))
      rewind(24)
   endif
-
-!  print*,'c',nhist2,trim(msg),' ',c6,' ',g4
 
 900 return
 end subroutine q65_hist2
