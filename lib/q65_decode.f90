@@ -126,7 +126,6 @@ contains
              nhist2=nhist2-1
           endif
        enddo
-!       print*,'a nhist2:',nhist2
     endif
 
 ! Determine the T/R sequence: iseq=0 (even), or iseq=1 (odd)
@@ -161,7 +160,15 @@ contains
     this%callback => callback
     nFadingModel=1
 
-    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 5)
+!    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 5)
+!### This needs work!
+    ibwa=0                          !Q65-60A
+    if(mode_q65.eq.2) ibwa=3        !Q65-60B
+    if(mode_q65.eq.4) ibwa=8        !Q65-60C
+    if(mode_q65.eq.2) ibwa=9        !Q65-60D
+    if(mode_q65.eq.2) ibwa=10       !Q65-60E
+!###
+
     ibwb=min(15,ibwa+4)
     maxiters=40
     if(iand(ndepth,3).eq.2) maxiters=60
@@ -170,6 +177,7 @@ contains
        ibwb=ibwb+2
        maxiters=100
     endif
+!    print*,'a',iand(ndepth,3),ibwa,ibwb,maxiters
 
 ! Generate codewords for full-AP list decoding
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
@@ -331,13 +339,13 @@ contains
              if(c6.eq.'      ') c6='<b>   '
              c4=hisgrid(1:4)
              if(c4.eq.'    ') c4='<b> '
-             fmt='(i6.4,1x,a4,i5,4i2,6i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
+             fmt='(i6.4,1x,a4,i5,4i2,8i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
                   '1x,a6,1x,a6,1x,a4,1x,a)'
              if(ntrperiod.le.30) fmt(5:5)='6'
              if(idec.eq.3) nrc=0
              write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,idtbest, &
-                  ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,f0,snr2,plog, &
-                  tdecode,mycall(1:6),c6,c4,trim(decoded)
+                  ibwa,ibwb,ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,    &
+                  f0,snr2,plog,tdecode,mycall(1:6),c6,c4,trim(decoded)
              close(22)
           endif
        endif
@@ -428,13 +436,14 @@ contains
                 if(c6.eq.'      ') c6='<b>   '
                 c4=hisgrid(1:4)
                 if(c4.eq.'    ') c4='<b> '
-                fmt='(i6.4,1x,a4,i5,4i2,6i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
+                fmt='(i6.4,1x,a4,i5,4i2,8i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
                      '1x,a6,1x,a6,1x,a4,1x,a)'
                 if(ntrperiod.le.30) fmt(5:5)='6'
                 if(idec.eq.3) nrc=0
                 write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,    &
-                     idtbest,ibw,ndistbest,nused,icand,ncand,nrc,ndepth,     &
-                     xdt,f0,snr2,plog,tdecode,mycall(1:6),c6,c4,trim(decoded)
+                     idtbest,ibwa,ibwb,ibw,ndistbest,nused,icand,ncand,nrc,  &
+                     ndepth,xdt,f0,snr2,plog,tdecode,mycall(1:6),c6,c4,      &
+                     trim(decoded)
                 close(22)
              endif
           endif
