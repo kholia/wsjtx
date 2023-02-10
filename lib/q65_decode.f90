@@ -162,7 +162,7 @@ contains
 
 !    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 5)
 !### This needs work!
-    ibwa=0                          !Q65-60A
+    ibwa=1                          !Q65-60A
     if(mode_q65.eq.2) ibwa=3        !Q65-60B
     if(mode_q65.eq.4) ibwa=8        !Q65-60C
     if(mode_q65.eq.2) ibwa=9        !Q65-60D
