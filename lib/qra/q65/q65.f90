@@ -567,6 +567,10 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
 ! Save parameters for best candidates
   jzz=ib-ia+1
   call indexx(ccf2(ia:ib),jzz,indx)
+
+  call pctile(ccf2(ia:ib),jzz,50,ave)
+  call pctile(ccf2(ia:ib),jzz,84,base)
+  rms=base-ave
   ncand=0
   maxcand=20
   do j=1,20
@@ -578,8 +582,10 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
      i4=min(iz,i+mode_q65)
      biggest=maxval(ccf2(i3:i4))
      if(ccf2(i).ne.biggest) cycle
+     snr=(ccf2(i)-ave)/rms
+     if(snr.lt.6.0) exit
      ncand=ncand+1
-     candidates(ncand,1)=ccf2(i)
+     candidates(ncand,1)=snr
      candidates(ncand,2)=xdt2(i)
      candidates(ncand,3)=f
      if(ncand.ge.maxcand) exit

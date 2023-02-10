@@ -228,10 +228,10 @@ contains
           read(c78,1060) apsymbols
        endif
 
-       call timer('q65loops',0)
+       call timer('q65loop1',0)
        call q65_loops(c00,npts/2,nsps/2,nsubmode,ndepth,jpk0,   &
             xdt,f0,iaptype,xdt1,f1,snr2,dat4,idec)
-       call timer('q65loops',1)
+       call timer('q65loop1',1)
 !       write(*,3001) '=b',nfqso,ntol,ndepth,xdt,f0,idec
        if(idec.ge.0) then
           dtdec=xdt1
@@ -366,6 +366,8 @@ contains
        if(lapcqonly) npasses=1
        iaptype=0
        do ipass=0,npasses                  !Loop over AP passes
+!          write(*,3001) nutc,icand,ipass,f0,xdt,snr1
+!3001      format('a',i5.4,2i3,3f7.1)
           apmask=0                         !Try first with no AP information
           apsymbols=0
           if(ipass.ge.1) then
@@ -378,10 +380,10 @@ contains
              read(c78,1060) apsymbols
           endif
 
-          call timer('q65loops',0)
+          call timer('q65loop2',0)
           call q65_loops(c00,npts/2,nsps/2,nsubmode,ndepth,jpk0,   &
                xdt,f0,iaptype,xdt1,f1,snr2,dat4,idec)
-          call timer('q65loops',1)
+          call timer('q65loop2',1)
 !          write(*,3001) '=e',nfqso,ntol,ndepth,xdt,f0,idec
           if(idec.ge.0) then
              dtdec=xdt1
