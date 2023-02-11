@@ -61,8 +61,8 @@ subroutine q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,codewords,ncw)
            jj=jj+1
            codewords(jj,i)=itone(kk) - 1
         enddo
-        write(71,3001) i,j,k,codewords(1:13,i),trim(msg)
-3001    format(3i3,2x,13i3,2x,a)
+!        write(71,3001) i,j,k,codewords(1:13,i),trim(msg)
+!3001    format(3i3,2x,13i3,2x,a)
      enddo
   enddo
   ncw=i
