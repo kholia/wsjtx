@@ -895,6 +895,11 @@ subroutine q65_hist2(msg0,callers,nhist2)
   enddo
 
   if(newcall .and. isgrid(g4)) then
+     if(nhist2.eq.MAX_CALLERS) then
+! Purge the oldest caller
+        callers(1:MAX_CALLERS-1)=callers(2:MAX_CALLERS)
+        nhist2=nhist2-1
+     endif
      nhist2=nhist2+1
      callers(nhist2)%call=c6
      callers(nhist2)%grid=g4

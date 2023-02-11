@@ -169,7 +169,8 @@ contains
     if(mode_q65.eq.2) ibwa=10       !Q65-60E
 !###
 
-    ibwb=min(15,ibwa+4)
+!    ibwb=min(15,ibwa+4)
+    ibwb=min(15,ibwa+6)
     maxiters=40
     if(iand(ndepth,3).eq.2) maxiters=60
     if(iand(ndepth,3).eq.3) then
@@ -177,7 +178,6 @@ contains
        ibwb=ibwb+2
        maxiters=100
     endif
-!    print*,'a',iand(ndepth,3),ibwa,ibwb,maxiters
 
 ! Generate codewords for full-AP list decoding
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
@@ -185,7 +185,8 @@ contains
     ncw=0
     if(nqd.eq.1 .or. lagain) then
        if(ncontest.eq.1) then
-          call q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,codewords,ncw)
+          call q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,   &
+               codewords,ncw)
        else
           call q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
        endif
