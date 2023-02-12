@@ -14,6 +14,7 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
 
   logical single_decode,bVHF,lnewdat,lagain,lclearave,lapcqonly
   integer*2 id2(300*12000)
+  integer nqf(20)
 !  type(params_block) :: params
   character(len=12) :: mycall, hiscall
   character(len=6) :: hisgrid
@@ -43,7 +44,7 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
   call timer('dec_q65 ',0)
   call my_q65%decode(q65_decoded,id2,nqd,nutc,ntrperiod,nsubmode,nfqso,       &
        ntol,ndepth,nfa,nfb,lclearave,single_decode,lagain,max_drift,lnewdat,  &
-       emedelay,mycall,hiscall,hisgrid,nQSOProgress,ncontest,lapcqonly,navg0)
+       emedelay,mycall,hiscall,hisgrid,nQSOProgress,ncontest,lapcqonly,navg0,nqf)
   call timer('dec_q65 ',1)
 
   return

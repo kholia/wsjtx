@@ -33,7 +33,7 @@ contains
   subroutine decode(this,callback,iwave,nqd0,nutc,ntrperiod,nsubmode,nfqso,  &
        ntol,ndepth,nfa0,nfb0,lclearave,single_decode,lagain,max_drift0,      &
        lnewdat0,emedelay,mycall,hiscall,hisgrid,nQSOprogress,ncontest,       &
-       lapcqonly,navg0)
+       lapcqonly,navg0,nqf)
 
 ! Top-level routine that organizes the decoding of Q65 signals
 ! Input:  iwave            Raw data, i*2
@@ -74,24 +74,26 @@ contains
     character*80 fmt
     integer*2 iwave(NMAX)                 !Raw data
     real, allocatable :: dd(:)            !Raw data
+    real xdtdecodes(100)
     real f0decodes(100)
     integer dat4(13)                      !Decoded message as 12 6-bit integers
     integer dgen(13)
-    integer nq65param(3)
+    integer nqf(20)
     integer stageno                       !Added by W3SZ
     integer time
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
-    logical single_decode,lagain,ex
+    logical single_decode,lagain
     complex, allocatable :: c00(:)        !Analytic signal, 6000 Sa/s
     complex, allocatable :: c0(:)         !Analytic signal, 6000 Sa/s
     type(q3list) callers(MAX_CALLERS)
-
+    
 ! Start by setting some parameters and allocating storage for large arrays
     call sec0(0,tdecode)
     stageno=0
     ndecodes=0
     decodes=' '
     f0decodes=0.
+    xdtdecodes=0.
     nfa=nfa0
     nfb=nfb0
     nqd=nqd0
@@ -183,7 +185,7 @@ contains
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
     if(ichar(hisgrid(1:1)).eq.0) hisgrid=' '
     ncw=0
-    if(nqd.eq.1 .or. lagain) then
+    if(nqd.eq.1 .or. lagain .or. ncontest.eq.1) then
        if(ncontest.eq.1) then
           call q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,   &
                codewords,ncw)
@@ -214,6 +216,7 @@ contains
        f0dec=f0
        go to 100
     endif
+    if(ncontest.eq.1 .and. lagain) go to 100
 
 ! Prepare for a single-period decode with iaptype = 0, 1, 2, or 4
     jpk0=(xdt+1.0)*6000                      !Index of nominal start of signal
@@ -318,6 +321,7 @@ contains
           ndecodes=min(ndecodes+1,100)
           decodes(ndecodes)=decoded
           f0decodes(ndecodes)=f0dec
+          xdtdecodes(ndecodes)=dtdec
           call q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
           nsnr=nint(snr2)
           call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
@@ -363,6 +367,24 @@ contains
           fdiff=f0-f0decodes(i)
           if(fdiff.gt.-baud*mode_q65 .and. fdiff.lt.65*baud*mode_q65) go to 800
        enddo
+
+!###  TEST REGION
+       if(ncontest.eq.-1) then
+          call timer('q65_dec0',0)
+! Call top-level routine in q65 module: establish sync and try for a
+! q3 or q0 decode.
+          call q65_dec0(iavg,iwave,ntrperiod,nint(f0),ntol,lclearave,  &
+               emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
+          call timer('q65_dec0',1)
+          write(*,3001) icand,nint(f0),xdt,idec
+3001      format('a',i3,i5,f6.1,i3)
+          if(idec.ge.0) then
+             dtdec=xdt                    !We have a q3 or q0 decode at f0
+             f0dec=f0
+             go to 200
+          endif
+       endif
+!###
        jpk0=(xdt+1.0)*6000                   !Index of nominal start of signal
        if(ntrperiod.le.30) jpk0=(xdt+0.5)*6000  !For shortest sequences
        if(jpk0.lt.0) jpk0=0
@@ -452,9 +474,31 @@ contains
 800    continue
     enddo  ! icand
     if(iavg.eq.0 .and.navg(iseq).ge.2 .and. iand(ndepth,16).ne.0) go to 50
-
 900 close(24)
-    return
+
+    if(ncontest.ne.1 .or. lagain) go to 999
+    if(ntrperiod.ne.60 .or. nsubmode.ne.0) go to 999
+
+! This is first time here, and we're running Q65-60A in NA VHF Contest mode.
+! Return a list of potential sync frequencies at which to try q3 decoding.
+
+    k=0
+    nqf=0
+    bw=baud*mode_q65*65
+    do i=1,ncand
+!       snr1=candidates(i,1)
+!       xdt= candidates(i,2)
+       f0 = candidates(i,3)
+       do j=1,ndecodes          ! Already decoded one at or near this frequency?
+          fj=f0decodes(j)
+          if(f0.gt.fj-5.0 .and. f0.lt.fj+bw+5.0) go to 990
+       enddo
+       k=k+1
+       nqf(k)=nint(f0)
+990    continue
+    enddo
+
+999 return
   end subroutine decode
 
 end module q65_decode

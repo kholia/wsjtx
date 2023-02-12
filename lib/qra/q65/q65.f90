@@ -618,7 +618,7 @@ subroutine q65_dec1(s3,nsubmode,b90ts,esnodb,irc,dat4,decoded)
      irc=-1
   endif
   nrc=irc
-  
+
   return
 end subroutine q65_dec1
 
