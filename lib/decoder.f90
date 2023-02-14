@@ -44,6 +44,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
 
   real ss(184,NSMAX)
   logical baddata,newdat65,newdat9,single_decode,bVHF,bad0,newdat,ex
+  logical lprinthash22
   integer*2 id2(NTMAX*12000)
   type(params_block) :: params
   real*4 dd(NTMAX*12000)
@@ -221,27 +222,30 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
 ! We're in FST4 mode
      ndepth=iand(params%ndepth,3)
      iwspr=0
+     lprinthash22=.false.
      params%nsubmode=0
      call timer('dec_fst4',0)
      call my_fst4%decode(fst4_decoded,id2,params%nutc,                &
           params%nQSOProgress,params%nfa,params%nfb,                  &
           params%nfqso,ndepth,params%ntr,params%nexp_decode,          &
           params%ntol,params%emedelay,logical(params%nagain),         &
-          logical(params%lapcqonly),mycall,hiscall,iwspr)
+          logical(params%lapcqonly),mycall,hiscall,iwspr,lprinthash22)
      call timer('dec_fst4',1)
      go to 800
   endif
 
-    if(params%nmode.eq.241) then
+    if(params%nmode.eq.241 .or. params%nmode.eq.242) then
 ! We're in FST4W mode
      ndepth=iand(params%ndepth,3)
      iwspr=1
+     lprinthash22=.false.
+     if(params%nmode.eq.242) lprinthash22=.true. 
      call timer('dec_fst4',0)
      call my_fst4%decode(fst4_decoded,id2,params%nutc,                &
           params%nQSOProgress,params%nfa,params%nfb,                  &
           params%nfqso,ndepth,params%ntr,params%nexp_decode,          &
           params%ntol,params%emedelay,logical(params%nagain),         &
-          logical(params%lapcqonly),mycall,hiscall,iwspr)
+          logical(params%lapcqonly),mycall,hiscall,iwspr,lprinthash22)
      call timer('dec_fst4',1)
      go to 800
   endif
@@ -705,7 +709,7 @@ contains
   end subroutine ft4_decoded
 
   subroutine fst4_decoded (this,nutc,sync,nsnr,dt,freq,decoded,nap,   &
-       qual,ntrperiod,lwspr,fmid,w50)
+       qual,ntrperiod,fmid,w50)
 
     use fst4_decode
     implicit none
@@ -720,7 +724,6 @@ contains
     integer, intent(in) :: nap
     real, intent(in) :: qual
     integer, intent(in) :: ntrperiod
-    logical, intent(in) :: lwspr
     real, intent(in) :: fmid
     real, intent(in) :: w50
 
