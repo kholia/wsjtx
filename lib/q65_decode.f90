@@ -213,7 +213,7 @@ contains
        f0dec=f0
        go to 100
     endif
-    if(ncontest.eq.1 .and. lagain) go to 100
+    if(ncontest.eq.1 .and. lagain) go to 50
 
 ! Prepare for a single-period decode with iaptype = 0, 1, 2, or 4
     jpk0=(xdt+1.0)*6000                      !Index of nominal start of signal
@@ -252,10 +252,10 @@ contains
     if(iand(ndepth,16).eq.0 .or. navg(iseq).lt.2) go to 100
 
 ! There was no single-transmission decode. Try for an average 'q3n' decode.
-50  call timer('list_avg',0)
+50  iavg=1
+    call timer('list_avg',0)
 ! Call top-level routine in q65 module: establish sync and try for a q3
 ! decode, this time using the cumulative 's1a' symbol spectra.
-    iavg=1
     call q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('list_avg',1)
