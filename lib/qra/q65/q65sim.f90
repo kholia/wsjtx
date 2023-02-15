@@ -152,7 +152,7 @@ program q65sim
 
      n=65.0*baud*mode65/100.0 + 0.9999
      nfstep=100*n
-     nf1=1500 - nfstep*nsig/2
+     nf1=1500 - nfstep*(nsig-1)/2
      do n=1,nsig
         if(nsig.ge.2) then
            f0=nf1 + (n-1)*nfstep
