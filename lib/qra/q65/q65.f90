@@ -691,9 +691,9 @@ subroutine q65_write_red(iz,xdt,ccf2_avg,ccf2)
   i2=min(iz,int(nfb/df))
   y0=minval(ccf2(i1:i2))
   y0_avg=minval(ccf2_avg(i1:i2))
-  g=1.0/(maxval(ccf2(i1:i2))-y0)
+  g=0.4
   g_avg=0.
-  if(maxval(ccf2_avg(i1:i2)).ne.y0_avg) g_avg=1.0/(maxval(ccf2_avg(i1:i2))-y0_avg)
+  if(maxval(ccf2_avg(i1:i2)).ne.y0_avg) g_avg=g
 
   do i=i1,i2
      freq=i*df
