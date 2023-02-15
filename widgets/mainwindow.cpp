@@ -3373,7 +3373,8 @@ void MainWindow::decode()                                       //decode()
   if(m_config.decode_at_52s()) dec_data.params.emedelay=2.5;
   dec_data.params.minSync=ui->syncSpinBox->isVisible () ? m_minSync : 0;
   dec_data.params.nexp_decode=int(m_specOp);
-  if(dec_data.params.nexp_decode==8) dec_data.params.nexp_decode=1;  //NA VHF and ARRL Digi are same
+  if(dec_data.params.nexp_decode==5) dec_data.params.nexp_decode=1;  //NA VHF, WW Digi, and ARRL Digi
+  if(dec_data.params.nexp_decode==8) dec_data.params.nexp_decode=1;  //contests all use grid exchange
   if(m_config.single_decode()) dec_data.params.nexp_decode += 32;
   if(m_config.enable_VHF_features()) dec_data.params.nexp_decode += 64;
   if(m_mode.startsWith("FST4")) dec_data.params.nexp_decode += 256*(ui->sbNB->value()+3);

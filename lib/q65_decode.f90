@@ -86,7 +86,7 @@ contains
     complex, allocatable :: c00(:)        !Analytic signal, 6000 Sa/s
     complex, allocatable :: c0(:)         !Analytic signal, 6000 Sa/s
     type(q3list) callers(MAX_CALLERS)
-    
+
 ! Start by setting some parameters and allocating storage for large arrays
     call sec0(0,tdecode)
     stageno=0
@@ -113,17 +113,14 @@ contains
     mycall13=mycall
     nhist2=0
     if(ncontest.eq.1) then
-! NA VHF Contest or ARRL Digi Contest
-!       open(24,file=trim(data_dir)//'/q3list.bin',status='unknown',     &
-!            form='unformatted')
-!       read(24,end=2) nhist2,callers(1:nhist2)
-       open(24,file=trim(data_dir)//'/q3list.bin',status='unknown')
-       read(24,3024,end=2) nhist2,callers(1:nhist2)
-3024   format(i5/(a6,2x,a4,2x,i10))
+! NA VHF, WW-Digi, or ARRL Digi Contest
+       open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+            form='unformatted')
+       read(24,end=2) nhist2,callers(1:nhist2)
        now=time()
        do i=1,nhist2
           hours=(now - callers(i)%nsec)/3600.0
-          if(hours.gt.18.0) then
+          if(hours.gt.24.0) then
              callers(i:nhist2-1)=callers(i+1:nhist2)
              nhist2=nhist2-1
           endif

@@ -905,8 +905,7 @@ subroutine q65_hist2(msg0,callers,nhist2)
      callers(nhist2)%grid=g4
      callers(nhist2)%nsec=time()
      rewind(24)
-     write(24,3024) nhist2,callers(1:nhist2)
-3024 format(i5/(a6,2x,a4,2x,i10))
+     write(24) nhist2,callers(1:nhist2)
      rewind(24)
   endif
 
