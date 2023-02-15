@@ -213,7 +213,9 @@ contains
        f0dec=f0
        go to 100
     endif
-    if(ncontest.eq.1 .and. lagain) go to 50
+
+    if(ncontest.eq.1 .and. lagain .and. iand(ndepth,16).eq.16) go to 50
+    if(ncontest.eq.1 .and. lagain .and. iand(ndepth,16).eq.0) go to 100
 
 ! Prepare for a single-period decode with iaptype = 0, 1, 2, or 4
     jpk0=(xdt+1.0)*6000                      !Index of nominal start of signal
