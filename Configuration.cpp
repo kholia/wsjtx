@@ -1542,6 +1542,8 @@ void Configuration::impl::read_settings ()
   Contest_Name_ = settings_->value ("Contest_Name",QString {}).toString ();
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
+  ui_->Contest_Name->setText(Contest_Name_);
+
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
     {

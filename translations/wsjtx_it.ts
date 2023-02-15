@@ -70,7 +70,7 @@
     <message>
         <location filename="../widgets/activeStations.ui" line="89"/>
         <source>Max Age  </source>
-        <translation>Etá Massima  </translation>
+        <translation>Età Massima  </translation>
     </message>
     <message>
         <location filename="../widgets/activeStations.ui" line="105"/>
@@ -115,7 +115,7 @@
     <message>
         <location filename="../widgets/activeStations.ui" line="192"/>
         <source>Call  Grid  Age   Points</source>
-        <translation>Punti   Nominativo  etá  della  griglia</translation>
+        <translation>Nominativo Griglia Età Punti</translation>
     </message>
     <message>
         <location filename="../widgets/activeStations.cpp" line="21"/>
@@ -2369,7 +2369,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="754"/>
         <source>Enable auto response to the first decode from a new DXCC or new call on the current band.</source>
-        <translation>Abilita la risposta automatica alla prima decodifica da un nuovo DXCC o una nuova chiamata sulla banda corrente.</translation>
+        <translation>Abilita la risposta automatica alla prima decodifica da un nuovo DXCC o un nuovo nominativo sulla banda corrente.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1221"/>
@@ -2989,7 +2989,7 @@ Fare doppio clic per attivare / disattivare l&apos;uso del messaggio Tx1 per avv
     <message>
         <location filename="../widgets/mainwindow.ui" line="1533"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to this Tx message NOW&lt;/p&gt;&lt;p&gt;Double click to toggle the use of the Tx1 message to start a QSO with a station (not allowed for type 1 compound call holders)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ORA&lt;/p&gt;&lt;p&gt;Fai doppio clic per attivare o disattivare l&apos;uso del messaggio Tx1 per avviare un QSO con una stazione (non consentito per i detentori di chiamate composte di tipo 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ADESSO&lt;/p&gt;&lt;p&gt;Fai doppio clic per attivare o disattivare l&apos;uso del messaggio Tx1 per avviare un QSO con una stazione (non consentito per i detentori di chiamate composte di tipo 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1536"/>
@@ -3067,7 +3067,7 @@ I messaggi RR73 devono essere utilizzati solo quando si è ragionevolmente sicur
     <message>
         <location filename="../widgets/mainwindow.ui" line="1512"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to this Tx message NOW&lt;/p&gt;&lt;p&gt;Double-click to toggle between RRR and RR73 messages in Tx4 (not allowed for type2 compound call holders)&lt;/p&gt;&lt;p&gt;RR73 messages should only be used when you are reasonably confident that no message repetitions will be required&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ORA&lt;/p&gt;&lt;p&gt;Fai doppio clic per alternare tra i messaggi RRR e RR73 in Tx4 (non consentito per i possessori di chiamate composte di tipo2)&lt;/p&gt;&lt;p&gt;I messaggi RR73 devono essere utilizzati solo quando sei ragionevolmente sicuro che non sarà richiesta alcuna ripetizione del messaggio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ADESSO&lt;/p&gt;&lt;p&gt;Fai doppio clic per alternare tra i messaggi RRR e RR73 in Tx4 (non consentito per i possessori di chiamate composte di tipo2)&lt;/p&gt;&lt;p&gt;I messaggi RR73 devono essere utilizzati solo quando sei ragionevolmente sicuro che non sarà richiesta alcuna ripetizione del messaggio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1515"/>
@@ -3459,12 +3459,12 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2280"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;6 digit locators cause 2 different messages to be sent, the second contains the full locator but only a hashed callsign, other stations must have decoded the first once before they can decode your call in the second. Check this option to only send 4 digit locators if it will avoid the two message protocol.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare la chiamata nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare il nominativo nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2283"/>
         <source>6 digit locators cause 2 different messages to be sent, the second contains the full locator but only a hashed callsign, other stations must have decoded the first once before they can decode your call in the second. Check this option to only send 4 digit locators if it will avoid the two message protocol.</source>
-        <translation>I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare la chiamata nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.</translation>
+        <translation>I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare il nominativo nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3558"/>
@@ -4370,7 +4370,7 @@ is already in CALL3.TXT, do you wish to replace it?</source>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="6276"/>
         <source>Warning:  DX Call field is empty.</source>
-        <translation>Avviso: il campo Chiamata DX è vuoto.</translation>
+        <translation>Avviso: il campo Nominativo DX è vuoto.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="6337"/>
@@ -5703,22 +5703,22 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../Configuration.ui" line="134"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type 2 compound callsigns are those with prefixes or suffixes not included in the allowed shortlist (See Help-&amp;gt;Add-on prefixes and suffixes).&lt;/p&gt;&lt;p&gt;This option determines which generated messages should contain your full type 2 compound call sign rather than your base callsign. It only applies if you have a type 2 compound callsign.&lt;/p&gt;&lt;p&gt;This option controls the way the messages that are used to answer CQ calls are generated. Generated messages 6 (CQ) and 5 (73) will always contain your full callsign. The JT65 and JT9 protocols allow for some standard messages with your full call at the expense of another piece of information such as the DX call or your locator.&lt;/p&gt;&lt;p&gt;Choosing message 1 omits the DX callsign which may be an issue when replying to CQ calls. Choosing message 3 also omits the DX callsign and many versions of this and other software will not extract the report. Choosing neither means that your full callsign only goes in your message 5 (73) so your QSO partner may log the wrong callsign.&lt;/p&gt;&lt;p&gt;None of these options are perfect, message 3 is usually best but be aware your QSO partner may not log the report you send them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I nominativi composti di tipo 2 sono quelli con prefissi o suffissi non inclusi nella lista consentita (Vedi Aiuto-&amp;gt; Prefissi e suffissi aggiuntivi).&lt;/p&gt;&lt;p&gt; Questa opzione determina quali messaggi generati devono contenere la chiamata composta completa di tipo 2 anziché il tuo nominativo di base. Si applica solo se si dispone di un nominativo composto di tipo 2.&lt;/p&gt;&lt;p&gt; Questa opzione controlla il modo in cui vengono generati i messaggi utilizzati per rispondere alle chiamate CQ. I messaggi generati 6 (CQ) e 5 (73) conterranno sempre il tuo nominativo completo. I protocolli JT65 e JT9 consentono alcuni messaggi standard con il tuo nominativo completo a spese di un&apos;altra informazione come la chiamata DX o il tuo localizzatore. &lt;/p&gt;&lt;p&gt; La scelta del messaggio 1 omette il nominativo DX che potrebbe essere un problema quando si risponde alle chiamate CQ. La scelta del messaggio 3 omette anche il nominativo DX e molte versioni di questo e di altri software non estrarranno il rapporto. Scegliere nessuno dei due significa che il tuo nominativo completo va inserito solo nel tuo messaggio 5 (73), quindi il tuo partner del QSO potrebbe registrare un nominativo errato.&lt;/p&gt;&lt;p&gt;Nessuna di queste opzioni è perfetta, il messaggio 3 è in genere il migliore ma fai attenzione al tuo partner di QSO che potrebbe non registrare il rapporto che gli hai inviato.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I nominativi composti di tipo 2 sono quelli con prefissi o suffissi non inclusi nella lista consentita (Vedi Aiuto-&amp;gt; Prefissi e suffissi aggiuntivi).&lt;/p&gt;&lt;p&gt; Questa opzione determina quali messaggi generati devono contenere la nominativo composto completo di tipo 2 anziché il tuo nominativo di base. Si applica solo se si dispone di un nominativo composto di tipo 2.&lt;/p&gt;&lt;p&gt; Questa opzione controlla il modo in cui vengono generati i messaggi utilizzati per rispondere alle chiamate CQ. I messaggi generati 6 (CQ) e 5 (73) conterranno sempre il tuo nominativo completo. I protocolli JT65 e JT9 consentono alcuni messaggi standard con il tuo nominativo completo a spese di un&apos;altra informazione come il nominativo DX o il tuo localizzatore. &lt;/p&gt;&lt;p&gt; La scelta del messaggio 1 omette il nominativo DX che potrebbe essere un problema quando si risponde alle chiamate CQ. La scelta del messaggio 3 omette anche il nominativo DX e molte versioni di questo e di altri software non estrarranno il rapporto. Scegliere nessuno dei due significa che il tuo nominativo completo va inserito solo nel tuo messaggio 5 (73), quindi il tuo partner del QSO potrebbe registrare un nominativo errato.&lt;/p&gt;&lt;p&gt;Nessuna di queste opzioni è perfetta, il messaggio 3 è in genere il migliore ma fai attenzione al tuo partner di QSO che potrebbe non registrare il rapporto che gli hai inviato.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="141"/>
         <source>Full call in Tx1</source>
-        <translation>Chiamata completa in Tx1</translation>
+        <translation>Nominativo completo in Tx1</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="146"/>
         <source>Full call in Tx3</source>
-        <translation>Chiamata completa in Tx3</translation>
+        <translation>Nominativo completo in Tx3</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="151"/>
         <source>Full call in Tx5 only</source>
-        <translation>Chiamata completa solo in Tx5</translation>
+        <translation>Nominativo completo solo in Tx5</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="171"/>
@@ -6641,14 +6641,14 @@ campo commenti.</translation>
         <location filename="../Configuration.ui" line="1794"/>
         <source>Check this option to force the clearing of the DX Call
 and DX Grid fields when a 73 or free text message is sent.</source>
-        <translation>Seleziona questa opzione per forzare la cancellazione della chiamata DX
+        <translation>Seleziona questa opzione per forzare la cancellazione del nominativo DX
 e i campi della Griglia DX quando viene inviato un messaggio di testo libero o 73.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1798"/>
         <source>Clear &amp;DX call and grid after logging</source>
         <translatorcomment>(Griglia=GRID LOCATOR)</translatorcomment>
-        <translation>Cancella chiamata &amp;DX e la griglia dopo la registrazione</translation>
+        <translation>Cancella nominativo &amp;DX e la griglia dopo la registrazione</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1805"/>
