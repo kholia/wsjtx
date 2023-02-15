@@ -493,6 +493,7 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
 
   real s1(iz,jz)
   real ccf2(iz)                               !Orange sync curve
+  real tmp(20,3)
   real, allocatable :: xdt2(:)
   real, allocatable :: s1avg(:)
   integer, allocatable :: indx(:)
@@ -589,6 +590,13 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
      candidates(ncand,2)=xdt2(i)
      candidates(ncand,3)=f
      if(ncand.ge.maxcand) exit
+  enddo
+
+! Resort the candidates back into frequency order
+  tmp(1:ncand,1:3)=candidates(1:ncand,1:3)
+  call indexx(tmp(1:ncand,3),ncand,indx)
+  do i=1,ncand
+     candidates(i,1:3)=tmp(indx(i),1:3)
   enddo
 
   return
