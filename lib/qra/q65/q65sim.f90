@@ -18,7 +18,7 @@ program q65sim
   complex cdat(NMAX)                     !Generated complex waveform
   complex cspread(0:NMAX-1)              !Complex amplitude for Rayleigh fading 
   complex z
-  real*8 f0,dt,twopi,phi,dphi,baud,fsample,freq
+  real*8 f00,f0,dt,twopi,phi,dphi,baud,fsample,freq
   character fname*17,csubmode*1,arg*12,c2*2
   character*37 msg,msgsent,imsg(10)
   
@@ -40,7 +40,7 @@ program q65sim
   call getarg(2,csubmode)
   mode65=2**(ichar(csubmode)-ichar('A'))
   call getarg(3,arg)
-  read(arg,*) f0
+  read(arg,*) f00
   call getarg(4,arg)
   read(arg,*) fspread
   call getarg(5,arg)
@@ -147,7 +147,7 @@ program q65sim
      bandwidth_ratio=2500.0/6000.0
      sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
      if(snrdb.gt.90.0) sig=1.0
-     write(*,1020) ifile,ntrperiod,f0,csubmode,snrdb,fspread,xdt,f1,nstp,trim(msgsent)
+     write(*,1020) ifile,ntrperiod,f00,csubmode,snrdb,fspread,xdt,f1,nstp,trim(msgsent)
 1020 format(i4,i6,f7.1,2x,a1,2x,f5.1,1x,f6.2,2f6.1,i4,2x,a)
 
      n=65.0*baud*mode65/100.0 + 0.9999
@@ -155,6 +155,7 @@ program q65sim
      nf1=1500 - nfstep*(nsig-1)/2
      do n=1,nsig
         if(nsig.ge.2) then
+           f0=f00
            f0=nf1 + (n-1)*nfstep
            itone=ntone(:,n)
         endif
