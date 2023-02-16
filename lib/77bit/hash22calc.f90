@@ -11,7 +11,8 @@ program hash22calc
   nargs=iargc()
   if(nargs.ne.1) then
      print*,'Given a valid callsign, print its 22-bit hash.'
-     print*,'Usage: hashcalc <callsign>'
+     print*,'Usage: hash22calc <callsign>'
+     print*,'  e.g. hash22calc W9ABC'
      go to 999
   endif
   call getarg(1,callsign)
@@ -27,8 +28,9 @@ program hash22calc
 ! check for a valid callsign
   call chkcall(callsign,basecall,cok)
   if(.not.cok) then
-    print*,'Invalid callsign'
-    goto 999
+     print*,'Invalid callsign'
+     print*,'Usage: hash22calc <callsign>'
+     goto 999
   endif
 
 ! calculate the hash
