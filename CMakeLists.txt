@@ -327,6 +327,7 @@ set (wsjt_FSRCS
   lib/ft8_decode.f90
   lib/ft4_decode.f90
   lib/fst4_decode.f90
+  lib/get_q3list.f90
   lib/jt9_decode.f90
   lib/options.f90
   lib/packjt.f90

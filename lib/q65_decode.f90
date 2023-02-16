@@ -125,10 +125,11 @@ contains
              nhist2=nhist2-1
           endif
        enddo
+2      close(24)
     endif
 
 ! Determine the T/R sequence: iseq=0 (even), or iseq=1 (odd)
-2   n=nutc
+    n=nutc
     if(ntrperiod.ge.60 .and. nutc.le.2359) n=100*n
     write(cutc,'(i6.6)') n
     read(cutc,'(3i2)') ih,im,is
@@ -326,7 +327,10 @@ contains
           call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                idec,nused,ntrperiod)
           if(ncontest.eq.1) then
-             call q65_hist2(decoded,callers,nhist2)
+             open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+                  form='unformatted')
+             call q65_hist2(nint(f0dec),decoded,callers,nhist2)
+             close(24)
           else
              call q65_hist(nint(f0dec),msg0=decoded)
           endif
@@ -440,7 +444,10 @@ contains
              call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                   idec,nused,ntrperiod)
              if(ncontest.eq.1) then
-                call q65_hist2(decoded,callers,nhist2)
+                open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+                     form='unformatted')
+                call q65_hist2(nint(f0dec),decoded,callers,nhist2)
+                close(24)
              else
                 call q65_hist(nint(f0dec),msg0=decoded)
              endif
@@ -473,9 +480,8 @@ contains
 800    continue
     enddo  ! icand
     if(iavg.eq.0 .and.navg(iseq).ge.2 .and. iand(ndepth,16).ne.0) go to 50
-900 close(24)
 
-    if(ncontest.ne.1 .or. lagain) go to 999
+900 if(ncontest.ne.1 .or. lagain) go to 999
     if(ntrperiod.ne.60 .or. nsubmode.ne.0) go to 999
 
 ! This is first time here, and we're running Q65-60A in NA VHF Contest mode.

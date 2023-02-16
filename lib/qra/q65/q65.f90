@@ -866,7 +866,7 @@ subroutine q65_hist(if0,msg0,dxcall,dxgrid)
 900 return
 end subroutine q65_hist
 
-subroutine q65_hist2(msg0,callers,nhist2)
+subroutine q65_hist2(nfreq,msg0,callers,nhist2)
 
   use types
   parameter (MAX_CALLERS=40)  !For multiple q3 decodes in NA VHf Contest mode
@@ -912,9 +912,8 @@ subroutine q65_hist2(msg0,callers,nhist2)
      callers(nhist2)%call=c6
      callers(nhist2)%grid=g4
      callers(nhist2)%nsec=time()
-     rewind(24)
+     callers(nhist2)%nfreq=nfreq
      write(24) nhist2,callers(1:nhist2)
-     rewind(24)
   endif
 
 900 return

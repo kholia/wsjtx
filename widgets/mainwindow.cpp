@@ -185,6 +185,8 @@ extern "C" {
   void save_dxbase_(char* dxbase, FCL len);
 
   void indexx_(float arr[], int* n, int indx[]);
+
+  void get_q3list_(char* fname, int* nlist, char* list, FCL len1, FCL len2);
 }
 
 int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
@@ -3556,6 +3558,28 @@ void MainWindow::decodeDone ()
     ARRL_Digi_Display();  // Update the ARRL_DIGI display
   }
   if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
+
+  if(m_mode=="Q65" and (m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI
+                        or m_specOp==SpecOp::WW_DIGI) and m_ActiveStationsWidget!=NULL) {
+
+    int nlist=0;
+    char list[2000];
+    char line[36];
+    list[0]=0;
+//    QString t="1200 W9XYZ  EN37";
+    auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("tsil.3q"))};
+
+//    morse_(const_cast<char *> (m_config.my_callsign ().toLatin1().constData()),
+//           const_cast<int *> (icw), &m_ncw, (FCL)m_config.my_callsign().length());
+    get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &nlist,
+                &list[0], (FCL)fname.length(), (FCL)2000);
+    QString t="";
+    for(int i=0; i<nlist; i++) {
+      memcpy(line,&list[36*i],36);
+      t+=QString::fromLatin1(line)+"\n";
+    }
+    m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
+  }
 }
 
 void MainWindow::read_log()

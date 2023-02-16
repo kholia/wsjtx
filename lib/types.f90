@@ -11,6 +11,7 @@ module types
      character*6 call
      character*4 grid
      integer nsec
+     integer nfreq
   end type q3list
 
 end module types

@@ -60,14 +60,17 @@ void ActiveStations::write_settings ()
 void ActiveStations::displayRecentStations(QString mode, QString const& t)
 {
   m_mode=mode;
-  bool b=(m_mode=="Q65");
-  if(b) {
+  if(m_mode=="Q65") {
     ui->header_label2->setText("  N    Frx   Fsked  S/N   Call     Grid  Tx  Age");
     ui->label->setText("QSOs:");
+  } else if(m_mode=="Q65-pileup") {
+    ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
+
   } else {
     ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
     ui->label->setText("Rate:");
   }
+  bool b=(m_mode.left(3)=="Q65");
   ui->bandChanges->setVisible(!b);
   ui->cbReadyOnly->setVisible(!b);
   ui->label_2->setVisible(!b);
