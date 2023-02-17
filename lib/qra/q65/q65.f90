@@ -869,6 +869,7 @@ end subroutine q65_hist
 subroutine q65_hist2(nfreq,msg0,callers,nhist2)
 
   use types
+  use prog_args
   parameter (MAX_CALLERS=40)  !For multiple q3 decodes in NA VHf Contest mode
   character*37 msg0,msg
   type(q3list) callers(MAX_CALLERS)
@@ -913,8 +914,12 @@ subroutine q65_hist2(nfreq,msg0,callers,nhist2)
      callers(nhist2)%grid=g4
      callers(nhist2)%nsec=time()
      callers(nhist2)%nfreq=nfreq
-     write(24) nhist2,callers(1:nhist2)
   endif
+
+  open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+       form='unformatted')
+  write(24) nhist2,callers(1:nhist2)
+  close(24)
 
 900 return
 end subroutine q65_hist2
