@@ -1177,6 +1177,9 @@ target_link_libraries (wsprcode wsjt_fort wsjt_cxx)
 add_executable (encode77 lib/77bit/encode77.f90)
 target_link_libraries (encode77 wsjt_fort wsjt_cxx)
 
+add_executable (hash22calc lib/77bit/hash22calc.f90)
+target_link_libraries (hash22calc wsjt_fort wsjt_cxx)
+
 add_executable (wsprsim ${wsprsim_CSRCS})
 target_link_libraries (wsprsim ${LIBM_LIBRARIES})
 
