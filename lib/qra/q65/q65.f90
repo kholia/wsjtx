@@ -594,6 +594,7 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
 
 ! Resort the candidates back into frequency order
   tmp(1:ncand,1:3)=candidates(1:ncand,1:3)
+  candidates=0.
   call indexx(tmp(1:ncand,3),ncand,indx)
   do i=1,ncand
      candidates(i,1:3)=tmp(indx(i),1:3)

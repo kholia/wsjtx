@@ -214,6 +214,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
           single_decode,logical(params%nagain),params%max_drift,         &
           logical(params%newdat),params%emedelay,mycall,hiscall,hisgrid, &
           params%nQSOProgress,ncontest,logical(params%lapcqonly),navg0,nqf)
+     params%nclearave=.false.
 
 !###
      do k=1,20

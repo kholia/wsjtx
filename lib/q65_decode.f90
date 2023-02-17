@@ -111,7 +111,6 @@ contains
     if(lagain) ndepth=ior(ndepth,3)       !Use 'Deep' for manual Q65 decodes
     dxcall13=hiscall  ! initialize for use in packjt77
     mycall13=mycall
-    nhist2=0
     if(ncontest.eq.1) then
 ! NA VHF, WW-Digi, or ARRL Digi Contest
        open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
@@ -244,7 +243,6 @@ contains
        call q65_loops(c00,npts/2,nsps/2,nsubmode,ndepth,jpk0,   &
             xdt,f0,iaptype,xdt1,f1,snr2,dat4,idec)
        call timer('q65loop1',1)
-!       write(*,3001) '=b',nfqso,ntol,ndepth,xdt,f0,idec
        if(idec.ge.0) then
           dtdec=xdt1
           f0dec=f1
@@ -379,8 +377,6 @@ contains
           call q65_dec0(iavg,iwave,ntrperiod,nint(f0),ntol,lclearave,  &
                emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
           call timer('q65_dec0',1)
-          write(*,3001) icand,nint(f0),xdt,idec
-3001      format('a',i3,i5,f6.1,i3)
           if(idec.ge.0) then
              dtdec=xdt                    !We have a q3 or q0 decode at f0
              f0dec=f0
