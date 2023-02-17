@@ -187,6 +187,8 @@ extern "C" {
   void indexx_(float arr[], int* n, int indx[]);
 
   void get_q3list_(char* fname, int* nlist, char* list, FCL len1, FCL len2);
+
+  void jpl_setup_(char* fname, FCL len);
 }
 
 int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
@@ -1077,6 +1079,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
+
+  QString jpleph = m_config.data_dir().absoluteFilePath("JPLEPH");
+  jpl_setup_(const_cast<char *>(jpleph.toLocal8Bit().constData()),256);
 
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
