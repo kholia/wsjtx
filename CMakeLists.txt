@@ -580,6 +580,7 @@ set (wsjt_FSRCS
   lib/fst4/fastosd240_74.f90
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
+  lib/77bit/hash22calc.f90
   )
 
 # temporary workaround for a gfortran v7.3 ICE on Fedora 27 64-bit
@@ -1592,7 +1593,7 @@ install (TARGETS jt9 wsprd fmtave fcal fmeasure
 
 if(WSJT_BUILD_UTILS)
 install (TARGETS ft8code jt65code jt9code jt4code msk144code 
-  q65code fst4sim q65sim echosim
+  q65code fst4sim q65sim echosim hash22calc
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
