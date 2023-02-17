@@ -370,10 +370,22 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
      msg=adjustl(msg)
 
   else if(i3.eq.0 .and. n3.eq.6) then
-     read(c77(49:50),'(2b1)') j2a,j2b
-     itype=2
-     if(j2b.eq.0 .and. j2a.eq.0) itype=1
-     if(j2b.eq.0 .and. j2a.eq.1) itype=3
+     read(c77(48:50),'(3b1)') j48,j49,j50
+! bits 48:50
+! itype=1: x00
+! itype=2: xx1
+! itype=3: 010
+     if(j50.eq.1) then
+        itype=2
+     else if(j49.eq.0) then
+        itype=1
+     else if(j48.eq.0) then
+        itype=3
+     else
+        itype=-1
+        unpk77_success=.false.
+     endif
+
      if(itype.eq.1) then
 ! WSPR Type 1
         read(c77,2010) n28,igrid4,idbm
