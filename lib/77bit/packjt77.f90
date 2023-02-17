@@ -379,6 +379,7 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
         read(c77,2010) n28,igrid4,idbm
 2010    format(b28.28,b15.15,b5.5)
         idbm=nint(idbm*10.0/3.0)
+        if(idbm.lt.0 .or. idbm.gt.60) unpk77_success=.false.
         call unpack28(n28,call_1,unpk28_success) 
         if(.not.unpk28_success) unpk77_success=.false.
         call to_grid4(igrid4,grid4,unpkg4_success)
@@ -392,6 +393,7 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
         read(c77,2020) n28,npfx,idbm
 2020    format(b28.28,b16.16,b5.5)
         idbm=nint(idbm*10.0/3.0)        
+        if(idbm.lt.0 .or. idbm.gt.60) unpk77_success=.false.
         call unpack28(n28,call_1,unpk28_success) 
         if(.not.unpk28_success) unpk77_success=.false.
         write(crpt,'(i3)') idbm
