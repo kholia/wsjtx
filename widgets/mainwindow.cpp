@@ -9606,26 +9606,35 @@ list2Done:
     }
 
     if(hc1!="") {
-      // Log this QSO!
-      auto QSO_time = QDateTime::currentDateTimeUtc ();
-      m_hisCall=hc1;
-      m_hisGrid=m_foxQSO[hc1].grid;
-      m_rptSent=m_foxQSO[hc1].sent;
-      m_rptRcvd=m_foxQSO[hc1].rcvd;
-      if (!m_foxLogWindow) on_fox_log_action_triggered ();
-      if (m_logBook.fox_log ()->add_QSO (QSO_time, m_hisCall, m_hisGrid, m_rptSent, m_rptRcvd, m_lastBand))
-        {
-          writeFoxQSO (QString {" Log:  %1 %2 %3 %4 %5"}.arg (m_hisCall).arg (m_hisGrid)
-                       .arg (m_rptSent).arg (m_rptRcvd).arg (m_lastBand));
-          on_logQSOButton_clicked ();
-          m_foxRateQueue.enqueue (now); //Add present time in seconds
-                                        //to Rate queue.
-          QTimer::singleShot (13000, [=] {
-              m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
-              updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
-          });
+      auto already_logged = m_loggedByFox[hc1].contains(m_lastBand + " ");   // already logged this call on this band?
+
+      if (!already_logged) { // Log this QSO!
+        auto QSO_time = QDateTime::currentDateTimeUtc ();
+        m_hisCall=hc1;
+        m_hisGrid=m_foxQSO[hc1].grid;
+        m_rptSent=m_foxQSO[hc1].sent;
+        m_rptRcvd=m_foxQSO[hc1].rcvd;
+        if (!m_foxLogWindow) on_fox_log_action_triggered ();
+        if (m_logBook.fox_log ()->add_QSO (QSO_time, m_hisCall, m_hisGrid, m_rptSent, m_rptRcvd, m_lastBand))
+          {
+            writeFoxQSO (QString {" Log:  %1 %2 %3 %4 %5"}.arg (m_hisCall).arg (m_hisGrid)
+                         .arg (m_rptSent).arg (m_rptRcvd).arg (m_lastBand));
+            on_logQSOButton_clicked ();
+            m_foxRateQueue.enqueue (now); //Add present time in seconds
+                                          //to Rate queue.
+            QTimer::singleShot (13000, [=] {
+                m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
+                updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
+            });
+          }
+          m_loggedByFox[hc1] += (m_lastBand + " ");
         }
-      m_loggedByFox[hc1] += (m_lastBand + " ");
+      else
+        {
+          // note that this is a duplicate
+          writeFoxQSO(QString{" Dup:  %1 %2 %3 %4 %5"}.arg(m_hisCall).arg(m_hisGrid)
+                              .arg(m_rptSent).arg(m_rptRcvd).arg(m_lastBand));
+        }
     }
 
     if(i<n2 and fm=="") {
