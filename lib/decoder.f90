@@ -216,20 +216,25 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
           params%nQSOProgress,ncontest,logical(params%lapcqonly),navg0,nqf)
      params%nclearave=.false.
 
-!###
-     do k=1,20
-        if(nqf(k).eq.0) exit
-        nqd=1
-        navg0=0
-        ntol=5
-        call my_q65%decode(q65_decoded,id2,nqd,params%nutc,params%ntr,      &
-             params%nsubmode,nqf(k),ntol,params%ndepth,        &
-             params%nfa,params%nfb,logical(params%nclearave),               &
-             .true.,.true.,params%max_drift,         &
-             .false.,params%emedelay,mycall,hiscall,hisgrid, &
-             params%nQSOProgress,ncontest,logical(params%lapcqonly),navg0,nqf)
-     enddo
-!###
+     if(.not.params%nagain) then
+! Go through identified candidates again, treating each as if it had been
+! double-clicked on the waterfall.
+        do k=1,20
+           if(nqf(k).eq.0) exit
+           if(params%nagain .and. abs(nqf(k)-params%nfqso).gt.params%ntol) cycle
+           nqd=1
+           navg0=0
+           ntol=5
+           call my_q65%decode(q65_decoded,id2,nqd,params%nutc,params%ntr,    &
+                params%nsubmode,nqf(k),ntol,params%ndepth,                   &
+                params%nfa,params%nfb,logical(params%nclearave),             &
+                .true.,.true.,params%max_drift,                              &
+                .false.,params%emedelay,mycall,hiscall,hisgrid,              &
+                params%nQSOProgress,ncontest,logical(params%lapcqonly),      &
+                navg0,nqf)
+        enddo
+     endif
+
      call timer('dec_q65 ',1)
      close(17)
      go to 800
