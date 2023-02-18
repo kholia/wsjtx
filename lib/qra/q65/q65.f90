@@ -125,10 +125,7 @@ subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
      lclearave=.false.
   endif
   ccf1=0.
-  if(iavg.eq.0) then
-     ccf2=0.
-     ccf2_avg=0.
-  endif
+  if(iavg.eq.0) ccf2=0.
   dtstep=nsps/(NSTEP*12000.0)                 !Step size in seconds
   lag1=-1.0/dtstep
   lag2=1.0/dtstep + 0.9999
@@ -694,16 +691,15 @@ subroutine q65_write_red(iz,xdt,ccf2_avg,ccf2)
   call q65_sync_curve(ccf2_avg,1,iz,rms1)
   call q65_sync_curve(ccf2,1,iz,rms2)
 
-  rewind 17
-  write(17,1000) xdt,minval(ccf2_avg),maxval(ccf2_avg)
   i1=max(1,nint(nfa/df))
   i2=min(iz,int(nfb/df))
   y0=minval(ccf2(i1:i2))
   y0_avg=minval(ccf2_avg(i1:i2))
   g=0.4
   g_avg=0.
-  if(maxval(ccf2_avg(i1:i2)).ne.y0_avg) g_avg=g
-
+  if(navg(iseq).ge.2) g_avg=g
+  rewind 17
+  write(17,1000) xdt,g_avg*minval(ccf2_avg),g_avg*maxval(ccf2_avg)
   do i=i1,i2
      freq=i*df
      y1=g_avg*(ccf2_avg(i)-y0_avg)
