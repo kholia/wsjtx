@@ -667,6 +667,7 @@ private:
   QString m_deCall;
   QString m_deGrid;
   QString m_ready2call[50];
+  QString m_callers[40];
 
   QSet<QString> m_pfx;
   QSet<QString> m_sfx;

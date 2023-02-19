@@ -1227,6 +1227,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->special_op_activity_button_group->setId (ui_->rbARRL_Digi, static_cast<int> (SpecialOperatingActivity::ARRL_DIGI));
   ui_->special_op_activity_button_group->setId (ui_->rbFox, static_cast<int> (SpecialOperatingActivity::FOX));
   ui_->special_op_activity_button_group->setId (ui_->rbHound, static_cast<int> (SpecialOperatingActivity::HOUND));
+  ui_->special_op_activity_button_group->setId (ui_->rbQ65pileup, static_cast<int> (SpecialOperatingActivity::Q65_PILEUP));
 
   //
   // setup PTT port combo box drop down content

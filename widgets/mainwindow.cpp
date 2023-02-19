@@ -3380,8 +3380,9 @@ void MainWindow::decode()                                       //decode()
   if(m_config.decode_at_52s()) dec_data.params.emedelay=2.5;
   dec_data.params.minSync=ui->syncSpinBox->isVisible () ? m_minSync : 0;
   dec_data.params.nexp_decode=int(m_specOp);
-  if(dec_data.params.nexp_decode==5) dec_data.params.nexp_decode=1;  //NA VHF, WW Digi, and ARRL Digi
-  if(dec_data.params.nexp_decode==8) dec_data.params.nexp_decode=1;  //contests all use grid exchange
+  if(dec_data.params.nexp_decode==5) dec_data.params.nexp_decode=1;  //NA VHF, WW Digi, ARRL Digi contests
+  if(dec_data.params.nexp_decode==8) dec_data.params.nexp_decode=1;  //and Q65 Pileup all use 4-character
+  if(dec_data.params.nexp_decode==9) dec_data.params.nexp_decode=1;  //grid exchange
   if(m_config.single_decode()) dec_data.params.nexp_decode += 32;
   if(m_config.enable_VHF_features()) dec_data.params.nexp_decode += 64;
   if(m_mode.startsWith("FST4")) dec_data.params.nexp_decode += 256*(ui->sbNB->value()+3);
@@ -3565,7 +3566,8 @@ void MainWindow::decodeDone ()
   if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
 
   if(m_mode=="Q65" and (m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI
-                        or m_specOp==SpecOp::WW_DIGI) and m_ActiveStationsWidget!=NULL) {
+                        or m_specOp==SpecOp::WW_DIGI or m_specOp==SpecOp::Q65_PILEUP)
+                        and m_ActiveStationsWidget!=NULL) {
 
     int nlist=0;
     char list[2000];
@@ -3579,11 +3581,16 @@ void MainWindow::decodeDone ()
     get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &nlist,
                 &list[0], (FCL)fname.length(), (FCL)2000);
     QString t="";
+    QString t0="";
     for(int i=0; i<nlist; i++) {
       memcpy(line,&list[36*i],36);
-      t+=QString::fromLatin1(line)+"\n";
+      t0=QString::fromLatin1(line)+"\n";
+      m_callers[i]=t0;
+      t+=t0;
     }
+    m_ActiveStationsWidget->setClickOK(false);
     m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
+    m_ActiveStationsWidget->setClickOK(true);
   }
 }
 
@@ -3750,6 +3757,24 @@ void MainWindow::callSandP2(int n)
 {
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
+  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP) {
+    // This is the mode for 6m EME DXpeditions
+    w=m_callers[n].split(' ', SkipEmptyParts);
+    m_deCall=w[2];
+    m_deGrid=w[3];
+    m_bDoubleClicked=true;               //### needed?
+    m_txFirst=true;
+    ui->dxCallEntry->setText(m_deCall);
+    ui->dxGridEntry->setText(m_deGrid);
+    ui->txFirstCheckBox->setChecked(m_txFirst);
+    genStdMsgs("-22");
+    setTxMsg(3);
+    if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
+    if(m_transmitting) m_restart=true;
+//    qDebug() << "aa" << int(m_specOp) << n << m_callers[n];
+    return;
+  }
+
   if(m_mode=="Q65") {
     double kHz=w[1].toDouble();
     int nMHz=m_freqNominal/1000000;
@@ -4877,7 +4902,8 @@ void MainWindow::guiUpdate()
         SpecOp::FIELD_DAY==m_specOp or
         SpecOp::RTTY==m_specOp or
         SpecOp::WW_DIGI==m_specOp or
-        SpecOp::ARRL_DIGI==m_specOp) ) {
+        SpecOp::ARRL_DIGI==m_specOp or
+        SpecOp::Q65_PILEUP==m_specOp) ) {
       //We're in a contest-like mode other than EU_VHF: start QSO with Tx2.
       ui->tx1->setEnabled(false);
       ui->txb1->setEnabled(false);
@@ -5521,7 +5547,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
            or bEU_VHF_w2 or (m_QSOProgress==CALLING))) {
       if(message_words.at(4).contains(grid_regexp) and SpecOp::EU_VHF!=m_specOp) {
         if((SpecOp::NA_VHF==m_specOp or SpecOp::WW_DIGI==m_specOp or
-            SpecOp::ARRL_DIGI==m_specOp )
+            SpecOp::ARRL_DIGI==m_specOp or SpecOp::Q65_PILEUP==m_specOp)
            and bContestOK) {
           setTxMsg(3);
           m_QSOProgress=ROGER_REPORT;
@@ -6009,6 +6035,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
       if(SpecOp::NA_VHF==m_specOp) sent=my_grid;
       if(SpecOp::WW_DIGI==m_specOp) sent=my_grid;
       if(SpecOp::ARRL_DIGI==m_specOp) sent=my_grid;
+      if(SpecOp::Q65_PILEUP==m_specOp) sent=my_grid;
       if(SpecOp::FIELD_DAY==m_specOp) sent=m_config.Field_Day_Exchange();
       if(SpecOp::RTTY==m_specOp) {
         sent=rst + m_config.RTTY_Exchange();
@@ -6949,8 +6976,9 @@ void MainWindow::on_actionFT8_triggered()
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";
-    if(SpecOp::WW_DIGI==m_specOp) t0="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL_DIGI";
+    if(SpecOp::WW_DIGI==m_specOp) t0="WW Digi";
+    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL Digi";
+    if(SpecOp::Q65_PILEUP==m_specOp) t0="Q65 Pileup";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
@@ -7185,8 +7213,9 @@ void MainWindow::on_actionQ65_triggered()
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";
-    if(SpecOp::WW_DIGI==m_specOp) t0="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL_DIGI";
+    if(SpecOp::WW_DIGI==m_specOp) t0="WW Digi";
+    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL Digi";
+    if(SpecOp::Q65_PILEUP==m_specOp) t0="Q65 Pileup";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
@@ -10254,8 +10283,9 @@ void MainWindow::chkFT4()
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";
-    if(SpecOp::WW_DIGI==m_specOp) t0="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL_DIGI";
+    if(SpecOp::WW_DIGI==m_specOp) t0="WW Digi";
+    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL Digi";
+    if(SpecOp::Q65_PILEUP==m_specOp) t0="Q65 Pileup";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {

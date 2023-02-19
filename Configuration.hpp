@@ -190,8 +190,8 @@ public:
   bool highlight_DXgrid () const;
   bool Individual_Contest_Name() const;
 
-//                                      0       1      2         3       4       5      6     7        8
-  enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND, ARRL_DIGI};
+//                                      0       1      2         3       4       5      6     7        8           9
+  enum class SpecialOperatingActivity {NONE, NA_VHF, EU_VHF, FIELD_DAY, RTTY, WW_DIGI, FOX, HOUND, ARRL_DIGI, Q65_PILEUP};
   SpecialOperatingActivity special_op_id () const;
 
   struct CalibrationParams
