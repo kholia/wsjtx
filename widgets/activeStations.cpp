@@ -59,29 +59,31 @@ void ActiveStations::write_settings ()
 
 void ActiveStations::displayRecentStations(QString mode, QString const& t)
 {
-  m_mode=mode;
-  if(m_mode=="Q65") {
-    ui->header_label2->setText("  N    Frx   Fsked  S/N   Call     Grid  Tx  Age");
-    ui->label->setText("QSOs:");
-  } else if(m_mode=="Q65-pileup") {
-    ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
-  } else {
-    ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
-    ui->label->setText("Rate:");
-  }
-  bool b=(m_mode.left(3)=="Q65");
-  ui->bandChanges->setVisible(!b);
-  ui->cbReadyOnly->setVisible(!b);
-  ui->label_2->setVisible(!b);
-  ui->label_3->setVisible(!b);
-  ui->score->setVisible(!b);
-  ui->sbMaxRecent->setVisible(!b);
-  ui->RecentStationsPlainTextEdit->insertPlainText(t);
+  if(mode!=m_mode) {
+    m_mode=mode;
+    if(m_mode=="Q65") {
+      ui->header_label2->setText("  N    Frx   Fsked  S/N   Call     Grid  Tx  Age");
+      ui->label->setText("QSOs:");
+    } else if(m_mode=="Q65-pileup") {
+      ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
+    } else {
+      ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
+      ui->label->setText("Rate:");
+    }
+    bool b=(m_mode.left(3)=="Q65");
+    ui->bandChanges->setVisible(!b);
+    ui->cbReadyOnly->setVisible(!b);
+    ui->label_2->setVisible(!b);
+    ui->label_3->setVisible(!b);
+    ui->score->setVisible(!b);
+    ui->sbMaxRecent->setVisible(!b);
 
-  b=(m_mode!="Q65-pileup");
-  ui->sbMaxAge->setVisible(b);
-  ui->label->setVisible(b);
-  ui->rate->setVisible(b);
+    b=(m_mode!="Q65-pileup");
+    ui->sbMaxAge->setVisible(b);
+    ui->label->setVisible(b);
+    ui->rate->setVisible(b);
+  }
+  ui->RecentStationsPlainTextEdit->insertPlainText(t);
 }
 
 int ActiveStations::maxRecent()

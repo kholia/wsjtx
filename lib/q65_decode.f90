@@ -115,15 +115,20 @@ contains
 ! NA VHF, WW-Digi, or ARRL Digi Contest
        open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
             form='unformatted')
-       read(24,end=2) nhist2,callers(1:nhist2)
-       now=time()
-       do i=1,nhist2
-          hours=(now - callers(i)%nsec)/3600.0
-          if(hours.gt.24.0) then
-             callers(i:nhist2-1)=callers(i+1:nhist2)
-             nhist2=nhist2-1
-          endif
-       enddo
+       read(24,end=2) nhist2
+       if(nhist2.ge.1 .and. nhist2.le.40) then
+          read(24,end=2) callers(1:nhist2)
+          now=time()
+          do i=1,nhist2
+             hours=(now - callers(i)%nsec)/3600.0
+             if(hours.gt.24.0) then
+                callers(i:nhist2-1)=callers(i+1:nhist2)
+                nhist2=nhist2-1
+             endif
+          enddo
+       else
+          nhist2=0
+       endif
 2      close(24)
     endif
 

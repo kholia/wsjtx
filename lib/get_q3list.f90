@@ -20,7 +20,12 @@ subroutine get_q3list(fname,nlist,list)
 
   nhist2=0
   open(24,file=fname,status='unknown',form='unformatted')
-  read(24,end=1) nhist2,callers(1:nhist2)
+  read(24,end=1) nhist2
+  if(nhist2.ge.1 .and. nhist2.le.40) then
+     read(24,end=1) callers(1:nhist2)
+  else
+     nhist2=0
+  endif
 1 close(24)
 
   now=time()

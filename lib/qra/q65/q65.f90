@@ -913,10 +913,13 @@ subroutine q65_hist2(nfreq,msg0,callers,nhist2)
      callers(nhist2)%nfreq=nfreq
   endif
 
-  open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
-       form='unformatted')
-  write(24) nhist2,callers(1:nhist2)
-  close(24)
+  if(nhist2.ge.1 .and. nhist2.le.40) then
+     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+          form='unformatted')
+     write(24) nhist2
+     write(24) callers(1:nhist2)
+     close(24)
+  endif
 
 900 return
 end subroutine q65_hist2
