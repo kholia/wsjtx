@@ -183,6 +183,7 @@ public:
   bool highlight_only_fields () const;
   bool include_WAE_entities () const;
   bool highlight_73 () const;
+  void setSpecial_Q65_Pileup();
   void setSpecial_Hound();
   void setSpecial_Fox();
   void setSpecial_None();

@@ -6461,6 +6461,19 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
   ui->sbTxPercent->setEnabled (text == tr ("Random"));
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+  if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {
+      m_specOp=m_config.special_op_id();
+      if (m_specOp==SpecOp::Q65_PILEUP) {
+          m_config.setSpecial_None();
+      } else {
+          m_config.setSpecial_Q65_Pileup();
+      }
+      m_specOp=m_config.special_op_id();
+      on_actionQ65_triggered();
+  }
+}
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {

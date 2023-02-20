@@ -997,6 +997,15 @@ void Configuration::set_location (QString const& grid_descriptor)
   m_->dynamic_grid_ = grid_descriptor.trimmed ();
 }
 
+void Configuration::setSpecial_Q65_Pileup()
+{
+  m_->bSpecialOp_=true;
+  m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->ui_->rbQ65pileup->setChecked(true);
+  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::Q65_PILEUP);
+  m_->write_settings();
+}
+
 void Configuration::setSpecial_Hound()
 {
   m_->bSpecialOp_=true;
