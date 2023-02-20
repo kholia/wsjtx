@@ -5911,7 +5911,7 @@ void MainWindow::genCQMsg ()
     QString t=ui->tx6->text();
     QStringList tlist=t.split(" ");
     if((m_mode=="FT4" or m_mode=="FT8" or m_mode=="MSK144" || "Q65" == m_mode) and
-       SpecOp::NONE != m_specOp and SpecOp::HOUND != m_specOp and
+       SpecOp::NONE != m_specOp and SpecOp::HOUND != m_specOp and SpecOp::Q65_PILEUP != m_specOp and
        ( tlist.at(1)==my_callsign or
          tlist.at(2)==my_callsign ) and
        stdCall(my_callsign)) {
