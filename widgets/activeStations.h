@@ -33,17 +33,15 @@ public:
   bool m_clickOK=false;
   bool m_bReadyOnly;
 
-signals:
-  void callSandP(int nline);
-  void activeStationsDisplay();
-
-private slots:
-  void on_textEdit_clicked();
-
 private:
   void read_settings ();
   void write_settings ();
+  Q_SIGNAL void callSandP(int nline);
+  Q_SIGNAL void activeStationsDisplay();
+  Q_SIGNAL void cursorPositionChanged();
+
   Q_SLOT void on_cbReadyOnly_toggled(bool b);
+  Q_SLOT void on_textEdit_clicked();
 
   qint64 m_msec0=0;
   QString m_mode="";
