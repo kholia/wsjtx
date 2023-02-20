@@ -65,7 +65,6 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
     ui->label->setText("QSOs:");
   } else if(m_mode=="Q65-pileup") {
     ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
-
   } else {
     ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
     ui->label->setText("Rate:");
@@ -78,6 +77,11 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
   ui->score->setVisible(!b);
   ui->sbMaxRecent->setVisible(!b);
   ui->RecentStationsPlainTextEdit->insertPlainText(t);
+
+  b=(m_mode!="Q65-pileup");
+  ui->sbMaxAge->setVisible(b);
+  ui->label->setVisible(b);
+  ui->rate->setVisible(b);
 }
 
 int ActiveStations::maxRecent()
