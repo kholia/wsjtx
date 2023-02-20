@@ -2458,6 +2458,7 @@ void MainWindow::displayDialFrequency ()
 
 void MainWindow::statusChanged()
 {
+  if (m_specOp==SpecOp::Q65_PILEUP && m_mode != "Q65") on_actionQ65_triggered();
   statusUpdate ();
   QFile f {m_config.temp_dir ().absoluteFilePath ("wsjtx_status.txt")};
   if(f.open(QFile::WriteOnly | QIODevice::Text)) {
