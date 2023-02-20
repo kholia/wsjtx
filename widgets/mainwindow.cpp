@@ -6985,7 +6985,8 @@ void MainWindow::on_actionFT8_triggered()
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    on_contest_log_action_triggered();
+    qDebug() << "aa" << int(m_specOp);
+    if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
 
   if((SpecOp::FOX==m_specOp or SpecOp::HOUND==m_specOp) and !m_config.split_mode() and !m_bWarnedSplit) {
@@ -7222,9 +7223,8 @@ void MainWindow::on_actionQ65_triggered()
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    on_contest_log_action_triggered();
+    if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
-
 }
 
 void MainWindow::on_actionMSK144_triggered()
