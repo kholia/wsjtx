@@ -7401,6 +7401,10 @@ void MainWindow::on_actionFreqCal_triggered()
 
 void MainWindow::switch_mode (Mode mode)
 {
+  if (m_mode != "Q65" && m_specOp==SpecOp::Q65_PILEUP) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+   }
   m_fastGraph->setMode(m_mode);
   m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
   auto const& row = m_config.frequencies ()->best_working_frequency (m_freqNominal);
