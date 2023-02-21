@@ -108,6 +108,7 @@ contains
     nfft1=ntrperiod*12000
     nfft2=ntrperiod*6000
     npasses=1
+    nhist2=0
     if(lagain) ndepth=ior(ndepth,3)       !Use 'Deep' for manual Q65 decodes
     dxcall13=hiscall  ! initialize for use in packjt77
     mycall13=mycall

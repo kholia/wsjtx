@@ -11,7 +11,6 @@ subroutine q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,codewords,ncw)
   integer codewords(63,MAX_NCW)
   integer itone(85)
   integer isync(22)
-  integer time
   type(q3list) callers(MAX_CALLERS)
 
   data isync/1,9,12,13,15,22,23,26,27,33,35,38,46,50,55,60,62,66,69,74,76,85/
