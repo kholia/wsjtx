@@ -6469,6 +6469,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
           m_config.setSpecial_None();
       } else {
           m_config.setSpecial_Q65_Pileup();
+          ui->houndButton->setChecked(false);
+          ui->houndButton->setStyleSheet("");
       }
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
@@ -10310,7 +10312,7 @@ void MainWindow::chkFT4()
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    on_contest_log_action_triggered();
+    if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
   if (SpecOp::HOUND == m_specOp or SpecOp::FOX == m_specOp) {
     ui->labDXped->setVisible(false);
