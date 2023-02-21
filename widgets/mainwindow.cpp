@@ -7572,6 +7572,9 @@ void MainWindow::band_changed (Frequency f)
       }
     setRig (f);
     setXIT (ui->TxFreqSpinBox->value ());
+
+    // when changing bands, don't preserve the Fox queues
+    FoxReset("BandChange");
   }
 }
 
@@ -9207,6 +9210,20 @@ void MainWindow::on_sbMax_dB_valueChanged(int n)
   t = t.asprintf(" Max_dB %d",m_max_dB);
   writeFoxQSO(t);
 }
+void MainWindow::FoxReset(QString reason="")
+{
+  QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
+  f.remove();
+  ui->decodedTextBrowser->setText("");
+  ui->houndQueueTextBrowser->setText("");
+  ui->foxTxListTextBrowser->setText("");
+
+  m_houndQueue.clear();
+  m_foxQSO.clear();
+  m_foxQSOinProgress.clear();
+  if (reason != "") writeFoxQSO(" " + reason);
+  writeFoxQSO(" Reset");
+}
 
 void MainWindow::on_pbFoxReset_clicked()
 {
@@ -9214,16 +9231,7 @@ void MainWindow::on_pbFoxReset_clicked()
   auto button = MessageBox::query_message (this, tr ("Confirm Reset"),
       tr ("Are you sure you want to clear the QSO queues?"));
   if(button == MessageBox::Yes) {
-    QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
-    f.remove();
-    ui->decodedTextBrowser->setText("");
-    ui->houndQueueTextBrowser->setText("");
-    ui->foxTxListTextBrowser->setText("");
-
-    m_houndQueue.clear();
-    m_foxQSO.clear();
-    m_foxQSOinProgress.clear();
-    writeFoxQSO(" Reset");
+    FoxReset();
   }
 }
 
@@ -9347,6 +9355,7 @@ void MainWindow::selectHound(QString line, bool bTopQueue)
  * <Enter> is equivalent to double-clicking on the top-most line.
 */
   if(line.length()==0) return;
+  if(line.length() < 6) return;
   QString houndCall=line.split(" ",SkipEmptyParts).at(0);
 
 // Don't add a call already enqueued or in QSO

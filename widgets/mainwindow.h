@@ -326,12 +326,13 @@ private slots:
   void on_sbF_High_valueChanged(int n);
   void chk_FST4_freq_range();
   void on_pbFoxReset_clicked();
+  void FoxReset(QString reason);
   void on_comboBoxHoundSort_activated (int index);
   void not_GA_warning_message ();
   void checkMSK144ContestType();
   void on_pbBestSP_clicked();
   void on_RoundRobin_currentTextChanged(QString text);
-  void  setTxMsg(int n);
+  void setTxMsg(int n);
   bool stdCall(QString const& w);
   void remote_configure (QString const& mode, quint32 frequency_tolerance, QString const& submode
                          , bool fast_mode, quint32 tr_period, quint32 rx_df, QString const& dx_call
