@@ -478,7 +478,7 @@ void MainWindow::on_actionSettings_triggered()
 
 void MainWindow::on_monitorButton_clicked()                  //Monitor
 {
-  if(m_monitoring) {
+  if(m_monitoring or m_loopall) {
     m_monitoring=false;
     soundInThread.setMonitoring(false);
     m_loopall=false;

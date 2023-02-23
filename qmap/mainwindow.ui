@@ -327,7 +327,7 @@
          </size>
         </property>
         <property name="title">
-         <string>     UTC               Freq           Fsked             DT            dB       Message</string>
+         <string>     UTC                Frx            Fsked             DT           dB       Message</string>
         </property>
         <layout class="QFormLayout" name="formLayout_2">
          <item row="0" column="0" colspan="2">
