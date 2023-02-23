@@ -42,6 +42,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -185,6 +186,7 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
+            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -3151,7 +3153,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -3229,6 +3231,7 @@ QPushButton[state=&quot;ok&quot;] {
     <addaction name="actionQSG_FST4"/>
     <addaction name="actionQSG_Q65"/>
     <addaction name="actionQSG_X250_M3"/>
+    <addaction name="actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP"/>
     <addaction name="download_samples_action"/>
     <addaction name="separator"/>
     <addaction name="actionKeyboard_shortcuts"/>
@@ -3803,6 +3806,11 @@ QPushButton[state=&quot;ok&quot;] {
   <action name="actionActiveStations">
    <property name="text">
     <string>Active Stations</string>
+   </property>
+  </action>
+  <action name="actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP">
+   <property name="text">
+    <string>Quick-Start Guide to WSJT-X 2.7.0 and QMAP</string>
    </property>
   </action>
  </widget>
