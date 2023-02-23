@@ -37,7 +37,7 @@ subroutine q65_loops(c00,npts2,nsps2,nsubmode,ndepth,jpk0,    &
   if(iand(ndepth,3).eq.3) then
      idfmax=5
      idtmax=5
-     maxdist=15
+     maxdist=5
   endif
 
   napmin=99

@@ -997,6 +997,15 @@ void Configuration::set_location (QString const& grid_descriptor)
   m_->dynamic_grid_ = grid_descriptor.trimmed ();
 }
 
+void Configuration::setSpecial_Q65_Pileup()
+{
+  m_->bSpecialOp_=true;
+  m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->ui_->rbQ65pileup->setChecked(true);
+  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::Q65_PILEUP);
+  m_->write_settings();
+}
+
 void Configuration::setSpecial_Hound()
 {
   m_->bSpecialOp_=true;
@@ -1227,6 +1236,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->special_op_activity_button_group->setId (ui_->rbARRL_Digi, static_cast<int> (SpecialOperatingActivity::ARRL_DIGI));
   ui_->special_op_activity_button_group->setId (ui_->rbFox, static_cast<int> (SpecialOperatingActivity::FOX));
   ui_->special_op_activity_button_group->setId (ui_->rbHound, static_cast<int> (SpecialOperatingActivity::HOUND));
+  ui_->special_op_activity_button_group->setId (ui_->rbQ65pileup, static_cast<int> (SpecialOperatingActivity::Q65_PILEUP));
 
   //
   // setup PTT port combo box drop down content

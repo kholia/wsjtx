@@ -185,13 +185,16 @@ extern "C" {
   void save_dxbase_(char* dxbase, FCL len);
 
   void indexx_(float arr[], int* n, int indx[]);
+
+  void get_q3list_(char* fname, int* nlist, char* list, FCL len1, FCL len2);
+
+  void jpl_setup_(char* fname, FCL len);
 }
 
 int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
 int volatile itone0[MAX_NUM_SYMBOLS];  //Dummy array, data not actually used
 int volatile icw[NUM_CW_SYMBOLS];        //Dits for CW ID
 dec_data_t dec_data;                // for sharing with Fortran
-
 int outBufSize;
 int rc;
 qint32  g_iptt {0};
@@ -211,6 +214,17 @@ using SpecOp = Configuration::SpecialOperatingActivity;
 bool m_displayBand = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
+
+QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
+struct {
+  int ndecodes;          //Number of QMAP decodes available (so far)
+  int ncand;             //Number of QMAP candidates considered for decoding
+  int nQDecoderDone;     //QMAP decoder is finished (0 or 1)
+  int nWDecoderBusy;     //WSJT-X decoder is busy (0 or 1)
+  int nWTransmitting;    //WSJT-X is transmitting (0 or 1)
+  char result[50][60];   //Decodes as character*60 arrays
+} qmapcom;
+int* ipc_qmap;
 
 namespace
 {
@@ -452,6 +466,19 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_optimizingProgress.setWindowModality (Qt::WindowModal);
   m_optimizingProgress.setAutoReset (false);
   m_optimizingProgress.setMinimumDuration (15000); // only show after 15s delay
+
+  //Attach or create a memory segment to be shared with QMAP.
+    int memSize=4096;
+    if(!mem_qmap.attach()) {
+      if(!mem_qmap.create(memSize)) {
+        MessageBox::information_message (this,
+            "Unable to create shared memory segment mem_qmap.");
+      }
+    }
+    ipc_qmap = (int*)mem_qmap.data();
+    mem_qmap.lock();
+    memset(ipc_qmap,0,memSize);         //Zero all of QMAP shared memory
+    mem_qmap.unlock();
 
   // Closedown.
   connect (ui->actionExit, &QAction::triggered, this, &QMainWindow::close);
@@ -880,6 +907,10 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->lh_decodes_headings_label->setText(t);
   ui->rh_decodes_headings_label->setText(t);
   readSettings();            //Restore user's setup parameters
+  if(m_mode=="Q65") {
+    m_score=0;
+    read_log();
+  }
   m_audioThread.start (m_audioThreadPriority);
 
 #ifdef WIN32
@@ -1049,12 +1080,16 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
 
+  QString jpleph = m_config.data_dir().absoluteFilePath("JPLEPH");
+  jpl_setup_(const_cast<char *>(jpleph.toLocal8Bit().constData()),256);
+
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
 }
 
 void MainWindow::not_GA_warning_message ()
 {
+  /*       ### TEMPORARY ###
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X 2.6.0 made\n"
                                 "available for testing purposes.  By design it will\n"
@@ -1063,6 +1098,7 @@ void MainWindow::not_GA_warning_message ()
   if (now >= QDateTime {{2023, 03, 31}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
+  */
 }
 
 void MainWindow::initialize_fonts ()
@@ -1118,6 +1154,7 @@ MainWindow::~MainWindow()
   m_audioThread.quit ();
   m_audioThread.wait ();
   remove_child_from_event_filter (this);
+  memset(ipc_qmap,0,4096);         //Zero all of QMAP shared memory
 }
 
 //-------------------------------------------------------- writeSettings()
@@ -1378,7 +1415,6 @@ void MainWindow::readSettings()
   if (displayContestLog) on_contest_log_action_triggered ();
   if(displayActiveStations) {
     on_actionActiveStations_triggered();
-//    QFile f {m_config.writeable_data_dir ().absoluteFilePath ("activeCalls.txt")};
   }
 }
 
@@ -2422,6 +2458,7 @@ void MainWindow::displayDialFrequency ()
 
 void MainWindow::statusChanged()
 {
+  if (m_specOp==SpecOp::Q65_PILEUP && m_mode != "Q65") on_actionQ65_triggered();
   statusUpdate ();
   QFile f {m_config.temp_dir ().absoluteFilePath ("wsjtx_status.txt")};
   if(f.open(QFile::WriteOnly | QIODevice::Text)) {
@@ -2659,6 +2696,11 @@ void MainWindow::on_actionQSG_Q65_triggered()
 void MainWindow::on_actionQSG_X250_M3_triggered()
 {
   QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
+}
+
+void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered()
+{
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf"});
 }
 
 void MainWindow::on_actionOnline_User_Guide_triggered()      //Display manual
@@ -2914,6 +2956,7 @@ void MainWindow::on_actionActiveStations_triggered()
   connect(m_ActiveStationsWidget.data(), SIGNAL(callSandP(int)),this,SLOT(callSandP2(int)));
   connect(m_ActiveStationsWidget.data(), SIGNAL(activeStationsDisplay()),this,SLOT(ARRL_Digi_Display()));
   m_ActiveStationsWidget->setScore(m_score);
+  if(m_mode=="Q65") m_ActiveStationsWidget->setRate(m_score);
 }
 
 void MainWindow::on_actionOpen_triggered()                     //Open File
@@ -3231,6 +3274,7 @@ void MainWindow::msgAvgDecode2()
 void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;                          //Don't start decoder if it's already busy.
+  m_fetched=0;
   QDateTime now = QDateTime::currentDateTimeUtc ();
   if( m_dateTimeLastTX.isValid () ) {
     qint64 isecs_since_tx = m_dateTimeLastTX.secsTo(now);
@@ -3283,7 +3327,9 @@ void MainWindow::decode()                                       //decode()
   dec_data.params.ndiskdat=0;
   if(m_diskData) dec_data.params.ndiskdat=1;
   dec_data.params.nfa=m_wideGraph->nStartFreq();
-  dec_data.params.nfSplit=m_wideGraph->Fmin();
+  dec_data.params.nfSplit=m_wideGraph->Fmin();  // Not used any more?
+  if(dec_data.params.nfSplit==8) dec_data.params.nfSplit=1;
+
   dec_data.params.nfb=m_wideGraph->Fmax();
   if(m_mode=="FT8" and SpecOp::HOUND == m_specOp and !ui->cbRxAll->isChecked()) dec_data.params.nfb=1000;
   if(m_mode=="FT8" and SpecOp::FOX == m_specOp ) dec_data.params.nfqso=200;
@@ -3339,7 +3385,10 @@ void MainWindow::decode()                                       //decode()
   dec_data.params.emedelay=0.0;
   if(m_config.decode_at_52s()) dec_data.params.emedelay=2.5;
   dec_data.params.minSync=ui->syncSpinBox->isVisible () ? m_minSync : 0;
-  dec_data.params.nexp_decode = static_cast<int> (m_specOp);
+  dec_data.params.nexp_decode=int(m_specOp);
+  if(dec_data.params.nexp_decode==5) dec_data.params.nexp_decode=1;  //NA VHF, WW Digi, ARRL Digi contests
+  if(dec_data.params.nexp_decode==8) dec_data.params.nexp_decode=1;  //and Q65 Pileup all use 4-character
+  if(dec_data.params.nexp_decode==9) dec_data.params.nexp_decode=1;  //grid exchange
   if(m_config.single_decode()) dec_data.params.nexp_decode += 32;
   if(m_config.enable_VHF_features()) dec_data.params.nexp_decode += 64;
   if(m_mode.startsWith("FST4")) dec_data.params.nexp_decode += 256*(ui->sbNB->value()+3);
@@ -3407,8 +3456,8 @@ void MainWindow::decode()                                       //decode()
         decodeBusy(true);
       }
     }
-  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData) and
-     m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();
+  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData or m_mode=="Q65") and
+     m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();  //TEMP
 }
 
 void::MainWindow::fast_decode_done()
@@ -3521,6 +3570,58 @@ void MainWindow::decodeDone ()
     ARRL_Digi_Display();  // Update the ARRL_DIGI display
   }
   if(m_mode!="FT8" or dec_data.params.nzhsym==50) m_nDecodes=0;
+
+  if(m_mode=="Q65" and (m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI
+                        or m_specOp==SpecOp::WW_DIGI or m_specOp==SpecOp::Q65_PILEUP)
+                        and m_ActiveStationsWidget!=NULL) {
+
+    int nlist=0;
+    char list[2000];
+    char line[36];
+    list[0]=0;
+//    QString t="1200 W9XYZ  EN37";
+    auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("tsil.3q"))};
+
+//    morse_(const_cast<char *> (m_config.my_callsign ().toLatin1().constData()),
+//           const_cast<int *> (icw), &m_ncw, (FCL)m_config.my_callsign().length());
+    get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &nlist,
+                &list[0], (FCL)fname.length(), (FCL)2000);
+    QString t="";
+    QString t0="";
+    for(int i=0; i<nlist; i++) {
+      memcpy(line,&list[36*i],36);
+      t0=QString::fromLatin1(line)+"\n";
+      m_callers[i]=t0;
+      t+=t0;
+    }
+    m_ActiveStationsWidget->setClickOK(false);
+    m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
+    m_ActiveStationsWidget->setClickOK(true);
+  }
+}
+
+void MainWindow::read_log()
+{
+  static QFile f {QDir {QStandardPaths::writableLocation (QStandardPaths::DataLocation)}.absoluteFilePath ("wsjtx.log")};
+  f.open(QIODevice::ReadOnly);
+  if(f.isOpen()) {
+    QTextStream in(&f);
+    QString line,callsign;
+    for(int i=0; i<99999; i++) {
+      line=in.readLine();
+      if(line.length()<=0) break;
+      callsign=line.mid(40,6);
+      int n=callsign.indexOf(",");
+      if(n>0) callsign=callsign.left(n);
+      m_EMEworked[callsign]=true;
+      m_score++;
+    }
+    f.close();
+  }
+  if(m_ActiveStationsWidget!=NULL) {
+    m_ActiveStationsWidget->setScore(m_score);
+    if(m_mode=="Q65") m_ActiveStationsWidget->setRate(m_score);
+  }
 }
 
 void MainWindow::ARRL_Digi_Update(DecodedText dt)
@@ -3654,23 +3755,56 @@ void MainWindow::ARRL_Digi_Display()
     t += (t1 + list[k] + "\n");
     if(i>=maxRecent) break;
   }
-  if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(t);
+  if(m_ActiveStationsWidget!=NULL) m_ActiveStationsWidget->displayRecentStations(m_mode,t);
   m_ActiveStationsWidget->setClickOK(true);
 }
 
 void MainWindow::callSandP2(int n)
 {
-  if(m_ready2call[n]=="") return;
+  if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
-  m_deCall=w[0];
-  m_deGrid=w[1];
+  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP) {
+    // This is the mode for 6m EME DXpeditions
+    w=m_callers[n].split(' ', SkipEmptyParts);
+    m_deCall=w[2];
+    m_deGrid=w[3];
+    m_bDoubleClicked=true;               //### needed?
+    m_txFirst=true;
+    ui->dxCallEntry->setText(m_deCall);
+    ui->dxGridEntry->setText(m_deGrid);
+    ui->txFirstCheckBox->setChecked(m_txFirst);
+    genStdMsgs("-22");
+    setTxMsg(3);
+    if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
+    if(m_transmitting) m_restart=true;
+//    qDebug() << "aa" << int(m_specOp) << n << m_callers[n];
+    return;
+  }
+
+  if(m_mode=="Q65") {
+    double kHz=w[1].toDouble();
+    int nMHz=m_freqNominal/1000000;
+    m_freqNominal=(nMHz*1000 + kHz)* 1000;
+    m_deCall=w[3];
+    m_deGrid=w[4];
+    m_txFirst=(w[5]=="0");
+//    ui->TxFreqSpinBox->setValue(1500);
+  } else {
+    m_deCall=w[0];
+    m_deGrid=w[1];
+    ui->RxFreqSpinBox->setValue(w[4].toInt());
+    m_txFirst = (w[5]=="0");
+  }
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
   ui->dxGridEntry->setText(m_deGrid);
-  genStdMsgs(w[3]);                   //### real SNR would be better here?
-  ui->RxFreqSpinBox->setValue(w[4].toInt());
+  if(m_mode=="Q65") {
+    ui->rptSpinBox->setValue(w[2].toInt());
+    genStdMsgs(w[2]);
+  } else {
+    genStdMsgs(w[3]);
+  }
   setTxMsg(1);
-  m_txFirst = (w[5]=="0");
   ui->txFirstCheckBox->setChecked(m_txFirst);
   if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
   if(m_transmitting) m_restart=true;
@@ -4774,7 +4908,8 @@ void MainWindow::guiUpdate()
         SpecOp::FIELD_DAY==m_specOp or
         SpecOp::RTTY==m_specOp or
         SpecOp::WW_DIGI==m_specOp or
-        SpecOp::ARRL_DIGI==m_specOp) ) {
+        SpecOp::ARRL_DIGI==m_specOp or
+        SpecOp::Q65_PILEUP==m_specOp) ) {
       //We're in a contest-like mode other than EU_VHF: start QSO with Tx2.
       ui->tx1->setEnabled(false);
       ui->txb1->setEnabled(false);
@@ -4787,9 +4922,24 @@ void MainWindow::guiUpdate()
   }
   if(m_mode=="Echo" and !m_monitoring and !m_auto and !m_diskData) m_echoRunning=false;
 
+  if(m_mode=="Q65") {
+    mem_qmap.lock();
+    int n=0;
+    if(m_decoderBusy) n=1;
+    ipc_qmap[3]=n;
+    n=0;
+    if(m_transmitting) n=1;
+    ipc_qmap[4]=n;
+    if(ipc_qmap[0] > 0) {             //ndecodes
+      memcpy(&qmapcom, (char*)ipc_qmap, sizeof(qmapcom));  //Fetch the new decode(s)
+      readWidebandDecodes();
+    }
+    mem_qmap.unlock();
+  }
+
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec << m_bFastMode << m_bFast9;
+//    qDebug() << "AAA" << nsec%60 << int(m_specOp);
 
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
@@ -5403,7 +5553,7 @@ void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifie
            or bEU_VHF_w2 or (m_QSOProgress==CALLING))) {
       if(message_words.at(4).contains(grid_regexp) and SpecOp::EU_VHF!=m_specOp) {
         if((SpecOp::NA_VHF==m_specOp or SpecOp::WW_DIGI==m_specOp or
-            SpecOp::ARRL_DIGI==m_specOp )
+            SpecOp::ARRL_DIGI==m_specOp or SpecOp::Q65_PILEUP==m_specOp)
            and bContestOK) {
           setTxMsg(3);
           m_QSOProgress=ROGER_REPORT;
@@ -5767,7 +5917,7 @@ void MainWindow::genCQMsg ()
     QString t=ui->tx6->text();
     QStringList tlist=t.split(" ");
     if((m_mode=="FT4" or m_mode=="FT8" or m_mode=="MSK144" || "Q65" == m_mode) and
-       SpecOp::NONE != m_specOp and SpecOp::HOUND != m_specOp and
+       SpecOp::NONE != m_specOp and SpecOp::HOUND != m_specOp and SpecOp::Q65_PILEUP != m_specOp and
        ( tlist.at(1)==my_callsign or
          tlist.at(2)==my_callsign ) and
        stdCall(my_callsign)) {
@@ -5891,6 +6041,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
       if(SpecOp::NA_VHF==m_specOp) sent=my_grid;
       if(SpecOp::WW_DIGI==m_specOp) sent=my_grid;
       if(SpecOp::ARRL_DIGI==m_specOp) sent=my_grid;
+      if(SpecOp::Q65_PILEUP==m_specOp) sent=my_grid;
       if(SpecOp::FIELD_DAY==m_specOp) sent=m_config.Field_Day_Exchange();
       if(SpecOp::RTTY==m_specOp) {
         sent=rst + m_config.RTTY_Exchange();
@@ -6315,6 +6466,21 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
   ui->sbTxPercent->setEnabled (text == tr ("Random"));
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+  if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {
+      m_specOp=m_config.special_op_id();
+      if (m_specOp==SpecOp::Q65_PILEUP) {
+          m_config.setSpecial_None();
+      } else {
+          m_config.setSpecial_Q65_Pileup();
+          ui->houndButton->setChecked(false);
+          ui->houndButton->setStyleSheet("");
+      }
+      m_specOp=m_config.special_op_id();
+      on_actionQ65_triggered();
+  }
+}
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
@@ -6482,16 +6648,22 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
   }
 
   if(m_ActiveStationsWidget!=NULL) {
-    QString band=m_config.bands()->find(dial_freq);
-    activeWorked(call,band);
-    int points=m_activeCall[call].points;
-    m_score += points;
-    ARRL_logged al;
-    al.time=QDateTime::currentDateTimeUtc();
-    al.band=band;
-    al.points=points;
-    m_arrl_log.append(al);
-    updateRate();
+    if(m_mode=="Q65") {
+      m_score++;
+      m_EMEworked[call]=true;
+      m_ActiveStationsWidget->setRate(m_score);
+    } else {
+      QString band=m_config.bands()->find(dial_freq);
+      activeWorked(call,band);
+      int points=m_activeCall[call].points;
+      m_score += points;
+      ARRL_logged al;
+      al.time=QDateTime::currentDateTimeUtc();
+      al.band=band;
+      al.points=points;
+      m_arrl_log.append(al);
+      updateRate();
+    }
   }
 
   m_xSent.clear ();
@@ -6825,15 +6997,17 @@ void MainWindow::on_actionFT8_triggered()
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";
-    if(SpecOp::WW_DIGI==m_specOp) t0="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL_DIGI";
+    if(SpecOp::WW_DIGI==m_specOp) t0="WW Digi";
+    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL Digi";
+    if(SpecOp::Q65_PILEUP==m_specOp) t0="Q65 Pileup";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    on_contest_log_action_triggered();
+    qDebug() << "aa" << int(m_specOp);
+    if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
 
   if((SpecOp::FOX==m_specOp or SpecOp::HOUND==m_specOp) and !m_config.split_mode() and !m_bWarnedSplit) {
@@ -7061,17 +7235,17 @@ void MainWindow::on_actionQ65_triggered()
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";
-    if(SpecOp::WW_DIGI==m_specOp) t0="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL_DIGI";
+    if(SpecOp::WW_DIGI==m_specOp) t0="WW Digi";
+    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL Digi";
+    if(SpecOp::Q65_PILEUP==m_specOp) t0="Q65 Pileup";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    on_contest_log_action_triggered();
+    if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
-
 }
 
 void MainWindow::on_actionMSK144_triggered()
@@ -7247,6 +7421,10 @@ void MainWindow::on_actionFreqCal_triggered()
 
 void MainWindow::switch_mode (Mode mode)
 {
+  if (m_mode != "Q65" && m_specOp==SpecOp::Q65_PILEUP) {
+      m_config.setSpecial_None();
+      m_specOp=m_config.special_op_id();
+   }
   m_fastGraph->setMode(m_mode);
   m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
   auto const& row = m_config.frequencies ()->best_working_frequency (m_freqNominal);
@@ -7450,8 +7628,12 @@ void MainWindow::on_reset_cabrillo_log_action_triggered ()
       if(m_config.RTTY_Exchange()!="SCC") ui->sbSerialNumber->setValue(1);
       m_logBook.contest_log ()->reset ();
       m_activeCall.clear();                      //Erase the QMap of active calls
+      m_EMECall.clear();                         //ditto for EME calls
       m_score=0;
-      if (m_ActiveStationsWidget) m_ActiveStationsWidget->setScore(0);
+      if (m_ActiveStationsWidget) {
+        m_ActiveStationsWidget->setScore(0);
+        if(m_mode=="Q65") m_ActiveStationsWidget->setRate(0);
+      }
     }
 }
 
@@ -9175,6 +9357,107 @@ void MainWindow::write_transmit_entry (QString const& file_name)
     }
 }
 
+void MainWindow::readWidebandDecodes()
+{
+  if(m_ActiveStationsWidget==NULL) return;
+
+  int nhr=0;
+  int nmin=0;
+  int nsnr=0;
+  while(m_fetched < qmapcom.ndecodes) {
+    QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
+    nhr=line.mid(0,2).toInt();
+    nmin=line.mid(2,2).toInt();
+    double frx=line.mid(4,9).toDouble();
+    double fsked=line.mid(13,7).toDouble();
+    QString msg=line.mid(34,-1);
+    int i1=msg.indexOf(" ");
+    int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
+    QString dxcall=msg.mid(i1+1,i2-i1-1);
+    QString w3=msg.mid(i2+1,-1);
+    nsnr=line.mid(29,3).toInt();
+    m_EMECall[dxcall].frx=frx;
+    m_EMECall[dxcall].fsked=fsked;
+    m_EMECall[dxcall].nsnr=nsnr;
+    m_EMECall[dxcall].t=60*nhr + nmin;
+    if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
+    m_fetched++;
+
+    Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
+    bool bCQ=line.contains(" CQ ");
+    bool bFromDisk=qmapcom.nQDecoderDone==2;
+    if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
+      qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
+      if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
+        showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+      }
+    }
+  }
+
+  if (m_config.spot_to_psk_reporter ()) {
+    m_psk_Reporter.sendReport();                // Upload any queued spots
+  }
+
+// Update "m_wEMECall" by reading qmap_decodes.txt
+  QMap<QString,EMECall>::iterator i;
+  QString t="";
+  QString t1;
+  QString dxcall;
+  QString dxgrid4;
+  QStringList list;
+  float f[100];
+  int indx[100];
+  int maxAge=m_ActiveStationsWidget->maxAge();
+
+  m_ActiveStationsWidget->setClickOK(false);
+  int k=0;
+  for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
+    int snr=i->nsnr;
+    int odd=1 - (i->t)%2;
+    int age=60*nhr + nmin - (i->t);
+    if(age<0) age += 1440;
+    if(age<=maxAge) {
+      dxcall=(i.key()+"     ").left(8);
+      dxgrid4=(i->grid4+"... ").left(4);
+      if(m_EMEworked[dxcall.trimmed()]) {
+        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
+                       dxgrid4.toLatin1().constData(),odd,age);
+      } else {
+        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d*\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
+                       dxgrid4.toLatin1().constData(),odd,age);
+      }
+      f[k]=i->fsked;
+      list.append(t1);
+      k++;
+    }
+    m_ActiveStationsWidget->setClickOK(true);
+  }
+
+  if(k>0) {
+    t1="";
+    int kz=k;
+    indexx_(f,&kz,indx);
+    for(int k=0; k<kz; k++) {
+      int j=indx[k]-1;
+      t1=t1.asprintf("%2d. ",k+1);
+      t1+=list[j];
+      m_ready2call[k]=list[j];
+      t+=t1;
+    }
+  }
+
+  if(m_ActiveStationsWidget != NULL) {
+    m_ActiveStationsWidget->erase();
+    m_ActiveStationsWidget->displayRecentStations(m_mode,t);
+    m_ActiveStationsWidget->setClickOK(true);
+  }
+  if(ipc_qmap[2]!=0) {
+    m_fetched=0;
+    ipc_qmap[0]=0;
+    ipc_qmap[2]=0;
+  }
+}
+
 // -------------------------- Code for FT8 DXpedition Mode ---------------------------
 
 void MainWindow::hound_reply ()
@@ -10025,15 +10308,16 @@ void MainWindow::chkFT4()
     if(SpecOp::EU_VHF==m_specOp) t0="EU VHF";
     if(SpecOp::FIELD_DAY==m_specOp) t0="Field Day";
     if(SpecOp::RTTY==m_specOp) t0="FT RU";
-    if(SpecOp::WW_DIGI==m_specOp) t0="WW_DIGI";
-    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL_DIGI";
+    if(SpecOp::WW_DIGI==m_specOp) t0="WW Digi";
+    if(SpecOp::ARRL_DIGI==m_specOp) t0="ARRL Digi";
+    if(SpecOp::Q65_PILEUP==m_specOp) t0="Q65 Pileup";
     if(t0=="") {
       ui->labDXped->setVisible(false);
     } else {
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    on_contest_log_action_triggered();
+    if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
   if (SpecOp::HOUND == m_specOp or SpecOp::FOX == m_specOp) {
     ui->labDXped->setVisible(false);

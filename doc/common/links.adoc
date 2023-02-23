@@ -80,7 +80,7 @@ d). Edit lines as needed. Keeping them in alphabetic order help see dupes.
 :jtalert: https://hamapps.com/[JTAlert]
 :launchpadki7mt: https://launchpad.net/~ki7mt[KI7MT PPA's]
 :log4om: https://www.log4om.com[Log4OM]
-:lunarEchoes: https://sourceforge.net/projects/wsjt/files/wsjtx-{VERSION}/LunarEchoes_QEX.pdf[QEX]
+:lunarEchoes: https://wsjt.sourceforge.io/LunarEchoes_QEX.pdf[QEX]
 :msk144: https://wsjt.sourceforge.io/MSK144_Protocol_QEX.pdf[QEX]
 :msvcpp_redist: https://www.microsoft.com/en-ph/download/details.aspx?id=40784[Microsoft VC++ 2013 Redistributable]
 :msys_url: https://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/[MSYS Download]

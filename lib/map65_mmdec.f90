@@ -1,5 +1,5 @@
 subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
-     nagain,max_drift,mycall,hiscall,hisgrid)
+     nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
 
   use prog_args
   use timer_module, only: timer
@@ -14,8 +14,8 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
 
   logical single_decode,bVHF,lnewdat,lagain,lclearave,lapcqonly
   integer*2 id2(300*12000)
+  integer nqf(20)
 !  type(params_block) :: params
-  character(len=20) :: datetime
   character(len=12) :: mycall, hiscall
   character(len=6) :: hisgrid
   data ntr0/-1/
@@ -28,8 +28,7 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
 !  hiscall=transfer(params%hiscall,hiscall)
 !  mygrid=transfer(params%mygrid,mygrid)
 !  hisgrid=transfer(params%hisgrid,hisgrid)
-  datetime=' '
-  
+
   my_q65%decoded = 0
   ncontest=0
   nQSOprogress=0
@@ -40,16 +39,12 @@ subroutine map65_mmdec(nutc,id2,nqd,nsubmode,nfa,nfb,nfqso,ntol,newdat,   &
   lagain=(nagain.ne.0)
   bVHF=.true.
   emedelay=2.5
-  ndepth=1
   ntrperiod=60
-
-  open(17,file=trim(temp_dir)//'/red.dat',status='unknown')
-  open(14,file=trim(temp_dir)//'/avemsg.txt',status='unknown')
 
   call timer('dec_q65 ',0)
   call my_q65%decode(q65_decoded,id2,nqd,nutc,ntrperiod,nsubmode,nfqso,       &
        ntol,ndepth,nfa,nfb,lclearave,single_decode,lagain,max_drift,lnewdat,  &
-       emedelay,mycall,hiscall,hisgrid,nQSOProgress,ncontest,lapcqonly,navg0)
+       emedelay,mycall,hiscall,hisgrid,nQSOProgress,ncontest,lapcqonly,navg0,nqf)
   call timer('dec_q65 ',1)
 
   return

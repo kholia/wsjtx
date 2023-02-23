@@ -280,27 +280,28 @@ void CPlotter::draw(float swide[], bool bScroll, bool bRed)
     painter2D.drawText(x1-4,y,"73");
   }
 
-  if(bRed and m_bQ65_Sync) {      //Plot the Q65 red/orange sync curves
+  if(bRed and m_bQ65_Sync) {      //Plot the Q65 orange (current) and red (average) sync curves
     int k=0;
     int k2=0;
     std::ifstream f;
     f.open(m_redFile.toLatin1());
     if(f) {
       int x,y;
-      float freq,xdt,smin,smax,sync,sync2;
+      float freq,xdt,smin,smax,sync_avg,sync_current;
       f >> xdt >> smin >> smax;
       if(f) {
         for(int i=0; i<99999; i++) {
-          f >> freq >> sync >> sync2;
+          f >> freq >> sync_avg >> sync_current;
           if(!f or f.eof() or k>=MAX_SCREENSIZE or k2>=MAX_SCREENSIZE) break;
           x=XfromFreq(freq);
-          if(sync > -99.0 and (smin!=0.0 or smax != 0.0)) {
-            y=m_h2*(0.9 - 0.09*gain2d*sync) - m_plot2dZero - 10;
-            LineBuf2[k2].setX(x);                          //Red sync curve
+          // Plot the red curve only if we have averaged 2 or more Rx sequences.
+          if(sync_avg > -99.0 and (smin!=0.0 or smax != 0.0)) {
+            y=m_h2*(0.9 - 0.09*gain2d*gain2d*sync_avg) - m_plot2dZero - 10;
+            LineBuf2[k2].setX(x);                          //Red sync curve (average)
             LineBuf2[k2].setY(y);
             k2++;
           }
-          y=m_h2*(0.9 - 0.09*gain2d*sync2) - m_plot2dZero;
+          y=m_h2*(0.9 - 0.09*gain2d*gain2d*sync_current) - m_plot2dZero;
           LineBuf3[k].setX(x);                            //Orange sync curve
           LineBuf3[k].setY(y);
           k++;

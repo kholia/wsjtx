@@ -610,6 +610,7 @@ contains
                         case(1800) 
                            snr_calfac=320.0
                         case default
+                           snr_calfac=430.0
                      end select
                      arg=snr_calfac*xsig/base - 1.0
                      if(arg.gt.0.0) then

@@ -167,6 +167,7 @@ private slots:
   void on_actionQSG_FST4_triggered();
   void on_actionQSG_Q65_triggered();
   void on_actionQSG_X250_M3_triggered();
+  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered();
   void on_actionOnline_User_Guide_triggered();
   void on_actionLocal_User_Guide_triggered();
   void on_actionWide_Waterfall_triggered();
@@ -211,6 +212,7 @@ private slots:
   void on_txb6_clicked();
   void on_lookupButton_clicked();
   void on_addButton_clicked();
+  void mousePressEvent(QMouseEvent *event) override;
   void on_dxCallEntry_textChanged (QString const&);
   void on_dxGridEntry_textChanged (QString const&);
   void on_dxCallEntry_editingFinished();
@@ -373,6 +375,7 @@ private:
   void setColorHighlighting();
   void chkFT4();
   bool elide_tx1_not_allowed () const;
+  void readWidebandDecodes();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
@@ -508,6 +511,7 @@ private:
   qint32  m_score=0;
   qint32  m_fDop=0;
   qint32  m_echoSec0=0;
+  qint32  m_fetched=0;
 
   bool    m_btxok;		//True if OK to transmit
   bool    m_diskData;
@@ -665,6 +669,7 @@ private:
   QString m_deCall;
   QString m_deGrid;
   QString m_ready2call[50];
+  QString m_callers[40];
 
   QSet<QString> m_pfx;
   QSet<QString> m_sfx;
@@ -700,6 +705,19 @@ private:
     qint32 points;
   };
   QMap<QString,ActiveCall> m_activeCall;   //Key = callsign, value = grid4, az, points for ARRL_DIGI
+
+  struct EMECall
+  {
+    QString grid4;
+    double frx;
+    double fsked;
+    qint32 nsnr;
+    qint32 t;
+    bool worked;
+  };
+  QMap<QString,EMECall> m_EMECall;
+
+  QMap<QString,bool> m_EMEworked;
 
   struct RecentCall
   {
@@ -848,6 +866,7 @@ private:
   Q_SLOT void ARRL_Digi_Display();
   void ARRL_Digi_Update(DecodedText dt);
   void activeWorked(QString call, QString band);
+  void read_log();
 };
 
 extern int killbyname(const char* progName);

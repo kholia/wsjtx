@@ -23,8 +23,8 @@ ActiveStations::ActiveStations(QSettings * settings, QFont const& font, QWidget 
   changeFont (font);
   read_settings ();
   ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
-  connect(ui->RecentStationsPlainTextEdit, SIGNAL(selectionChanged()), this, SLOT(select()));
   connect(ui->cbReadyOnly, SIGNAL(toggled(bool)), this, SLOT(on_cbReadyOnly_toggled(bool)));
+  connect(ui->RecentStationsPlainTextEdit, SIGNAL(cursorPositionChanged()), this, SLOT(on_textEdit_clicked()));
 }
 
 ActiveStations::~ActiveStations()
@@ -57,9 +57,33 @@ void ActiveStations::write_settings ()
   settings_->setValue("ReadyOnly",ui->cbReadyOnly->isChecked());
 }
 
-void ActiveStations::displayRecentStations(QString const& t)
+void ActiveStations::displayRecentStations(QString mode, QString const& t)
 {
-  ui->RecentStationsPlainTextEdit->setPlainText(t);
+  if(mode!=m_mode) {
+    m_mode=mode;
+    if(m_mode=="Q65") {
+      ui->header_label2->setText("  N    Frx   Fsked  S/N   Call     Grid  Tx  Age");
+      ui->label->setText("QSOs:");
+    } else if(m_mode=="Q65-pileup") {
+      ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
+    } else {
+      ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
+      ui->label->setText("Rate:");
+    }
+    bool b=(m_mode.left(3)=="Q65");
+    ui->bandChanges->setVisible(!b);
+    ui->cbReadyOnly->setVisible(!b);
+    ui->label_2->setVisible(!b);
+    ui->label_3->setVisible(!b);
+    ui->score->setVisible(!b);
+    ui->sbMaxRecent->setVisible(!b);
+
+    b=(m_mode!="Q65-pileup");
+    ui->sbMaxAge->setVisible(b);
+    ui->label->setVisible(b);
+    ui->rate->setVisible(b);
+  }
+  ui->RecentStationsPlainTextEdit->insertPlainText(t);
 }
 
 int ActiveStations::maxRecent()
@@ -72,14 +96,19 @@ int ActiveStations::maxAge()
   return ui->sbMaxAge->value();
 }
 
-void ActiveStations::select()
+void ActiveStations::on_textEdit_clicked()
 {
   if(m_clickOK) {
-    qint64 msec=QDateTime::currentMSecsSinceEpoch();
-    if((msec-m_msec0)<500) return;
-    m_msec0=msec;
-    int nline=ui->RecentStationsPlainTextEdit->textCursor().blockNumber();
-    emit callSandP(nline);
+    QTextCursor cursor;
+    QString text;
+    cursor = ui->RecentStationsPlainTextEdit->textCursor();
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+    text = cursor.selectedText();
+    if(text!="") {
+      int nline=text.left(2).toInt()-1;
+      emit callSandP(nline);
+    }
   }
 }
 

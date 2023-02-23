@@ -41,7 +41,7 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
   type(candidate) :: cand(MAX_CANDIDATES)
   common/early/nhsym1,nhsym2,ldecoded(32768)
 
-  call wb_sync(ss,savg,xpol,jz,nfa,nfb)
+  call wb_sync(ss,savg,xpol,jz,nfa,nfb)          !Output to sync() array
 
   tstep=2048.0/11025.0        !0.185760 s: 0.5*tsym_jt65, 0.3096*tsym_q65
   df3=96000.0/NFFT
@@ -89,8 +89,6 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
         if(diffhz.gt.-0.03*bw .and. diffhz.lt.1.03*bw) skip=.true.
      enddo
      if(skip) cycle
-!     write(*,3301) i,k,m,f0,diffhz,bw,db(snr1)
-!3301 format('=A',3i5,f8.3,2f8.0,f8.2)
      k=k+1
      cand(k)%snr=snr1
      cand(k)%f=f0
@@ -99,6 +97,8 @@ subroutine get_candidates(ss,savg,xpol,jz,nfa,nfb,nts_jt65,nts_q65,cand,ncand)
      cand(k)%ipol=sync(n)%ipol
      cand(k)%iflip=nint(flip)
      cand(k)%indx=n
+!     write(50,3050) i,k,m,f0+32.0,diffhz,bw,snr1,db(snr1)
+!3050 format(3i5,f8.3,2f8.0,2f8.2)
      if(k.ge.MAX_CANDIDATES) exit
   enddo
   ncand=k
@@ -251,14 +251,29 @@ subroutine wb_sync(ss,savg,xpol,jz,nfa,nfb)
 
   enddo  ! i (frequency bin)
 
-!  do i=ia,ib
-!     write(15,3015) 0.001*(i-1)*df3,sync(i)%ccfmax,sync(i)%xdt,sync(i)%ipol,   &
-!          sync(i)%iflip,sync(i)%birdie
-!3015 format(3f10.3,2i6,L5)
-!  enddo
-  
   call pctile(sync(ia:ib)%ccfmax,ib-ia+1,50,base)
   sync(ia:ib)%ccfmax=sync(ia:ib)%ccfmax/base
+
+  bw=65*4*1.66666667                        !Q65-60C bandwidth
+  nbw=bw/df3 + 1                            !Number of bins to blank
+  syncmin=2.0
+  nguard=10
+  do i=ia,ib
+     if(sync(i)%ccfmax.lt.syncmin) cycle
+     spk=maxval(sync(i:i+nbw)%ccfmax)
+     ip =maxloc(sync(i:i+nbw)%ccfmax)
+     i0=ip(1)+i-1
+     ja=min(i,i0-nguard)
+     jb=i0+nbw+nguard
+     sync(ja:jb)%ccfmax=0.
+     sync(i0)%ccfmax=spk
+  enddo
+
+!  do i=ia,ib
+!     write(15,3015) 0.001*(i-1)*df3+32.0,sync(i)%ccfmax,sync(i)%xdt,  &
+!          sync(i)%ipol,sync(i)%iflip,sync(i)%birdie
+!3015 format(3f10.3,2i6,L5)
+!  enddo
 
   return
 end subroutine wb_sync
