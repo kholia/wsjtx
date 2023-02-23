@@ -1057,3 +1057,14 @@ bool MainWindow::isGrid4(QString g)
   if(g.mid(3,1)<'0' or g.mid(3,1)>'9') return false;
   return true;
 }
+
+void MainWindow::on_actionQuick_Start_Guide_to_Q65_triggered()
+{
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Q65_Quick_Start.pdf"});
+}
+
+void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered()
+{
+  QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf"});
+}
+

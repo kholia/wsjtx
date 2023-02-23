@@ -80,6 +80,8 @@ private slots:
   void on_actionQ65C_triggered();
   void on_actionQ65D_triggered();
   void on_actionQ65E_triggered();
+  void on_actionQuick_Start_Guide_to_Q65_triggered();
+  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
 
 private:
   Ui::MainWindow *ui;

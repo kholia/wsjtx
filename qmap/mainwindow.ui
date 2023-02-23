@@ -431,6 +431,8 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP"/>
+    <addaction name="actionQuick_Start_Guide_to_Q65"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuMode">
@@ -785,6 +787,16 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>F2</string>
+   </property>
+  </action>
+  <action name="actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP">
+   <property name="text">
+    <string>Quick-Start Guide to WSJT-X 2.7 and QMAP</string>
+   </property>
+  </action>
+  <action name="actionQuick_Start_Guide_to_Q65">
+   <property name="text">
+    <string>Quick-Start Guide to Q65</string>
    </property>
   </action>
  </widget>
