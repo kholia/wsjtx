@@ -457,6 +457,7 @@ void MainWindow::on_actionSettings_triggered()
     m_timeout=dlg.m_timeout;
     m_fCal=dlg.m_fCal;
     m_fAdd=dlg.m_fAdd;
+    soundInThread.setFadd(m_fAdd);
     m_wide_graph_window->setFcal(m_fCal);
     m_fs96000=dlg.m_fs96000;
     m_network=dlg.m_network;
@@ -469,7 +470,6 @@ void MainWindow::on_actionSettings_triggered()
       soundInThread.wait(1000);
       soundInThread.setNetwork(m_network);
       soundInThread.setRate(96000.0);
-      soundInThread.setFadd(m_fAdd);
       soundInThread.setNrx(1);
       soundInThread.start(QThread::HighestPriority);
     }
@@ -946,6 +946,7 @@ void MainWindow::guiUpdate()
   ui->labFreq->setText(t1);
 
   if(nsec != m_sec0) {                                     //Once per second
+//    qDebug() << "AAA" << nsec << m_fAdd;
     static int n60z=99;
     int n60=nsec%60;
     int itest[5];

@@ -211,7 +211,7 @@ void SoundInThread::inputUDP()
           int nsam=-1;
           recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8);
           datcom_.fcenter=b.cfreq + m_fAdd;
-//          qDebug() << "aaa" << b.cfreq << m_fAdd << datcom_.fcenter;
+//          qDebug() << "bb" << b.cfreq << m_fAdd << datcom_.fcenter;
         }
 
         m_hsym=(k-2048)*11025.0/(2048.0*m_rate);
