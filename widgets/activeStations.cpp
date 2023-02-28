@@ -72,7 +72,7 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
     }
     bool b=(m_mode.left(3)=="Q65");
     ui->bandChanges->setVisible(!b);
-    ui->cbReadyOnly->setVisible(!b);
+//    ui->cbReadyOnly->setVisible(!b);
     ui->label_2->setVisible(!b);
     ui->label_3->setVisible(!b);
     ui->score->setVisible(!b);

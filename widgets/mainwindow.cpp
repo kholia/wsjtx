@@ -1415,6 +1415,14 @@ void MainWindow::readSettings()
   if (displayContestLog) on_contest_log_action_triggered ();
   if(displayActiveStations) {
     on_actionActiveStations_triggered();
+    if(m_mode=="Q65") {
+      QString t{""};
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
+      } else {
+        m_ActiveStationsWidget->displayRecentStations("Q65",t);
+      }
+    }
   }
 }
 
@@ -2275,9 +2283,6 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
         }
       }
       return;
-    case Qt::Key_F10:
-      readWidebandDecodes();
-      return;
     case Qt::Key_F11:
       if((e->modifiers() & Qt::ControlModifier) and (e->modifiers() & Qt::ShiftModifier)) {
         m_bandEdited = true;
@@ -2375,6 +2380,11 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     }
     if(e->modifiers() & Qt::ControlModifier) {
       if(m_send_RR73) on_txrb4_doubleClicked();
+      return;
+    }
+    if(e->modifiers() & Qt::ShiftModifier) {
+      m_fetched=0;
+      readWidebandDecodes();
       return;
     }
     break;
@@ -3629,6 +3639,12 @@ void MainWindow::read_log()
 
 void MainWindow::ARRL_Digi_Update(DecodedText dt)
 {
+  if(m_mode=="Q65") {
+    m_fetched=0;
+    readWidebandDecodes();
+    return;
+  }
+
   // Extract information relevant for the ARRL Digi contest
   QString deCall;
   QString deGrid;
@@ -3688,6 +3704,11 @@ void MainWindow::ARRL_Digi_Update(DecodedText dt)
 
 void MainWindow::ARRL_Digi_Display()
 {
+  if(m_mode=="Q65") {
+    m_fetched=0;
+    readWidebandDecodes();
+    return;
+  }
   QMutableMapIterator<QString,RecentCall> icall(m_recentCall);
   QString deCall,deGrid;
   int age=0;
@@ -7015,7 +7036,6 @@ void MainWindow::on_actionFT8_triggered()
       ui->labDXped->setVisible(true);
       ui->labDXped->setText(t0);
     }
-    qDebug() << "aa" << int(m_specOp);
     if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
 
@@ -9369,7 +9389,6 @@ void MainWindow::write_transmit_entry (QString const& file_name)
 void MainWindow::readWidebandDecodes()
 {
   if(m_ActiveStationsWidget==NULL) return;
-
   int nhr=0;
   int nmin=0;
   int nsnr=0;
@@ -9422,23 +9441,25 @@ void MainWindow::readWidebandDecodes()
   m_ActiveStationsWidget->setClickOK(false);
   int k=0;
   for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
-    int snr=i->nsnr;
-    int odd=1 - (i->t)%2;
-    int age=60*nhr + nmin - (i->t);
-    char c2[3]={32,32,0};
-    if(age<0) age += 1440;
-    if(age<=maxAge) {
-      dxcall=(i.key()+"     ").left(8);
-      dxgrid4=(i->grid4+"... ").left(4);
-      if(!m_EMEworked[dxcall.trimmed()]) c2[0]=35;       //# for not in log
-      if(i->ready2call) c2[1]=42;                        //* for ready to call
-      t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d %2s\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
+    if(i->ready2call or !m_ActiveStationsWidget->readyOnly()) {
+      int snr=i->nsnr;
+      int odd=1 - (i->t)%2;
+      int age=60*nhr + nmin - (i->t);
+      char c2[3]={32,32,0};
+      if(age<0) age += 1440;
+      if(age<=maxAge) {
+        dxcall=(i.key()+"     ").left(8);
+        dxgrid4=(i->grid4+"... ").left(4);
+        if(!m_EMEworked[dxcall.trimmed()]) c2[0]=35;       //# for not in log
+        if(i->ready2call) c2[1]=42;                        //* for ready to call
+        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d %2s\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
                        dxgrid4.toLatin1().constData(),odd,age,c2);
-      f[k]=i->fsked;
-      list.append(t1);
-      k++;
+        f[k]=i->fsked;
+        list.append(t1);
+        k++;
+      }
+      m_ActiveStationsWidget->setClickOK(true);
     }
-    m_ActiveStationsWidget->setClickOK(true);
   }
 
   if(k>0) {
