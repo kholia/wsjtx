@@ -3766,7 +3766,6 @@ void MainWindow::callSandP2(int n)
 {
   bool bHoldFreq = (n<0);
   n=qAbs(n)-1;
-  qDebug() << "aa" << n << bHoldFreq;
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n <= m_callers->size()) {
