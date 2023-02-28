@@ -9386,10 +9386,11 @@ void MainWindow::readWidebandDecodes()
     m_EMECall[dxcall].nsnr=nsnr;
     m_EMECall[dxcall].t=60*nhr + nmin;
     if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
+    bool bCQ=line.contains(" CQ ");
+    m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
     m_fetched++;
 
     Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
-    bool bCQ=line.contains(" CQ ");
     bool bFromDisk=qmapcom.nQDecoderDone==2;
     if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
       qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
@@ -9420,17 +9421,15 @@ void MainWindow::readWidebandDecodes()
     int snr=i->nsnr;
     int odd=1 - (i->t)%2;
     int age=60*nhr + nmin - (i->t);
+    char c2[3]={32,32,0};
     if(age<0) age += 1440;
     if(age<=maxAge) {
       dxcall=(i.key()+"     ").left(8);
       dxgrid4=(i->grid4+"... ").left(4);
-      if(m_EMEworked[dxcall.trimmed()]) {
-        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
-                       dxgrid4.toLatin1().constData(),odd,age);
-      } else {
-        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d*\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
-                       dxgrid4.toLatin1().constData(),odd,age);
-      }
+      if(!m_EMEworked[dxcall.trimmed()]) c2[0]=35;       //# for not in log
+      if(i->ready2call) c2[1]=42;                        //* for ready to call
+      t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d %2s\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
+                       dxgrid4.toLatin1().constData(),odd,age,c2);
       f[k]=i->fsked;
       list.append(t1);
       k++;

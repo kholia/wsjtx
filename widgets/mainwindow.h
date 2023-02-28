@@ -714,6 +714,7 @@ private:
     qint32 nsnr;
     qint32 t;
     bool worked;
+    bool ready2call;
   };
   QMap<QString,EMECall> m_EMECall;
 
