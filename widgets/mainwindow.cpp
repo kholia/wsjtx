@@ -3764,6 +3764,9 @@ void MainWindow::ARRL_Digi_Display()
 
 void MainWindow::callSandP2(int n)
 {
+  bool bHoldFreq = (n<0);
+  n=qAbs(n)-1;
+  qDebug() << "aa" << n << bHoldFreq;
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n <= m_callers->size()) {
@@ -3784,9 +3787,11 @@ void MainWindow::callSandP2(int n)
   }
 
   if(m_mode=="Q65") {
-    double kHz=w[1].toDouble();
-    int nMHz=m_freqNominal/1000000;
-    m_freqNominal=(nMHz*1000 + kHz)* 1000;
+    if(!bHoldFreq) {
+      double kHz=w[1].toDouble();
+      int nMHz=m_freqNominal/1000000;
+      m_freqNominal=(nMHz*1000 + kHz)* 1000;
+    }
     m_deCall=w[3];
     m_deGrid=w[4];
     m_txFirst=(w[5]=="0");

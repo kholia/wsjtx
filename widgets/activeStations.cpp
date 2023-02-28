@@ -106,7 +106,8 @@ void ActiveStations::on_textEdit_clicked()
     cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
     text = cursor.selectedText();
     if(text!="") {
-      int nline=text.left(2).toInt()-1;
+      int nline=text.left(2).toInt();
+      if(QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) nline=-nline;
       emit callSandP(nline);
     }
   }
