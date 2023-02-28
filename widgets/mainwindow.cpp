@@ -2275,6 +2275,9 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
         }
       }
       return;
+    case Qt::Key_F10:
+      readWidebandDecodes();
+      return;
     case Qt::Key_F11:
       if((e->modifiers() & Qt::ControlModifier) and (e->modifiers() & Qt::ShiftModifier)) {
         m_bandEdited = true;
@@ -3763,7 +3766,7 @@ void MainWindow::callSandP2(int n)
 {
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
-  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP) {
+  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n <= m_callers->size()) {
     // This is the mode for 6m EME DXpeditions
     w=m_callers[n].split(' ', SkipEmptyParts);
     m_deCall=w[2];
@@ -3777,7 +3780,6 @@ void MainWindow::callSandP2(int n)
     setTxMsg(3);
     if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
     if(m_transmitting) m_restart=true;
-//    qDebug() << "aa" << int(m_specOp) << n << m_callers[n];
     return;
   }
 
@@ -8005,7 +8007,7 @@ void MainWindow::handle_transceiver_update (Transceiver::TransceiverState const&
 
             if(m_lastDialFreq != m_freqNominal and m_ActiveStationsWidget != NULL) {
               m_recentCall.clear();
-              m_ActiveStationsWidget->erase();
+              if(m_mode!="Q65") m_ActiveStationsWidget->erase();
             }
 
             m_lastDialFreq = m_freqNominal;
