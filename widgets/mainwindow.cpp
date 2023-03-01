@@ -2711,7 +2711,7 @@ void MainWindow::on_actionQSG_X250_M3_triggered()
   QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/WSJTX_2.5.0_MAP65_3.0_Quick_Start.pdf"});
 }
 
-void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered()
+void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered()
 {
   QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf"});
 }

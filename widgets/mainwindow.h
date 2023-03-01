@@ -167,7 +167,7 @@ private slots:
   void on_actionQSG_FST4_triggered();
   void on_actionQSG_Q65_triggered();
   void on_actionQSG_X250_M3_triggered();
-  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_0_and_QMAP_triggered();
+  void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
   void on_actionOnline_User_Guide_triggered();
   void on_actionLocal_User_Guide_triggered();
   void on_actionWide_Waterfall_triggered();
