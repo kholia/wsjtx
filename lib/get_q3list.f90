@@ -1,4 +1,4 @@
-subroutine get_q3list(fname,nlist,list)
+subroutine get_q3list(fname,bDiskData,nlist,list)
 
   type q3list
      character*6 call
@@ -11,6 +11,7 @@ subroutine get_q3list(fname,nlist,list)
   character*(*) fname
   character*36 list(40)
   character*8 grid6
+  logical*1 bDiskData
   integer time
   integer nt(8)
   integer indx(MAX_CALLERS)

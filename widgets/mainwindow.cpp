@@ -186,7 +186,7 @@ extern "C" {
 
   void indexx_(float arr[], int* n, int indx[]);
 
-  void get_q3list_(char* fname, int* nlist, char* list, FCL len1, FCL len2);
+  void get_q3list_(char* fname, bool* bDiskData, int* nlist, char* list, FCL len1, FCL len2);
 
   void jpl_setup_(char* fname, FCL len);
 }
@@ -3587,17 +3587,13 @@ void MainWindow::decodeDone ()
   if(m_mode=="Q65" and (m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI
                         or m_specOp==SpecOp::WW_DIGI or m_specOp==SpecOp::Q65_PILEUP)
                         and m_ActiveStationsWidget!=NULL) {
-
+// Update the ActiveStations display for Q65 pileup situation...
     int nlist=0;
     char list[2000];
     char line[36];
     list[0]=0;
-//    QString t="1200 W9XYZ  EN37";
-    auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir ().absoluteFilePath ("tsil.3q"))};
-
-//    morse_(const_cast<char *> (m_config.my_callsign ().toLatin1().constData()),
-//           const_cast<int *> (icw), &m_ncw, (FCL)m_config.my_callsign().length());
-    get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &nlist,
+    auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("tsil.3q"))};
+    get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &m_diskData, &nlist,
                 &list[0], (FCL)fname.length(), (FCL)2000);
     QString t="";
     QString t0="";
@@ -3605,6 +3601,7 @@ void MainWindow::decodeDone ()
       memcpy(line,&list[36*i],36);
       t0=QString::fromLatin1(line)+"\n";
       m_callers[i]=t0;
+//      qDebug() << "aa" << t0;
       t+=t0;
     }
     m_ActiveStationsWidget->setClickOK(false);
