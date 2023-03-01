@@ -4167,7 +4167,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             hound_reply ();
           }
         } else {
-          QStringList w=decodedtext.string().mid(24).split(" ",SkipEmptyParts);
+            QStringList w=decodedtext.string().replace("<","").replace(">","").mid(24).split(" ",SkipEmptyParts); // .replace("<","").replace(">","") is needed for MSHV multistream messages
           if(decodedtext.string().contains("/")) w.append(" +00");  //Add a dummy report
           if(w.size()>=3) {
             QString foxCall=w.at(1);
