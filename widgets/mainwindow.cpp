@@ -2376,17 +2376,22 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
       }
       break;
   case Qt::Key_R:
+    if(m_mode=="Q65" and e->modifiers() & Qt::ShiftModifier and
+       e->modifiers() & Qt::ControlModifier) {
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        refreshPileupList();
+      } else {
+        m_fetched=0;
+        readWidebandDecodes();
+      }
+      return;
+    }
     if(e->modifiers() & Qt::AltModifier) {
       if(!m_send_RR73) on_txrb4_doubleClicked();
     return;
     }
     if(e->modifiers() & Qt::ControlModifier) {
       if(m_send_RR73) on_txrb4_doubleClicked();
-      return;
-    }
-    if((e->modifiers() & Qt::ShiftModifier) and m_specOp!=SpecOp::Q65_PILEUP and m_mode=="Q65") {
-      m_fetched=0;
-      readWidebandDecodes();
       return;
     }
     break;
@@ -3192,6 +3197,7 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>Alt+Q    </b></td><td>Open "Log QSO" window</td></tr>
   <tr><td><b>Ctrl+R   </b></td><td>Set Tx4 message to RRR (not in FT4)</td></tr>
   <tr><td><b>Alt+R    </b></td><td>Set Tx4 message to RR73</td></tr>
+  <tr><td><b>Ctrl+Shift+R  </b></td><td>Refresh Active Stations window</td></tr>
   <tr><td><b>Alt+S    </b></td><td>Stop monitoring</td></tr>
   <tr><td><b>Alt+T    </b></td><td>Toggle Tune status</td></tr>
   <tr><td><b>Alt+Z    </b></td><td>Clear hung decoder status</td></tr>
@@ -3591,27 +3597,32 @@ void MainWindow::decodeDone ()
   if(m_mode=="Q65" and (m_specOp==SpecOp::NA_VHF or m_specOp==SpecOp::ARRL_DIGI
                         or m_specOp==SpecOp::WW_DIGI or m_specOp==SpecOp::Q65_PILEUP)
                         and m_ActiveStationsWidget!=NULL) {
-// Update the ActiveStations display for Q65 pileup situation...
-    int nlist=0;
-    char list[2000];
-    char line[36];
-    list[0]=0;
-    auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("tsil.3q"))};
-    get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &m_diskData, &nlist,
-                &list[0], (FCL)fname.length(), (FCL)2000);
-    QString t="";
-    QString t0="";
-    for(int i=0; i<nlist; i++) {
-      memcpy(line,&list[36*i],36);
-      t0=QString::fromLatin1(line)+"\n";
-      m_callers[i]=t0;
-//      qDebug() << "aa" << t0;
-      t+=t0;
-    }
-    m_ActiveStationsWidget->setClickOK(false);
-    m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
-    m_ActiveStationsWidget->setClickOK(true);
+    refreshPileupList();
   }
+}
+
+void MainWindow::refreshPileupList()
+{
+  // Update the ActiveStations display for Q65 pileup situation...
+      int nlist=0;
+      char list[2000];
+      char line[36];
+      list[0]=0;
+      auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("tsil.3q"))};
+      get_q3list_(const_cast<char *> (fname.toLatin1().constData()), &m_diskData, &nlist,
+                  &list[0], (FCL)fname.length(), (FCL)2000);
+      QString t="";
+      QString t0="";
+      for(int i=0; i<nlist; i++) {
+        memcpy(line,&list[36*i],36);
+        t0=QString::fromLatin1(line)+"\n";
+        m_callers[i]=t0;
+  //      qDebug() << "aa" << t0;
+        t+=t0;
+      }
+      m_ActiveStationsWidget->setClickOK(false);
+      m_ActiveStationsWidget->displayRecentStations("Q65-pileup",t);
+      m_ActiveStationsWidget->setClickOK(true);
 }
 
 void MainWindow::read_log()
@@ -3797,6 +3808,7 @@ void MainWindow::callSandP2(int n)
     if(bCtrl) {
       // Remove this call from q3list.
       rm_q3list_(const_cast<char *> (m_deCall.toLatin1().constData()), m_deCall.size());
+      refreshPileupList();
       return;
     }
     m_deGrid=w[3];

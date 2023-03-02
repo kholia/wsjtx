@@ -868,6 +868,7 @@ private:
   void ARRL_Digi_Update(DecodedText dt);
   void activeWorked(QString call, QString band);
   void read_log();
+  void refreshPileupList();
 };
 
 extern int killbyname(const char* progName);
