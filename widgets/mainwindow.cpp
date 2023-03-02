@@ -2384,7 +2384,7 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
       if(m_send_RR73) on_txrb4_doubleClicked();
       return;
     }
-    if(e->modifiers() & Qt::ShiftModifier) {
+    if((e->modifiers() & Qt::ShiftModifier) and m_specOp!=SpecOp::Q65_PILEUP and m_mode=="Q65") {
       m_fetched=0;
       readWidebandDecodes();
       return;
