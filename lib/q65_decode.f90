@@ -114,15 +114,11 @@ contains
     mycall13=mycall
     if(ncontest.eq.1) then
 ! NA VHF, WW-Digi, or ARRL Digi Contest
-!       open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
-!            form='unformatted')
-       open(24,file=trim(data_dir)//'/tsil.3q',status='unknown')
-!       read(24,end=2) nhist2
-       read(24,*,end=2) nhist2
+       open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+            form='unformatted')
+       read(24,end=2) nhist2
        if(nhist2.ge.1 .and. nhist2.le.40) then
-!          read(24,end=2) callers(1:nhist2)
-          read(24,3001,end=2) callers(1:nhist2)
-3001      format(a6,2x,a4,2x,i11,2i5)
+          read(24,end=2) callers(1:nhist2)
           now=time()
           do i=1,nhist2
              hours=(now - callers(i)%nsec)/3600.0

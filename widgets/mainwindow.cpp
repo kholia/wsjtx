@@ -3790,7 +3790,7 @@ void MainWindow::callSandP2(int n)
   n=qAbs(n)-1;
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
-  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n <= m_callers->size()) {
+  if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n < 40) {
     // This code is for 6m EME DXpedition operator
     w=m_callers[n].split(' ', SkipEmptyParts);
     m_deCall=w[2];

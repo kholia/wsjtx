@@ -896,6 +896,7 @@ subroutine q65_hist2(nfreq,msg0,callers,nhist2)
      if(callers(i)%call .eq. c6) then
         newcall=.false.
         callers(i)%nsec=time()
+        callers(i)%nfreq=nfreq
         exit
      endif
   enddo
@@ -914,12 +915,10 @@ subroutine q65_hist2(nfreq,msg0,callers,nhist2)
   endif
 
   if(nhist2.ge.1 .and. nhist2.le.40) then
-!     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
-!          form='unformatted')
-     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown')
-     write(24,*) nhist2
-     write(24,3001) callers(1:nhist2)
-3001 format(a6,2x,a4,2x,i11,2i5)
+     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+          form='unformatted')
+     write(24) nhist2
+     write(24) callers(1:nhist2)
      close(24)
   endif
 

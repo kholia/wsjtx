@@ -22,14 +22,10 @@ subroutine get_q3list(fname,bDiskData,nlist,list)
   common/lu24com/file24name
 
   nhist2=0
-! open(24,file=fname,status='unknown',form='unformatted')
-  open(24,file=fname,status='unknown')
-!  read(24,end=1) nhist2
-  read(24,*,end=1) nhist2
+ open(24,file=fname,status='unknown',form='unformatted')
+  read(24,end=1) nhist2
   if(nhist2.ge.1 .and. nhist2.le.40) then
-!     read(24,end=1) ctmp(1:nhist2)
-     read(24,3001,end=1) ctmp(1:nhist2)
-3001 format(a6,2x,a4,2x,i11,2i5)
+     read(24,end=1) ctmp(1:nhist2)
   else
      nhist2=0
   endif
@@ -57,10 +53,8 @@ subroutine get_q3list(fname,bDiskData,nlist,list)
   enddo
 
   nhist2=j
-!  write(24) nhist2
-  write(24,*) nhist2
-!  write(24) callers(1:nhist2)
-  write(24,3001) callers(1:nhist2)
+  write(24) nhist2
+  write(24) callers(1:nhist2)
 
   call indexx(callers(1:nhist2)%nfreq,nhist2,indx)
   do i=1,nhist2
@@ -104,10 +98,9 @@ subroutine rm_q3list(dxcall0)
   common/lu24com/file24name
 
   dxcall=dxcall0
-  open(24,file=trim(file24name),status='unknown')
-  read(24,*) nhist2
-  read(24,3001) callers(1:nhist2)
-3001 format(a6,2x,a4,2x,i11,2i5)
+  open(24,file=trim(file24name),status='unknown',form='unformatted')
+  read(24) nhist2
+  read(24) callers(1:nhist2)
 
   if(nhist2.eq.MAX_CALLERS .and. dxcall.eq.callers(nhist2)%call) then
      nhist2=MAX_CALLERS - 1
@@ -124,8 +117,8 @@ subroutine rm_q3list(dxcall0)
   enddo
 
 10 rewind 24
-  write(24,*) nhist2
-  write(24,3001) callers(1:nhist2)
+  write(24) nhist2
+  write(24) callers(1:nhist2)
   close(24)
 
   return
