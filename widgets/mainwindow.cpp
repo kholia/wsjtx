@@ -188,6 +188,8 @@ extern "C" {
 
   void get_q3list_(char* fname, bool* bDiskData, int* nlist, char* list, FCL len1, FCL len2);
 
+  void rm_q3list_(char* callsign, FCL len);
+
   void jpl_setup_(char* fname, FCL len);
 }
 
@@ -3469,8 +3471,10 @@ void MainWindow::decode()                                       //decode()
         decodeBusy(true);
       }
     }
-  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData or m_mode=="Q65") and
-     m_ActiveStationsWidget != NULL) m_ActiveStationsWidget->erase();  //TEMP
+  if((m_mode=="FT4" or (m_mode=="FT8" and m_ihsym==41) or m_diskData) and
+     m_ActiveStationsWidget != NULL) {
+    if(m_mode!="Q65") m_ActiveStationsWidget->erase();  //TEMP
+  }
 }
 
 void::MainWindow::fast_decode_done()
@@ -3782,14 +3786,19 @@ void MainWindow::ARRL_Digi_Display()
 
 void MainWindow::callSandP2(int n)
 {
-  bool bHoldFreq = (n<0);
+  bool bCtrl = (n<0);
   n=qAbs(n)-1;
   if(m_mode!="Q65" and m_ready2call[n]=="") return;
   QStringList w=m_ready2call[n].split(' ', SkipEmptyParts);
   if(m_mode=="Q65" and m_specOp==SpecOp::Q65_PILEUP and n <= m_callers->size()) {
-    // This is the mode for 6m EME DXpeditions
+    // This code is for 6m EME DXpedition operator
     w=m_callers[n].split(' ', SkipEmptyParts);
     m_deCall=w[2];
+    if(bCtrl) {
+      // Remove this call from q3list.
+      rm_q3list_(const_cast<char *> (m_deCall.toLatin1().constData()), m_deCall.size());
+      return;
+    }
     m_deGrid=w[3];
     m_bDoubleClicked=true;               //### needed?
     m_txFirst=true;
@@ -3804,7 +3813,7 @@ void MainWindow::callSandP2(int n)
   }
 
   if(m_mode=="Q65") {
-    if(!bHoldFreq) {
+    if(!bCtrl) {                          //Do not reset m_freqNominal if CTRL was down
       double kHz=w[1].toDouble();
       int nMHz=m_freqNominal/1000000;
       m_freqNominal=(nMHz*1000 + kHz)* 1000;

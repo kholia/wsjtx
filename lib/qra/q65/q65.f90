@@ -879,7 +879,7 @@ subroutine q65_hist2(nfreq,msg0,callers,nhist2)
        g4(4:4).ge.'0' .and. g4(4:4).le.'9' .and. g4(1:4).ne.'RR73'
 
   msg=msg0
-  if(index(msg,'/').gt.0) goto 900            !Ignore messages withcompound calls
+  if(index(msg,'/').gt.0) goto 900         !Ignore messages with compound calls
   i0=index(msg,' R ')
   if(i0.ge.7) msg=msg(1:i0)//msg(i0+3:)
   i1=index(msg,' ')
@@ -914,10 +914,12 @@ subroutine q65_hist2(nfreq,msg0,callers,nhist2)
   endif
 
   if(nhist2.ge.1 .and. nhist2.le.40) then
-     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
-          form='unformatted')
-     write(24) nhist2
-     write(24) callers(1:nhist2)
+!     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+!          form='unformatted')
+     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown')
+     write(24,*) nhist2
+     write(24,3001) callers(1:nhist2)
+3001 format(a6,2x,a4,2x,i11,2i5)
      close(24)
   endif
 
