@@ -9478,8 +9478,12 @@ void MainWindow::readWidebandDecodes()
 
   m_ActiveStationsWidget->setClickOK(false);
   int k=0;
+
   for(i=m_EMECall.begin(); i!=m_EMECall.end(); i++) {
-    if(i->ready2call or !m_ActiveStationsWidget->readyOnly()) {
+    bool bSkip=false;
+    if(m_ActiveStationsWidget->wantedOnly() and m_EMEworked[i.key()]) bSkip=true;
+    if(m_ActiveStationsWidget->readyOnly() and !i->ready2call) bSkip=true;
+    if(!bSkip) {
       int snr=i->nsnr;
       int odd=1 - (i->t)%2;
       int age=60*nhr + nmin - (i->t);

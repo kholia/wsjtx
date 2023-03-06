@@ -178,7 +178,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QCheckBox" name="cbWanted">
+        <widget class="QCheckBox" name="cbWantedOnly">
           <property name="visible">
             <bool>false</bool>
           </property>

@@ -23,8 +23,8 @@ ActiveStations::ActiveStations(QSettings * settings, QFont const& font, QWidget 
   changeFont (font);
   read_settings ();
   ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
-  ui->cbWanted->setVisible(false);
   connect(ui->cbReadyOnly, SIGNAL(toggled(bool)), this, SLOT(on_cbReadyOnly_toggled(bool)));
+  connect(ui->cbWantedOnly, SIGNAL(toggled(bool)), this, SLOT(on_cbWantedOnly_toggled(bool)));
   connect(ui->RecentStationsPlainTextEdit, SIGNAL(cursorPositionChanged()), this, SLOT(on_textEdit_clicked()));
 }
 
@@ -47,6 +47,7 @@ void ActiveStations::read_settings ()
   ui->sbMaxRecent->setValue(settings_->value("MaxRecent",10).toInt());
   ui->sbMaxAge->setValue(settings_->value("MaxAge",10).toInt());
   ui->cbReadyOnly->setChecked(settings_->value("ReadyOnly",false).toBool());
+  ui->cbWantedOnly->setChecked(settings_->value("WantedOnly",false).toBool());
 }
 
 void ActiveStations::write_settings ()
@@ -56,6 +57,7 @@ void ActiveStations::write_settings ()
   settings_->setValue("MaxRecent",ui->sbMaxRecent->value());
   settings_->setValue("MaxAge",ui->sbMaxAge->value());
   settings_->setValue("ReadyOnly",ui->cbReadyOnly->isChecked());
+  settings_->setValue("WantedOnly",ui->cbWantedOnly->isChecked());
 }
 
 void ActiveStations::displayRecentStations(QString mode, QString const& t)
@@ -74,7 +76,7 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
     bool b=(m_mode.left(3)=="Q65");
     ui->bandChanges->setVisible(!b);
     ui->cbReadyOnly->setVisible(m_mode!="Q65-pileup");
-    ui->cbWanted->setVisible(m_mode!="Q65-pileup");
+    ui->cbWantedOnly->setVisible(m_mode!="Q65-pileup");
     ui->label_2->setVisible(!b);
     ui->label_3->setVisible(!b);
     ui->score->setVisible(!b);
@@ -134,6 +136,17 @@ bool ActiveStations::readyOnly()
 void ActiveStations::on_cbReadyOnly_toggled(bool b)
 {
   m_bReadyOnly=b;
+  emit activeStationsDisplay();
+}
+
+bool ActiveStations::wantedOnly()
+{
+  return ui->cbWantedOnly->isChecked();
+}
+
+void ActiveStations::on_cbWantedOnly_toggled(bool b)
+{
+  m_bWantedOnly=b;
   emit activeStationsDisplay();
 }
 

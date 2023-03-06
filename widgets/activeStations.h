@@ -26,12 +26,14 @@ public:
   void setClickOK(bool b);
   void erase();
   bool readyOnly();
+  bool wantedOnly();
   void setRate(int n);
   void setBandChanges(int n);
   void setScore(int n);
 
   bool m_clickOK=false;
   bool m_bReadyOnly;
+  bool m_bWantedOnly;
 
 private:
   void read_settings ();
@@ -41,6 +43,7 @@ private:
   Q_SIGNAL void cursorPositionChanged();
 
   Q_SLOT void on_cbReadyOnly_toggled(bool b);
+  Q_SLOT void on_cbWantedOnly_toggled(bool b);
   Q_SLOT void on_textEdit_clicked();
 
 //  qint64 m_msec0=0;
