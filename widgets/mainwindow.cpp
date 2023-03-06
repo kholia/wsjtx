@@ -7666,6 +7666,17 @@ void MainWindow::on_actionErase_ALL_TXT_triggered()          //Erase ALL.TXT
   }
 }
 
+void MainWindow::on_actionErase_list_of_Q65_callers_triggered()
+{
+  int ret = MessageBox::query_message (this, tr ("Confirm Erase"),
+          tr ("Are you sure you want to erase the list of Q65 callers?"));
+  if(ret==MessageBox::Yes) {
+    QFile f {m_config.writeable_data_dir ().absoluteFilePath ("tsil.3q")};
+    f.remove();
+  }
+}
+
+
 void MainWindow::on_reset_cabrillo_log_action_triggered ()
 {
   if (MessageBox::Yes == MessageBox::query_message (this, tr ("Confirm Reset"),
