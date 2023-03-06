@@ -6829,6 +6829,13 @@ void MainWindow::displayWidgets(qint64 n)
   b=m_mode.startsWith("FST4");
   ui->sbNB->setVisible(b);
   genStdMsgs (m_rpt, true);
+  if(m_ActiveStationsWidget!=NULL and (m_mode=="Q65" or m_mode=="FT4" or m_mode=="FT8")) {
+    if(m_specOp==SpecOp::Q65_PILEUP) {
+      m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
+    } else {
+      m_ActiveStationsWidget->displayRecentStations(m_mode,"");
+    }
+  }
 }
 
 void MainWindow::on_actionFST4_triggered()
