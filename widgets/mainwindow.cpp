@@ -2086,6 +2086,13 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     }
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
     set_mode(m_mode);
+    if(m_ActiveStationsWidget!=NULL and m_mode=="Q65") {
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        m_ActiveStationsWidget->displayRecentStations("Q65-pileup","");
+      } else {
+        m_ActiveStationsWidget->displayRecentStations("Q65","");
+      }
+    }
   }
 }
 
