@@ -23,6 +23,7 @@ ActiveStations::ActiveStations(QSettings * settings, QFont const& font, QWidget 
   changeFont (font);
   read_settings ();
   ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
+  ui->cbWanted->setVisible(false);
   connect(ui->cbReadyOnly, SIGNAL(toggled(bool)), this, SLOT(on_cbReadyOnly_toggled(bool)));
   connect(ui->RecentStationsPlainTextEdit, SIGNAL(cursorPositionChanged()), this, SLOT(on_textEdit_clicked()));
 }
@@ -73,6 +74,7 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
     bool b=(m_mode.left(3)=="Q65");
     ui->bandChanges->setVisible(!b);
     ui->cbReadyOnly->setVisible(m_mode!="Q65-pileup");
+    ui->cbWanted->setVisible(m_mode!="Q65-pileup");
     ui->label_2->setVisible(!b);
     ui->label_3->setVisible(!b);
     ui->score->setVisible(!b);
