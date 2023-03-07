@@ -6708,6 +6708,10 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
     if(m_mode=="Q65") {
       m_score++;
       m_EMEworked[call]=true;
+      if(m_specOp==SpecOp::Q65_PILEUP) {
+        rm_q3list_(const_cast<char *> (m_deCall.toLatin1().constData()), m_deCall.size());
+        refreshPileupList();
+      }
       m_ActiveStationsWidget->setRate(m_score);
     } else {
       QString band=m_config.bands()->find(dial_freq);
