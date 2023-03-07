@@ -154,8 +154,8 @@ program q65sim
      nfstep=100*n
      nf1=1500 - nfstep*(nsig-1)/2
      do n=1,nsig
+        f0=f00
         if(nsig.ge.2) then
-           f0=f00
            f0=nf1 + (n-1)*nfstep
            itone=ntone(:,n)
         endif
