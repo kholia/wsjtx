@@ -6,6 +6,9 @@
 //
 // Reports will be sent in batch mode every 5 minutes.
 
+#ifdef DEBUGPSK
+#include <fstream>
+#endif
 #include <cmath>
 #include <QObject>
 #include <QString>
@@ -35,12 +38,17 @@ namespace
   // QLatin1String HOST {"127.0.0.1"};
   quint16 SERVICE_PORT {4739};
   // quint16 SERVICE_PORT {14739};
-  int MIN_SEND_INTERVAL {15}; // in seconds
-  int FLUSH_INTERVAL {4 * 5}; // in send intervals
+  int MIN_SEND_INTERVAL {120}; // in seconds
+  int FLUSH_INTERVAL {MIN_SEND_INTERVAL + 5}; // in send intervals
   bool ALIGNMENT_PADDING {true};
   int MIN_PAYLOAD_LENGTH {508};
-  int MAX_PAYLOAD_LENGTH {1400};
+  int MAX_PAYLOAD_LENGTH {10000};
+  int CACHE_TIMEOUT {300}; // default to 5 minutes for repeating spots
+  QMap<QString, time_t> spot_cache;
 }
+
+static int added;
+static int removed;
 
 class PSKReporter::impl final
   : public QObject
@@ -167,7 +175,7 @@ public:
 
     if (!report_timer_.isActive ())
       {
-        report_timer_.start (MIN_SEND_INTERVAL * 1000);
+        report_timer_.start (MIN_SEND_INTERVAL+1 * 1000); // we add 1 to give some more randomization
       }
     if (!descriptor_timer_.isActive ())
       {
@@ -542,7 +550,42 @@ bool PSKReporter::addRemoteStation (QString const& call, QString const& grid, Ra
         {
            reconnect ();
         }
-      m_->spots_.enqueue ({call, grid, snr, freq, mode, QDateTime::currentDateTimeUtc ()});
+      // remove any earlier spots of this call to reduce pskreporter load
+#ifdef DEBUGPSK
+      static std::fstream fs;
+      if (!fs.is_open()) fs.open("/temp/psk.log", std::fstream::in | std::fstream::out | std::fstream::app);
+#endif
+      added++;
+      if (!spot_cache.contains(call) || freq > 49000000) // then it's a new spot
+      {
+        m_->spots_.enqueue ({call, grid, snr, freq, mode, QDateTime::currentDateTimeUtc ()});
+        spot_cache.insert(call, time(NULL));
+#ifdef DEBUGPSK
+        if (fs.is_open()) fs << "Adding   " << call << " freq=" << freq << " " << spot_cache[call] <<  " count=" << m_->spots_.count() << std::endl;
+#endif
+      }
+      else if (time(NULL) - spot_cache[call] > CACHE_TIMEOUT) // then the cache has expired  
+      {
+        m_->spots_.enqueue ({call, grid, snr, freq, mode, QDateTime::currentDateTimeUtc ()});
+#ifdef DEBUGPSK
+        if (fs.is_open()) fs << "Adding # " << call << spot_cache[call] << " count=" << m_->spots_.count() << std::endl;
+#endif
+        spot_cache[call] = time(NULL);
+      }
+      else
+      {
+        removed++;
+#ifdef DEBUGPSK
+        if (fs.is_open()) fs << "Removing " << call << " " << time(NULL) << " reduction=" << removed/(double)added*100 << "%" << std::endl;
+#endif
+      }
+      // remove cached items over 10 minutes old to save a little memory
+      QMapIterator<QString, time_t> i(spot_cache);
+      time_t tmptime = time(NULL);
+      while(i.hasNext()) {
+          i.next();
+          if (tmptime - i.value() > 600) spot_cache.remove(i.key());
+      }
       return true;
     }
   return false;
