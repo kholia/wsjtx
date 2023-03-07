@@ -9221,6 +9221,7 @@ void MainWindow::FoxReset(QString reason="")
   m_houndQueue.clear();
   m_foxQSO.clear();
   m_foxQSOinProgress.clear();
+  m_discard_decoded_hounds_this_cycle = true;     // discard decoded messages until the next cycle
   if (reason != "") writeFoxQSO(" " + reason);
   writeFoxQSO(" Reset");
 }
@@ -9400,6 +9401,15 @@ void MainWindow::houndCallers()
  * Distance, Age, and Continent) to a list, sort the list by specified criteria,
  * and display the top N_Hounds entries in the left text window.
 */
+  //  if frequency was changed in the middle of an interval, there's a flag set to ignore the decodes. Reset it here
+  //
+
+  if (m_discard_decoded_hounds_this_cycle)
+  {
+    m_discard_decoded_hounds_this_cycle = false;             //
+    return; // don't use these decodes
+  }
+
   QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
   if(f.open(QIODevice::ReadOnly | QIODevice::Text)) {
     QTextStream s(&f);
