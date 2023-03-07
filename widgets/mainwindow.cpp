@@ -9439,6 +9439,7 @@ void MainWindow::readWidebandDecodes()
   int nsnr=0;
   while(m_fetched < qmapcom.ndecodes) {
     QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
+    m_fetched++;
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
     double frx=line.mid(4,9).toDouble();
@@ -9447,23 +9448,23 @@ void MainWindow::readWidebandDecodes()
     int i1=msg.indexOf(" ");
     int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
     QString dxcall=msg.mid(i1+1,i2-i1-1);
-    QString w3=msg.mid(i2+1,-1);
-    nsnr=line.mid(29,3).toInt();
-    m_EMECall[dxcall].frx=frx;
-    m_EMECall[dxcall].fsked=fsked;
-    m_EMECall[dxcall].nsnr=nsnr;
-    m_EMECall[dxcall].t=60*nhr + nmin;
-    if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
-    bool bCQ=line.contains(" CQ ");
-    m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
-    m_fetched++;
-
-    Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
-    bool bFromDisk=qmapcom.nQDecoderDone==2;
-    if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
-      qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
-      if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
-        showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+    if(stdCall(dxcall)) {
+      QString w3=msg.mid(i2+1,-1);
+      nsnr=line.mid(29,3).toInt();
+      m_EMECall[dxcall].frx=frx;
+      m_EMECall[dxcall].fsked=fsked;
+      m_EMECall[dxcall].nsnr=nsnr;
+      m_EMECall[dxcall].t=60*nhr + nmin;
+      if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
+      bool bCQ=line.contains(" CQ ");
+      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
+      Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
+      bool bFromDisk=qmapcom.nQDecoderDone==2;
+      if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
+        qDebug() << "To PSKreporter:" << dxcall << m_EMECall[dxcall].grid4 << frequency << m_mode << nsnr;
+        if (!m_psk_Reporter.addRemoteStation (dxcall, m_EMECall[dxcall].grid4, frequency, m_mode, nsnr)) {
+          showStatusMessage (tr ("Spotting to PSK Reporter unavailable"));
+        }
       }
     }
   }
