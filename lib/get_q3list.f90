@@ -46,7 +46,7 @@ subroutine get_q3list(fname,bDiskData,nlist,list)
           AzSun,ElSun,mjd,day)
      call moondopjpl(nt(1),nt(2),nt(3),uth,-xlon,xlat,RAMoon,DecMoon,    &
           xLST,HA,AzMoon,ElMoon,vr,techo)
-     if(ElMoon.lt.0.0 .and. (.not.bDiskData)) cycle
+     if(ElMoon.lt.-5.0 .and. (.not.bDiskData)) cycle
      j=j+1                                   !Keep this one...
      callers(j)=ctmp(i)
      callers(j)%moonel=nint(ElMoon)          !... and save its current moonel
