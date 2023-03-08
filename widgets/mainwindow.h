@@ -377,6 +377,7 @@ private:
   void chkFT4();
   bool elide_tx1_not_allowed () const;
   void readWidebandDecodes();
+  void configActiveStations();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;
