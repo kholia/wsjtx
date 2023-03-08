@@ -6513,6 +6513,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
       m_specOp=m_config.special_op_id();
       if (m_specOp==SpecOp::Q65_PILEUP) {
           m_config.setSpecial_None();
+          ui->tx1->setEnabled(true);
+          ui->txb1->setEnabled(true);
       } else {
           m_config.setSpecial_Q65_Pileup();
           ui->houndButton->setChecked(false);
@@ -7469,6 +7471,8 @@ void MainWindow::switch_mode (Mode mode)
   if (m_mode != "Q65" && m_specOp==SpecOp::Q65_PILEUP) {
       m_config.setSpecial_None();
       m_specOp=m_config.special_op_id();
+      ui->tx1->setEnabled(true);
+      ui->txb1->setEnabled(true);
    }
   m_fastGraph->setMode(m_mode);
   m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
