@@ -10539,6 +10539,9 @@ void MainWindow::on_houndButton_clicked (bool checked)
   if (checked) {
     ui->houndButton->setStyleSheet("background-color: #ff0000;");
     m_config.setSpecial_Hound();
+    ui->tx1->setVisible(true);
+    ui->tx1->setEnabled(true);
+    ui->txb1->setEnabled(true);
   } else {
     ui->houndButton->setStyleSheet("");
     m_config.setSpecial_None();
