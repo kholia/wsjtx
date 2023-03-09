@@ -1431,8 +1431,8 @@ endif (${OPENMP_FOUND} OR APPLE)
 if (WIN32)
   find_package (Portaudio REQUIRED)
   add_subdirectory (map65)
-  add_subdirectory (qmap)
 endif ()
+  add_subdirectory (qmap)
 
 # build the main application
 generate_version_info (wsjtx_VERSION_RESOURCES
