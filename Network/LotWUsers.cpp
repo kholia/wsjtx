@@ -16,6 +16,8 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QDebug>
+#include "qt_helpers.hpp"
+#include "Logger.hpp"
 
 #include "pimpl_impl.hpp"
 
@@ -76,7 +78,7 @@ public:
         network_manager_->setNetworkAccessible (QNetworkAccessManager::Accessible);
       }
 #endif
-
+    LOG_INFO(QString("Download..."));
     QNetworkRequest request {url};
     request.setRawHeader ("User-Agent", "WSJT LotW User Downloader");
     request.setOriginatingObject (this);
@@ -98,6 +100,7 @@ public:
 
   void reply_finished ()
   {
+    LOG_INFO(QString("Finished..."));
     if (!reply_)
       {
         Q_EMIT self_->load_finished ();
