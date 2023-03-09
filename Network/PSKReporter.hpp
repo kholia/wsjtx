@@ -31,6 +31,10 @@ public:
   //
   void sendReport (bool last = false);
 
+  //
+  // True if current time falls withing a +/- window of a solar eclipse for HamSCI use
+  bool eclipse_active(QDateTime now);
+
   Q_SIGNAL void errorOccurred (QString const& reason);
 
 private:
