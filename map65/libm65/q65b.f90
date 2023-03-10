@@ -137,10 +137,11 @@ subroutine q65b(nutc,nqd,nxant,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,xpol, &
      nfb=min(2500,1000+ntol)
   endif
   nsnr0=-99             !Default snr for no decode
+  ndpth=3
 
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
   call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
-       newdat,nagain,max_drift,mycall,hiscall,hisgrid)
+       newdat,nagain,max_drift,ndepth,mycall,hiscall0,hisgrid)
 
   MHz=fcenter
   freq0=MHz + 0.001d0*ikhz
