@@ -278,25 +278,6 @@ p, li { white-space: pre-wrap; }
             <property name="title">
              <string>       DX Call             DX Grid     </string>
             </property>
-            <widget class="QPushButton" name="pushButton">
-             <property name="geometry">
-              <rect>
-               <x>231</x>
-               <y>13</y>
-               <width>50</width>
-               <height>23</height>
-              </rect>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>SetMsgs</string>
-             </property>
-            </widget>
             <widget class="QWidget" name="layoutWidget_2">
              <property name="geometry">
               <rect>
