@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
-    <height>430</height>
+    <width>441</width>
+    <height>503</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,6 @@
         <font>
          <family>Courier New</family>
          <pointsize>20</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
