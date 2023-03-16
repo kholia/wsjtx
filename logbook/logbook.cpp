@@ -69,6 +69,11 @@ void LogBook::rescan ()
   worked_before_.reload ();
 }
 
+QString const LogBook::cty_version() const
+{
+  return worked_before_.cty_version();
+}
+
 QByteArray LogBook::QSOToADIF (QString const& hisCall, QString const& hisGrid, QString const& mode,
                                QString const& rptSent, QString const& rptRcvd, QDateTime const& dateTimeOn,
                                QDateTime const& dateTimeOff, QString const& band, QString const& comments,

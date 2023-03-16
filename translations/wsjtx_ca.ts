@@ -3684,7 +3684,7 @@ La llista es pot mantenir a la configuració (F2).</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
         <translation>Log ADIF escanejat, %1 funcionava abans de la creació de registres</translation>
     </message>
     <message>

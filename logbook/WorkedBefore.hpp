@@ -36,8 +36,9 @@ public:
   bool continent_worked (Continent continent, QString const& mode, QString const& band) const;
   bool CQ_zone_worked (int CQ_zone, QString const& mode, QString const& band) const;
   bool ITU_zone_worked (int ITU_zone, QString const& mode, QString const& band) const;
+  QString cty_version () const;
 
-  Q_SIGNAL void finished_loading (int worked_before_record_count, QString const& error) const;
+  Q_SIGNAL void finished_loading (int worked_before_record_count, QString const, QString const& error) const;
 
 private:
   class impl;

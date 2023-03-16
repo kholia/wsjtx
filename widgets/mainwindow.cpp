@@ -522,14 +522,15 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (this, &MainWindow::finished, m_logDlg.data (), &LogQSO::close);
 
   // hook up the log book
-  connect (&m_logBook, &LogBook::finished_loading, [this] (int record_count, QString const& error) {
+  connect (&m_logBook, &LogBook::finished_loading, [this] (int record_count, QString cty_version, QString const& error) {
       if (error.size ())
         {
           MessageBox::warning_message (this, tr ("Error Scanning ADIF Log"), error);
         }
       else
         {
-          showStatusMessage (tr ("Scanned ADIF log, %1 worked before records created").arg (record_count));
+          m_config.set_CTY_DAT_version(cty_version);
+          showStatusMessage (tr ("Scanned ADIF log, %1 worked-before records created. CTY: %2. CTY: %2").arg (record_count).arg (cty_version));
         }
     });
 

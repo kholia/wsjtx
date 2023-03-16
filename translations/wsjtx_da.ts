@@ -3917,7 +3917,7 @@ listen. Makro listen kan også ændfres i Inderstillinger (F2).</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
         <translation>Scannet ADIF log, %1 worked B4 oprettede poster</translation>
     </message>
     <message>

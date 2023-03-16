@@ -46,7 +46,9 @@ public:
                         QString const& m_myGrid, QString const& m_txPower, QString const& operator_call,
                         QString const& xSent, QString const& xRcvd, QString const& propmode);
 
-  Q_SIGNAL void finished_loading (int worked_before_record_count, QString const& error) const;
+  QString const cty_version() const;
+
+  Q_SIGNAL void finished_loading (int worked_before_record_count, QString const cty_version, QString const& error) const;
 
   CabrilloLog * contest_log ();
   Multiplier const * multiplier () const;
