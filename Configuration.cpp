@@ -567,6 +567,7 @@ private:
   void delete_selected_macros (QModelIndexList);
   void after_CTY_downloaded();
   void set_CTY_DAT_version(QString const& version);
+  void error_during_CTY_download (QString const& reason);
   Q_SLOT void on_udp_server_line_edit_textChanged (QString const&);
   Q_SLOT void on_udp_server_line_edit_editingFinished ();
   Q_SLOT void on_save_path_select_push_button_clicked (bool);
@@ -2433,11 +2434,19 @@ void Configuration::impl::on_CTY_download_button_clicked (bool /*clicked*/)
 
   // set up LoTW users CSV file fetching
   connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_CTY_downloaded, Qt::UniqueConnection);
+  connect (&cty_download, &FileDownload::error, this, &Configuration::impl::error_during_CTY_download, Qt::UniqueConnection);
+
   cty_download.start_download();
 }
 void Configuration::impl::set_CTY_DAT_version(QString const& version)
 {
   ui_->CTY_file_label->setText(QString{"CTY File Version: %1"}.arg(version));
+}
+
+void Configuration::impl::error_during_CTY_download (QString const& reason)
+{
+  MessageBox::warning_message (this, tr ("Error Loading CTY.DAT"), reason);
+  after_CTY_downloaded();
 }
 
 void Configuration::impl::after_CTY_downloaded ()
