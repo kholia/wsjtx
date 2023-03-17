@@ -7,6 +7,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QTemporaryFile>
+#include <QSaveFile>
 
 class FileDownload : public QObject {
     Q_OBJECT
@@ -24,7 +25,7 @@ private:
     QString user_agent_;
     QPointer<QNetworkReply> reply_;
     QNetworkRequest request_;
-    QPointer<QTemporaryFile> tmpfile_;
+    QSaveFile destfile_;
     bool url_valid_;
     int redirect_count_;
 signals:

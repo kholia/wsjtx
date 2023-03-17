@@ -16,6 +16,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QDebugStateSaver>
+#include <QRegularExpression>
 #include "Configuration.hpp"
 #include "Radio.hpp"
 #include "pimpl_impl.hpp"
@@ -233,6 +234,8 @@ public:
   Configuration const * configuration_;
   QString path_;
   QString cty_version_;
+  QString cty_version_date_;
+
   entities_type entities_;
   prefixes_type prefixes_;
 };
@@ -330,11 +333,14 @@ QString AD1CCty::impl::get_cty_path(Configuration const * configuration)
 
 void AD1CCty::impl::load_cty(QFile &file)
 {
+  QRegularExpression version_pattern{R"(VER\d{8})"};
   int entity_id = 0;
   int line_number{0};
 
   entities_.clear();
   prefixes_.clear();
+  cty_version_ = QString{};
+  cty_version_date_ = QString{};
 
   QTextStream in{&file};
   while (!in.atEnd())
@@ -377,6 +383,11 @@ void AD1CCty::impl::load_cty(QFile &file)
           {
             prefix = prefix.mid(1);
             exact = true;
+            // match version pattern to prefix
+            if (version_pattern.match(prefix).hasMatch())
+            {
+              cty_version_date_ = prefix;
+            }
           }
           prefixes_.emplace(prefix, exact, entity_id);
         }
@@ -407,7 +418,7 @@ void AD1CCty::reload(Configuration const * configuration)
     m_->impl::load_cty(file);
     m_->cty_version_ = AD1CCty::lookup("VERSION").entity_name;
     Q_EMIT cty_loaded(m_->cty_version_);
-    LOG_INFO(QString{"Loaded CTY.DAT version %1"}.arg (m_->cty_version_));
+    LOG_INFO(QString{"Loaded CTY.DAT version %1, %2"}.arg (m_->cty_version_date_).arg (m_->cty_version_));
   }
 }
 
@@ -448,5 +459,5 @@ auto AD1CCty::lookup (QString const& call) const -> Record
 }
 auto AD1CCty::version () const -> QString
 {
-  return m_->cty_version_;
+  return m_->cty_version_date_;
 }

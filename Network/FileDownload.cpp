@@ -25,7 +25,8 @@ void FileDownload::errorOccurred(QNetworkReply::NetworkError code)
 {
   LOG_INFO(QString{"FileDownload [%1]: errorOccurred %2 -> %3"}.arg(user_agent_).arg(code).arg(reply_->errorString()));
   Q_EMIT error (reply_->errorString ());
-  delete tmpfile_;
+  destfile_.cancelWriting ();
+  destfile_.commit ();
 }
 
 void FileDownload::configure(QNetworkAccessManager *network_manager, const QString &source_url, const QString &destination_path, const QString &user_agent)
@@ -38,17 +39,16 @@ void FileDownload::configure(QNetworkAccessManager *network_manager, const QStri
 
 void FileDownload::store()
 {
-  if (tmpfile_->isOpen())
-    tmpfile_->write (reply_->read (reply_->bytesAvailable ()));
+  if (destfile_.isOpen())
+    destfile_.write (reply_->read (reply_->bytesAvailable ()));
   else
-    LOG_INFO(QString{ "FileDownload [%1]: tmpfile is not open"}.arg(user_agent_));
+    LOG_INFO(QString{ "FileDownload [%1]: file is not open."}.arg(user_agent_));
 }
 
 void FileDownload::replyComplete()
 {
   QFileInfo destination_file(destination_filename_);
-  QString const tmpfile_path = destination_file.absolutePath();
-  QDir tmpdir_(tmpfile_path);
+  QDir tmpdir_(destination_file.absoluteFilePath());
 
   LOG_DEBUG(QString{ "FileDownload [%1]: replyComplete"}.arg(user_agent_));
   if (!reply_)
@@ -83,8 +83,8 @@ void FileDownload::replyComplete()
   }
   else if (reply_->error () != QNetworkReply::NoError)
   {
-    tmpfile_->close();
-    delete tmpfile_;
+    destfile_.cancelWriting();
+    destfile_.commit();
     url_valid_ = false;     // reset
     // report errors that are not due to abort
     if (QNetworkReply::OperationCanceledError != reply_->error ())
@@ -107,14 +107,8 @@ void FileDownload::replyComplete()
         url_valid_ = false; // reset
         // load the database asynchronously
         // future_load_ = std::async (std::launch::async, &LotWUsers::impl::load_dictionary, this, csv_file_.fileName ());
-        LOG_INFO(QString{ "FileDownload [%1]: complete. tempfile path is %2"}.arg(user_agent_).arg(tmpfile_->fileName()));
-        // move the file to the destination
-        tmpdir_.remove(destination_filename_+".old"); // get rid of previous version
-        tmpdir_.rename(destination_filename_, destination_filename_+".old");
-        tmpdir_.rename(tmpfile_->fileName(), destination_filename_);
-        LOG_INFO(QString{ "FileDownload [%1]: moved tempfile %2 to %3"}.arg(user_agent_).arg(tmpfile_->fileName()).arg(destination_filename_));
-        tmpfile_->close();
-        delete tmpfile_;
+        LOG_INFO(QString{ "FileDownload [%1]: complete. File path is %2"}.arg(user_agent_).arg(destfile_.fileName()));
+        destfile_.commit();
         emit complete(destination_filename_);
       }
   }
@@ -184,15 +178,18 @@ void FileDownload::download(QUrl qurl)
   QObject::connect(manager_, &QNetworkAccessManager::finished, this, &FileDownload::downloadComplete, Qt::UniqueConnection);
   QObject::connect(reply_, &QNetworkReply::downloadProgress, this, &FileDownload::downloadProgress, Qt::UniqueConnection);
   QObject::connect(reply_, &QNetworkReply::finished, this,&FileDownload::replyComplete, Qt::UniqueConnection);
-
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
   QObject::connect(reply_, &QNetworkReply::errorOccurred,this,&FileDownload::errorOccurred, Qt::UniqueConnection);
+#else
+  QObject::connect(reply_, &QNetworkReply::error, this, &FileDownload::errorOccurred, Qt::UniqueConnection);
+#endif
   QObject::connect (reply_, &QNetworkReply::readyRead, this, &FileDownload::store, Qt::UniqueConnection);
 
   QFileInfo destination_file(destination_filename_);
   QString const tmpfile_base = destination_file.fileName();
   QString const tmpfile_path = destination_file.absolutePath();
-  tmpfile_ = new QTemporaryFile(tmpfile_path+QDir::separator()+tmpfile_base+".XXXXXX");
-  if (!tmpfile_->open())
+  destfile_.setFileName(destination_file.absoluteFilePath());
+  if (!destfile_.open(QSaveFile::WriteOnly))
   {
     LOG_INFO(QString{"FileDownload [%1]: Unable to open the temporary file based on %2"}.arg(user_agent_).arg(tmpfile_path));
     return;

@@ -530,7 +530,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       else
         {
           m_config.set_CTY_DAT_version(cty_version);
-          showStatusMessage (tr ("Scanned ADIF log, %1 worked-before records created. CTY: %2. CTY: %2").arg (record_count).arg (cty_version));
+          showStatusMessage (tr ("Scanned ADIF log, %1 worked-before records created. CTY: %2").arg (record_count).arg (cty_version));
         }
     });
 
