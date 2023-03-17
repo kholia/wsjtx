@@ -7,7 +7,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QFileInfo>
 #include <QDir>
-#include <QTemporaryFile>
+#include <QIODevice>
 #include "qt_helpers.hpp"
 #include "Logger.hpp"
 
@@ -187,12 +187,21 @@ void FileDownload::download(QUrl qurl)
 
   QFileInfo destination_file(destination_filename_);
   QString const tmpfile_base = destination_file.fileName();
-  QString const tmpfile_path = destination_file.absolutePath();
-  destfile_.setFileName(destination_file.absoluteFilePath());
-  if (!destfile_.open(QSaveFile::WriteOnly))
+  QString const &tmpfile_path = destination_file.absolutePath();
+  QDir tmpdir{};
+  if (!tmpdir.mkpath(tmpfile_path))
   {
-    LOG_INFO(QString{"FileDownload [%1]: Unable to open the temporary file based on %2"}.arg(user_agent_).arg(tmpfile_path));
-    return;
+      LOG_INFO(QString{"FileDownload [%1]: Directory %2 does not exist"}.arg(user_agent_).arg(tmpfile_path).arg(
+              destfile_.errorString()));
+  }
+  
+  if (url_valid_) {
+      destfile_.setFileName(destination_file.absoluteFilePath());
+      if (!destfile_.open(QSaveFile::WriteOnly | QIODevice::WriteOnly)) {
+          LOG_INFO(QString{"FileDownload [%1]: Unable to open %2: %3"}.arg(user_agent_).arg(destfile_.fileName()).arg(
+                  destfile_.errorString()));
+          return;
+      }
   }
 }
 
