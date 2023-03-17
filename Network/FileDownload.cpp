@@ -177,13 +177,13 @@ void FileDownload::download(QUrl qurl)
 
   QObject::connect(manager_, &QNetworkAccessManager::finished, this, &FileDownload::downloadComplete, Qt::UniqueConnection);
   QObject::connect(reply_, &QNetworkReply::downloadProgress, this, &FileDownload::downloadProgress, Qt::UniqueConnection);
-  QObject::connect(reply_, &QNetworkReply::finished, this,&FileDownload::replyComplete, Qt::UniqueConnection);
+  QObject::connect(reply_, &QNetworkReply::finished, this, &FileDownload::replyComplete, Qt::UniqueConnection);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-  QObject::connect(reply_, &QNetworkReply::errorOccurred,this,&FileDownload::errorOccurred, Qt::UniqueConnection);
+  QObject::connect(reply_, &QNetworkReply::errorOccurred,this, &FileDownload::errorOccurred, Qt::UniqueConnection);
 #else
-  QObject::connect(reply_, &QNetworkReply::error, this, &FileDownload::errorOccurred, Qt::UniqueConnection);
+//  QObject::connect(reply_, &QNetworkReply::error, this, &FileDownload::errorOccurred, Qt::UniqueConnection);
 #endif
-  QObject::connect (reply_, &QNetworkReply::readyRead, this, &FileDownload::store, Qt::UniqueConnection);
+  QObject::connect(reply_, &QNetworkReply::readyRead, this, &FileDownload::store, Qt::UniqueConnection);
 
   QFileInfo destination_file(destination_filename_);
   QString const tmpfile_base = destination_file.fileName();
