@@ -324,7 +324,7 @@ char const * AD1CCty::continent (Continent c)
 
 QString AD1CCty::impl::get_cty_path(Configuration const * configuration)
 {
-  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::AppDataLocation)};
+  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
   auto path = dataPath.exists (file_name)
               ? dataPath.absoluteFilePath (file_name) // user override
               : configuration->data_dir ().absoluteFilePath (file_name); // or original
