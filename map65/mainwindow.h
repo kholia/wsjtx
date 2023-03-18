@@ -322,6 +322,9 @@ extern "C" {
               int len1, int len2);
 
   int ptt_(int* nport, int* itx, int* iptt);
+
+  void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
+                    const char* mygrid, int* ndop00, int len1);
   }
 
 #endif // MAINWINDOW_H

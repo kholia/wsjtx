@@ -93,6 +93,10 @@ program fst4sim
    if(i3.eq.1) then
       write(*,*) '         mycall                         hiscall                    hisgrid'
       write(*,'(28i1,1x,i1,1x,28i1,1x,i1,1x,i1,1x,15i1,1x,3i1)') msgbits(1:77)
+   elseif(i3.eq.0 .and. n3.eq.6) then
+      write(*,'(a15,37x,a5)') '50-bit message','CRC24'
+      write(*,'(50i1,1x,24i1)') msgbits(1:50),msgbits(51:74)
+      write(*,'(a50)') '01234567890123456789012345678901234567890123456789'
    else
       write(*,'(a14)') 'Message bits: '
       write(*,'(77i1,1x,24i1)') msgbits

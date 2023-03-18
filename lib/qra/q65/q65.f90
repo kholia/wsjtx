@@ -2,8 +2,8 @@ module q65
 
   parameter (NSTEP=8)          !Number of time bins per symbol in s1, s1a, s1b
   parameter (PLOG_MIN=-242.0)        !List decoding threshold
-  integer nsave,nlist,LL0,iz0,jz0
-  integer listutc(10)
+  integer iz0,jz0
+!  integer listutc(10)
   integer apsym0(58),aph10(10)
   integer apmask1(78),apsymbols1(78)
   integer apmask(13),apsymbols(13)
@@ -12,23 +12,23 @@ module q65
   integer codewords(63,206)
   integer ibwa,ibwb,ncw,nsps,mode_q65,nfa,nfb,nqd
   integer idfbest,idtbest,ibw,ndistbest,maxiters,max_drift
-  integer istep,nsmo,lag1,lag2,npasses,nused,iseq,ncand,nrc
+  integer istep,nsmo,lag1,lag2,npasses,iseq,ncand,nrc
   integer i0,j0
   integer navg(0:1)
   logical lnewdat
   real candidates(20,3)                  !snr, xdt, and f0 of top candidates
   real, allocatable :: s1raw(:,:)        !Symbol spectra, 1/8-symbol steps
   real, allocatable :: s1(:,:)           !Symbol spectra w/suppressed peaks
-  real, allocatable :: s1w(:,:)           !Symbol spectra w/suppressed peaks  !w3sz added
+  real, allocatable :: s1w(:,:)       !Symbol spectra w/suppressed peaks (W3SZ)
   real, allocatable,save :: s1a(:,:,:)   !Cumulative symbol spectra
-  real, allocatable,save :: ccf2(:)      !Max CCF(freq) at any lag, single seq
-  real, allocatable,save :: ccf2_avg(:)  !Like ccf2, but for accumulated average
+  real, allocatable,save :: ccf2(:)      !Max CCF(freq) at any lag (orange curve)
+  real, allocatable,save :: ccf2_avg(:)  !Like ccf2, but for avg (red curve)
   real sync(85)                          !sync vector
   real df,dtstep,dtdec,f0dec,ftol,plog,drift
 
 contains
 
-subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+subroutine q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
      emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
 
 ! Top-level routine in q65 module
@@ -41,7 +41,6 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
 !         ntrperiod              T/R sequence length (s)
 !         nfqso                  Target frequency (Hz)
 !         ntol                   Search range around nfqso (Hz)
-!         ndepth                 Requested decoding depth
 !         lclearave              Flag to clear the accumulating array
 !         emedelay               Extra delay for EME signals
 ! Output: xdt                    Time offset from nominal (s)
@@ -68,7 +67,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   real, allocatable :: s3(:,:)           !Data-symbol energies s3(LL,63)
   real, allocatable :: ccf1(:)           !CCF(freq) at fixed lag (red)
   data first/.true./
-  save first
+  save first,LL0
 
   integer w3t
   integer w3f
@@ -76,7 +75,6 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   integer stageno
 
   NN=63
-  if(nutc+ndepth.eq.-999) stop           !Silence compiler warnings
 
 ! Set some parameters and allocate storage for large arrays
   irc=-2
@@ -95,7 +93,8 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   ftol=ntol
   ia=ntol/df
   ia2=max(ia,10*mode_q65,nint(100.0/df))
-  nsmo=int(0.7*mode_q65*mode_q65)
+!  nsmo=int(0.7*mode_q65*mode_q65)
+  nsmo=int(0.5*mode_q65*mode_q65)
   if(nsmo.lt.1) nsmo=1
   if(first) then                         !Generate the sync vector
      sync=-22.0/63.0                     !Sync tone OFF  
@@ -126,7 +125,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
      lclearave=.false.
   endif
   ccf1=0.
-  if(iavg.eq.0) ccf2_avg=0.
+  if(iavg.eq.0) ccf2=0.
   dtstep=nsps/(NSTEP*12000.0)                 !Step size in seconds
   lag1=-1.0/dtstep
   lag2=1.0/dtstep + 0.9999
@@ -135,11 +134,13 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   if(nsps.ge.7200) j0=1.0/dtstep              !Nominal start-signal index
 
   s3=0.
+!  if(iavg.eq.0 .and. lnewdat) then
   if(iavg.eq.0) then
      call timer('q65_syms',0)
 ! Compute symbol spectra with NSTEP time bins per symbol
      call q65_symspec(iwave,ntrperiod*12000,iz,jz,s1)
      call timer('q65_syms',1)
+!     lnewdat=.false.
   else
      s1=s1a(:,:,iseq)
   endif
@@ -148,15 +149,15 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
   ii1=max(1,i0-64)
   ii2=i0-65+LL
   call pctile(s1(ii1:ii2,1:jz),ii2-ii1+1*jz,45,base)
-  s1=s1/base
+!  s1=s1/base
   s1raw=s1
 
 ! Apply fast AGC to the symbol spectra
-  s1max=20.0                                  !Empirical choice
-  do j=1,jz                                   !### Maybe wrong way? ###
-     smax=maxval(s1(ii1:ii2,j))
-     if(smax.gt.s1max) s1(ii1:ii2,j)=s1(ii1:ii2,j)*s1max/smax
-  enddo
+!  s1max=20.0                                  !Empirical choice
+!  do j=1,jz                                   !### Maybe wrong way? ###
+!     smax=maxval(s1(ii1:ii2,j))
+!     if(smax.gt.s1max) s1(ii1:ii2,j)=s1(ii1:ii2,j)*s1max/smax
+!  enddo
 
   dat4=0
   if(ncw.gt.0 .and. iavg.le.1) then
@@ -178,7 +179,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
 ! Get 2d CCF and ccf2 using sync symbols only
   if(iavg.eq.0) then
      call timer('ccf_22a ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
           f0a,xdta,ccf2)
      call timer('ccf_22a ',1)
   endif
@@ -186,7 +187,7 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
 ! Get 2d CCF and ccf2_avg using sync symbols only
   if(iavg.ge.1) then
      call timer('ccf_22b ',0)
-     call q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
+     call q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
           f0a,xdta,ccf2_avg)
      call timer('ccf_22b ',1)
   endif
@@ -217,10 +218,8 @@ subroutine q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
      if(i2.eq.-9999 .and. ccf1(-i).ge.0.5*smax) i2=-i
   enddo
   width=df*(i2-i1)
-
   if(ncw.eq.0) ccf1=0.
-
-  call q65_write_red(iz,xdt,ccf2_avg,ccf2)
+  call q65_write_red(iz,xdt,ccf2_avg,ccf2)   !### Need this call for WSJT-X
 
   if(idec.lt.0 .and. (iavg.eq.0 .or. iavg.eq.2)) then
      call q65_dec_q012(s3,LL,snr2,dat4,idec,decoded)
@@ -291,7 +290,7 @@ subroutine q65_symspec(iwave,nmax,iz,jz,s1)
   allocate(c0(0:nsps-1))
   nfft=nsps
   fac=1/32767.0
-  do j=1,jz                              !Compute symbol spectra at step size
+  do j=1,jz,2                     !Compute symbol spectra at 2*step size
      i1=(j-1)*istep
      i2=i1+nsps-1
      k=-1
@@ -311,6 +310,8 @@ subroutine q65_symspec(iwave,nmax,iz,jz,s1)
      do i=1,nsmo
         call smo121(s1(1:iz,j),iz)
      enddo
+! Interpolate to fill in the skipped-over spectra.
+     if(j.ge.3) s1(1:iz,j-1)=0.5*(s1(1:iz,j-2)+s1(1:iz,j))
   enddo
   if(lnewdat) then
      navg(iseq)=navg(iseq) + 1
@@ -481,7 +482,7 @@ subroutine q65_ccf_85(s1,iz,jz,nfqso,ia,ia2,ipk,jpk,f0,xdt,imsg_best,   &
   return
 end subroutine q65_ccf_85
 
-subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
+subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
      f0,xdt,ccf2)
 
 ! Attempt synchronization using only the 22 sync symbols.  Return ccf2
@@ -489,6 +490,7 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
 
   real s1(iz,jz)
   real ccf2(iz)                               !Orange sync curve
+  real tmp(20,3)
   real, allocatable :: xdt2(:)
   real, allocatable :: s1avg(:)
   integer, allocatable :: indx(:)
@@ -509,11 +511,14 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
      s1avg(i)=sum(s1(i,1:jz))
   enddo
 
+  call pctile(s1avg(ia:ib),ib-ia+1,40,base0)
   ccfbest=0.
   ibest=0
   lagpk=0
   lagbest=0
+  idrift_max=0
   idrift_best=0
+
   do i=ia,ib
      ccfmax=0.
      do lag=lag1,lag2
@@ -535,10 +540,13 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
            endif
         enddo  ! idrift
      enddo  ! lag
+
      ccf2(i)=ccfmax
      xdt2(i)=lagpk*dtstep
+
      if(ccfmax.gt.ccfbest .and. abs(i*df-nfqso).le.ftol) then
         ccfbest=ccfmax
+        snrbest=snr
         ibest=i
         lagbest=lagpk
         idrift_best=idrift_max
@@ -556,26 +564,37 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,ndepth,ntrperiod,iavg,ipk,jpk,  &
 
 ! Save parameters for best candidates
   jzz=ib-ia+1
-  call pctile(ccf2(ia:ib),jzz,40,base)
-  ccf2=ccf2/base
   call indexx(ccf2(ia:ib),jzz,indx)
+
+  call pctile(ccf2(ia:ib),jzz,50,ave)
+  call pctile(ccf2(ia:ib),jzz,84,base)
+  rms=base-ave
   ncand=0
   maxcand=20
   do j=1,20
      k=jzz-j+1
      if(k.lt.1 .or. k.gt.iz) cycle
      i=indx(k)+ia-1
-     if(ccf2(i).lt.3.3) exit                !Candidate limit
      f=i*df
      i3=max(1, i-mode_q65)
      i4=min(iz,i+mode_q65)
      biggest=maxval(ccf2(i3:i4))
      if(ccf2(i).ne.biggest) cycle
+     snr=(ccf2(i)-ave)/rms
+     if(snr.lt.6.0) exit
      ncand=ncand+1
-     candidates(ncand,1)=ccf2(i)
+     candidates(ncand,1)=snr
      candidates(ncand,2)=xdt2(i)
      candidates(ncand,3)=f
      if(ncand.ge.maxcand) exit
+  enddo
+
+! Resort the candidates back into frequency order
+  tmp(1:ncand,1:3)=candidates(1:ncand,1:3)
+  candidates=0.
+  call indexx(tmp(1:ncand,3),ncand,indx)
+  do i=1,ncand
+     candidates(i,1:3)=tmp(indx(i),1:3)
   enddo
 
   return
@@ -591,7 +610,7 @@ subroutine q65_dec1(s3,nsubmode,b90ts,esnodb,irc,dat4,decoded)
   integer dat4(13)
   character c77*77,decoded*37
   logical unpk77_success
-  
+
   nFadingModel=1
   decoded='                                     '
   call q65_intrinsics_ff(s3,nsubmode,b90ts,nFadingModel,s3prob)
@@ -605,7 +624,7 @@ subroutine q65_dec1(s3,nsubmode,b90ts,esnodb,irc,dat4,decoded)
      irc=-1
   endif
   nrc=irc
-  
+
   return
 end subroutine q65_dec1
 
@@ -672,16 +691,21 @@ subroutine q65_write_red(iz,xdt,ccf2_avg,ccf2)
   call q65_sync_curve(ccf2_avg,1,iz,rms1)
   call q65_sync_curve(ccf2,1,iz,rms2)
 
+  i1=max(1,nint(nfa/df))
+  i2=min(iz,int(nfb/df))
+  y0=minval(ccf2(i1:i2))
+  y0_avg=minval(ccf2_avg(i1:i2))
+  g=0.4
+  g_avg=0.
+  if(navg(iseq).ge.2) g_avg=g
   rewind 17
-  write(17,1000) xdt,minval(ccf2_avg),maxval(ccf2_avg)
-  do i=max(1,nint(nfa/df)),min(iz,int(nfb/df))
+  write(17,1000) xdt,g_avg*minval(ccf2_avg),g_avg*maxval(ccf2_avg)
+  do i=i1,i2
      freq=i*df
-     y1=ccf2_avg(i)
-     if(y1.gt.10.0) y1=10.0 + 2.0*log10(y1/10.0)
-     y2=ccf2(i)
-     if(y2.gt.10.0) y2=10.0 + 2.0*log10(y2/10.0)
+     y1=g_avg*(ccf2_avg(i)-y0_avg)
+     y2=g*(ccf2(i)-y0)
      write(17,1000) freq,y1,y2
-1000 format(3f10.3)
+1000 format(f10.3,2f15.6)
   enddo
   flush(17)
 
@@ -733,7 +757,7 @@ subroutine q65_bzap(s3,LL)
   return
 end subroutine q65_bzap
 
-subroutine q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
+subroutine q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
 
 ! Estimate SNR of a decoded transmission by aligning the spectra of
 ! all 85 symbols.
@@ -781,8 +805,6 @@ subroutine q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
   sig_area=sum(spec(ia+nsum:ib-nsum)-1.0)
   w_equiv=sig_area/(smax-1.0)
   snr2=db(max(1.0,sig_area)) - db(2500.0/df)
-! NB: No adjustment to SNR is now made for nused>1, because that process did
-! not seem to work as expected.
 
   return
 end subroutine q65_snr
@@ -840,5 +862,67 @@ subroutine q65_hist(if0,msg0,dxcall,dxgrid)
 
 900 return
 end subroutine q65_hist
+
+subroutine q65_hist2(nfreq,msg0,callers,nhist2)
+
+  use types
+  use prog_args
+  parameter (MAX_CALLERS=40)  !For multiple q3 decodes in NA VHf Contest mode
+  character*37 msg0,msg
+  type(q3list) callers(MAX_CALLERS)
+  character*6 c6
+  character*4 g4
+  logical newcall,isgrid
+
+  isgrid(g4)=g4(1:1).ge.'A' .and. g4(1:1).le.'R' .and. g4(2:2).ge.'A' .and. &
+       g4(2:2).le.'R' .and. g4(3:3).ge.'0' .and. g4(3:3).le.'9' .and.       &
+       g4(4:4).ge.'0' .and. g4(4:4).le.'9' .and. g4(1:4).ne.'RR73'
+
+  msg=msg0
+  if(index(msg,'/').gt.0) goto 900         !Ignore messages with compound calls
+  i0=index(msg,' R ')
+  if(i0.ge.7) msg=msg(1:i0)//msg(i0+3:)
+  i1=index(msg,' ')
+  c6='      '
+  g4='    '
+  if(i1.ge.4 .and. i1.le.13) then
+     i2=index(msg(i1+1:),' ') + i1
+     c6=msg(i1+1:i2-1)                     !Extract DX call
+     g4=msg(i2+1:i2+4)                     !Extract DX grid
+  endif
+
+  newcall=.true.
+  do i=1,nhist2
+     if(callers(i)%call .eq. c6) then
+        newcall=.false.
+        callers(i)%nsec=time()
+        callers(i)%nfreq=nfreq
+        exit
+     endif
+  enddo
+
+  if(newcall .and. isgrid(g4)) then
+     if(nhist2.eq.MAX_CALLERS) then
+! Purge the oldest caller
+        callers(1:MAX_CALLERS-1)=callers(2:MAX_CALLERS)
+        nhist2=nhist2-1
+     endif
+     nhist2=nhist2+1
+     callers(nhist2)%call=c6
+     callers(nhist2)%grid=g4
+     callers(nhist2)%nsec=time()
+     callers(nhist2)%nfreq=nfreq
+  endif
+
+  if(nhist2.ge.1 .and. nhist2.le.40) then
+     open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+          form='unformatted')
+     write(24) nhist2
+     write(24) callers(1:nhist2)
+     close(24)
+  endif
+
+900 return
+end subroutine q65_hist2
 
 end module q65

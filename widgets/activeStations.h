@@ -19,31 +19,35 @@ class ActiveStations
 public:
   explicit ActiveStations(QSettings *, QFont const&, QWidget * parent = 0);
   ~ActiveStations();
-  void displayRecentStations(QString const&);
+  void displayRecentStations(QString mode, QString const&);
   void changeFont (QFont const&);
   int  maxRecent();
   int  maxAge();
   void setClickOK(bool b);
   void erase();
   bool readyOnly();
+  bool wantedOnly();
   void setRate(int n);
   void setBandChanges(int n);
   void setScore(int n);
-  Q_SLOT void select();
 
   bool m_clickOK=false;
   bool m_bReadyOnly;
-
-signals:
-  void callSandP(int nline);
-  void activeStationsDisplay();
+  bool m_bWantedOnly;
 
 private:
   void read_settings ();
   void write_settings ();
-  Q_SLOT void on_cbReadyOnly_toggled(bool b);
+  Q_SIGNAL void callSandP(int nline);
+  Q_SIGNAL void activeStationsDisplay();
+  Q_SIGNAL void cursorPositionChanged();
 
-  qint64 m_msec0=0;
+  Q_SLOT void on_cbReadyOnly_toggled(bool b);
+  Q_SLOT void on_cbWantedOnly_toggled(bool b);
+  Q_SLOT void on_textEdit_clicked();
+
+//  qint64 m_msec0=0;
+  QString m_mode="";
   QSettings * settings_;
 
   QScopedPointer<Ui::ActiveStations> ui;

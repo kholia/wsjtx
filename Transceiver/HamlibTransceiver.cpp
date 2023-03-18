@@ -659,7 +659,7 @@ int HamlibTransceiver::do_start ()
       rmode_t mb;
       pbwidth_t w {RIG_PASSBAND_NORMAL};
       pbwidth_t wb;
-      if (m_->freq_query_works_
+      if (m_->freq_query_works_ && m_->mode_query_works_
           && (!m_->get_vfo_works_ || !rig_get_function_ptr (m_->model_, RIG_FUNCTION_GET_VFO)))
         {
           // Icom have deficient CAT protocol with no way of reading which

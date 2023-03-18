@@ -6,6 +6,8 @@
 //
 // Reports will be sent in batch mode every 5 minutes.
 
+#include <fstream>
+#include <iostream>
 #include <cmath>
 #include <QObject>
 #include <QString>
@@ -18,6 +20,7 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <QTimer>
+#include <QDir>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 #include <QRandomGenerator>
 #endif
@@ -35,12 +38,17 @@ namespace
   // QLatin1String HOST {"127.0.0.1"};
   quint16 SERVICE_PORT {4739};
   // quint16 SERVICE_PORT {14739};
-  int MIN_SEND_INTERVAL {15}; // in seconds
-  int FLUSH_INTERVAL {4 * 5}; // in send intervals
+  int MIN_SEND_INTERVAL {120}; // in seconds
+  int FLUSH_INTERVAL {MIN_SEND_INTERVAL + 5}; // in send intervals
   bool ALIGNMENT_PADDING {true};
   int MIN_PAYLOAD_LENGTH {508};
-  int MAX_PAYLOAD_LENGTH {1400};
+  int MAX_PAYLOAD_LENGTH {10000};
+  int CACHE_TIMEOUT {300}; // default to 5 minutes for repeating spots
+  QMap<QString, time_t> spot_cache;
 }
+
+static int added;
+static int removed;
 
 class PSKReporter::impl final
   : public QObject
@@ -83,6 +91,7 @@ public:
                                                          send_receiver_data_ = 3; // three times
                                                        }
                                                    });
+    eclipse_load(config->data_dir ().absoluteFilePath ("eclipse.txt"));
   }
 
   void check_connection ()
@@ -167,7 +176,7 @@ public:
 
     if (!report_timer_.isActive ())
       {
-        report_timer_.start (MIN_SEND_INTERVAL * 1000);
+        report_timer_.start (MIN_SEND_INTERVAL+1 * 1000); // we add 1 to give some more randomization
       }
     if (!descriptor_timer_.isActive ())
       {
@@ -188,6 +197,8 @@ public:
 
   void send_report (bool send_residue = false);
   void build_preamble (QDataStream&);
+  void eclipse_load(QString filename);
+  bool eclipse_active(QDateTime now = QDateTime::currentDateTime());
 
   bool flushing ()
   {
@@ -195,6 +206,14 @@ public:
     LOG_LOG_LOCATION (logger_, trace, "flush: " << flush);
     return flush;
   }
+
+  QString getStringFromQDateTime(const QString& dateTimeString, const QString& format)
+  {
+      QDateTime dateTime = QDateTime::fromString(dateTimeString, format);
+      return dateTime.toString();
+  }
+
+  QList<QDateTime> eclipseDates;
 
   logger_type mutable logger_;
   PSKReporter * self_;
@@ -270,6 +289,52 @@ namespace
     out << static_cast<quint16> (b.size ());
     out.device ()->seek (pos);
   }
+}
+
+bool PSKReporter::impl::eclipse_active(QDateTime now)
+{
+    for (int i=0; i< eclipseDates.size(); ++i)
+    {
+        QDateTime check = eclipseDates.at(i);
+        // +- 6 hour window
+        QDateTime date1 = check.addSecs(-3600*6);
+        QDateTime date2 = check.addSecs( 3600*6);
+        if (now > date1 && now < date2)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void PSKReporter::impl::eclipse_load(QString eclipse_file)
+{
+    std::ifstream fs(qPrintable(eclipse_file));
+    std::string mydate,mytime,myline;
+#ifdef DEBUGECLIPSE
+    std::ofstream mylog("eclipse.log");
+    mylog << "eclipse_file=" << eclipse_file << std::endl;
+#endif
+    if (fs.is_open())
+    {
+          while(!fs.eof())
+          {
+              std::getline(fs, myline);
+              if (myline[0] != '#')
+              {
+                  QString format = "yyyy-MM-dd hh:mm:ss";
+                  QDateTime qdate = QDateTime::fromString(QString::fromStdString(myline), format);
+                  eclipseDates.append(qdate);
+              }
+#ifdef DEBUGECLIPSE
+              mylog << myline << std::endl;
+#endif
+          }
+    }
+#ifdef DEBUGECLIPSE
+    if (eclipse_active(QDateTime::currentDateTime())) mylog << "Eclipse is active" << std::endl;
+    else mylog << "Eclipse is not active" << std::endl;
+#endif
 }
 
 void PSKReporter::impl::build_preamble (QDataStream& message)
@@ -516,6 +581,11 @@ void PSKReporter::reconnect ()
   m_->reconnect ();
 }
 
+bool PSKReporter::eclipse_active(QDateTime now)
+{
+  return m_->eclipse_active(now);
+}
+
 void PSKReporter::setLocalStation (QString const& call, QString const& gridSquare, QString const& antenna)
 {
   LOG_LOG_LOCATION (m_->logger_, trace, "call: " << call << " grid: " << gridSquare << " ant: " << antenna);
@@ -542,7 +612,45 @@ bool PSKReporter::addRemoteStation (QString const& call, QString const& grid, Ra
         {
            reconnect ();
         }
-      m_->spots_.enqueue ({call, grid, snr, freq, mode, QDateTime::currentDateTimeUtc ()});
+      // remove any earlier spots of this call to reduce pskreporter load
+#ifdef DEBUGPSK
+      static std::fstream fs;
+      if (!fs.is_open()) fs.open("/temp/psk.log", std::fstream::in | std::fstream::out | std::fstream::app);
+#endif
+      added++;
+
+      QDateTime qdateNow = QDateTime::currentDateTime();
+      // we allow all spots through +/- 6 hours around an eclipse for the HamSCI group
+      if (!spot_cache.contains(call) || freq > 49000000 || eclipse_active(qdateNow)) // then it's a new spot
+      {
+        m_->spots_.enqueue ({call, grid, snr, freq, mode, QDateTime::currentDateTimeUtc ()});
+        spot_cache.insert(call, time(NULL));
+#ifdef DEBUGPSK
+        if (fs.is_open()) fs << "Adding   " << call << " freq=" << freq << " " << spot_cache[call] <<  " count=" << m_->spots_.count() << std::endl;
+#endif
+      }
+      else if (time(NULL) - spot_cache[call] > CACHE_TIMEOUT) // then the cache has expired  
+      {
+        m_->spots_.enqueue ({call, grid, snr, freq, mode, QDateTime::currentDateTimeUtc ()});
+#ifdef DEBUGPSK
+        if (fs.is_open()) fs << "Adding # " << call << spot_cache[call] << " count=" << m_->spots_.count() << std::endl;
+#endif
+        spot_cache[call] = time(NULL);
+      }
+      else
+      {
+        removed++;
+#ifdef DEBUGPSK
+        if (fs.is_open()) fs << "Removing " << call << " " << time(NULL) << " reduction=" << removed/(double)added*100 << "%" << std::endl;
+#endif
+      }
+      // remove cached items over 10 minutes old to save a little memory
+      QMapIterator<QString, time_t> i(spot_cache);
+      time_t tmptime = time(NULL);
+      while(i.hasNext()) {
+          i.next();
+          if (tmptime - i.value() > 600) spot_cache.remove(i.key());
+      }
       return true;
     }
   return false;

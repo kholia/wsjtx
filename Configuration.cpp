@@ -1008,6 +1008,15 @@ void Configuration::set_location (QString const& grid_descriptor)
   m_->dynamic_grid_ = grid_descriptor.trimmed ();
 }
 
+void Configuration::setSpecial_Q65_Pileup()
+{
+  m_->bSpecialOp_=true;
+  m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->ui_->rbQ65pileup->setChecked(true);
+  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::Q65_PILEUP);
+  m_->write_settings();
+}
+
 void Configuration::setSpecial_Hound()
 {
   m_->bSpecialOp_=true;
@@ -1243,6 +1252,7 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
   ui_->special_op_activity_button_group->setId (ui_->rbARRL_Digi, static_cast<int> (SpecialOperatingActivity::ARRL_DIGI));
   ui_->special_op_activity_button_group->setId (ui_->rbFox, static_cast<int> (SpecialOperatingActivity::FOX));
   ui_->special_op_activity_button_group->setId (ui_->rbHound, static_cast<int> (SpecialOperatingActivity::HOUND));
+  ui_->special_op_activity_button_group->setId (ui_->rbQ65pileup, static_cast<int> (SpecialOperatingActivity::Q65_PILEUP));
 
   //
   // setup PTT port combo box drop down content
@@ -1558,6 +1568,8 @@ void Configuration::impl::read_settings ()
   Contest_Name_ = settings_->value ("Contest_Name",QString {}).toString ();
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
+  ui_->Contest_Name->setText(Contest_Name_);
+
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
     {

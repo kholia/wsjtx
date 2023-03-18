@@ -44,7 +44,9 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
 
   real ss(184,NSMAX)
   logical baddata,newdat65,newdat9,single_decode,bVHF,bad0,newdat,ex
+  logical lprinthash22
   integer*2 id2(NTMAX*12000)
+  integer nqf(20)
   type(params_block) :: params
   real*4 dd(NTMAX*12000)
   character(len=20) :: datetime
@@ -211,7 +213,28 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
           params%nfa,params%nfb,logical(params%nclearave),               &
           single_decode,logical(params%nagain),params%max_drift,         &
           logical(params%newdat),params%emedelay,mycall,hiscall,hisgrid, &
-          params%nQSOProgress,ncontest,logical(params%lapcqonly),navg0)
+          params%nQSOProgress,ncontest,logical(params%lapcqonly),navg0,nqf)
+     params%nclearave=.false.
+
+     if(.not.params%nagain) then
+! Go through identified candidates again, treating each as if it had been
+! double-clicked on the waterfall.
+        do k=1,20
+           if(nqf(k).eq.0) exit
+           if(params%nagain .and. abs(nqf(k)-params%nfqso).gt.params%ntol) cycle
+           nqd=1
+           navg0=0
+           ntol=5
+           call my_q65%decode(q65_decoded,id2,nqd,params%nutc,params%ntr,    &
+                params%nsubmode,nqf(k),ntol,params%ndepth,                   &
+                params%nfa,params%nfb,logical(params%nclearave),             &
+                .true.,.true.,params%max_drift,                              &
+                .false.,params%emedelay,mycall,hiscall,hisgrid,              &
+                params%nQSOProgress,ncontest,logical(params%lapcqonly),      &
+                navg0,nqf)
+        enddo
+     endif
+
      call timer('dec_q65 ',1)
      close(17)
      go to 800
@@ -221,27 +244,30 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
 ! We're in FST4 mode
      ndepth=iand(params%ndepth,3)
      iwspr=0
+     lprinthash22=.false.
      params%nsubmode=0
      call timer('dec_fst4',0)
      call my_fst4%decode(fst4_decoded,id2,params%nutc,                &
           params%nQSOProgress,params%nfa,params%nfb,                  &
           params%nfqso,ndepth,params%ntr,params%nexp_decode,          &
           params%ntol,params%emedelay,logical(params%nagain),         &
-          logical(params%lapcqonly),mycall,hiscall,iwspr)
+          logical(params%lapcqonly),mycall,hiscall,iwspr,lprinthash22)
      call timer('dec_fst4',1)
      go to 800
   endif
 
-    if(params%nmode.eq.241) then
+    if(params%nmode.eq.241 .or. params%nmode.eq.242) then
 ! We're in FST4W mode
      ndepth=iand(params%ndepth,3)
      iwspr=1
+     lprinthash22=.false.
+     if(params%nmode.eq.242) lprinthash22=.true. 
      call timer('dec_fst4',0)
      call my_fst4%decode(fst4_decoded,id2,params%nutc,                &
           params%nQSOProgress,params%nfa,params%nfb,                  &
           params%nfqso,ndepth,params%ntr,params%nexp_decode,          &
           params%ntol,params%emedelay,logical(params%nagain),         &
-          logical(params%lapcqonly),mycall,hiscall,iwspr)
+          logical(params%lapcqonly),mycall,hiscall,iwspr,lprinthash22)
      call timer('dec_fst4',1)
      go to 800
   endif
@@ -705,7 +731,7 @@ contains
   end subroutine ft4_decoded
 
   subroutine fst4_decoded (this,nutc,sync,nsnr,dt,freq,decoded,nap,   &
-       qual,ntrperiod,lwspr,fmid,w50)
+       qual,ntrperiod,fmid,w50)
 
     use fst4_decode
     implicit none
@@ -720,7 +746,6 @@ contains
     integer, intent(in) :: nap
     real, intent(in) :: qual
     integer, intent(in) :: ntrperiod
-    logical, intent(in) :: lwspr
     real, intent(in) :: fmid
     real, intent(in) :: w50
 

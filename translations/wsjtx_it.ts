@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="it_IT">
+    <extra-po-header-language>it_IT</extra-po-header-language>
+    <extra-po-header-language_team></extra-po-header-language_team>
+    <extra-po-header-last_translator></extra-po-header-last_translator>
+    <extra-po-header-po_revision_date></extra-po-header-po_revision_date>
+    <extra-po-header-pot_creation_date></extra-po-header-pot_creation_date>
+    <extra-po-header-project_id_version></extra-po-header-project_id_version>
+    <extra-po-header-x_generator>Poedit 3.2.2</extra-po-header-x_generator>
+    <extra-po-headers>Project-Id-Version,POT-Creation-Date,PO-Revision-Date,Last-Translator,Language-Team,Language,MIME-Version,Content-Type,Content-Transfer-Encoding,Plural-Forms,X-Language,X-Qt-Contexts,X-Generator</extra-po-headers>
 <context>
     <name>AbstractLogWindow</name>
     <message>
@@ -62,7 +70,7 @@
     <message>
         <location filename="../widgets/activeStations.ui" line="89"/>
         <source>Max Age  </source>
-        <translation>Etá Massima  </translation>
+        <translation>Età Massima  </translation>
     </message>
     <message>
         <location filename="../widgets/activeStations.ui" line="105"/>
@@ -107,7 +115,7 @@
     <message>
         <location filename="../widgets/activeStations.ui" line="192"/>
         <source>Call  Grid  Age   Points</source>
-        <translation>Punti Indicativo etá della griglia</translation>
+        <translation>Nominativo Griglia Età Punti</translation>
     </message>
     <message>
         <location filename="../widgets/activeStations.cpp" line="21"/>
@@ -245,7 +253,7 @@
     <message>
         <location filename="../models/Bands.cpp" line="140"/>
         <source>Lower frequency limit</source>
-        <translation>Limite frequenza minore</translation>
+        <translation>Limite frequenza inferiore</translation>
     </message>
     <message>
         <location filename="../models/Bands.cpp" line="141"/>
@@ -355,7 +363,7 @@
     <message>
         <location filename="../GetUserId.cpp" line="29"/>
         <source>Callsign</source>
-        <translation>Indicativo</translation>
+        <translation>Nominativo</translation>
     </message>
 </context>
 <context>
@@ -388,7 +396,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="63"/>
         <source>My Call in message</source>
-        <translation>Il mio indicativo nel messaggio</translation>
+        <translation>Il mio Nominativo nel messaggio</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="70"/>
@@ -413,7 +421,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="150"/>
         <source>New Call</source>
-        <translation>Nuovo Indicativo</translation>
+        <translation>Nuovo Nominativo</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="157"/>
@@ -423,7 +431,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="203"/>
         <source>New Call on Band</source>
-        <translation>Nuovo indicativo sulla Banda</translation>
+        <translation>Nuovo Indicativo sulla Banda</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="210"/>
@@ -484,7 +492,7 @@
     <message>
         <location filename="../Configuration.cpp" line="1045"/>
         <source>path: &quot;%1%</source>
-        <translation>Percorso: &quot;%1&quot;</translation>
+        <translation>percorso: &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="1056"/>
@@ -542,9 +550,9 @@ Formats:
         <translation>Nome host e porta del servizio di rete opzionali.
 Lascia vuoto per un&apos;impostazione predefinita ragionevole su questa macchina.
 Formati:
-	hostname: porta
-	IPv4-indirizzo: porta
-	[IPv6-address]: porta</translation>
+	hostname:porta
+	IPv4-indirizzo:porta
+	[IPv6-address]:porta</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="1834"/>
@@ -557,20 +565,16 @@ Formati:
 Leave blank for a sensible default for the rig.
 Format:
 	[VID[:PID[:VENDOR[:PRODUCT]]]]</source>
-        <translation>Identificazione del dispositivo opzionale.
+        <translation>Identificazione opzionale del dispositivo.
 Lasciare vuoto per un valore predefinito ragionevole per il rig.
 Formato:
-	[VID [: PID [: VENDOR [: PRODOTTI]]]]</translation>
+	[VID[:PID[:VENDOR[:PRODOTTO]]]]</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="1871"/>
         <location filename="../Configuration.cpp" line="1879"/>
         <source>Invalid audio input device</source>
         <translation>Dispositivo di ingresso audio non valido</translation>
-    </message>
-    <message>
-        <source>Invalid audio out device</source>
-        <translation type="vanished">Dispositivo di uscita audio non valido</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="1887"/>
@@ -739,6 +743,10 @@ Formato:
         <translatorcomment>dispositivo audio mancante</translatorcomment>
         <translation>Non trovato</translation>
     </message>
+    <message>
+        <source>Invalid audio out device</source>
+        <translation type="vanished">Dispositivo di uscita audio non valido</translation>
+    </message>
 </context>
 <context>
     <name>DXLabSuiteCommanderTransceiver</name>
@@ -752,7 +760,7 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="131"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly reading frequency: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente alla frequenza di lettura: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente alla lettura della frequenza: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="178"/>
@@ -762,7 +770,7 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="184"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly polling TX status: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente al polling dello stato TX: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente durante il polling dello stato TX: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="192"/>
@@ -777,17 +785,17 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="293"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly polling TX frequency: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente alla frequenza di polling TX: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente durante il polling della frequenza TX: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="312"/>
         <source>DX Lab Suite Commander sent an unrecognised split state: </source>
-        <translation>DX Lab Suite Commander ha inviato uno stato di divisione non riconosciuto: </translation>
+        <translation>DX Lab Suite Commander ha inviato uno stato di split non riconosciuto: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="318"/>
         <source>DX Lab Suite Commander didn&apos;t respond correctly polling split status: </source>
-        <translation>DX Lab Suite Commander non ha risposto correttamente allo stato di suddivisione del polling: </translation>
+        <translation>DX Lab Suite Commander non ha risposto correttamente al polling dello stato di split: </translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="374"/>
@@ -814,12 +822,6 @@ Formato:
 </translation>
     </message>
     <message>
-        <source>DX Lab Suite Commander failed to send command &quot;%1&quot;: %2
-</source>
-        <translation type="vanished">DX Lab Suite Commander non è riuscito a inviare il comando &quot;%1&quot;: %2
-</translation>
-    </message>
-    <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="424"/>
         <source>DX Lab Suite Commander send command &quot;%1&quot; read reply failed: %2
 </source>
@@ -829,12 +831,18 @@ Formato:
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="435"/>
         <source>DX Lab Suite Commander retries exhausted sending command &quot;%1&quot;</source>
-        <translation>DX Lab Suite Commander ripete il comando di invio esaurito &quot;%1&quot;</translation>
+        <translation>DX Lab Suite Commander esautiti i tentativi di riprova dell&apos;invio del comando &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="../Transceiver/DXLabSuiteCommanderTransceiver.cpp" line="494"/>
         <source>DX Lab Suite Commander sent an unrecognized frequency</source>
         <translation>DX Lab Suite Commander ha inviato una frequenza non riconosciuta</translation>
+    </message>
+    <message>
+        <source>DX Lab Suite Commander failed to send command &quot;%1&quot;: %2
+</source>
+        <translation type="vanished">DX Lab Suite Commander non è riuscito a inviare il comando &quot;%1&quot;: %2
+</translation>
     </message>
 </context>
 <context>
@@ -886,7 +894,7 @@ Formato:
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="113"/>
         <source>My Call in message</source>
-        <translation>Il mio indicativo nel messaggio</translation>
+        <translation>Il mio Nominativo nel messaggio</translation>
     </message>
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="114"/>
@@ -916,12 +924,12 @@ Formato:
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="119"/>
         <source>New Call</source>
-        <translation>Nuovo Indicativo</translation>
+        <translation>Nuovo Nominativo</translation>
     </message>
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="120"/>
         <source>New Call on Band</source>
-        <translation>Nuovo indicativo sulla Banda</translation>
+        <translation>Nuovo Nominativo sulla Banda</translation>
     </message>
     <message>
         <location filename="../models/DecodeHighlightingModel.cpp" line="121"/>
@@ -1061,7 +1069,7 @@ Formato:
     <message>
         <location filename="../SampleDownloader/Directory.cpp" line="142"/>
         <source>Contents file top level must be a JSON array</source>
-        <translation>Il file di livello superiore deve essere un array JSON</translation>
+        <translation>Il livello superiore del file di contenuti deve essere un array JSON</translation>
     </message>
     <message>
         <location filename="../SampleDownloader/Directory.cpp" line="153"/>
@@ -1132,7 +1140,7 @@ Errore: %2 - %3</translation>
         <location filename="../widgets/echograph.ui" line="101"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compression factor for frequency scale&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fattore di compressione per scala di frequenza&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Compression factor for frequency scale&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fattore di compressione per la scala di frequenza&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/echograph.ui" line="104"/>
@@ -1831,13 +1839,13 @@ Errore: %2 - %3</translation>
         <location filename="../Transceiver/HamlibTransceiver.cpp" line="957"/>
         <location filename="../Transceiver/HamlibTransceiver.cpp" line="1026"/>
         <source>setting/unsetting split mode</source>
-        <translation>impostazione / disinserimento della modalità split</translation>
+        <translation>impostazione/disinserimento della modalità split</translation>
     </message>
     <message>
         <location filename="../Transceiver/HamlibTransceiver.cpp" line="968"/>
         <location filename="../Transceiver/HamlibTransceiver.cpp" line="1008"/>
         <source>setting split mode</source>
-        <translation></translation>
+        <translation>impostazione della modalità split</translation>
     </message>
     <message>
         <location filename="../Transceiver/HamlibTransceiver.cpp" line="996"/>
@@ -1883,21 +1891,6 @@ Errore: %2 - %3</translation>
         <location filename="../Transceiver/HamlibTransceiver.cpp" line="323"/>
         <source>getting a configuration item</source>
         <translation>ottenere un elemento di configurazione</translation>
-    </message>
-</context>
-<context>
-    <name>HelpTextWindow</name>
-    <message>
-        <source>Help file error</source>
-        <translation type="vanished">Aiuto file di errore</translation>
-    </message>
-    <message>
-        <source>Cannot open &quot;%1&quot; for reading</source>
-        <translation type="vanished">Impossibile aprire &quot;%1&quot; per la lettura</translation>
-    </message>
-    <message>
-        <source>Error: %1</source>
-        <translation type="vanished">Errore: %1</translation>
     </message>
 </context>
 <context>
@@ -2063,7 +2056,7 @@ Errore: %2 - %3</translation>
         <location filename="../widgets/logqso.cpp" line="36"/>
         <source>Sporadic E</source>
         <translatorcomment>Propagazione via Strato E Sporadico</translatorcomment>
-        <translation>E-Sporadico</translation>
+        <translation>E Sporadico</translation>
     </message>
     <message>
         <location filename="../widgets/logqso.cpp" line="37"/>
@@ -2213,7 +2206,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="14"/>
         <source>WSJT-X   by K1JT</source>
-        <translation>WSJT-X di K1JT</translation>
+        <translation>WSJT-X   di K1JT</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="44"/>
@@ -2250,7 +2243,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="346"/>
         <source>Enter this QSO in log</source>
-        <translation>Immettere questo QSO nel log</translation>
+        <translation>Registrare questo QSO nel log</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="349"/>
@@ -2370,17 +2363,18 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="705"/>
         <source>Decode other Hounds calling above 1000 Hz audio offset</source>
-        <translatorcomment>Nota che in modo Hound, WSJT-X è normalmente configurato per ignorare i segnali sopra 1000 Hz. Se vuoi decodificare i segnali oltre la gamma totale del waterfall, per mantenereun tracciamento più vicino del pileup, spunta la casella Rx All Freqs</translatorcomment>
+        <translatorcomment>Nota che in modo Hound, WSJT-X è normalmente configurato per ignorare i segnali sopra 1000 Hz. Se vuoi decodificare i segnali oltre la gamma totale del waterfall, per mantenere un tracciamento più vicino del pileup, spunta la casella Rx All Freqs</translatorcomment>
         <translation>Decodifica altri segugi che chiamano con offset audio superiore a 1000 Hz Nota che in modo Hound, WSJT-X è normalmente configurato per ignorare i segnali sopra 1000 Hz. Se vuoi decodificare i segnali oltre la gamma totale del waterfall, per mantenereun tracciamento più vicino del pileup, spunta la casella Rx All Freqs</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="754"/>
         <source>Enable auto response to the first decode from a new DXCC or new call on the current band.</source>
-        <translation>Abilita la risposta automatica alla prima decodifica da un nuovo DXCC o una nuova chiamata sulla banda corrente.</translation>
+        <translation>Abilita la risposta automatica alla prima decodifica da un nuovo DXCC o un nuovo nominativo sulla banda corrente.</translation>
     </message>
     <message>
-        <location filename="../widgets/mainwindow.ui" line="837"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: First&lt;/span&gt; to respond automatically to the first decoded reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Pts&lt;/span&gt; to respond automatically to the reply yielding most points in the ARRL International Digital Contest.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: None&lt;/span&gt; to choose callers manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../widgets/mainwindow.ui" line="1221"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: First&lt;/span&gt; to respond automatically to the first decoded reply to your CQ. &lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Dist&lt;/span&gt; to respond automatically to the reply yielding most points in the ARRL International Digital Contest.&lt;/p&gt;&lt;p&gt;Select &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: None&lt;/span&gt; to choose callers manually.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translatorcomment>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: prima&lt;/span&gt; per rispondere automaticamente alla prima risposta decodificata al tuo CQ. &lt;/p&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Dist&lt;/span&gt; per rispondere automaticamente alla risposta che ha ottenuto più punti nell&apos;ARRL International Digital Contest.&lt;/p&gt;&lt; p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Nessuno&lt;/span&gt; per scegliere i chiamanti manualmente.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: prima&lt;/span&gt; per rispondere automaticamente alla prima risposta decodificata al tuo CQ. &lt;/p&gt;&lt;p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Max Dist&lt;/span&gt; per rispondere automaticamente alla risposta che ha ottenuto più punti nell&apos;ARRL International Digital Contest.&lt;/p&gt;&lt; p&gt;Seleziona &lt;span style=&quot; font-weight:600;&quot;&gt;CQ: Nessuno&lt;/span&gt; per scegliere i chiamanti manualmente.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -2563,7 +2557,7 @@ Giallo quando troppo basso</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2688"/>
         <source>Callsign of station to be worked</source>
-        <translation>Nominativo statione da collegare</translation>
+        <translation>Nominativo stazione da collegare</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2725"/>
@@ -2653,7 +2647,8 @@ Giallo quando troppo basso</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1072"/>
         <source>Hold Tx Freq</source>
-        <translation>Blocca.la Freq.Tx</translation>
+        <translatorcomment>Blocca la Freq Tx</translatorcomment>
+        <translation>Blocca la Freq Tx</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="984"/>
@@ -2770,18 +2765,6 @@ Giallo quando troppo basso</translation>
         <translation>Auto Seq</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to call the first decoded responder to my CQ.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selezionare per chiamare il primo risponditore decodificato al mio CQ.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Check to call the first decoded responder to my CQ.</source>
-        <translation type="vanished">Selezionare per chiamare il primo risponditore decodificato al mio CQ.</translation>
-    </message>
-    <message>
-        <source>Call 1st</source>
-        <translation type="vanished">Chiama il 1º</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="856"/>
         <source>Check to generate &quot;@1250  (SEND MSGS)&quot; in Tx6.</source>
         <translation>Selezionare per generare &quot;@1250  (INVIO MSGS)&quot; in Tx6.</translation>
@@ -2794,7 +2777,7 @@ Giallo quando troppo basso</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="870"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to Tx in even-numbered minutes or sequences, starting at 0; uncheck for odd sequences.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selezionare su Tx in minuti o sequenze di numero pari, iniziando da 0; deselezionare le sequenze dispari.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selezionare per Tx in minuti o sequenze di numero pari, iniziando da 0; deselezionare le sequenze dispari.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="873"/>
@@ -2882,7 +2865,7 @@ Non disponibile per i possessori di nominativi non standard.</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="779"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this to start recording calibration data.&lt;br/&gt;While measuring calibration correction is disabled.&lt;br/&gt;When not checked you can view the calibration results.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Seleziona questa opzione per avviare la registrazione dei dati di calibrazione.&lt;br/&gt;Mentre la misurazione della correzione della calibrazione è disabilitata.&lt;br/&gt;Se non selezionato puoi visualizzare i risultati della calibrazione.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selezionare questo per iniziare a registrare i dati di calibrazione.&lt;br/&gt;Durante la misurazione la correzione della calibrazione è disabilitata.&lt;/br&gt;Se non selezionato è possibile visualizzare i risultati della calibrazione.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="782"/>
@@ -2936,14 +2919,6 @@ Se non selezionato, è possibile visualizzare i risultati della calibrazione.</t
         <translation>T/R  </translation>
     </message>
     <message>
-        <source>Toggle Tx mode</source>
-        <translation type="vanished">Attiva / disattiva la modalità Tx</translation>
-    </message>
-    <message>
-        <source>Tx JT9 @</source>
-        <translation type="vanished">Tx JT9 @</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="883"/>
         <source>Audio Tx frequency</source>
         <translation>Frequenza Tx audio</translation>
@@ -2958,18 +2933,6 @@ Se non selezionato, è possibile visualizzare i risultati della calibrazione.</t
         <location filename="../widgets/mainwindow.ui" line="1101"/>
         <source>Tx# </source>
         <translation>Tx# </translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double-click on another caller to queue that call for your next QSO.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fare doppio clic su un altro chiamante per mettere in coda quella chiamata per il QSO successivo.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>Double-click on another caller to queue that call for your next QSO.</source>
-        <translation type="vanished">Fare doppio clic su un altro chiamante per mettere in coda quella chiamata per il QSO successivo.</translation>
-    </message>
-    <message>
-        <source>Next Call</source>
-        <translation type="vanished">Prossima chiamata</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1290"/>
@@ -3026,7 +2989,7 @@ Fare doppio clic per attivare / disattivare l&apos;uso del messaggio Tx1 per avv
     <message>
         <location filename="../widgets/mainwindow.ui" line="1533"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to this Tx message NOW&lt;/p&gt;&lt;p&gt;Double click to toggle the use of the Tx1 message to start a QSO with a station (not allowed for type 1 compound call holders)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ORA&lt;/p&gt;&lt;p&gt;Fai doppio clic per attivare o disattivare l&apos;uso del messaggio Tx1 per avviare un QSO con una stazione (non consentito per i detentori di chiamate composte di tipo 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ADESSO&lt;/p&gt;&lt;p&gt;Fai doppio clic per attivare o disattivare l&apos;uso del messaggio Tx1 per avviare un QSO con una stazione (non consentito per i detentori di chiamate composte di tipo 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1536"/>
@@ -3104,7 +3067,7 @@ I messaggi RR73 devono essere utilizzati solo quando si è ragionevolmente sicur
     <message>
         <location filename="../widgets/mainwindow.ui" line="1512"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to this Tx message NOW&lt;/p&gt;&lt;p&gt;Double-click to toggle between RRR and RR73 messages in Tx4 (not allowed for type2 compound call holders)&lt;/p&gt;&lt;p&gt;RR73 messages should only be used when you are reasonably confident that no message repetitions will be required&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ORA&lt;/p&gt;&lt;p&gt;Fai doppio clic per alternare tra i messaggi RRR e RR73 in Tx4 (non consentito per i possessori di chiamate composte di tipo2)&lt;/p&gt;&lt;p&gt;I messaggi RR73 devono essere utilizzati solo quando sei ragionevolmente sicuro che non sarà richiesta alcuna ripetizione del messaggio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Passa a questo messaggio Tx ADESSO&lt;/p&gt;&lt;p&gt;Fai doppio clic per alternare tra i messaggi RRR e RR73 in Tx4 (non consentito per i possessori di chiamate composte di tipo2)&lt;/p&gt;&lt;p&gt;I messaggi RR73 devono essere utilizzati solo quando sei ragionevolmente sicuro che non sarà richiesta alcuna ripetizione del messaggio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1515"/>
@@ -3205,83 +3168,15 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <translation>FST4W</translation>
     </message>
     <message>
-        <source>Calling CQ </source>
-        <translation type="vanished">Chiamando CQ </translation>
-    </message>
-    <message>
-        <source>Generate a CQ message</source>
-        <translation type="vanished">Genera un messaggio CQ</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="1666"/>
         <location filename="../widgets/mainwindow.ui" line="1670"/>
         <source>CQ</source>
         <translation>CQ</translation>
     </message>
     <message>
-        <source>Generate message with RRR</source>
-        <translation type="vanished">Genera un messaggio con RRR</translation>
-    </message>
-    <message>
-        <source>RRR</source>
-        <translation type="vanished">RRR</translation>
-    </message>
-    <message>
-        <source>Generate message with report</source>
-        <translation type="vanished">Genera un messaggio con rapporto</translation>
-    </message>
-    <message>
-        <source>dB</source>
-        <translation type="vanished">dB</translation>
-    </message>
-    <message>
-        <source>Answering CQ</source>
-        <translation type="vanished">Rispondere al CQ</translation>
-    </message>
-    <message>
-        <source>Generate message for replying to a CQ</source>
-        <translation type="vanished">Genera messaggio di risposta al CQ</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="1861"/>
         <source>Grid</source>
         <translation>Griglia</translation>
-    </message>
-    <message>
-        <source>Generate message with R+report</source>
-        <translation type="vanished">Genera messaggio con R+rapporto</translation>
-    </message>
-    <message>
-        <source>R+dB</source>
-        <translation type="vanished">R+dB</translation>
-    </message>
-    <message>
-        <source>Generate message with 73</source>
-        <translation type="vanished">Genera messaggio con 73</translation>
-    </message>
-    <message>
-        <source>73</source>
-        <translation type="vanished">73</translation>
-    </message>
-    <message>
-        <source>Send this standard (generated) message</source>
-        <translation type="vanished">Invia questo messaggio standard (generato)</translation>
-    </message>
-    <message>
-        <source>Gen msg</source>
-        <translation type="vanished">Gen msg</translation>
-    </message>
-    <message>
-        <source>Send this free-text message (max 13 characters)</source>
-        <translation type="vanished">Invia questo messaggio di testo libero (massimo 13 caratteri)</translation>
-    </message>
-    <message>
-        <source>Free msg</source>
-        <translation type="vanished">Msg libero</translation>
-    </message>
-    <message>
-        <source>3</source>
-        <translation type="vanished">3</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1650"/>
@@ -3418,10 +3313,6 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <location filename="../widgets/mainwindow.ui" line="1892"/>
         <source>More CQs</source>
         <translation>Più CQs</translation>
-    </message>
-    <message>
-        <source>Percentage of 2-minute sequences devoted to transmitting.</source>
-        <translation type="vanished">Percentuale di sequenze di 2 minuti dedicate alla trasmissione.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2200"/>
@@ -3568,12 +3459,12 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2280"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;6 digit locators cause 2 different messages to be sent, the second contains the full locator but only a hashed callsign, other stations must have decoded the first once before they can decode your call in the second. Check this option to only send 4 digit locators if it will avoid the two message protocol.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare la chiamata nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare il nominativo nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2283"/>
         <source>6 digit locators cause 2 different messages to be sent, the second contains the full locator but only a hashed callsign, other stations must have decoded the first once before they can decode your call in the second. Check this option to only send 4 digit locators if it will avoid the two message protocol.</source>
-        <translation>I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare la chiamata nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.</translation>
+        <translation>I localizzatori a 6 cifre causano l&apos;invio di 2 messaggi diversi, il secondo contiene il localizzatore completo ma solo un nominativo con hash, altre stazioni devono aver decodificato il primo una volta prima di poter decodificare il nominativo nel secondo. Selezionare questa opzione per inviare localizzatori a 4 cifre solo se si eviterà il protocollo a due messaggi.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3558"/>
@@ -3587,21 +3478,9 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <translation>FST4</translation>
     </message>
     <message>
-        <source>FT240W</source>
-        <translation type="obsolete">FT240W</translation>
-    </message>
-    <message>
-        <source>Prefer type 1 messages</source>
-        <translation type="vanished">Preferisci i messaggi di tipo 1</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="2296"/>
         <source>No own call decodes</source>
         <translation>Nessuna decodifica del proprio nominativo</translation>
-    </message>
-    <message>
-        <source>Transmit during the next 2-minute sequence.</source>
-        <translation type="vanished">Trasmettere durante la sequenza di 2 minuti successiva.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2320"/>
@@ -3662,14 +3541,6 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <location filename="../widgets/mainwindow.ui" line="3157"/>
         <source>Exit</source>
         <translation>Uscita</translation>
-    </message>
-    <message>
-        <source>Configuration</source>
-        <translation type="vanished">Configurazione</translation>
-    </message>
-    <message>
-        <source>F2</source>
-        <translation type="vanished">F2</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3165"/>
@@ -3757,10 +3628,6 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <translation>Profondo</translation>
     </message>
     <message>
-        <source>Monitor OFF at startup</source>
-        <translation type="vanished">Monitor OFF all&apos;avvio</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="3293"/>
         <source>Erase ALL.TXT</source>
         <translation>Cancella ALL.TXT</translation>
@@ -3771,76 +3638,20 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <translation>Cancella wsjtx_log.adi</translation>
     </message>
     <message>
-        <source>Convert mode to RTTY for logging</source>
-        <translation type="vanished">Convertire la modalità in RTTY per la registrazione</translation>
-    </message>
-    <message>
-        <source>Log dB reports to Comments</source>
-        <translation type="vanished">Registra rapporto dB nei commenti</translation>
-    </message>
-    <message>
-        <source>Prompt me to log QSO</source>
-        <translation type="vanished">Avvisami di registrare il QSO</translation>
-    </message>
-    <message>
-        <source>Blank line between decoding periods</source>
-        <translation type="vanished">Riga vuota tra i periodi di decodifica</translation>
-    </message>
-    <message>
-        <source>Clear DX Call and Grid after logging</source>
-        <translation type="vanished">Cancella chiamata DX e griglia dopo la registrazione</translation>
-    </message>
-    <message>
-        <source>Display distance in miles</source>
-        <translation type="vanished">Visualizza la distanza in miglia</translation>
-    </message>
-    <message>
-        <source>Double-click on call sets Tx Enable</source>
-        <translation type="vanished">Fare doppio clic sui set di chiamate Abilita Tx</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="3353"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <source>Tx disabled after sending 73</source>
-        <translation type="vanished">Tx disabilitato dopo l&apos;invio 73</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.cpp" line="8965"/>
         <source>Runaway Tx watchdog</source>
-        <translation>Timer.Tx</translation>
-    </message>
-    <message>
-        <source>Allow multiple instances</source>
-        <translation type="vanished">Consenti più istanze</translation>
-    </message>
-    <message>
-        <source>Tx freq locked to Rx freq</source>
-        <translation type="vanished">Tx freq bloccato su Rx freq</translation>
+        <translation>Temporizzatore TX terminato</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2999"/>
         <location filename="../widgets/mainwindow.ui" line="3306"/>
         <source>JT65</source>
         <translation>JT65</translation>
-    </message>
-    <message>
-        <source>JT9+JT65</source>
-        <translation type="vanished">JT9+JT65</translation>
-    </message>
-    <message>
-        <source>Tx messages to Rx Frequency window</source>
-        <translation type="vanished">Messaggi Tx alla finestra Frequenza Rx</translation>
-    </message>
-    <message>
-        <source>Gray1</source>
-        <translation type="vanished">Gray1</translation>
-    </message>
-    <message>
-        <source>Show DXCC entity and worked B4 status</source>
-        <translation type="vanished">Mostra entità DXCC e stato B4 lavorato</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3314"/>
@@ -3988,14 +3799,6 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <translation>Strumenti di equalizzazione ...</translation>
     </message>
     <message>
-        <source>WSPR-LF</source>
-        <translation type="vanished">WSPR-LF</translation>
-    </message>
-    <message>
-        <source>Experimental LF/MF mode</source>
-        <translation type="vanished">Modo Sperimentale LF/MF</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="2911"/>
         <location filename="../widgets/mainwindow.ui" line="3496"/>
         <source>FT8</source>
@@ -4044,17 +3847,9 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <translation>Schema di evidenziazione del colore</translation>
     </message>
     <message>
-        <source>Contest Log</source>
-        <translation type="vanished">Log del Contest</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.ui" line="3553"/>
         <source>Export Cabrillo log ...</source>
         <translation>Esporta Log Cabrillo ...</translation>
-    </message>
-    <message>
-        <source>Quick-Start Guide to WSJT-X 2.0</source>
-        <translation type="vanished">Guida rapida per WSJT-X 2.0</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3563"/>
@@ -4082,28 +3877,12 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <location filename="../widgets/mainwindow.cpp" line="4749"/>
         <location filename="../widgets/mainwindow.cpp" line="8420"/>
         <source>Receiving</source>
-        <translation>Ricevente</translation>
+        <translation>Ricevendo</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="455"/>
         <source>Do you want to reconfigure the radio interface?</source>
         <translation>Vuoi riconfigurare l&apos;interfaccia radio?</translation>
-    </message>
-    <message>
-        <source>%1 (%2 sec) audio frames dropped</source>
-        <translation type="vanished">%1 (%2 sec) frames audio perse</translation>
-    </message>
-    <message>
-        <source>Audio Source</source>
-        <translation type="vanished">Sorgente Audio</translation>
-    </message>
-    <message>
-        <source>Reduce system load</source>
-        <translation type="vanished">Riduci carico di sistema</translation>
-    </message>
-    <message>
-        <source>Excessive dropped samples - %1 (%2 sec) audio frames dropped</source>
-        <translation type="vanished">Eccessivi campioni persi - %1 (%2 sec) frames audio ignorate</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
@@ -4369,7 +4148,7 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Z    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear hung decoder status&lt;/td&gt;&lt;/tr&gt;
 &lt;/table&gt;</source>
         <extracomment>Keyboard shortcuts help window contents</extracomment>
-        <translation>&lt;spaziatura celle tabella=1&gt;
+        <translation>&lt;table cellspacing=1&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Esc &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Interrompi Tx, annulla QSO, cancella la coda della chiamata successiva&lt;/td&gt;&lt;/tr&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;F1 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Guida dell&apos;utente in linea (Alt: trasmettere Tx6)&lt;/td&gt;&lt;/tr&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Maiusc+F1 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Avviso sul copyright&lt;/td&gt;&lt;/tr&gt;
@@ -4413,15 +4192,7 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+S &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Interrompi monitoraggio&lt;/td&gt;&lt;/tr&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+T &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Attiva/disattiva lo stato di ottimizzazione&lt;/td&gt;&lt;/tr&gt;
   &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Z &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Cancella stato decoder sospeso&lt;/td&gt;&lt;/tr&gt;
-&lt;/tabella&gt;</translation>
-    </message>
-    <message>
-        <source>If you make fair use of any part of WSJT-X under terms of the GNU General Public License, you must display the following copyright notice prominently in your derivative work:
-
-&quot;The algorithms, source code, look-and-feel of WSJT-X and related programs, and protocol specifications for the modes FSK441, FT8, JT4, JT6M, JT9, JT65, JTMS, QRA64, ISCAT, MSK144 are Copyright (C) 2001-2021 by one or more of the following authors: Joseph Taylor, K1JT; Bill Somerville, G4WJS; Steven Franke, K9AN; Nico Palermo, IV3NWV; Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; Philip Karn, KA9Q; and other members of the WSJT Development Group.&quot;</source>
-        <translation type="vanished">Se si utilizza in modo equo qualsiasi parte di WSJT-X in base ai termini della GNU General Public License, è necessario visualizzare in modo evidente la seguente nota sul copyright nell&apos;opera derivata:
-
-&quot;Gli algoritmi, il codice sorgente, l&apos;aspetto di WSJT-X e dei relativi programmi e le specifiche del protocollo per le modalità FSK441, FT8, JT4, JT6M, JT9, JT65, JTMS, QRA64, ISCAT, MSK144 sono Copyright (C) 2001-2021 di uno o più dei seguenti autori: Joseph Taylor, K1JT; Bill Somerville, G4WJS; Steven Franke, K9AN; Nico Palermo, IV3NWV; Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; Philip Karn, KA9Q e altri membri del WSJT Development Group. &quot;</translation>
+&lt;/table&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="2958"/>
@@ -4442,149 +4213,6 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
         <location filename="../widgets/mainwindow.cpp" line="3003"/>
         <source>Keyboard Shortcuts</source>
         <translation>Scorciatoie da tastiera</translation>
-    </message>
-    <message>
-        <source>&lt;table cellspacing=1&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Esc      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop Tx, abort QSO, clear next-call queue&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F1       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Online User&apos;s Guide (Alt: transmit Tx6)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Copyright Notice&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;About WSJT-X&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F2       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open settings window (Alt: transmit Tx2)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F3       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display keyboard shortcuts (Alt: transmit Tx3)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F4       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear DX Call, DX Grid, Tx messages 1-4 (Alt: transmit Tx4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+F4   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Exit program&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F5       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display special mouse commands (Alt: transmit Tx5)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F6       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open next file in directory (Alt: toggle &quot;Call 1st&quot;)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F6 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode all remaining files in directory&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F7       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display Message Averaging window&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F11      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency down 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies down 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency down 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency down 2000 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F12      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency up 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies up 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency up 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency up 2000 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set now transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctl+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set next transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+B    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Best S+P&quot; status&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+C    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Call 1st&quot; checkbox&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+D    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode again at QSO frequency&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+D  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Full decode (both windows)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+E   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn on TX even/1st&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+E  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn off TX even/1st&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+E    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Erase&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Edit the free text message box&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+G    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Generate standard messages&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+H    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Halt Tx&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+L   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Lookup callsign in database, generate standard messages&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+M    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Monitor&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+N    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Enable Tx&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+O   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open a .wav file&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+O    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Change operator&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Q    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Log QSO&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+R   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RRR (not in FT4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+R    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RR73&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+S    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop monitoring&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+T    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle Tune status&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Z    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear hung decoder status&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;</source>
-        <extracomment>Keyboard shortcuts help window contents</extracomment>
-        <translation type="vanished">Finestra Scorciatoie.Tastiera dei contenuti di help</translation>
-    </message>
-    <message>
-        <source>&lt;table cellspacing=1&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Esc      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop Tx, abort QSO, clear next-call queue&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F1       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Online User&apos;s Guide (Alt: transmit Tx6)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Copyright Notice&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;About WSJT-X&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F2       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open settings window (Alt: transmit Tx2)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F3       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display keyboard shortcuts (Alt: transmit Tx3)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F4       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear DX Call, DX Grid, Tx messages 1-4 (Alt: transmit Tx4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+F4   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Exit program&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F5       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display special mouse commands (Alt: transmit Tx5)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F6       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open next file in directory (Alt: toggle &quot;Call 1st&quot;)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F6 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode all remaining files in directrory&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F7       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display Message Averaging window&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F11      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency down 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies down 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency down 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency down 2000 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F12      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency up 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies up 1 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency up 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency up 2000 Hz&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set now transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctl+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set next transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+B    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Best S+P&quot; status&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+C    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Call 1st&quot; checkbox&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+D    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode again at QSO frequency&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+D  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Full decode (both windows)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+E   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn on TX even/1st&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+E  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn off TX even/1st&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+E    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Erase&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Edit the free text message box&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+G    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Generate standard messages&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+H    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Halt Tx&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+L   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Lookup callsign in database, generate standard messages&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+M    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Monitor&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+N    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Enable Tx&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+O   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open a .wav file&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+O    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Change operator&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Q    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Log QSO&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+R   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RRR (not in FT4)&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+R    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RR73&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+S    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop monitoring&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+T    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle Tune status&lt;/td&gt;&lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Z    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear hung decoder status&lt;/td&gt;&lt;/tr&gt;
-&lt;/table&gt;</source>
-        <extracomment>Keyboard shortcuts help window contents</extracomment>
-        <translatorcomment>Scorciatoie da tastiera contenuto della finestra della guida</translatorcomment>
-        <translation type="vanished">&lt;table cellspacing = 1&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Esc &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Ferma Tx, interrompi QSO, cancella la coda della chiamata successiva &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F1 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Guida in linea dell&apos;utente (Alt: trasmissione Tx6) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F1 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Avviso sul copyright &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F1 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Informazioni su WSJT-X &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F2 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Apri la finestra delle impostazioni (Alt: trasmissione Tx2) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F3 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Visualizza scorciatoie da tastiera (Alt: trasmissione Tx3) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F4 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cancella chiamata DX, Griglia DX, messaggi Tx 1-4 (Alt: trasmissione Tx4) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + F4 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Esci dal programma &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F5 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Visualizza comandi speciali del mouse (Alt: trasmissione Tx5) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Apri il file successivo nella directory (Alt: attiva / disattiva &quot;Chiama 1º&quot;) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Decodifica tutti i file rimanenti nella directory &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F7 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Visualizza finestra media messaggio &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Rx verso il basso di 1 Hz &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta frequenze Rx e Tx identiche verso il basso di 1 Hz &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Tx verso il basso di 60 Hz (FT8) o 90 Hz (FT4) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + Maiusc + F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza di composizione verso il basso di 2000 Hz &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Rx su 1 Hz &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta frequenze Rx e Tx identiche su 1 Hz &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Tx su 60 Hz (FT8) o 90 Hz (FT4) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + Maiusc + F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza di composizione verso l&apos;alto di 2000 Hz &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + 1-6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta ora la trasmissione a questo numero nella scheda 1 &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctl + 1-6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta la trasmissione successiva a questo numero nella scheda 1 &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + B &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Alterna lo stato &quot;Migliore S + P&quot; &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + C &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Attiva / disattiva la casella di controllo &quot;Chiama 1º&quot; &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + D &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Decodifica di nuovo alla frequenza QSO &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + D &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Decodifica completa (entrambe le finestre) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + E &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Attiva TX pari / 1 ° &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + E &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Disattiva TX pari / 1 ° &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + E &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Erase&lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Modifica la casella del messaggio di testo libero &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + G &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Genera messaggi standard &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + H &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Interrompi trasmissione &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + L &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cerca il nominativo nel database, genera messaggi standard &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + M &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Monitor&lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + N &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Abilita Tx &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + O &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Apri un file .wav &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + O &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cambia operatore &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + Q &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Registra QSO &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + R &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta messaggio Tx4 su RRR (non in FT4) &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + R &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta messaggio Tx4 su RR73 &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + S &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Interrompi monitoraggio &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + T &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Attiva / disattiva stato di regolazione &lt;/td&gt; &lt;/tr&gt;
-  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + Z &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cancella stato decoder bloccato &lt;/td&gt; &lt;/tr&gt;
-&lt;/table&gt;</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="3061"/>
@@ -4742,7 +4370,7 @@ is already in CALL3.TXT, do you wish to replace it?</source>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="6276"/>
         <source>Warning:  DX Call field is empty.</source>
-        <translation>Avviso: il campo Chiamata DX è vuoto.</translation>
+        <translation>Avviso: il campo Nominativo DX è vuoto.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="6337"/>
@@ -4824,10 +4452,6 @@ is already in CALL3.TXT, do you wish to replace it?</source>
         <translation>Sei sicuro di voler cancellare la tabella hash WSPR?</translation>
     </message>
     <message>
-        <source>VHF features warning</source>
-        <translation type="vanished">VHF presenta un avviso</translation>
-    </message>
-    <message>
         <location filename="../widgets/mainwindow.cpp" line="7934"/>
         <source>Tune digital gain </source>
         <translation>Ottimizza il guadagno digitale </translation>
@@ -4884,6 +4508,377 @@ Server UDP%2:%3</translation>
         <location filename="../widgets/mainwindow.cpp" line="9083"/>
         <source>Are you sure you want to clear the QSO queues?</source>
         <translation>Sei sicuro di voler cancellare le code QSO?</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to call the first decoded responder to my CQ.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selezionare per chiamare il primo risponditore decodificato al mio CQ.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Check to call the first decoded responder to my CQ.</source>
+        <translation type="vanished">Selezionare per chiamare il primo risponditore decodificato al mio CQ.</translation>
+    </message>
+    <message>
+        <source>Call 1st</source>
+        <translation type="vanished">Chiama il 1º</translation>
+    </message>
+    <message>
+        <source>Toggle Tx mode</source>
+        <translation type="vanished">Attiva / disattiva la modalità Tx</translation>
+    </message>
+    <message>
+        <source>Tx JT9 @</source>
+        <translation type="vanished">Tx JT9 @</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double-click on another caller to queue that call for your next QSO.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fare doppio clic su un altro chiamante per mettere in coda quella chiamata per il QSO successivo.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Double-click on another caller to queue that call for your next QSO.</source>
+        <translation type="vanished">Fare doppio clic su un altro chiamante per mettere in coda quella chiamata per il QSO successivo.</translation>
+    </message>
+    <message>
+        <source>Next Call</source>
+        <translation type="vanished">Prossima chiamata</translation>
+    </message>
+    <message>
+        <source>Calling CQ </source>
+        <translation type="vanished">Chiamando CQ </translation>
+    </message>
+    <message>
+        <source>Generate a CQ message</source>
+        <translation type="vanished">Genera un messaggio CQ</translation>
+    </message>
+    <message>
+        <source>Generate message with RRR</source>
+        <translation type="vanished">Genera un messaggio con RRR</translation>
+    </message>
+    <message>
+        <source>RRR</source>
+        <translation type="vanished">RRR</translation>
+    </message>
+    <message>
+        <source>Generate message with report</source>
+        <translation type="vanished">Genera un messaggio con rapporto</translation>
+    </message>
+    <message>
+        <source>dB</source>
+        <translation type="vanished">dB</translation>
+    </message>
+    <message>
+        <source>Answering CQ</source>
+        <translation type="vanished">Rispondere al CQ</translation>
+    </message>
+    <message>
+        <source>Generate message for replying to a CQ</source>
+        <translation type="vanished">Genera messaggio di risposta al CQ</translation>
+    </message>
+    <message>
+        <source>Generate message with R+report</source>
+        <translation type="vanished">Genera messaggio con R+rapporto</translation>
+    </message>
+    <message>
+        <source>R+dB</source>
+        <translation type="vanished">R+dB</translation>
+    </message>
+    <message>
+        <source>Generate message with 73</source>
+        <translation type="vanished">Genera messaggio con 73</translation>
+    </message>
+    <message>
+        <source>73</source>
+        <translation type="vanished">73</translation>
+    </message>
+    <message>
+        <source>Send this standard (generated) message</source>
+        <translation type="vanished">Invia questo messaggio standard (generato)</translation>
+    </message>
+    <message>
+        <source>Gen msg</source>
+        <translation type="vanished">Gen msg</translation>
+    </message>
+    <message>
+        <source>Send this free-text message (max 13 characters)</source>
+        <translation type="vanished">Invia questo messaggio di testo libero (massimo 13 caratteri)</translation>
+    </message>
+    <message>
+        <source>Free msg</source>
+        <translation type="vanished">Msg libero</translation>
+    </message>
+    <message>
+        <source>3</source>
+        <translation type="vanished">3</translation>
+    </message>
+    <message>
+        <source>Percentage of 2-minute sequences devoted to transmitting.</source>
+        <translation type="vanished">Percentuale di sequenze di 2 minuti dedicate alla trasmissione.</translation>
+    </message>
+    <message>
+        <source>FT240W</source>
+        <translation type="obsolete">FT240W</translation>
+    </message>
+    <message>
+        <source>Prefer type 1 messages</source>
+        <translation type="vanished">Preferisci i messaggi di tipo 1</translation>
+    </message>
+    <message>
+        <source>Transmit during the next 2-minute sequence.</source>
+        <translation type="vanished">Trasmettere durante la sequenza di 2 minuti successiva.</translation>
+    </message>
+    <message>
+        <source>Configuration</source>
+        <translation type="vanished">Configurazione</translation>
+    </message>
+    <message>
+        <source>F2</source>
+        <translation type="vanished">F2</translation>
+    </message>
+    <message>
+        <source>Monitor OFF at startup</source>
+        <translation type="vanished">Monitor OFF all&apos;avvio</translation>
+    </message>
+    <message>
+        <source>Convert mode to RTTY for logging</source>
+        <translation type="vanished">Convertire la modalità in RTTY per la registrazione</translation>
+    </message>
+    <message>
+        <source>Log dB reports to Comments</source>
+        <translation type="vanished">Registra rapporto dB nei commenti</translation>
+    </message>
+    <message>
+        <source>Prompt me to log QSO</source>
+        <translation type="vanished">Avvisami di registrare il QSO</translation>
+    </message>
+    <message>
+        <source>Blank line between decoding periods</source>
+        <translation type="vanished">Riga vuota tra i periodi di decodifica</translation>
+    </message>
+    <message>
+        <source>Clear DX Call and Grid after logging</source>
+        <translation type="vanished">Cancella chiamata DX e griglia dopo la registrazione</translation>
+    </message>
+    <message>
+        <source>Display distance in miles</source>
+        <translation type="vanished">Visualizza la distanza in miglia</translation>
+    </message>
+    <message>
+        <source>Double-click on call sets Tx Enable</source>
+        <translation type="vanished">Fare doppio clic sui set di chiamate Abilita Tx</translation>
+    </message>
+    <message>
+        <source>Tx disabled after sending 73</source>
+        <translation type="vanished">Tx disabilitato dopo l&apos;invio 73</translation>
+    </message>
+    <message>
+        <source>Allow multiple instances</source>
+        <translation type="vanished">Consenti più istanze</translation>
+    </message>
+    <message>
+        <source>Tx freq locked to Rx freq</source>
+        <translation type="vanished">Tx freq bloccato su Rx freq</translation>
+    </message>
+    <message>
+        <source>JT9+JT65</source>
+        <translation type="vanished">JT9+JT65</translation>
+    </message>
+    <message>
+        <source>Tx messages to Rx Frequency window</source>
+        <translation type="vanished">Messaggi Tx alla finestra Frequenza Rx</translation>
+    </message>
+    <message>
+        <source>Gray1</source>
+        <translation type="vanished">Gray1</translation>
+    </message>
+    <message>
+        <source>Show DXCC entity and worked B4 status</source>
+        <translation type="vanished">Mostra entità DXCC e stato B4 lavorato</translation>
+    </message>
+    <message>
+        <source>WSPR-LF</source>
+        <translation type="vanished">WSPR-LF</translation>
+    </message>
+    <message>
+        <source>Experimental LF/MF mode</source>
+        <translation type="vanished">Modo Sperimentale LF/MF</translation>
+    </message>
+    <message>
+        <source>Contest Log</source>
+        <translation type="vanished">Log del Contest</translation>
+    </message>
+    <message>
+        <source>Quick-Start Guide to WSJT-X 2.0</source>
+        <translation type="vanished">Guida rapida per WSJT-X 2.0</translation>
+    </message>
+    <message>
+        <source>%1 (%2 sec) audio frames dropped</source>
+        <translation type="vanished">%1 (%2 sec) frames audio perse</translation>
+    </message>
+    <message>
+        <source>Audio Source</source>
+        <translation type="vanished">Sorgente Audio</translation>
+    </message>
+    <message>
+        <source>Reduce system load</source>
+        <translation type="vanished">Riduci carico di sistema</translation>
+    </message>
+    <message>
+        <source>Excessive dropped samples - %1 (%2 sec) audio frames dropped</source>
+        <translation type="vanished">Eccessivi campioni persi - %1 (%2 sec) frames audio ignorate</translation>
+    </message>
+    <message>
+        <source>If you make fair use of any part of WSJT-X under terms of the GNU General Public License, you must display the following copyright notice prominently in your derivative work:
+
+&quot;The algorithms, source code, look-and-feel of WSJT-X and related programs, and protocol specifications for the modes FSK441, FT8, JT4, JT6M, JT9, JT65, JTMS, QRA64, ISCAT, MSK144 are Copyright (C) 2001-2021 by one or more of the following authors: Joseph Taylor, K1JT; Bill Somerville, G4WJS; Steven Franke, K9AN; Nico Palermo, IV3NWV; Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; Philip Karn, KA9Q; and other members of the WSJT Development Group.&quot;</source>
+        <translation type="vanished">Se si utilizza in modo equo qualsiasi parte di WSJT-X in base ai termini della GNU General Public License, è necessario visualizzare in modo evidente la seguente nota sul copyright nell&apos;opera derivata:
+
+&quot;Gli algoritmi, il codice sorgente, l&apos;aspetto di WSJT-X e dei relativi programmi e le specifiche del protocollo per le modalità FSK441, FT8, JT4, JT6M, JT9, JT65, JTMS, QRA64, ISCAT, MSK144 sono Copyright (C) 2001-2021 di uno o più dei seguenti autori: Joseph Taylor, K1JT; Bill Somerville, G4WJS; Steven Franke, K9AN; Nico Palermo, IV3NWV; Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; Philip Karn, KA9Q e altri membri del WSJT Development Group. &quot;</translation>
+    </message>
+    <message>
+        <source>&lt;table cellspacing=1&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Esc      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop Tx, abort QSO, clear next-call queue&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F1       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Online User&apos;s Guide (Alt: transmit Tx6)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Copyright Notice&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;About WSJT-X&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F2       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open settings window (Alt: transmit Tx2)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F3       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display keyboard shortcuts (Alt: transmit Tx3)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F4       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear DX Call, DX Grid, Tx messages 1-4 (Alt: transmit Tx4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+F4   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Exit program&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F5       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display special mouse commands (Alt: transmit Tx5)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F6       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open next file in directory (Alt: toggle &quot;Call 1st&quot;)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F6 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode all remaining files in directory&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F7       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display Message Averaging window&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F11      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency down 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies down 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency down 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency down 2000 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F12      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency up 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies up 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency up 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency up 2000 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set now transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctl+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set next transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+B    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Best S+P&quot; status&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+C    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Call 1st&quot; checkbox&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+D    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode again at QSO frequency&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+D  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Full decode (both windows)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+E   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn on TX even/1st&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+E  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn off TX even/1st&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+E    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Erase&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Edit the free text message box&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+G    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Generate standard messages&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+H    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Halt Tx&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+L   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Lookup callsign in database, generate standard messages&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+M    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Monitor&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+N    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Enable Tx&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+O   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open a .wav file&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+O    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Change operator&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Q    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Log QSO&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+R   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RRR (not in FT4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+R    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RR73&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+S    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop monitoring&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+T    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle Tune status&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Z    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear hung decoder status&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</source>
+        <extracomment>Keyboard shortcuts help window contents</extracomment>
+        <translation type="vanished">Finestra Scorciatoie.Tastiera dei contenuti di help</translation>
+    </message>
+    <message>
+        <source>&lt;table cellspacing=1&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Esc      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop Tx, abort QSO, clear next-call queue&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F1       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Online User&apos;s Guide (Alt: transmit Tx6)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Copyright Notice&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F1  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;About WSJT-X&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F2       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open settings window (Alt: transmit Tx2)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F3       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display keyboard shortcuts (Alt: transmit Tx3)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F4       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear DX Call, DX Grid, Tx messages 1-4 (Alt: transmit Tx4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+F4   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Exit program&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F5       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display special mouse commands (Alt: transmit Tx5)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F6       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open next file in directory (Alt: toggle &quot;Call 1st&quot;)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F6 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode all remaining files in directrory&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F7       &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Display Message Averaging window&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F11      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency down 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies down 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency down 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F11 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency down 2000 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;F12      &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Rx frequency up 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move identical Rx and Tx frequencies up 1 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move Tx frequency up 60 Hz (FT8) or 90 Hz (FT4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+Shift+F12 &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Move dial frequency up 2000 Hz&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set now transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctl+1-6  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set next transmission to this number on Tab 1&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+B    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Best S+P&quot; status&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+C    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle &quot;Call 1st&quot; checkbox&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+D    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Decode again at QSO frequency&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+D  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Full decode (both windows)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+E   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn on TX even/1st&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Shift+E  &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Turn off TX even/1st&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+E    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Erase&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+F   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Edit the free text message box&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+G    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Generate standard messages&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+H    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Halt Tx&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+L   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Lookup callsign in database, generate standard messages&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+M    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Monitor&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+N    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Enable Tx&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+O   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Open a .wav file&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+O    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Change operator&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Q    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Log QSO&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Ctrl+R   &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RRR (not in FT4)&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+R    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Set Tx4 message to RR73&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+S    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Stop monitoring&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+T    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Toggle Tune status&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;&lt;b&gt;Alt+Z    &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Clear hung decoder status&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;</source>
+        <extracomment>Keyboard shortcuts help window contents</extracomment>
+        <translatorcomment>Scorciatoie da tastiera contenuto della finestra della guida</translatorcomment>
+        <translation type="vanished">&lt;table cellspacing = 1&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Esc &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Ferma Tx, interrompi QSO, cancella la coda della chiamata successiva &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F1 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Guida in linea dell&apos;utente (Alt: trasmissione Tx6) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F1 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Avviso sul copyright &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F1 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Informazioni su WSJT-X &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F2 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Apri la finestra delle impostazioni (Alt: trasmissione Tx2) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F3 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Visualizza scorciatoie da tastiera (Alt: trasmissione Tx3) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F4 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cancella chiamata DX, Griglia DX, messaggi Tx 1-4 (Alt: trasmissione Tx4) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + F4 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Esci dal programma &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F5 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Visualizza comandi speciali del mouse (Alt: trasmissione Tx5) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Apri il file successivo nella directory (Alt: attiva / disattiva &quot;Chiama 1º&quot;) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Decodifica tutti i file rimanenti nella directory &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F7 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Visualizza finestra media messaggio &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Rx verso il basso di 1 Hz &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta frequenze Rx e Tx identiche verso il basso di 1 Hz &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Tx verso il basso di 60 Hz (FT8) o 90 Hz (FT4) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + Maiusc + F11 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza di composizione verso il basso di 2000 Hz &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Rx su 1 Hz &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta frequenze Rx e Tx identiche su 1 Hz &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza Tx su 60 Hz (FT8) o 90 Hz (FT4) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + Maiusc + F12 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Sposta la frequenza di composizione verso l&apos;alto di 2000 Hz &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + 1-6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta ora la trasmissione a questo numero nella scheda 1 &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctl + 1-6 &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta la trasmissione successiva a questo numero nella scheda 1 &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + B &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Alterna lo stato &quot;Migliore S + P&quot; &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + C &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Attiva / disattiva la casella di controllo &quot;Chiama 1º&quot; &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + D &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Decodifica di nuovo alla frequenza QSO &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + D &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Decodifica completa (entrambe le finestre) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + E &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Attiva TX pari / 1 ° &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Maiusc + E &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Disattiva TX pari / 1 ° &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + E &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Erase&lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + F &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Modifica la casella del messaggio di testo libero &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + G &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Genera messaggi standard &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + H &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Interrompi trasmissione &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + L &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cerca il nominativo nel database, genera messaggi standard &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + M &lt;/b&gt;&lt;/td&gt;&lt;td&gt;Monitor&lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + N &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Abilita Tx &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + O &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Apri un file .wav &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + O &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cambia operatore &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + Q &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Registra QSO &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Ctrl + R &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta messaggio Tx4 su RRR (non in FT4) &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + R &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Imposta messaggio Tx4 su RR73 &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + S &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Interrompi monitoraggio &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + T &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Attiva / disattiva stato di regolazione &lt;/td&gt; &lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt; &lt;b&gt; Alt + Z &lt;/b&gt;&lt;/td&gt; &lt;td&gt; Cancella stato decoder bloccato &lt;/td&gt; &lt;/tr&gt;
+&lt;/table&gt;</translation>
+    </message>
+    <message>
+        <source>VHF features warning</source>
+        <translation type="vanished">VHF presenta un avviso</translation>
     </message>
 </context>
 <context>
@@ -4999,13 +4994,6 @@ Server UDP%2:%3</translation>
     </message>
 </context>
 <context>
-    <name>NetworkAccessManager</name>
-    <message>
-        <source>Network SSL/TLS Errors</source>
-        <translation type="vanished">Errori di rete SSL/TSL</translation>
-    </message>
-</context>
-<context>
     <name>OmniRigTransceiver</name>
     <message>
         <location filename="../Transceiver/OmniRigTransceiver.cpp" line="53"/>
@@ -5024,13 +5012,13 @@ Server UDP%2:%3</translation>
         <translation>OmniRig: non so come impostare la frequenza del rig</translation>
     </message>
     <message>
-        <source>OmniRig: timeout waiting for update from rig</source>
-        <translation type="vanished">OmniRig: timeout in attesa di aggiornamento dal rig</translation>
-    </message>
-    <message>
         <location filename="../Transceiver/OmniRigTransceiver.cpp" line="356"/>
         <source>OmniRig COM/OLE error: %1 at %2: %3 (%4)</source>
-        <translation>OmniRig errore.COM/OLE: %1 a %2: %3 (%4)</translation>
+        <translation>OmniRig errore COM/OLE: %1 a %2: %3 (%4)</translation>
+    </message>
+    <message>
+        <source>OmniRig: timeout waiting for update from rig</source>
+        <translation type="vanished">OmniRig: timeout in attesa di aggiornamento dal rig</translation>
     </message>
 </context>
 <context>
@@ -5043,10 +5031,6 @@ Server UDP%2:%3</translation>
 </context>
 <context>
     <name>QObject</name>
-    <message>
-        <source>User Defined</source>
-        <translation type="vanished">Definito dall&apos;utente</translation>
-    </message>
     <message>
         <location filename="../Network/LotWUsers.cpp" line="229"/>
         <source>Failed to open LotW users CSV file: &apos;%1&apos;</source>
@@ -5080,12 +5064,16 @@ Server UDP%2:%3</translation>
     <message>
         <location filename="../WFPalette.cpp" line="104"/>
         <source>Error opening waterfall palette file &quot;%1&quot;: %2.</source>
-        <translation>Errore lettura del file della tavolozza del display a cascata &quot;%1: %2.</translation>
+        <translation>Errore apertura del file della tavolozza del display a cascata &quot;%1: %2.</translation>
     </message>
     <message>
         <location filename="../WFPalette.cpp" line="256"/>
         <source>Error writing waterfall palette file &quot;%1&quot;: %2.</source>
-        <translation>Errore lettura del file della tavolozza del display a cascata &quot;%1: %2.</translation>
+        <translation>Errore scrittura del file della tavolozza del display a cascata &quot;%1: %2.</translation>
+    </message>
+    <message>
+        <source>User Defined</source>
+        <translation type="vanished">Definito dall&apos;utente</translation>
     </message>
 </context>
 <context>
@@ -5207,10 +5195,6 @@ Errore (%2):%3</translation>
         <translation>Seleziona questa opzione se ricevi errori SSL / TLS</translation>
     </message>
     <message>
-        <source>Check this is you get SSL/TLS errors</source>
-        <translation type="vanished">Verifica che si ottengano errori SSL / TLS</translation>
-    </message>
-    <message>
         <location filename="../SampleDownloader.cpp" line="132"/>
         <source>Input Error</source>
         <translation>Errore ingresso</translation>
@@ -5219,6 +5203,10 @@ Errore (%2):%3</translation>
         <location filename="../SampleDownloader.cpp" line="132"/>
         <source>Invalid URL format</source>
         <translation>Formato URL invalido</translation>
+    </message>
+    <message>
+        <source>Check this is you get SSL/TLS errors</source>
+        <translation type="vanished">Verifica che si ottengano errori SSL / TLS</translation>
     </message>
 </context>
 <context>
@@ -5232,10 +5220,6 @@ Errore (%2):%3</translation>
         <location filename="../Audio/soundin.cpp" line="28"/>
         <source>An error occurred during read from the audio input device.</source>
         <translation>Si è verificato un errore durante la lettura dal dispositivo di ingresso audio.</translation>
-    </message>
-    <message>
-        <source>Audio data not being fed to the audio input device fast enough.</source>
-        <translation type="vanished">I dati audio non vengono inviati al dispositivo di input audio abbastanza velocemente.</translation>
     </message>
     <message>
         <location filename="../Audio/soundin.cpp" line="36"/>
@@ -5286,6 +5270,10 @@ Errore (%2):%3</translation>
         <location filename="../Audio/soundin.cpp" line="162"/>
         <source>Stopped</source>
         <translation>Fermato</translation>
+    </message>
+    <message>
+        <source>Audio data not being fed to the audio input device fast enough.</source>
+        <translation type="vanished">I dati audio non vengono inviati al dispositivo di input audio abbastanza velocemente.</translation>
     </message>
 </context>
 <context>
@@ -5361,7 +5349,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../Configuration.cpp" line="318"/>
         <source>Add Station</source>
-        <translation>Aggoingi Stazione</translation>
+        <translation>Aggiungi Stazione</translation>
     </message>
     <message>
         <location filename="../Configuration.cpp" line="323"/>
@@ -5578,14 +5566,6 @@ Errore (%2):%3</translation>
         <translation>Split  </translation>
     </message>
     <message>
-        <source>  JT9</source>
-        <translation type="vanished">  JT9</translation>
-    </message>
-    <message>
-        <source>JT65  </source>
-        <translation type="vanished">JT65  </translation>
-    </message>
-    <message>
         <location filename="../widgets/widegraph.ui" line="392"/>
         <source>Number of FFTs averaged (controls waterfall scrolling rate)</source>
         <translation>Numero medio di FFT (controlla la velocità di scorrimento del display a cascata)</translation>
@@ -5608,7 +5588,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../widgets/widegraph.cpp" line="24"/>
         <source>User Defined</source>
-        <translation>Definito dall&apos;.utente</translation>
+        <translation>Definito dall&apos; utente</translation>
     </message>
     <message>
         <location filename="../widgets/widegraph.cpp" line="28"/>
@@ -5620,6 +5600,14 @@ Errore (%2):%3</translation>
         <location filename="../widgets/widegraph.cpp" line="442"/>
         <source>Read Palette</source>
         <translation>Leggi Tavolozza</translation>
+    </message>
+    <message>
+        <source>  JT9</source>
+        <translation type="vanished">  JT9</translation>
+    </message>
+    <message>
+        <source>JT65  </source>
+        <translation type="vanished">JT65  </translation>
     </message>
 </context>
 <context>
@@ -5670,7 +5658,7 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../Configuration.ui" line="43"/>
         <source>My C&amp;all:</source>
-        <translation>&amp;Mio indicativo:</translation>
+        <translation>Mio N&amp;ominativo:</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="53"/>
@@ -5715,22 +5703,22 @@ Errore (%2):%3</translation>
     <message>
         <location filename="../Configuration.ui" line="134"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type 2 compound callsigns are those with prefixes or suffixes not included in the allowed shortlist (See Help-&amp;gt;Add-on prefixes and suffixes).&lt;/p&gt;&lt;p&gt;This option determines which generated messages should contain your full type 2 compound call sign rather than your base callsign. It only applies if you have a type 2 compound callsign.&lt;/p&gt;&lt;p&gt;This option controls the way the messages that are used to answer CQ calls are generated. Generated messages 6 (CQ) and 5 (73) will always contain your full callsign. The JT65 and JT9 protocols allow for some standard messages with your full call at the expense of another piece of information such as the DX call or your locator.&lt;/p&gt;&lt;p&gt;Choosing message 1 omits the DX callsign which may be an issue when replying to CQ calls. Choosing message 3 also omits the DX callsign and many versions of this and other software will not extract the report. Choosing neither means that your full callsign only goes in your message 5 (73) so your QSO partner may log the wrong callsign.&lt;/p&gt;&lt;p&gt;None of these options are perfect, message 3 is usually best but be aware your QSO partner may not log the report you send them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I nominativi composti di tipo 2 sono quelli con prefissi o suffissi non inclusi nella lista consentita (Vedi Aiuto-&amp;gt; Prefissi e suffissi aggiuntivi).&lt;/p&gt;&lt;p&gt; Questa opzione determina quali messaggi generati devono contenere la chiamata composta completa di tipo 2 anziché il tuo nominativo di base. Si applica solo se si dispone di un nominativo composto di tipo 2.&lt;/p&gt;&lt;p&gt; Questa opzione controlla il modo in cui vengono generati i messaggi utilizzati per rispondere alle chiamate CQ. I messaggi generati 6 (CQ) e 5 (73) conterranno sempre il tuo nominativo completo. I protocolli JT65 e JT9 consentono alcuni messaggi standard con il tuo nominativo completo a spese di un&apos;altra informazione come la chiamata DX o il tuo localizzatore. &lt;/p&gt;&lt;p&gt; La scelta del messaggio 1 omette il nominativo DX che potrebbe essere un problema quando si risponde alle chiamate CQ. La scelta del messaggio 3 omette anche il nominativo DX e molte versioni di questo e di altri software non estrarranno il rapporto. Scegliere nessuno dei due significa che il tuo nominativo completo va inserito solo nel tuo messaggio 5 (73), quindi il tuo partner del QSO potrebbe registrare un nominativo errato.&lt;/p&gt;&lt;p&gt;Nessuna di queste opzioni è perfetta, il messaggio 3 è in genere il migliore ma fai attenzione al tuo partner di QSO che potrebbe non registrare il rapporto che gli hai inviato.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;I nominativi composti di tipo 2 sono quelli con prefissi o suffissi non inclusi nella lista consentita (Vedi Aiuto-&amp;gt; Prefissi e suffissi aggiuntivi).&lt;/p&gt;&lt;p&gt; Questa opzione determina quali messaggi generati devono contenere la nominativo composto completo di tipo 2 anziché il tuo nominativo di base. Si applica solo se si dispone di un nominativo composto di tipo 2.&lt;/p&gt;&lt;p&gt; Questa opzione controlla il modo in cui vengono generati i messaggi utilizzati per rispondere alle chiamate CQ. I messaggi generati 6 (CQ) e 5 (73) conterranno sempre il tuo nominativo completo. I protocolli JT65 e JT9 consentono alcuni messaggi standard con il tuo nominativo completo a spese di un&apos;altra informazione come il nominativo DX o il tuo localizzatore. &lt;/p&gt;&lt;p&gt; La scelta del messaggio 1 omette il nominativo DX che potrebbe essere un problema quando si risponde alle chiamate CQ. La scelta del messaggio 3 omette anche il nominativo DX e molte versioni di questo e di altri software non estrarranno il rapporto. Scegliere nessuno dei due significa che il tuo nominativo completo va inserito solo nel tuo messaggio 5 (73), quindi il tuo partner del QSO potrebbe registrare un nominativo errato.&lt;/p&gt;&lt;p&gt;Nessuna di queste opzioni è perfetta, il messaggio 3 è in genere il migliore ma fai attenzione al tuo partner di QSO che potrebbe non registrare il rapporto che gli hai inviato.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="141"/>
         <source>Full call in Tx1</source>
-        <translation>Chiamata completa in Tx1</translation>
+        <translation>Nominativo completo in Tx1</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="146"/>
         <source>Full call in Tx3</source>
-        <translation>Chiamata completa in Tx3</translation>
+        <translation>Nominativo completo in Tx3</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="151"/>
         <source>Full call in Tx5 only</source>
-        <translation>Chiamata completa solo in Tx5</translation>
+        <translation>Nominativo completo solo in Tx5</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="171"/>
@@ -5841,10 +5829,6 @@ Errore (%2):%3</translation>
         <location filename="../Configuration.ui" line="359"/>
         <source> minutes</source>
         <translation> minuti</translation>
-    </message>
-    <message>
-        <source>Enable VHF/UHF/Microwave features</source>
-        <translation type="vanished">Abilita le funzionalità VHF / UHF / Microonde</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="381"/>
@@ -6338,8 +6322,8 @@ radio interface behave as expected.</source>
         <translation>Tentare di attivare il trasmettitore.
 Fai di nuovo clic per disattivare. Normalmente non dovrebbe esserci nessuna
 potenza in uscita poiché al momento non viene generato audio.
-Verificare che qualsiasi indicazione Tx sulla radio e / o sul proprio
-l&apos;interfaccia radio si comporta come previsto.</translation>
+Verificare che qualsiasi indicazione Tx sulla radio e / o sulla propria
+interfaccia radio si comporti come previsto.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1308"/>
@@ -6354,7 +6338,7 @@ l&apos;interfaccia radio si comporta come previsto.</translation>
     <message>
         <location filename="../Configuration.ui" line="1326"/>
         <source>Fake It</source>
-        <translation>Fai finta</translation>
+        <translation>Simula</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1336"/>
@@ -6397,7 +6381,7 @@ periodi di trasmissione.</translation>
     <message>
         <location filename="../Configuration.ui" line="1912"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the service port number of the UDP server that WSJT-X should send updates to. If this is zero no updates will be sent.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Immettere il numero di porta del servizio del server UDP a cui WSJT-X deve inviare gli aggiornamenti. Se questo è zero, non verrà inviato alcun aggiornamento.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Immettere il numero di porta del servizio del server UDP a cui WSJT-X deve inviare gli aggiornamenti. Se questo è zero non verrà inviato alcun aggiornamento.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1922"/>
@@ -6427,7 +6411,7 @@ periodi di trasmissione.</translation>
     <message>
         <location filename="../Configuration.ui" line="2465"/>
         <source>Days since last upload</source>
-        <translation>Giorni dall&apos;ultimo aggiornamento</translation>
+        <translation>Giorni dall&apos;ultimo caricamento</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1444"/>
@@ -6492,7 +6476,7 @@ entrambi qui.</translation>
     <message>
         <location filename="../Configuration.ui" line="265"/>
         <source>Highlight DX Call in message</source>
-        <translation>Evidenzia Indicativo DX nel messaggio</translation>
+        <translation>Evidenzia Nominativo DX nel messaggio</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1451"/>
@@ -6555,7 +6539,7 @@ entrambi qui.</translation>
     <message>
         <location filename="../Configuration.ui" line="1608"/>
         <source>Remember power settings by band</source>
-        <translation>Ricorda le impostazioni di alimentazione per banda</translation>
+        <translation>Ricorda le impostazioni di potenza per banda</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1614"/>
@@ -6657,14 +6641,14 @@ campo commenti.</translation>
         <location filename="../Configuration.ui" line="1794"/>
         <source>Check this option to force the clearing of the DX Call
 and DX Grid fields when a 73 or free text message is sent.</source>
-        <translation>Seleziona questa opzione per forzare la cancellazione della chiamata DX
+        <translation>Seleziona questa opzione per forzare la cancellazione del nominativo DX
 e i campi della Griglia DX quando viene inviato un messaggio di testo libero o 73.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1798"/>
         <source>Clear &amp;DX call and grid after logging</source>
         <translatorcomment>(Griglia=GRID LOCATOR)</translatorcomment>
-        <translation>Cancella chiamata &amp;DX e la griglia dopo la registrazione</translation>
+        <translation>Cancella nominativo &amp;DX e la griglia dopo la registrazione</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1805"/>
@@ -6685,7 +6669,7 @@ e i campi della Griglia DX quando viene inviato un messaggio di testo libero o 7
     <message>
         <location filename="../Configuration.ui" line="1822"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check to have QSOs logged automatically, when complete.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Verifica che i QSO siano registrati automaticamente, quando completi. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selezionare per registrare i QSO automaticamente, quando completi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1825"/>
@@ -6702,16 +6686,6 @@ e i campi della Griglia DX quando viene inviato un messaggio di testo libero o 7
         <location filename="../Configuration.ui" line="1848"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program can send your station details and all decoded signals with grid squares as spots to the http://pskreporter.info web site.&lt;/p&gt;&lt;p&gt;This is used for reverse beacon analysis which is very useful for assessing propagation and system performance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt; &lt;p&gt; Il programma può inviare i dettagli della stazione e tutti i segnali decodificati con quadrati della griglia come punti al sito web http://pskreporter.info. &lt;/p&gt; &lt;p&gt; Questo è utilizzato per l&apos;analisi del beacon inverso che è molto utile per valutare la propagazione e le prestazioni del sistema. &lt;/p&gt; &lt;/body&gt; &lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>The program can send your station details and all
-decoded signals as spots to the http://pskreporter.info web site.
-This is used for reverse beacon analysis which is very useful
-for assessing propagation and system performance.</source>
-        <translation type="vanished">Il programma può inviare i dettagli della tua stazione e tutto il resto
-segnali decodificati come spot per il sito Web http://pskreporter.info.
-Questo è usato per l&apos;analisi del beacon inverso che è molto utile
-per valutare la propagazione e le prestazioni del sistema.</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="1851"/>
@@ -6749,10 +6723,6 @@ per valutare la propagazione e le prestazioni del sistema.</translation>
         <translation>Porta del Server UDP:</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the service port number of the UDP server that WSJT-X should send updates to. If this is zero no updates will be broadcast.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Immettere il numero di porta del servizio del server UDP a cui WSJT-X deve inviare gli aggiornamenti. Se questo è zero, non verranno trasmessi aggiornamenti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <location filename="../Configuration.ui" line="1966"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this enabled WSJT-X will accept certain requests back from a UDP server that receives decode messages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Con questo abilitato WSJT-X accetterà alcune richieste di ritorno da un server UDP che riceve messaggi di decodifica.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
@@ -6780,7 +6750,7 @@ per valutare la propagazione e le prestazioni del sistema.</translation>
     <message>
         <location filename="../Configuration.ui" line="1989"/>
         <source>Accepted UDP request restores window</source>
-        <translation>Finestra di ripristino richieste UDP accettate</translation>
+        <translation>Richieste UDP accettate ripristinano la finestra</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2001"/>
@@ -6800,7 +6770,7 @@ per valutare la propagazione e le prestazioni del sistema.</translation>
     <message>
         <location filename="../Configuration.ui" line="2017"/>
         <source>Server name or IP address:</source>
-        <translation></translation>
+        <translation>Nome server o indirizzo IP:</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2027"/>
@@ -6932,12 +6902,12 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
     <message>
         <location filename="../Configuration.ui" line="2339"/>
         <source>Check to for grid highlighting to only apply to unworked grid fields</source>
-        <translation>Verificare che l&apos;evidenziazione della griglia si applichi solo ai campi della griglia non lavorati</translation>
+        <translation>Selezionare per applicare l&apos;evidenziazione della griglia solo ai campi della griglia non lavorati</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2342"/>
         <source>Only grid Fields sought</source>
-        <translation>Sono stati cercati solo i campi della griglia</translation>
+        <translation>Solo Campi griglia ricercati</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2406"/>
@@ -6997,7 +6967,7 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
     <message>
         <location filename="../Configuration.ui" line="2514"/>
         <source>Advanced</source>
-        <translation>Avanzato</translation>
+        <translation>Avanzate</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2975"/>
@@ -7035,14 +7005,10 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
         <translation>Decodifica a due passaggi</translation>
     </message>
     <message>
-        <source>Special operating activity:  Generation of FT4, FT8, and MSK144 messages</source>
-        <translation type="vanished">Attività operativa speciale: Generazione di messaggi FT4, FT8 e MSK144</translation>
-    </message>
-    <message>
         <location filename="../Configuration.ui" line="2608"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode:  Hound operator calling the DX.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>(Hound=Cane da caccia)</translatorcomment>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode: operator Hound chiama il DX.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode: l&apos; operatore Hound chiama la stazione DX (Fox)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2611"/>
@@ -7084,27 +7050,15 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
         <translation>EU VHF Contest</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ARRL RTTY Roundup and similar contests.  Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ARRL RTTY Roundup e contests simili. Lo scambio è stato USA, provincia Canadese o &amp;quot;DX&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <location filename="../Configuration.ui" line="2723"/>
         <source>R T T Y Roundup</source>
         <translatorcomment>R T T Y Riunione</translatorcomment>
         <translation>R T T Y Roundup</translation>
     </message>
     <message>
-        <source>RTTY Roundup messages</source>
-        <translation type="vanished">Messaggi Roundup RTTY</translation>
-    </message>
-    <message>
         <location filename="../Configuration.ui" line="2751"/>
         <source>RTTY Roundup exchange</source>
         <translation>Scambio di riunione in RTTY</translation>
-    </message>
-    <message>
-        <source>RTTY RU Exch:</source>
-        <translation type="vanished">Scambio RTTY RU:</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2773"/>
@@ -7171,12 +7125,12 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
     <message>
         <location filename="../Configuration.ui" line="2720"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT Roundup and similar contests. Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Riunione FT.e concorsi simili. Lo scambio è lo stato degli Stati Uniti, la provincia canadese o &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Riunione FT e concorsi simili. Lo scambio è lo stato degli Stati Uniti, la provincia Canadese o &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2726"/>
         <source>FT Roundup</source>
-        <translation>Riunione.FT</translation>
+        <translation>Riunione FT</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2754"/>
@@ -7291,25 +7245,43 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Discard (Cancel) or apply (OK) configuration changes including&lt;/p&gt;&lt;p&gt;resetting the radio interface and applying any soundcard changes&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Annulla (Annulla) o applica (OK) le modifiche alla configurazione incluso&lt;/p&gt;&lt;p&gt;ripristinando l&apos;interfaccia radio e applicando eventuali modifiche alla scheda audio&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>Enable VHF/UHF/Microwave features</source>
+        <translation type="vanished">Abilita le funzionalità VHF / UHF / Microonde</translation>
+    </message>
+    <message>
+        <source>The program can send your station details and all
+decoded signals as spots to the http://pskreporter.info web site.
+This is used for reverse beacon analysis which is very useful
+for assessing propagation and system performance.</source>
+        <translation type="vanished">Il programma può inviare i dettagli della tua stazione e tutto il resto
+segnali decodificati come spot per il sito Web http://pskreporter.info.
+Questo è usato per l&apos;analisi del beacon inverso che è molto utile
+per valutare la propagazione e le prestazioni del sistema.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter the service port number of the UDP server that WSJT-X should send updates to. If this is zero no updates will be broadcast.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Immettere il numero di porta del servizio del server UDP a cui WSJT-X deve inviare gli aggiornamenti. Se questo è zero, non verranno trasmessi aggiornamenti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Special operating activity:  Generation of FT4, FT8, and MSK144 messages</source>
+        <translation type="vanished">Attività operativa speciale: Generazione di messaggi FT4, FT8 e MSK144</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ARRL RTTY Roundup and similar contests.  Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ARRL RTTY Roundup e contests simili. Lo scambio è stato USA, provincia Canadese o &amp;quot;DX&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>RTTY Roundup messages</source>
+        <translation type="vanished">Messaggi Roundup RTTY</translation>
+    </message>
+    <message>
+        <source>RTTY RU Exch:</source>
+        <translation type="vanished">Scambio RTTY RU:</translation>
+    </message>
 </context>
 <context>
     <name>main</name>
-    <message>
-        <source>Fatal error</source>
-        <translation type="vanished">Errore fatale</translation>
-    </message>
-    <message>
-        <source>Unexpected fatal error</source>
-        <translation type="vanished">Errore fatale inatteso</translation>
-    </message>
-    <message>
-        <source>Another instance may be running</source>
-        <translation type="vanished">Un&apos;altra istanza potrebbe essere in esecuzione</translation>
-    </message>
-    <message>
-        <source>try to remove stale lock file?</source>
-        <translation type="vanished">Provo a rimuovere il file di blocco non aggiornato?</translation>
-    </message>
     <message>
         <location filename="../main.cpp" line="265"/>
         <source>Failed to create a temporary directory</source>
@@ -7361,6 +7333,22 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
         <source>Failed to close orphaned jt9 process</source>
         <translation>Impossibile chiudere il processo jt9 orfano</translation>
     </message>
+    <message>
+        <source>Fatal error</source>
+        <translation type="vanished">Errore fatale</translation>
+    </message>
+    <message>
+        <source>Unexpected fatal error</source>
+        <translation type="vanished">Errore fatale inatteso</translation>
+    </message>
+    <message>
+        <source>Another instance may be running</source>
+        <translation type="vanished">Un&apos;altra istanza potrebbe essere in esecuzione</translation>
+    </message>
+    <message>
+        <source>try to remove stale lock file?</source>
+        <translation type="vanished">Provo a rimuovere il file di blocco non aggiornato?</translation>
+    </message>
 </context>
 <context>
     <name>wf_palette_design_dialog</name>
@@ -7373,6 +7361,28 @@ Fare clic con il tasto destro per inserire ed eliminare le opzioni.</translation
         <location filename="../wf_palette_design_dialog.ui" line="23"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Double click a color to edit it.&lt;/p&gt;&lt;p&gt;Right click to insert or delete colors.&lt;/p&gt;&lt;p&gt;Colors at the top represent weak signals&lt;/p&gt;&lt;p&gt;and colors at the bottom represent strong&lt;/p&gt;&lt;p&gt;signals. You can have up to 256 colors.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Doppio click su un colore per editarlo.&lt;/p&gt;&lt;p&gt;Click destro per inserire o cancellare colori.&lt;/p&gt;&lt;p&gt;I colori in alto rappresentano segnali deboli&lt;/p&gt;&lt;p&gt;e i colori in basso rappresentano segnali &lt;/p&gt;&lt;p&gt;forti. Puoi avere fino a 256 colori.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>HelpTextWindow</name>
+    <message>
+        <source>Help file error</source>
+        <translation type="vanished">Aiuto file di errore</translation>
+    </message>
+    <message>
+        <source>Cannot open &quot;%1&quot; for reading</source>
+        <translation type="vanished">Impossibile aprire &quot;%1&quot; per la lettura</translation>
+    </message>
+    <message>
+        <source>Error: %1</source>
+        <translation type="vanished">Errore: %1</translation>
+    </message>
+</context>
+<context>
+    <name>NetworkAccessManager</name>
+    <message>
+        <source>Network SSL/TLS Errors</source>
+        <translation type="vanished">Errori di rete SSL/TSL</translation>
     </message>
 </context>
 </TS>

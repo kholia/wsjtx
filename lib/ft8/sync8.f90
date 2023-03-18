@@ -1,5 +1,4 @@
-subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,nzhsym,candidate,   &
-     ncand,sbase)
+subroutine sync8(dd,nfa,nfb,syncmin,nfqso,maxcand,candidate,ncand,sbase)
 
   include 'ft8_params.f90'
   parameter (MAXPRECAND=1000)

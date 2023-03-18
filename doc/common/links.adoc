@@ -80,7 +80,7 @@ d). Edit lines as needed. Keeping them in alphabetic order help see dupes.
 :jtalert: https://hamapps.com/[JTAlert]
 :launchpadki7mt: https://launchpad.net/~ki7mt[KI7MT PPA's]
 :log4om: https://www.log4om.com[Log4OM]
-:lunarEchoes: https://sourceforge.net/projects/wsjt/files/wsjtx-{VERSION}/LunarEchoes_QEX.pdf[QEX]
+:lunarEchoes: https://wsjt.sourceforge.io/LunarEchoes_QEX.pdf[QEX]
 :msk144: https://wsjt.sourceforge.io/MSK144_Protocol_QEX.pdf[QEX]
 :msvcpp_redist: https://www.microsoft.com/en-ph/download/details.aspx?id=40784[Microsoft VC++ 2013 Redistributable]
 :msys_url: https://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/[MSYS Download]
@@ -94,8 +94,8 @@ d). Edit lines as needed. Keeping them in alphabetic order help see dupes.
 :sourceforge-jtsdk: https://sourceforge.net/projects/jtsdk[SourceForge JTSDK]
 :ubuntu_sdk: https://launchpad.net/~ubuntu-sdk-team/+archive/ppa[Ubuntu SDK Notice]
 :win_openssl_packages: https://slproweb.com/products/Win32OpenSSL.html[Windows OpenSSL Packages]
-:win32_openssl: https://slproweb.com/download/Win32OpenSSL_Light-1_1_1L.msi[Win32 OpenSSL Light Package]
-:win64_openssl: https://slproweb.com/download/Win64OpenSSL_Light-1_1_1L.msi[Win64 OpenSSL Light Package]
+:win32_openssl: https://slproweb.com/download/Win32OpenSSL_Light-1_1_1s.msi[Win32 OpenSSL Light Package]
+:win64_openssl: https://slproweb.com/download/Win64OpenSSL_Light-1_1_1s.msi[Win64 OpenSSL Light Package]
 :writelog: https://writelog.com/[Writelog]
 :wsjtx_group:  https://groups.io/g/WSJTX[WSJTX Group]
 :wsjtx_group2:  https://groups.io/g/WSJTX[join the group]
@@ -106,7 +106,7 @@ d). Edit lines as needed. Keeping them in alphabetic order help see dupes.
 :wsprnet_activity: https://wsprnet.org/drupal/wsprnet/activity[WSPRnet Activity page]
 
 // Download Links
-:cty_dat: https://www.country-files.com/cty/[Amateur Radio Country Files]
+:cty_dat: https://www.country-files.com/bigcty/cty.dat/[Amateur Radio Country Files]
 :jtbridge: https://jt-bridge.eller.nu/[JT-Bridge]
 :jtsdk_doc: https://sourceforge.net/projects/wsjt/files/wsjtx-{VERSION}/JTSDK-DOC.exe[Download]
 :jtsdk_installer: https://sourceforge.net/projects/jtsdk/files/win32/2.0.0/JTSDK-2.0.0-B2-Win32.exe/download[Download]

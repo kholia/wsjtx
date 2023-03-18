@@ -45,7 +45,7 @@ if (POLICY CMP0075)
 endif ()
 
 project (wsjtx
-  VERSION 2.6.1.0
+  VERSION 2.7.0.0
   LANGUAGES C CXX Fortran
   )
 set (PROJECT_DESCRIPTION "WSJT-X: Digital Modes for Weak Signal Communications in Amateur Radio")
@@ -71,7 +71,7 @@ message (STATUS "******************************************************")
 
 include (set_build_type)
 # RC 0 or omitted is a development build, GA is a General Availability release build
-set_build_type (GA)
+set_build_type (RC 1)
 set (wsjtx_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}${BUILD_TYPE_REVISION}")
 
 #
@@ -328,6 +328,7 @@ set (wsjt_FSRCS
   lib/ft8_decode.f90
   lib/ft4_decode.f90
   lib/fst4_decode.f90
+  lib/get_q3list.f90
   lib/jt9_decode.f90
   lib/options.f90
   lib/packjt.f90
@@ -510,6 +511,7 @@ set (wsjt_FSRCS
   lib/qra/q65/q65_ap.f90
   lib/qra/q65/q65_loops.f90
   lib/qra/q65/q65_set_list.f90
+  lib/qra/q65/q65_set_list2.f90
   lib/refspectrum.f90
   lib/savec2.f90
   lib/save_dxbase.f90
@@ -581,6 +583,7 @@ set (wsjt_FSRCS
   lib/fst4/fastosd240_74.f90
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
+  lib/77bit/hash22calc.f90
   )
 
 # temporary workaround for a gfortran v7.3 ICE on Fedora 27 64-bit
@@ -973,7 +976,10 @@ if (Fortran_COMPILER_NAME MATCHES "gfortran.*")
 
   set (CMAKE_Fortran_FLAGS_RELEASE "${CMAKE_Fortran_FLAGS_RELEASE} -fbounds-check -funroll-all-loops -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
 
-set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -g -fbacktrace -fbounds-check -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
+### TEMPORARY: Let Fortran use RElEASE flags for DEBUG builds
+#set (CMAKE_Fortran_FLAGS_DEBUG   "${CMAKE_Fortran_FLAGS_DEBUG} -g -fbacktrace -fbounds-check -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
+  set (CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_RELEASE} -fbounds-check -funroll-all-loops -fno-f2c -ffpe-summary=invalid,zero,overflow,underflow ${General_FFLAGS}")
+
   
   # FPE traps currently disabled in Debug configuration builds until
   # we decide if they are meaningful, without these FP instructions
@@ -1172,6 +1178,9 @@ target_link_libraries (wsprcode wsjt_fort wsjt_cxx)
 	       
 add_executable (encode77 lib/77bit/encode77.f90)
 target_link_libraries (encode77 wsjt_fort wsjt_cxx)
+
+add_executable (hash22calc lib/77bit/hash22calc.f90)
+target_link_libraries (hash22calc wsjt_fort wsjt_cxx)
 
 add_executable (wsprsim ${wsprsim_CSRCS})
 target_link_libraries (wsprsim ${LIBM_LIBRARIES})
@@ -1421,10 +1430,10 @@ else (${OPENMP_FOUND} OR APPLE)
 endif (${OPENMP_FOUND} OR APPLE)
 
 if (WIN32)
-  # build map65
   find_package (Portaudio REQUIRED)
   add_subdirectory (map65)
 endif ()
+  add_subdirectory (qmap)
 
 # build the main application
 generate_version_info (wsjtx_VERSION_RESOURCES
@@ -1590,7 +1599,7 @@ install (TARGETS jt9 wsprd fmtave fcal fmeasure
 
 if(WSJT_BUILD_UTILS)
 install (TARGETS ft8code jt65code jt9code jt4code msk144code 
-  q65code fst4sim q65sim echosim
+  q65code fst4sim q65sim echosim hash22calc
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
@@ -1632,6 +1641,7 @@ install (FILES
   cty.dat
   cty.dat_copyright.txt
   contrib/Ephemeris/JPLEPH
+  eclipse.txt
   DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}
   #COMPONENT runtime
   )

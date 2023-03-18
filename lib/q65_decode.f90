@@ -33,7 +33,7 @@ contains
   subroutine decode(this,callback,iwave,nqd0,nutc,ntrperiod,nsubmode,nfqso,  &
        ntol,ndepth,nfa0,nfb0,lclearave,single_decode,lagain,max_drift0,      &
        lnewdat0,emedelay,mycall,hiscall,hisgrid,nQSOprogress,ncontest,       &
-       lapcqonly,navg0)
+       lapcqonly,navg0,nqf)
 
 ! Top-level routine that organizes the decoding of Q65 signals
 ! Input:  iwave            Raw data, i*2
@@ -55,9 +55,13 @@ contains
     use, intrinsic :: iso_c_binding
     use q65                               !Shared variables
     use prog_args
+    use types
  
-    parameter (NMAX=300*12000)            !Max TRperiod is 300 s
+    parameter (NMAX=300*12000)  !Max TRperiod is 300 s
+    parameter (MAX_CALLERS=40)  !For multiple q3 decodes in NA VHf Contest mode
+
     class(q65_decoder), intent(inout) :: this
+
     procedure(q65_decode_callback) :: callback
     character(len=12) :: mycall, hiscall  !Used for AP decoding
     character(len=6) :: hisgrid
@@ -70,19 +74,26 @@ contains
     character*80 fmt
     integer*2 iwave(NMAX)                 !Raw data
     real, allocatable :: dd(:)            !Raw data
+    real xdtdecodes(100)
+    real f0decodes(100)
     integer dat4(13)                      !Decoded message as 12 6-bit integers
     integer dgen(13)
+    integer nqf(20)
+    integer stageno                       !Added by W3SZ
+    integer time
     logical lclearave,lnewdat0,lapcqonly,unpk77_success
     logical single_decode,lagain
     complex, allocatable :: c00(:)        !Analytic signal, 6000 Sa/s
     complex, allocatable :: c0(:)         !Analytic signal, 6000 Sa/s
-    integer stageno                       !Added by W3SZ
-    stageno=0
+    type(q3list) callers(MAX_CALLERS)
 
 ! Start by setting some parameters and allocating storage for large arrays
     call sec0(0,tdecode)
+    stageno=0
     ndecodes=0
     decodes=' '
+    f0decodes=0.
+    xdtdecodes=0.
     nfa=nfa0
     nfb=nfb0
     nqd=nqd0
@@ -97,9 +108,30 @@ contains
     nfft1=ntrperiod*12000
     nfft2=ntrperiod*6000
     npasses=1
+    nhist2=0
     if(lagain) ndepth=ior(ndepth,3)       !Use 'Deep' for manual Q65 decodes
     dxcall13=hiscall  ! initialize for use in packjt77
     mycall13=mycall
+    if(ncontest.eq.1) then
+! NA VHF, WW-Digi, or ARRL Digi Contest
+       open(24,file=trim(data_dir)//'/tsil.3q',status='unknown',     &
+            form='unformatted')
+       read(24,end=2) nhist2
+       if(nhist2.ge.1 .and. nhist2.le.40) then
+          read(24,end=2) callers(1:nhist2)
+          now=time()
+          do i=1,nhist2
+             hours=(now - callers(i)%nsec)/3600.0
+             if(hours.gt.24.0) then
+                callers(i:nhist2-1)=callers(i+1:nhist2)
+                nhist2=nhist2-1
+             endif
+          enddo
+       else
+          nhist2=0
+       endif
+2      close(24)
+    endif
 
 ! Determine the T/R sequence: iseq=0 (even), or iseq=1 (odd)
     n=nutc
@@ -132,25 +164,37 @@ contains
     baud=12000.0/nsps
     this%callback => callback
     nFadingModel=1
-    maxiters=33
-    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 1)
-    ibwb=min(10,ibwa+2)
-    if(iand(ndepth,3).ge.2) then
-       ibwa=max(1,int(1.8*log(baud*mode_q65)) + 1)
-       ibwb=min(10,ibwa+5)
-       maxiters=67
-    endif
+
+!    ibwa=max(1,int(1.8*log(baud*mode_q65)) + 5)
+!### This needs work!
+    ibwa=1                          !Q65-60A
+    if(mode_q65.eq.2) ibwa=3        !Q65-60B
+    if(mode_q65.eq.4) ibwa=8        !Q65-60C
+    if(mode_q65.eq.2) ibwa=9        !Q65-60D
+    if(mode_q65.eq.2) ibwa=10       !Q65-60E
+!###
+
+!    ibwb=min(15,ibwa+4)
+    ibwb=min(15,ibwa+6)
+    maxiters=40
+    if(iand(ndepth,3).eq.2) maxiters=60
     if(iand(ndepth,3).eq.3) then
-       ibwa=max(1,ibwa-1)
-       ibwb=min(10,ibwb+1)
+       ibwa=max(1,ibwa-2)
+       ibwb=ibwb+2
        maxiters=100
     endif
+
 ! Generate codewords for full-AP list decoding
     if(ichar(hiscall(1:1)).eq.0) hiscall=' '
     if(ichar(hisgrid(1:1)).eq.0) hisgrid=' '
     ncw=0
-    if(nqd.eq.1 .or. lagain) then
-       call q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
+    if(nqd.eq.1 .or. lagain .or. ncontest.eq.1) then
+       if(ncontest.eq.1) then
+          call q65_set_list2(mycall,hiscall,hisgrid,callers,nhist2,   &
+               codewords,ncw)
+       else
+          call q65_set_list(mycall,hiscall,hisgrid,codewords,ncw)
+       endif
     endif
     dgen=0
     call q65_enc(dgen,codewords)         !Initialize the Q65 codec
@@ -166,17 +210,18 @@ contains
     call timer('q65_dec0',0)
 ! Call top-level routine in q65 module: establish sync and try for a
 ! q3 or q0 decode.
-    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+    call q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('q65_dec0',1)
-!    write(*,3001) '=a',nfqso,ntol,ndepth,xdt,f0,idec
-!3001 format(a2,3i5,f7.2,f7.1,i5)
 
     if(idec.ge.0) then
        dtdec=xdt                    !We have a q3 or q0 decode at nfqso
        f0dec=f0
        go to 100
     endif
+
+    if(ncontest.eq.1 .and. lagain .and. iand(ndepth,16).eq.16) go to 50
+    if(ncontest.eq.1 .and. lagain .and. iand(ndepth,16).eq.0) go to 100
 
 ! Prepare for a single-period decode with iaptype = 0, 1, 2, or 4
     jpk0=(xdt+1.0)*6000                      !Index of nominal start of signal
@@ -200,11 +245,10 @@ contains
           read(c78,1060) apsymbols
        endif
 
-       call timer('q65loops',0)
+       call timer('q65loop1',0)
        call q65_loops(c00,npts/2,nsps/2,nsubmode,ndepth,jpk0,   &
             xdt,f0,iaptype,xdt1,f1,snr2,dat4,idec)
-       call timer('q65loops',1)
-!       write(*,3001) '=b',nfqso,ntol,ndepth,xdt,f0,idec
+       call timer('q65loop1',1)
        if(idec.ge.0) then
           dtdec=xdt1
           f0dec=f1
@@ -215,11 +259,11 @@ contains
     if(iand(ndepth,16).eq.0 .or. navg(iseq).lt.2) go to 100
 
 ! There was no single-transmission decode. Try for an average 'q3n' decode.
-50  call timer('list_avg',0)
+50  iavg=1
+    call timer('list_avg',0)
 ! Call top-level routine in q65 module: establish sync and try for a q3
 ! decode, this time using the cumulative 's1a' symbol spectra.
-    iavg=1
-    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+    call q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('list_avg',1)
 
@@ -236,7 +280,7 @@ contains
 
     call timer('q65_avg ',0)
     iavg=2
-    call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+    call q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
          emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
     call timer('q65_avg ',1)
     if(idec.ge.0) then
@@ -250,7 +294,7 @@ contains
        call timer('q65_dec0',0)
        ! Call top-level routine in q65 module: establish sync and try for a
        ! q3 or q0 decode.
-       call q65_dec0(iavg,nutc,iwave,ntrperiod,nfqso,ntol,ndepth,lclearave,  &
+       call q65_dec0(iavg,iwave,ntrperiod,nfqso,ntol,lclearave,  &
             emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
        call timer('q65_dec0',1)
        if(idec.ge.0) then
@@ -280,15 +324,21 @@ contains
        if(idupe.eq.0) then
           ndecodes=min(ndecodes+1,100)
           decodes(ndecodes)=decoded
-          call q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
+          f0decodes(ndecodes)=f0dec
+          xdtdecodes(ndecodes)=dtdec
+          call q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
           nsnr=nint(snr2)
           call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                idec,nused,ntrperiod)
-          call q65_hist(nint(f0dec),msg0=decoded)
+          if(ncontest.eq.1) then
+             call q65_hist2(nint(f0dec),decoded,callers,nhist2)
+          else
+             call q65_hist(nint(f0dec),msg0=decoded)
+          endif
           if(iand(ndepth,128).ne.0 .and. .not.lagain .and.      &
                int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
           call sec0(1,tdecode)
-          open(22,file=trim(data_dir)//'/q65_decodes.dat',status='unknown',     &
+          open(22,file=trim(data_dir)//'/q65_decodes.txt',status='unknown',  &
                position='append',iostat=ios)
           if(ios.eq.0) then
 ! Save decoding parameters to q65_decoded.dat, for later analysis.
@@ -298,13 +348,13 @@ contains
              if(c6.eq.'      ') c6='<b>   '
              c4=hisgrid(1:4)
              if(c4.eq.'    ') c4='<b> '
-             fmt='(i6.4,1x,a4,i5,4i2,6i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
+             fmt='(i6.4,1x,a4,i5,4i2,8i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
                   '1x,a6,1x,a6,1x,a4,1x,a)'
              if(ntrperiod.le.30) fmt(5:5)='6'
              if(idec.eq.3) nrc=0
              write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,idtbest, &
-                  ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,f0,snr2,plog, &
-                  tdecode,mycall(1:6),c6,c4,trim(decoded)
+                  ibwa,ibwb,ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,    &
+                  f0,snr2,plog,tdecode,mycall(1:6),c6,c4,trim(decoded)
              close(22)
           endif
        endif
@@ -317,6 +367,26 @@ contains
        snr1=candidates(icand,1)
        xdt= candidates(icand,2)
        f0 = candidates(icand,3)
+       do i=1,ndecodes
+          fdiff=f0-f0decodes(i)
+          if(fdiff.gt.-baud*mode_q65 .and. fdiff.lt.65*baud*mode_q65) go to 800
+       enddo
+
+!###  TEST REGION
+       if(ncontest.eq.-1) then
+          call timer('q65_dec0',0)
+! Call top-level routine in q65 module: establish sync and try for a
+! q3 or q0 decode.
+          call q65_dec0(iavg,iwave,ntrperiod,nint(f0),ntol,lclearave,  &
+               emedelay,xdt,f0,snr1,width,dat4,snr2,idec,stageno)
+          call timer('q65_dec0',1)
+          if(idec.ge.0) then
+             dtdec=xdt                    !We have a q3 or q0 decode at f0
+             f0dec=f0
+             go to 200
+          endif
+       endif
+!###
        jpk0=(xdt+1.0)*6000                   !Index of nominal start of signal
        if(ntrperiod.le.30) jpk0=(xdt+0.5)*6000  !For shortest sequences
        if(jpk0.lt.0) jpk0=0
@@ -329,6 +399,8 @@ contains
        if(lapcqonly) npasses=1
        iaptype=0
        do ipass=0,npasses                  !Loop over AP passes
+!          write(*,3001) nutc,icand,ipass,f0,xdt,snr1
+!3001      format('a',i5.4,2i3,3f7.1)
           apmask=0                         !Try first with no AP information
           apsymbols=0
           if(ipass.ge.1) then
@@ -341,10 +413,10 @@ contains
              read(c78,1060) apsymbols
           endif
 
-          call timer('q65loops',0)
+          call timer('q65loop2',0)
           call q65_loops(c00,npts/2,nsps/2,nsubmode,ndepth,jpk0,   &
                xdt,f0,iaptype,xdt1,f1,snr2,dat4,idec)
-          call timer('q65loops',1)
+          call timer('q65loop2',1)
 !          write(*,3001) '=e',nfqso,ntol,ndepth,xdt,f0,idec
           if(idec.ge.0) then
              dtdec=xdt1
@@ -365,15 +437,21 @@ contains
           if(idupe.eq.0) then
              ndecodes=min(ndecodes+1,100)
              decodes(ndecodes)=decoded
-             call q65_snr(dat4,dtdec,f0dec,mode_q65,nused,snr2)
+             f0decodes(ndecodes)=f0dec
+             call q65_snr(dat4,dtdec,f0dec,mode_q65,snr2)
              nsnr=nint(snr2)
              call this%callback(nutc,snr1,nsnr,dtdec,f0dec,decoded,    &
                   idec,nused,ntrperiod)
-             call q65_hist(nint(f0dec),msg0=decoded)
+             if(ncontest.eq.1) then
+                call q65_hist2(nint(f0dec),decoded,callers,nhist2)
+             else
+                call q65_hist(nint(f0dec),msg0=decoded)
+             endif
              if(iand(ndepth,128).ne.0 .and. .not.lagain .and.      &
                   int(abs(f0dec-nfqso)).le.ntol ) call q65_clravg    !AutoClrAvg
              call sec0(1,tdecode)
-             open(22,file=trim(data_dir)//'/q65_decodes.dat',status='unknown',     &
+             ios=1
+             open(22,file=trim(data_dir)//'/q65_decodes.txt',status='unknown',&
                   position='append',iostat=ios)
              if(ios.eq.0) then
 ! Save decoding parameters to q65_decoded.dat, for later analysis.
@@ -383,20 +461,45 @@ contains
                 if(c6.eq.'      ') c6='<b>   '
                 c4=hisgrid(1:4)
                 if(c4.eq.'    ') c4='<b> '
-                fmt='(i6.4,1x,a4,i5,4i2,6i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
+                fmt='(i6.4,1x,a4,i5,4i2,8i3,i4,f6.2,f7.1,f6.1,f7.1,f6.2,'//   &
                      '1x,a6,1x,a6,1x,a4,1x,a)'
                 if(ntrperiod.le.30) fmt(5:5)='6'
                 if(idec.eq.3) nrc=0
-                write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,idtbest, &
-                     ibw,ndistbest,nused,icand,ncand,nrc,ndepth,xdt,f0,snr2,plog, &
-                     tdecode,mycall(1:6),c6,c4,trim(decoded)
+                write(22,fmt) nutc,cmode,nfqso,nQSOprogress,idec,idfbest,    &
+                     idtbest,ibwa,ibwb,ibw,ndistbest,nused,icand,ncand,nrc,  &
+                     ndepth,xdt,f0,snr2,plog,tdecode,mycall(1:6),c6,c4,      &
+                     trim(decoded)
                 close(22)
              endif
           endif
        endif
+800    continue
     enddo  ! icand
     if(iavg.eq.0 .and.navg(iseq).ge.2 .and. iand(ndepth,16).ne.0) go to 50
-900 return
+
+900 if(ncontest.ne.1 .or. lagain) go to 999
+    if(ntrperiod.ne.60 .or. nsubmode.ne.0) go to 999
+
+! This is first time here, and we're running Q65-60A in NA VHF Contest mode.
+! Return a list of potential sync frequencies at which to try q3 decoding.
+
+    k=0
+    nqf=0
+    bw=baud*mode_q65*65
+    do i=1,ncand
+!       snr1=candidates(i,1)
+!       xdt= candidates(i,2)
+       f0 = candidates(i,3)
+       do j=1,ndecodes          ! Already decoded one at or near this frequency?
+          fj=f0decodes(j)
+          if(f0.gt.fj-5.0 .and. f0.lt.fj+bw+5.0) go to 990
+       enddo
+       k=k+1
+       nqf(k)=nint(f0)
+990    continue
+    enddo
+
+999 return
   end subroutine decode
 
 end module q65_decode

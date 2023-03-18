@@ -46,7 +46,6 @@ contains
     procedure(ft8_decode_callback) :: callback
     parameter (MAXCAND=600,MAX_EARLY=100)
     real*8 tsec,tseq
-    real s(NH1,NHSYM)
     real sbase(NH1)
     real candidate(3,MAXCAND)
     real dd(15*12000),dd1(15*12000)
@@ -68,7 +67,7 @@ contains
     real xdt_save(MAX_EARLY)
     data nutc0/-1/
 
-    save s,dd,dd1,nutc0,ndec_early,itone_save,f1_save,xdt_save,lsubtracted,&
+    save dd,dd1,nutc0,ndec_early,itone_save,f1_save,xdt_save,lsubtracted,  &
          allmessages
     
     this%callback => callback
@@ -193,8 +192,7 @@ contains
       endif 
       call timer('sync8   ',0)
       maxc=MAXCAND
-      call sync8(dd,ifa,ifb,syncmin,nfqso,maxc,nzhsym,candidate,   &
-           ncand,sbase)
+      call sync8(dd,ifa,ifb,syncmin,nfqso,maxc,candidate,ncand,sbase)
       call timer('sync8   ',1)
       do icand=1,ncand
         sync=candidate(3,icand)

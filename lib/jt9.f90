@@ -27,7 +27,7 @@ program jt9
   logical :: read_files = .true., tx9 = .false., display_help = .false.,     &
        bLowSidelobes = .false., nexp_decode_set = .false.,                   &
        have_ntol = .false.
-  type (option) :: long_options(31) = [                                      &
+  type (option) :: long_options(32) = [                                      &
     option ('help', .false., 'h', 'Display this help message', ''),          &
     option ('shmem',.true.,'s','Use shared memory for sample data','KEY'),   &
     option ('tr-period', .true., 'p', 'Tx/Rx period, default SECONDS=60',    &
@@ -60,6 +60,7 @@ program jt9
     option ('jt65', .false.,'6', 'JT65 mode', ''),                           &
     option ('fst4', .false., '7', 'FST4 mode', ''),                          &
     option ('fst4w', .false., 'W', 'FST4W mode', ''),                        &
+    option ('fst4w', .false., 'Y', 'FST4W mode, print hash22 values', ''),   &
     option ('ft8', .false., '8', 'FT8 mode', ''),                            &
     option ('jt9', .false., '9', 'JT9 mode', ''),                            &
     option ('qra64', .false., 'q', 'QRA64 mode', ''),                        &
@@ -85,13 +86,12 @@ program jt9
   common/decstats/ntry65a,ntry65b,n65a,n65b,num9,numfano
   data npatience/1/,nthreads/1/,wisfile/' '/
 
-  iwspr=0
   nsubmode = 0
   ntol = 20
   TRperiod=60.d0
 
   do
-     call getopt('hs:e:a:b:r:m:p:d:f:F:w:t:9876543WqTL:S:H:c:G:x:g:X:Q:',     &
+     call getopt('hs:e:a:b:r:m:p:d:f:F:w:t:9876543WYqTL:S:H:c:G:x:g:X:Q:',     &
           long_options,c,optarg,arglen,stat,offset,remain,.true.)
      if (stat .ne. 0) then
         exit
@@ -141,7 +141,6 @@ program jt9
            if (mode.lt.65) mode = mode + 65
         case ('7')
            mode = 240
-           iwspr=0
         case ('8')
            mode = 8
         case ('9')
@@ -152,7 +151,8 @@ program jt9
            read (optarg(:arglen), *) npatience
         case ('W')
            mode = 241
-           iwspr=1
+        case ('Y')
+           mode = 242
         case ('c')
            read (optarg(:arglen), *) mycall
         case ('G')
@@ -212,7 +212,7 @@ program jt9
      hisgrid='      '
   endif
 
-  if (mode .eq. 241) then
+  if (mode .eq. 241 .or. mode .eq. 242) then
      ntol = min (ntol, 100)
   else if (mode .eq. 65 + 9 .and. .not. have_ntol) then
      ntol = 20
@@ -222,7 +222,7 @@ program jt9
      ntol = min (ntol, 1000)
   end if
   if (.not. nexp_decode_set) then
-     if (mode .eq. 240 .or. mode .eq. 241) then
+     if (mode .eq. 240 .or. mode .eq. 241 .or. mode .eq. 242) then
         nexp_decode = 3 * 256   ! single decode off and nb=0
      end if
   end if
@@ -277,7 +277,8 @@ program jt9
               call timer('symspec ',1)
            endif
            nhsym0=nhsym
-           if(nhsym.ge.181 .and. mode.ne.240 .and. mode.ne.241 .and. mode.ne.66) exit
+           if(nhsym.ge.181 .and. mode.ne.240 .and. mode.ne.241 .and. &
+              mode.ne.242 .and. mode.ne.66) exit
         endif
      enddo
      close(unit=wav%lun)
@@ -294,7 +295,6 @@ program jt9
      shared_data%params%kin=64800
      if(mode.eq.240) shared_data%params%kin=720000   !### 60 s periods ###
      shared_data%params%nzhsym=nhsym
-     if(mode.eq.240 .and. iwspr.eq.1) ndepth=ior(ndepth,128)
      shared_data%params%ndepth=ndepth
      shared_data%params%lft8apon=.true.
      shared_data%params%ljt65apon=.true.

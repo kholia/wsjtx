@@ -8,7 +8,7 @@ module fst4_decode
 
    abstract interface
       subroutine fst4_decode_callback (this,nutc,sync,nsnr,dt,freq,    &
-         decoded,nap,qual,ntrperiod,lwspr,fmid,w50)
+         decoded,nap,qual,ntrperiod,fmid,w50)
          import fst4_decoder
          implicit none
          class(fst4_decoder), intent(inout) :: this
@@ -21,7 +21,6 @@ module fst4_decode
          integer, intent(in) :: nap
          real, intent(in) :: qual
          integer, intent(in) :: ntrperiod
-         logical, intent(in) :: lwspr
          real, intent(in) :: fmid
          real, intent(in) :: w50
       end subroutine fst4_decode_callback
@@ -31,7 +30,7 @@ contains
 
    subroutine decode(this,callback,iwave,nutc,nQSOProgress,nfa,nfb,nfqso, &
       ndepth,ntrperiod,nexp_decode,ntol,emedelay,lagain,lapcqonly,mycall, &
-      hiscall,iwspr)
+      hiscall,iwspr,lprinthash22)
 
       use prog_args
       use timer_module, only: timer
@@ -67,9 +66,10 @@ contains
       integer mcq(29),mrrr(19),m73(19),mrr73(19)
 
       logical badsync,unpk77_success,single_decode
-      logical first,nohiscall,lwspr
+      logical first,nohiscall
       logical new_callsign,plotspec_exists,wcalls_exists,do_k50_decode
       logical decdata_exists
+      logical lprinthash22
 
       integer*2 iwave(30*60*12000)
 
@@ -88,7 +88,8 @@ contains
       dxcall13=hiscall   ! initialize for use in packjt77
       mycall13=mycall
 
-      if(iwspr.ne.0.and.iwspr.ne.1) return
+      if(iwspr.ne.0 .and. iwspr.ne.1) return 
+
       if(lagain) continue ! use lagain to keep compiler happy 
 
       if(first) then
@@ -503,6 +504,13 @@ contains
                      write(c77,'(50i1)') message74(1:50)
                      c77(51:77)='000000000000000000000110000'
                      call unpack77(c77,1,msg,unpk77_success)
+                     if(lprinthash22 .and. unpk77_success .and. index(msg,'<...>').gt.0) then
+                        read(c77,'(b22.22)') n22tmp
+                        i1=index(msg,' ')
+                        wpart=trim(msg(i1+1:))
+                        write(msg,'(a1,i7.7,a1)') '<',n22tmp,'>' 
+                        msg=trim(msg)//' '//trim(wpart)
+                     endif
                      if(unpk77_success .and. do_k50_decode) then
 ! If decode was obtained with Keff=66, save call/grid in fst4w_calls.txt if not there already.
                         i1=index(msg,' ')
@@ -602,6 +610,7 @@ contains
                         case(1800) 
                            snr_calfac=320.0
                         case default
+                           snr_calfac=430.0
                      end select
                      arg=snr_calfac*xsig/base - 1.0
                      if(arg.gt.0.0) then
@@ -626,8 +635,7 @@ contains
                         close(21)
                      endif
                      call this%callback(nutc,smax1,nsnr,xdt,fsig,msg,    &
-                        iaptype,qual,ntrperiod,lwspr,fmid,w50)
-!                     if(iwspr.eq.0 .and. nb.lt.0) go to 900
+                        iaptype,qual,ntrperiod,fmid,w50)
                      goto 800
                   endif
                enddo  ! metrics

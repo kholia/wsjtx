@@ -776,7 +776,7 @@ void CPlotter::mouseMoveEvent (QMouseEvent * event)
   if(lower) {
     QToolTip::showText(event->globalPos(),QString::number(ndf));
   } else {
-    QToolTip::showText(event->globalPos(),QString::number(freq));
+    QToolTip::showText(event->globalPos(),QString::number(freq,'f',3));
   }
   QWidget::mouseMoveEvent(event);
 }
