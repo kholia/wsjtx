@@ -4206,6 +4206,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_rptRcvd=w.at(2);
                   m_rptSent=decodedtext.string().mid(7,3);
                   m_nFoxFreq=decodedtext.string().mid(16,4).toInt();
+                  hound_reply ();
                 } else {
                   if (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
                 }
