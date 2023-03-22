@@ -16,9 +16,11 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QDebugStateSaver>
+#include <QRegularExpression>
 #include "Configuration.hpp"
 #include "Radio.hpp"
 #include "pimpl_impl.hpp"
+#include "Logger.hpp"
 
 #include "moc_AD1CCty.cpp"
 
@@ -163,6 +165,9 @@ public:
   {
   }
 
+  QString get_cty_path(const Configuration *configuration);
+  void load_cty(QFile &file);
+
   entity_by_id::iterator lookup_entity (QString call, prefix const& p) const
   {
     call = call.toUpper ();
@@ -228,6 +233,9 @@ public:
 
   Configuration const * configuration_;
   QString path_;
+  QString cty_version_;
+  QString cty_version_date_;
+
   entities_type entities_;
   prefixes_type prefixes_;
 };
@@ -314,6 +322,80 @@ char const * AD1CCty::continent (Continent c)
     }
 }
 
+QString AD1CCty::impl::get_cty_path(Configuration const * configuration)
+{
+  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  auto path = dataPath.exists (file_name)
+              ? dataPath.absoluteFilePath (file_name) // user override
+              : configuration->data_dir ().absoluteFilePath (file_name); // or original
+  return path;
+}
+
+void AD1CCty::impl::load_cty(QFile &file)
+{
+  QRegularExpression version_pattern{R"(VER\d{8})"};
+  int entity_id = 0;
+  int line_number{0};
+
+  entities_.clear();
+  prefixes_.clear();
+  cty_version_ = QString{};
+  cty_version_date_ = QString{};
+
+  QTextStream in{&file};
+  while (!in.atEnd())
+  {
+    auto const &entity_line = in.readLine();
+    ++line_number;
+    if (!in.atEnd())
+    {
+      auto const &entity_parts = entity_line.split(':');
+      if (entity_parts.size() >= 8)
+      {
+        auto primary_prefix = entity_parts[7].trimmed();
+        bool WAE_only{false};
+        if (primary_prefix.startsWith('*'))
+        {
+          primary_prefix = primary_prefix.mid(1);
+          WAE_only = true;
+        }
+        bool ok1, ok2, ok3, ok4, ok5;
+        entities_.emplace(++entity_id, entity_parts[0].trimmed(), WAE_only, entity_parts[1].trimmed().toInt(&ok1),
+                          entity_parts[2].trimmed().toInt(&ok2), continent(entity_parts[3].trimmed()),
+                          entity_parts[4].trimmed().toFloat(&ok3), entity_parts[5].trimmed().toFloat(&ok4),
+                          static_cast<int> (entity_parts[6].trimmed().toFloat(&ok5) * 60 * 60), primary_prefix);
+        if (!(ok1 && ok2 && ok3 && ok4 && ok5))
+        {
+          throw std::domain_error{"Invalid number in cty.dat line " + boost::lexical_cast<std::string>(line_number)};
+        }
+        QString line;
+        QString detail;
+        do
+        {
+          in.readLineInto(&line);
+          ++line_number;
+        } while (detail += line, !detail.endsWith(';'));
+        for (auto prefix: detail.left(detail.size() - 1).split(','))
+        {
+          prefix = prefix.trimmed();
+          bool exact{false};
+          if (prefix.startsWith('='))
+          {
+            prefix = prefix.mid(1);
+            exact = true;
+            // match version pattern to prefix
+            if (version_pattern.match(prefix).hasMatch())
+            {
+              cty_version_date_ = prefix;
+            }
+          }
+          prefixes_.emplace(prefix, exact, entity_id);
+        }
+      }
+    }
+  }
+}
+
 AD1CCty::AD1CCty (Configuration const * configuration)
   : m_ {configuration}
 {
@@ -321,69 +403,23 @@ AD1CCty::AD1CCty (Configuration const * configuration)
   // TODO: G4WJS - consider doing the following asynchronously to
   // speed up startup. Not urgent as it takes less than 0.5s on a Core
   // i7 reading BIG CTY.DAT.
-  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
-  m_->path_ = dataPath.exists (file_name)
-    ? dataPath.absoluteFilePath (file_name) // user override
-    : configuration->data_dir ().absoluteFilePath (file_name); // or original
+  AD1CCty::reload (configuration);
+  }
+
+void AD1CCty::reload(Configuration const * configuration)
+{
+  m_->path_ = m_->impl::get_cty_path(configuration);
   QFile file {m_->path_};
+
+  LOG_INFO(QString{"Loading CTY.DAT from %1"}.arg (m_->path_));
+
   if (file.open (QFile::ReadOnly))
-    {
-      int entity_id = 0;
-      int line_number {0};
-      QTextStream in {&file};
-      while (!in.atEnd ())
-        {
-          auto const& entity_line = in.readLine ();
-          ++line_number;
-          if (!in.atEnd ())
-            {
-              auto const& entity_parts = entity_line.split (':');
-              if (entity_parts.size () >= 8)
-                {
-                  auto primary_prefix = entity_parts[7].trimmed ();
-                  bool WAE_only {false};
-                  if (primary_prefix.startsWith ('*'))
-                    {
-                      primary_prefix = primary_prefix.mid (1);
-                      WAE_only = true;
-                    }
-                  bool ok1, ok2, ok3, ok4, ok5;
-                  m_->entities_.emplace (++entity_id
-                                         , entity_parts[0].trimmed ()
-                                         , WAE_only
-                                         , entity_parts[1].trimmed ().toInt (&ok1)
-                                         , entity_parts[2].trimmed ().toInt (&ok2)
-                                         , continent (entity_parts[3].trimmed ())
-                                         , entity_parts[4].trimmed ().toFloat (&ok3)
-                                         , entity_parts[5].trimmed ().toFloat (&ok4)
-                                         , static_cast<int> (entity_parts[6].trimmed ().toFloat (&ok5) * 60 * 60)
-                                         , primary_prefix);
-                  if (!(ok1 && ok2 && ok3 && ok4 && ok5))
-                    {
-                      throw std::domain_error {"Invalid number in cty.dat line " + boost::lexical_cast<std::string> (line_number)};
-                    }
-                  QString line;
-                  QString detail;
-                  do
-                    {
-                      in.readLineInto (&line);
-                      ++line_number;
-                    } while (detail += line, !detail.endsWith (';'));
-                  for (auto prefix : detail.left (detail.size () - 1).split (','))
-                    {
-                      prefix = prefix.trimmed ();
-                      bool exact {false};
-                      if (prefix.startsWith ('='))
-                        {
-                          prefix = prefix.mid (1);
-                          exact = true;
-                        }
-                      m_->prefixes_.emplace (prefix, exact, entity_id);
-                    }
-                }
-            }
-        }
-    }
+  {
+    m_->impl::load_cty(file);
+    m_->cty_version_ = AD1CCty::lookup("VERSION").entity_name;
+    Q_EMIT cty_loaded(m_->cty_version_);
+    LOG_INFO(QString{"Loaded CTY.DAT version %1, %2"}.arg (m_->cty_version_date_).arg (m_->cty_version_));
+  }
 }
 
 AD1CCty::~AD1CCty ()
@@ -420,4 +456,8 @@ auto AD1CCty::lookup (QString const& call) const -> Record
         }
     }
   return Record {};
+}
+auto AD1CCty::version () const -> QString
+{
+  return m_->cty_version_date_;
 }

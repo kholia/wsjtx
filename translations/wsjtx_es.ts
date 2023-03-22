@@ -4237,7 +4237,7 @@ predefinida. La lista se puede modificar en &quot;Ajustes&quot; (F2).</translati
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
         <translatorcomment>Log ADIF escaneado, %1 funcionaba antes de la creación de registros</translatorcomment>
         <translation>Log ADIF escaneado, %1 registros trabajados B4 creados</translation>
     </message>

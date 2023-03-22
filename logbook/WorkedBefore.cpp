@@ -23,6 +23,7 @@
 #include <QDateTime>
 #include "Configuration.hpp"
 #include "revision_utils.hpp"
+#include "Logger.hpp"
 #include "qt_helpers.hpp"
 #include "pimpl_impl.hpp"
 
@@ -225,7 +226,7 @@ namespace
 {
   auto const logFileName = "wsjtx_log.adi";
 
-  // Expception class suitable for using with QtConcurrent across
+  // Exception class suitable for using with QtConcurrent across
   // thread boundaries
   class LoaderException final
     : public QException
@@ -374,6 +375,7 @@ public:
 
   void reload ()
   {
+    prefixes_.reload (configuration_);
     async_loader_ = QtConcurrent::run (loader, path_, &prefixes_);
     loader_watcher_.setFuture (async_loader_);
   }
@@ -402,9 +404,16 @@ WorkedBefore::WorkedBefore (Configuration const * configuration)
         {
           error = e.error ();
         }
-      Q_EMIT finished_loading (n, error);
+      QString cty_ver = m_->prefixes_.version();
+      LOG_DEBUG(QString{"WorkedBefore::reload: CTY.DAT version %1"}.arg (cty_ver));
+      Q_EMIT finished_loading (n, cty_ver, error);
     });
   reload ();
+}
+
+QString WorkedBefore::cty_version () const
+{
+  return m_->prefixes_.version ();
 }
 
 void WorkedBefore::reload ()
@@ -668,6 +677,7 @@ bool WorkedBefore::CQ_zone_worked (int CQ_zone, QString const& mode, QString con
     }
 }
 
+
 bool WorkedBefore::ITU_zone_worked (int ITU_zone, QString const& mode, QString const& band) const
 {
   if (mode.size ())
@@ -699,3 +709,5 @@ bool WorkedBefore::ITU_zone_worked (int ITU_zone, QString const& mode, QString c
         }
     }
 }
+
+

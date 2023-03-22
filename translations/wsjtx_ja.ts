@@ -3869,7 +3869,7 @@ ENTERを押してテキストを登録リストに追加.
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
         <translation>ADIFログ検索. %1交信済み記録作成しました</translation>
     </message>
     <message>

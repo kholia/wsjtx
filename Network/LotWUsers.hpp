@@ -31,6 +31,7 @@ public:
   bool user (QString const& call) const;
 
   Q_SIGNAL void LotW_users_error (QString const& reason) const;
+  Q_SIGNAL void progress (QString const& reason) const;
   Q_SIGNAL void load_finished () const;
 
 private:

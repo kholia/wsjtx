@@ -201,6 +201,7 @@
 #include "models/DecodeHighlightingModel.hpp"
 #include "logbook/logbook.h"
 #include "widgets/LazyFillComboBox.hpp"
+#include "Network/FileDownload.hpp"
 
 #include "ui_Configuration.h"
 #include "moc_Configuration.cpp"
@@ -564,6 +565,9 @@ private:
   Q_SLOT void on_add_macro_line_edit_editingFinished ();
   Q_SLOT void delete_macro ();
   void delete_selected_macros (QModelIndexList);
+  void after_CTY_downloaded();
+  void set_CTY_DAT_version(QString const& version);
+  void error_during_CTY_download (QString const& reason);
   Q_SLOT void on_udp_server_line_edit_textChanged (QString const&);
   Q_SLOT void on_udp_server_line_edit_editingFinished ();
   Q_SLOT void on_save_path_select_push_button_clicked (bool);
@@ -574,7 +578,9 @@ private:
   Q_SLOT void handle_transceiver_failure (QString const& reason);
   Q_SLOT void on_reset_highlighting_to_defaults_push_button_clicked (bool);
   Q_SLOT void on_rescan_log_push_button_clicked (bool);
+  Q_SLOT void on_CTY_download_button_clicked (bool);
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
+
   Q_SLOT void on_cbx2ToneSpacing_clicked(bool);
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
   Q_SLOT void on_prompt_to_log_check_box_clicked(bool);
@@ -746,7 +752,7 @@ private:
   QAudioDeviceInfo next_audio_output_device_;
   AudioDevice::Channel audio_output_channel_;
   AudioDevice::Channel next_audio_output_channel_;
-
+  FileDownload cty_download;
   friend class Configuration;
 };
 
@@ -858,6 +864,11 @@ bool Configuration::include_WAE_entities () const {return m_->include_WAE_entiti
 bool Configuration::highlight_73 () const {return m_->highlight_73_;}
 bool Configuration::highlight_DXcall () const {return m_->highlight_DXcall_;}
 bool Configuration::highlight_DXgrid () const {return m_->highlight_DXgrid_;}
+
+void Configuration::set_CTY_DAT_version(QString const& version)
+{
+  m_->set_CTY_DAT_version(version);
+}
 
 void Configuration::set_calibration (CalibrationParams params)
 {
@@ -1183,8 +1194,13 @@ Configuration::impl::impl (Configuration * self, QNetworkAccessManager * network
 
   // set up LoTW users CSV file fetching
   connect (&lotw_users_, &LotWUsers::load_finished, [this] () {
-      ui_->LotW_CSV_fetch_push_button->setEnabled (true);
-    });
+    ui_->LotW_CSV_fetch_push_button->setEnabled (true);
+  });
+
+  connect(&lotw_users_, &LotWUsers::progress, [this] (QString const& msg) {
+      ui_->LotW_CSV_status_label->setText(msg);
+  });
+
   lotw_users_.set_local_file_path (writeable_data_dir_.absoluteFilePath ("lotw-user-activity.csv"));
 
   //
@@ -2414,9 +2430,45 @@ void Configuration::impl::on_reset_highlighting_to_defaults_push_button_clicked 
 
 void Configuration::impl::on_rescan_log_push_button_clicked (bool /*clicked*/)
 {
-  if (logbook_) logbook_->rescan ();
+  if (logbook_) {
+    logbook_->rescan ();
+  }
 }
 
+void Configuration::impl::on_CTY_download_button_clicked (bool /*clicked*/)
+{
+  ui_->CTY_download_button->setEnabled (false); // disable button until download is complete
+  QDir dataPath {QStandardPaths::writableLocation (QStandardPaths::DataLocation)};
+  cty_download.configure(network_manager_,
+                         "http://www.country-files.com/bigcty/cty.dat",
+                         dataPath.absoluteFilePath("cty.dat"),
+                         "WSJT-X CTY Downloader");
+
+  // set up LoTW users CSV file fetching
+  connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_CTY_downloaded, Qt::UniqueConnection);
+  connect (&cty_download, &FileDownload::error, this, &Configuration::impl::error_during_CTY_download, Qt::UniqueConnection);
+
+  cty_download.start_download();
+}
+void Configuration::impl::set_CTY_DAT_version(QString const& version)
+{
+  ui_->CTY_file_label->setText(QString{"CTY File Version: %1"}.arg(version));
+}
+
+void Configuration::impl::error_during_CTY_download (QString const& reason)
+{
+  MessageBox::warning_message (this, tr ("Error Loading CTY.DAT"), reason);
+  after_CTY_downloaded();
+}
+
+void Configuration::impl::after_CTY_downloaded ()
+{
+  ui_->CTY_download_button->setEnabled (true);
+  if (logbook_) {
+    logbook_->rescan ();
+    ui_->CTY_file_label->setText(QString{"CTY File Version: %1"}.arg(logbook_->cty_version()));
+  }
+}
 void Configuration::impl::on_LotW_CSV_fetch_push_button_clicked (bool /*checked*/)
 {
   lotw_users_.load (ui_->LotW_CSV_URL_line_edit->text (), true, true);

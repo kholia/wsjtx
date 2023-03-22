@@ -42,8 +42,11 @@ public:
   };
 
   explicit AD1CCty (Configuration const *);
+  void reload(Configuration const * configuration);
   ~AD1CCty ();
   Record lookup (QString const& call) const;
+  QString version () const;
+  Q_SIGNAL void cty_loaded (QString const& version) const;
 
 private:
   class impl;

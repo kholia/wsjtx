@@ -16,7 +16,9 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QDebug>
-
+#include "qt_helpers.hpp"
+#include "Logger.hpp"
+#include "FileDownload.hpp"
 #include "pimpl_impl.hpp"
 
 #include "moc_LotWUsers.cpp"
@@ -39,6 +41,7 @@ public:
     , url_valid_ {false}
     , redirect_count_ {0}
     , age_constraint_ {365}
+    , connected_ {false}
   {
   }
 
@@ -48,14 +51,36 @@ public:
     auto csv_file_name = csv_file_.fileName ();
     auto exists = QFileInfo::exists (csv_file_name);
     if (fetch && (!exists || forced_fetch))
+    {
+      current_url_.setUrl(url);
+      if (current_url_.isValid() && !QSslSocket::supportsSsl())
       {
-        current_url_.setUrl (url);
-        if (current_url_.isValid () && !QSslSocket::supportsSsl ())
-          {
-            current_url_.setScheme ("http");
-          }
-        redirect_count_ = 0;
-        download (current_url_);
+        current_url_.setScheme("http");
+      }
+      redirect_count_ = 0;
+
+      Q_EMIT self_->progress (QString("Starting download from %1").arg(url));
+
+      lotw_downloader_.configure(network_manager_,
+                                 url,
+                                 csv_file_name,
+                                 "WSJT-X LotW User Downloader");
+      if (!connected_)
+      {
+        connect(&lotw_downloader_, &FileDownload::complete, [this, csv_file_name] {
+            LOG_INFO(QString{"LotWUsers: Loading LotW file %1"}.arg(csv_file_name));
+            future_load_ = std::async(std::launch::async, &LotWUsers::impl::load_dictionary, this, csv_file_name);
+        });
+        connect(&lotw_downloader_, &FileDownload::error, [this] (QString const& msg) {
+            LOG_INFO(QString{"LotWUsers: Error downloading LotW file: %1"}.arg(msg));
+            Q_EMIT self_->LotW_users_error (msg);
+        });
+        connect( &lotw_downloader_, &FileDownload::progress, [this] (QString const& msg) {
+            Q_EMIT self_->progress (msg);
+        });
+        connected_ = true;
+      }
+        lotw_downloader_.start_download();
       }
     else
       {
@@ -67,142 +92,9 @@ public:
       }
   }
 
-  void download (QUrl url)
-  {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-    if (QNetworkAccessManager::Accessible != network_manager_->networkAccessible ())
-      {
-        // try and recover network access for QNAM
-        network_manager_->setNetworkAccessible (QNetworkAccessManager::Accessible);
-      }
-#endif
-
-    QNetworkRequest request {url};
-    request.setRawHeader ("User-Agent", "WSJT LotW User Downloader");
-    request.setOriginatingObject (this);
-
-    // this blocks for a second or two the first time it is used on
-    // Windows - annoying
-    if (!url_valid_)
-      {
-        reply_ = network_manager_->head (request);
-      }
-    else
-      {
-        reply_ = network_manager_->get (request);
-      }
-
-    connect (reply_.data (), &QNetworkReply::finished, this, &LotWUsers::impl::reply_finished);
-    connect (reply_.data (), &QNetworkReply::readyRead, this, &LotWUsers::impl::store);
-  }
-
-  void reply_finished ()
-  {
-    if (!reply_)
-      {
-        Q_EMIT self_->load_finished ();
-        return;           // we probably deleted it in an earlier call
-      }
-    QUrl redirect_url {reply_->attribute (QNetworkRequest::RedirectionTargetAttribute).toUrl ()};
-    if (reply_->error () == QNetworkReply::NoError && !redirect_url.isEmpty ())
-      {
-        if ("https" == redirect_url.scheme () && !QSslSocket::supportsSsl ())
-          {
-            Q_EMIT self_->LotW_users_error (tr ("Network Error - SSL/TLS support not installed, cannot fetch:\n\'%1\'")
-                                            .arg (redirect_url.toDisplayString ()));
-            url_valid_ = false; // reset
-            Q_EMIT self_->load_finished ();
-          }
-        else if (++redirect_count_ < 10) // maintain sanity
-          {
-            // follow redirect
-            download (reply_->url ().resolved (redirect_url));
-          }
-        else
-          {
-            Q_EMIT self_->LotW_users_error (tr ("Network Error - Too many redirects:\n\'%1\'")
-                                            .arg (redirect_url.toDisplayString ()));
-            url_valid_ = false; // reset
-            Q_EMIT self_->load_finished ();
-          }
-      }
-    else if (reply_->error () != QNetworkReply::NoError)
-      {
-        csv_file_.cancelWriting ();
-        csv_file_.commit ();
-        url_valid_ = false;     // reset
-        // report errors that are not due to abort
-        if (QNetworkReply::OperationCanceledError != reply_->error ())
-          {
-            Q_EMIT self_->LotW_users_error (tr ("Network Error:\n%1")
-                                            .arg (reply_->errorString ()));
-          }
-        Q_EMIT self_->load_finished ();
-      }
-    else
-      {
-        if (url_valid_ && !csv_file_.commit ())
-          {
-            Q_EMIT self_->LotW_users_error (tr ("File System Error - Cannot commit changes to:\n\"%1\"")
-                                            .arg (csv_file_.fileName ()));
-            url_valid_ = false; // reset
-            Q_EMIT self_->load_finished ();
-          }
-        else
-          {
-            if (!url_valid_)
-              {
-                // now get the body content
-                url_valid_ = true;
-                download (reply_->url ().resolved (redirect_url));
-              }
-            else
-              {
-                url_valid_ = false; // reset
-                // load the database asynchronously
-                future_load_ = std::async (std::launch::async, &LotWUsers::impl::load_dictionary, this, csv_file_.fileName ());
-              }
-          }
-      }
-    if (reply_ && reply_->isFinished ())
-      {
-        reply_->deleteLater ();
-      }
-  }
-
-  void store ()
-  {
-    if (url_valid_)
-      {
-        if (!csv_file_.isOpen ())
-          {
-            // create temporary file in the final location
-            if (!csv_file_.open (QSaveFile::WriteOnly))
-              {
-                abort ();
-                Q_EMIT self_->LotW_users_error (tr ("File System Error - Cannot open file:\n\"%1\"\nError(%2): %3")
-                                                .arg (csv_file_.fileName ())
-                                                .arg (csv_file_.error ())
-                                                .arg (csv_file_.errorString ()));
-              }
-          }
-        if (csv_file_.write (reply_->read (reply_->bytesAvailable ())) < 0)
-          {
-            abort ();
-            Q_EMIT self_->LotW_users_error (tr ("File System Error - Cannot write to file:\n\"%1\"\nError(%2): %3")
-                                            .arg (csv_file_.fileName ())
-                                            .arg (csv_file_.error ())
-                                            .arg (csv_file_.errorString ()));
-          }
-      }
-  }
-
   void abort ()
   {
-    if (reply_ && reply_->isRunning ())
-      {
-        reply_->abort ();
-      }
+    lotw_downloader_.abort();
   }
 
   // Load the database from the given file name
@@ -222,12 +114,14 @@ public:
             auto pos = l.indexOf (',');
             result[l.left (pos)] = QDate::fromString (l.mid (pos + 1, l.indexOf (',', pos + 1) - pos - 1), "yyyy-MM-dd");
           }
-//        qDebug () << "LotW User Data Loaded";
       }
     else
       {
         throw std::runtime_error {QObject::tr ("Failed to open LotW users CSV file: '%1'").arg (f.fileName ()).toStdString ()};
       }
+    LOG_INFO(QString{"LotWUsers: Loaded %1 records from %2"}.arg(result.size()).arg(lotw_csv_file));
+    Q_EMIT self_->progress (QString{"Loaded %1 records from LotW."}.arg(result.size()));
+    Q_EMIT self_->load_finished();
     return result;
   }
 
@@ -241,6 +135,8 @@ public:
   std::future<dictionary> future_load_;
   dictionary last_uploaded_;
   qint64 age_constraint_;       // days
+  FileDownload lotw_downloader_;
+  bool connected_;
 };
 
 #include "LotWUsers.moc"
@@ -249,6 +145,7 @@ LotWUsers::LotWUsers (QNetworkAccessManager * network_manager, QObject * parent)
   : QObject {parent}
   , m_ {this, network_manager}
 {
+
 }
 
 LotWUsers::~LotWUsers ()

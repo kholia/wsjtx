@@ -551,14 +551,15 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (this, &MainWindow::finished, m_logDlg.data (), &LogQSO::close);
 
   // hook up the log book
-  connect (&m_logBook, &LogBook::finished_loading, [this] (int record_count, QString const& error) {
+  connect (&m_logBook, &LogBook::finished_loading, [this] (int record_count, QString cty_version, QString const& error) {
       if (error.size ())
         {
           MessageBox::warning_message (this, tr ("Error Scanning ADIF Log"), error);
         }
       else
         {
-          showStatusMessage (tr ("Scanned ADIF log, %1 worked before records created").arg (record_count));
+          m_config.set_CTY_DAT_version(cty_version);
+          showStatusMessage (tr ("Scanned ADIF log, %1 worked-before records created. CTY: %2").arg (record_count).arg (cty_version));
         }
     });
 
@@ -674,6 +675,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (&m_config.lotw_users (), &LotWUsers::LotW_users_error, this, [this] (QString const& reason) {
       MessageBox::warning_message (this, tr ("Error Loading LotW Users Data"), reason);
     }, Qt::QueuedConnection);
+
 
   QButtonGroup* txMsgButtonGroup = new QButtonGroup {this};
   txMsgButtonGroup->addButton(ui->txrb1,1);
@@ -4204,6 +4206,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_rptRcvd=w.at(2);
                   m_rptSent=decodedtext.string().mid(7,3);
                   m_nFoxFreq=decodedtext.string().mid(16,4).toInt();
+                  hound_reply ();
                 } else {
                   if (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
                 }
@@ -7834,6 +7837,8 @@ void MainWindow::band_changed (Frequency f)
       }
     setRig (f);
     setXIT (ui->TxFreqSpinBox->value ());
+    m_specOp=m_config.special_op_id();
+    if (m_specOp==SpecOp::FOX) FoxReset("BandChange");  // when changing bands, don't preserve the Fox queues
   }
 }
 
@@ -9575,6 +9580,21 @@ void MainWindow::on_sbMax_dB_valueChanged(int n)
   t = t.asprintf(" Max_dB %d",m_max_dB);
   writeFoxQSO(t);
 }
+void MainWindow::FoxReset(QString reason="")
+{
+  QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
+  f.remove();
+  ui->decodedTextBrowser->setText("");
+  ui->houndQueueTextBrowser->setText("");
+  ui->foxTxListTextBrowser->setText("");
+
+  m_houndQueue.clear();
+  m_foxQSO.clear();
+  m_foxQSOinProgress.clear();
+  m_discard_decoded_hounds_this_cycle = true;     // discard decoded messages until the next cycle
+  if (reason != "") writeFoxQSO(" " + reason);
+  writeFoxQSO(" Reset");
+}
 
 void MainWindow::on_pbFoxReset_clicked()
 {
@@ -9582,16 +9602,7 @@ void MainWindow::on_pbFoxReset_clicked()
   auto button = MessageBox::query_message (this, tr ("Confirm Reset"),
       tr ("Are you sure you want to clear the QSO queues?"));
   if(button == MessageBox::Yes) {
-    QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
-    f.remove();
-    ui->decodedTextBrowser->setText("");
-    ui->houndQueueTextBrowser->setText("");
-    ui->foxTxListTextBrowser->setText("");
-
-    m_houndQueue.clear();
-    m_foxQSO.clear();
-    m_foxQSOinProgress.clear();
-    writeFoxQSO(" Reset");
+    FoxReset();
   }
 }
 
@@ -9715,6 +9726,7 @@ void MainWindow::selectHound(QString line, bool bTopQueue)
  * <Enter> is equivalent to double-clicking on the top-most line.
 */
   if(line.length()==0) return;
+  if(line.length() < 6) return;
   QString houndCall=line.split(" ",SkipEmptyParts).at(0);
 
 // Don't add a call already enqueued or in QSO
@@ -9759,6 +9771,15 @@ void MainWindow::houndCallers()
  * Distance, Age, and Continent) to a list, sort the list by specified criteria,
  * and display the top N_Hounds entries in the left text window.
 */
+  //  if frequency was changed in the middle of an interval, there's a flag set to ignore the decodes. Reset it here
+  //
+
+  if (m_discard_decoded_hounds_this_cycle)
+  {
+    m_discard_decoded_hounds_this_cycle = false;             //
+    return; // don't use these decodes
+  }
+
   QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
   if(f.open(QIODevice::ReadOnly | QIODevice::Text)) {
     QTextStream s(&f);
@@ -9974,26 +9995,35 @@ list2Done:
     }
 
     if(hc1!="") {
-      // Log this QSO!
-      auto QSO_time = QDateTime::currentDateTimeUtc ();
-      m_hisCall=hc1;
-      m_hisGrid=m_foxQSO[hc1].grid;
-      m_rptSent=m_foxQSO[hc1].sent;
-      m_rptRcvd=m_foxQSO[hc1].rcvd;
-      if (!m_foxLogWindow) on_fox_log_action_triggered ();
-      if (m_logBook.fox_log ()->add_QSO (QSO_time, m_hisCall, m_hisGrid, m_rptSent, m_rptRcvd, m_lastBand))
-        {
-          writeFoxQSO (QString {" Log:  %1 %2 %3 %4 %5"}.arg (m_hisCall).arg (m_hisGrid)
-                       .arg (m_rptSent).arg (m_rptRcvd).arg (m_lastBand));
-          on_logQSOButton_clicked ();
-          m_foxRateQueue.enqueue (now); //Add present time in seconds
-                                        //to Rate queue.
-          QTimer::singleShot (13000, [=] {
-              m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
-              updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
-          });
+      auto already_logged = m_loggedByFox[hc1].contains(m_lastBand + " ");   // already logged this call on this band?
+
+      if (!already_logged) { // Log this QSO!
+        auto QSO_time = QDateTime::currentDateTimeUtc ();
+        m_hisCall=hc1;
+        m_hisGrid=m_foxQSO[hc1].grid;
+        m_rptSent=m_foxQSO[hc1].sent;
+        m_rptRcvd=m_foxQSO[hc1].rcvd;
+        if (!m_foxLogWindow) on_fox_log_action_triggered ();
+        if (m_logBook.fox_log ()->add_QSO (QSO_time, m_hisCall, m_hisGrid, m_rptSent, m_rptRcvd, m_lastBand))
+          {
+            writeFoxQSO (QString {" Log:  %1 %2 %3 %4 %5"}.arg (m_hisCall).arg (m_hisGrid)
+                         .arg (m_rptSent).arg (m_rptRcvd).arg (m_lastBand));
+            on_logQSOButton_clicked ();
+            m_foxRateQueue.enqueue (now); //Add present time in seconds
+                                          //to Rate queue.
+            QTimer::singleShot (13000, [=] {
+                m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
+                updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
+            });
+          }
+          m_loggedByFox[hc1] += (m_lastBand + " ");
         }
-      m_loggedByFox[hc1] += (m_lastBand + " ");
+      else
+        {
+          // note that this is a duplicate
+          writeFoxQSO(QString{" Dup:  %1 %2 %3 %4 %5"}.arg(m_hisCall).arg(m_hisGrid)
+                              .arg(m_rptSent).arg(m_rptRcvd).arg(m_lastBand));
+        }
     }
 
     if(i<n2 and fm=="") {

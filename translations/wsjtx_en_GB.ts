@@ -3637,7 +3637,7 @@ list. The list can be maintained in Settings (F2).</source>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

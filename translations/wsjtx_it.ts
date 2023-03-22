@@ -3891,7 +3891,7 @@ elenco. L&apos;elenco può essere gestito in Impostazioni (F2).</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="527"/>
-        <source>Scanned ADIF log, %1 worked before records created</source>
+        <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
         <translation>Log ADIF scansionato,%1 ha funzionato prima della creazione dei record</translation>
     </message>
     <message>
