@@ -745,7 +745,6 @@ private:
 
   QQueue<QString> m_houndQueue;        //Selected Hounds available for starting a QSO
   QQueue<QString> m_foxQSOinProgress;  //QSOs in progress: Fox has sent a report
-  QQueue<qint64>  m_foxRateQueue;
 
   QDateTime m_dateTimeQSOOn;
   QDateTime m_dateTimeLastTX;
@@ -865,6 +864,7 @@ private:
   void foxTxSequencer();
   void foxGenWaveform(int i,QString fm);
   void writeFoxQSO (QString const& msg);
+  void update_foxLogWindow_rate();
   void to_jt9(qint32 n, qint32 istart, qint32 idone);
   bool is77BitMode () const;
   void cease_auto_Tx_after_QSO ();

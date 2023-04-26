@@ -1147,6 +1147,7 @@ void MainWindow::on_the_minute ()
   } else {
     tx_watchdog (false);
   }
+  MainWindow::update_foxLogWindow_rate(); // update the rate on the window
 }
 
 //--------------------------------------------------- MainWindow destructor
@@ -4512,8 +4513,8 @@ void MainWindow::guiUpdate()
 
     if(m_mode=="FT8" and SpecOp::FOX==m_specOp) {
 // Don't allow Fox mode in any of the default FT8 sub-bands.
-      qint32 ft8Freq[]={1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
-      for(int i=0; i<11; i++) {
+      QVector<qint32> ft8Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
+      for(int i=0; i<ft8Freq.length()-1; i++) {
           int kHzdiff=m_freqNominal - ft8Freq[i];
           if(qAbs(kHzdiff) < 3000 ) {
           m_bTxTime=false;
@@ -10009,8 +10010,6 @@ list2Done:
             writeFoxQSO (QString {" Log:  %1 %2 %3 %4 %5"}.arg (m_hisCall).arg (m_hisGrid)
                          .arg (m_rptSent).arg (m_rptRcvd).arg (m_lastBand));
             on_logQSOButton_clicked ();
-            m_foxRateQueue.enqueue (now); //Add present time in seconds
-                                          //to Rate queue.
             QTimer::singleShot (13000, [=] {
                 m_foxQSOinProgress.removeOne(hc1); //Remove from In Progress window
                 updateFoxQSOsInProgressDisplay();  //Update InProgress display after Tx is complete
@@ -10073,17 +10072,19 @@ Transmit:
     }
   }
 
-  while(!m_foxRateQueue.isEmpty()) {
-    qint64 age = now - m_foxRateQueue.head();
-    if(age < 3600) break;
-    m_foxRateQueue.dequeue();
-  }
   if (m_foxLogWindow)
     {
-      m_foxLogWindow->rate (m_foxRateQueue.size ());
+      MainWindow::update_foxLogWindow_rate();
       m_foxLogWindow->queued (m_foxQSOinProgress.count ());
     }
   updateFoxQSOsInProgressDisplay();
+}
+
+void MainWindow::update_foxLogWindow_rate()
+{
+  if (m_foxLogWindow) {
+    m_foxLogWindow->rate(m_logBook.fox_log()->rate());
+  }
 }
 
 void MainWindow::rm_tb4(QString houndCall)
@@ -10240,6 +10241,7 @@ void MainWindow::foxTest()
     return;
   }
 
+
   QTextStream s(&f);
   QTextStream sdiag(&fdiag);
 
@@ -10299,14 +10301,14 @@ void MainWindow::foxTest()
       m_houndQueue.swap(tmpQueue);
     }
     if(line.contains("Rx:"))  {
-      msg=line.mid(43);
+      msg=line.mid(37+6);
       t=msg.mid(24);
       int i0=t.indexOf(" ");
       hc1=t.mid(i0+1);
       int i1=hc1.indexOf(" ");
       hc1=hc1.mid(0,i1);
       int i2=qMax(msg.indexOf("R+"),msg.indexOf("R-"));
-      if(i2>20) {
+      if(i2>10) {
         rptRcvd=msg.mid(i2,4);
         foxRxSequencer(msg,hc1,rptRcvd);
       }
