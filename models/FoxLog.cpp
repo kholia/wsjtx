@@ -130,7 +130,7 @@ FoxLog::impl::impl (Configuration const * configuration)
                    "    fox_log "
                    "  ORDER BY "
                    "    \"when\" DESC"
-                   "  LIMIT 100"
+                   "  LIMIT :limitn"
   );
 
   SQL_error_check (rate60m_query_, &QSqlQuery::prepare,
@@ -161,8 +161,8 @@ FoxLog::impl::impl (Configuration const * configuration)
 
 QString FoxLog::rate()
 {
-  return QString("Last_10: %1, Last_100: %2, Last_60m:%3").arg(QString::number(this->rate_last_n(10),'g',1),
-                                               QString::number(this->rate_last_n(100),'g',1),
+  return QString("Last_10: %1, Last_100: %2, Last_60m:%3").arg(QString::number(this->rate_last_n(10),'f',0),
+                                               QString::number(this->rate_last_n(100),'f',0),
                                                QString::number(this->rate_60m()));
 }
 
@@ -273,7 +273,7 @@ double FoxLog::rate_last_n(int n)
   qlonglong const& secs_now = QDateTime::currentDateTime().toMSecsSinceEpoch () / 1000;
 
   // get last n or up to n
-  m_->rate_n_query_.bindValue (":lastn", n);
+  m_->rate_n_query_.bindValue (":limitn", n);
   SQL_error_check (m_->rate_n_query_, static_cast<bool (QSqlQuery::*) ()> (&QSqlQuery::exec));
 
   m_->rate_n_query_.next();
@@ -286,6 +286,7 @@ double FoxLog::rate_last_n(int n)
   rate_interval = secs_now - m_->rate_n_query_.value (0).toLongLong ();
 
   m_->rate_n_query_.first(); // count the records
+
   int size = 1;
   while (m_->rate_n_query_.next() && m_->rate_n_query_.isValid()) size++;
   return (size/rate_interval) * 3600;
