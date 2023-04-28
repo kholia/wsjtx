@@ -1165,7 +1165,7 @@ int main(int argc, char *argv[])
                         for (k=0; k<162; k++) {                             //Sum over symbols
                             ifd=ifr+((float)k-81.0)/81.0*( (float)idrift )/(2.0*df);
                             kindex=k0+2*k;
-                            if( kindex < nffts ) {
+                            if( kindex >= 0 && kindex < nffts ) {
                                 p0=ps[ifd-3][kindex];
                                 p1=ps[ifd-1][kindex];
                                 p2=ps[ifd+1][kindex];
