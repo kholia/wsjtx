@@ -284,6 +284,7 @@ double FoxLog::rate_last_n(int n)
   // size / (time_now - time_of_first)
   m_->rate_n_query_.last();
   rate_interval = secs_now - m_->rate_n_query_.value (0).toLongLong ();
+  if (rate_interval == 0) return 0.0;
 
   m_->rate_n_query_.first(); // count the records
 
