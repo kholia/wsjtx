@@ -60,7 +60,7 @@ contains
     character datetime*13,msg37*37
     character*37 allmessages(200)
     character*12 ctime
-    integer allsnrs(100)
+    integer allsnrs(200)
     integer itone(NN)
     integer itone_save(NN,MAX_EARLY)
     real f1_save(MAX_EARLY)
