@@ -1093,16 +1093,14 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
 void MainWindow::not_GA_warning_message ()
 {
-  /*       ### TEMPORARY ###
   MessageBox::critical_message (this,
-                                "This is a pre-release version of WSJT-X 2.6.0 made\n"
+                                "This is a pre-release version of WSJT-X 2.7.0-rc1 made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after Mar 31, 2023.");
+                                "be nonfunctional after Jan 15, 2024.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2023, 03, 31}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2024, 01, 15}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
-  */
 }
 
 void MainWindow::initialize_fonts ()
