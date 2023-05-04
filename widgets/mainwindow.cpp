@@ -8720,6 +8720,7 @@ void MainWindow::locationChange (QString const& location)
     if (m_config.my_grid () != grid) {
       m_config.set_location (grid);
       genStdMsgs (m_rpt, false);
+      pskSetLocal ();
       statusUpdate ();
     }
   } else {
