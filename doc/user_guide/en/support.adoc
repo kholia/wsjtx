@@ -5,15 +5,15 @@ _WSJT-X_ is the {wsjtx_group} at email address
 wsjtgroup@groups.io.  The chances are good that someone with
 similar interests and equipment has already solved your problem and
 will be happy to help.  To post messages here you will need to
-{wsjt-devel}.
+{wsjtx_group2}.
 
 === Bug Reports
 
 One of your responsibilities as a _WSJT-X_ user is to help the
 volunteer programmers to make the program better.  Bugs may be
 reported to the WSJTGROUP forum on Groups.io {wsjtgroup_mail} or the WSJT
-Developers list (wsjt-devel@lists.sourceforge.net).  Again, you will
-need to {wsjtx_group2} or {wsjt-devel2}. 
+Developers list (wsjt-devel@lists.sourceforge.net).  You will
+need to {wsjt-devel2}. 
 
 To be useful, bug reports should include at least the following
 information:
