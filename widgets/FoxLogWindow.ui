@@ -96,7 +96,7 @@
      <item>
       <widget class="QLabel" name="rate_label">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Arial','Helvetica','sans-serif'; font-size:small; color:#222222; background-color:#ffffff;&quot;&gt;Last 10: Average rate (QSOs/hour) for the last 10 QSOs.&lt;br/&gt;Last 100:  Average rate (QSOs/hour) for the last 100 QSOs. &lt;br/&gt;Last 60m: Average rate (QSOs/hour) for the last 60 minutes.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Last 10: Average rate (QSOs/hour) for the last 10 QSOs.&lt;br/&gt;Last 100:  Average rate (QSOs/hour) for the last 100 QSOs. &lt;br/&gt;Last 60m: Average rate (QSOs/hour) for the last 60 minutes.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>N</string>

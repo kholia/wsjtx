@@ -1084,6 +1084,8 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   ui->pbBestSP->setVisible(m_mode=="FT4");
 
+  update_foxLogWindow_rate(); // update the rate on the window
+
   QString jpleph = m_config.data_dir().absoluteFilePath("JPLEPH");
   jpl_setup_(const_cast<char *>(jpleph.toLocal8Bit().constData()),256);
 
@@ -1145,7 +1147,7 @@ void MainWindow::on_the_minute ()
   } else {
     tx_watchdog (false);
   }
-  MainWindow::update_foxLogWindow_rate(); // update the rate on the window
+  update_foxLogWindow_rate(); // update the rate on the window
 }
 
 //--------------------------------------------------- MainWindow destructor
@@ -10073,7 +10075,7 @@ Transmit:
 
   if (m_foxLogWindow)
     {
-      MainWindow::update_foxLogWindow_rate();
+      update_foxLogWindow_rate();
       m_foxLogWindow->queued (m_foxQSOinProgress.count ());
     }
   updateFoxQSOsInProgressDisplay();
