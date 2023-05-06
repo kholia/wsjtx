@@ -1039,6 +1039,7 @@ void Configuration::setSpecial_None()
 {
   m_->bSpecialOp_=false;
   m_->ui_->gbSpecialOpActivity->setChecked(m_->bSpecialOp_);
+  m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::HOUND); // brings backward compatibility to versions without Q65_PILEUP
   m_->write_settings();
 }
 namespace
