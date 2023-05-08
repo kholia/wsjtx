@@ -15,67 +15,67 @@ Copyright 2001 - 2023 by Joe Taylor, K1JT, and the WSJT Development Team
                              May 12, 2023
                       -------------------------
 
-WSJT-X_v2.7.0-rc1 is the first Release Candidate that introduces a new QMAP 
-program. The target application is EME. Besides that, there are a number of 
+WSJT-X 2.7.0 Release Candidate 1 introduces a new program called QMAP,
+a new Special Operating Activity known as Q65 Pileup, and a number of
 other enhancements and fixes.
 
- - New QMAP program: 
-   - QMAP is an independent program but is expected to be used cooperatively 
-     with WSJT-X. QMAP acts as a wideband decoder for one of the 60-second 
-     submodes of Q65. Decoding results are shared with WSJT-X, which manages 
-     operator interactions and rig control.
-   - WSJT-X can cooperate with QMAP via shared memory. In such operation WSJT-X 
-     provides a narrow (up to 5 kHz) view in which to conduct EME QSOs with 
-     full Doppler control, T/R switching, message sequencing, etc., and QMAP 
-     provides a wideband (90 kHz) view of all digital EME activity on the band.
-   - The Q65 decoder has been enhanced for better performance. These improvements 
-     apply to decodes made in WSJT-X and also to those made in QMAP, which uses 
-     the identical downstream code.
-   - QMAP provides most of the capabilities of map65, excert for adaptive
-     polarization.
+ - QMAP and Q65 Pileup mode are of particular interest to those
+   engaged in Earth-Moon-Earth (EME) communication, but other
+   applications may be found for them as well.
 
- - New Q65 Pileup mode, designed to help manage weak-signal pileup situations such 
-   as those experienced by 6-meter EME DXpeditions. Messages exchange 4-character 
-   locators rather than signal reports. Decoder provides q3-level sensitivity for
-   up to 40 callers decoded at least once in the past 24 hours, and for whom the 
-   Moon is above the horizon. Right-click on the Q65 button to enable or disable
-   the Q65 Pileup mode.
+   - QMAP is derived from MAP65, an older program used since 2007 for
+     EME, mainly on the 2 m band. QMAP provides single-polarization
+     receive-only capabilities for any one of the 60-second submodes
+     of Q65. It allows you to monitor all traffic in a 90 kHz subband
+     while conducting EME QSOs in the usual way with WSJT-X.
 
- - More efficient spotting to PSK Reporter. The transmission is now spread in time 
-   and redundant spots are removed, which will hopefully lead to a noticeably lower 
-   load for PSK Reporter.
+   - Q65 Pileup mode is a new feature in WSJT-X that will assist DX
+     operators using Q65 in pileup circumstances with many
+     simultaneous callers and very weak signals, such as those
+     experienced by 6-meter EME DXpeditions.
 
- - Support of the HamSCI Festivals of Eclipse Ionospheric Science: Temporarily, 
-   during the upcoming solar eclipses, spots are transmitted more frequently to   
-   PSK Reporter where this data is collected and used for analysis.  
+   - Further details on QMAP and Q65 Pileup mode are available in a
+     Quick-Start guide posted here:
+     https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf
 
- - WSJT-X is now able to process more than 100 FT8 decodes per period.
+ - WSJT-X now provides more efficient spotting to PSK Reporter.
+   Redundant spots are omitted, and posting of spots is now spread
+   more widely in time. (Temporarily, in support of the HamSCI
+   Festivals of Eclipse Ionospheric Science, spots will be transmitted
+   more frequently during the upcoming solar eclipses.)
 
- - Further improvements to the Fox mode:
-   - Better internal handling of the two queues.
-   - The Fox Log window now displays statistical data on the QSO rate.
+ - WSJT-X is now able to process more than 100 FT8 decodes in a single
+   reception interval.
 
- - When the location is changed (e.g during portable operations) an updated grid 
-   will be sent to PSK Reporter.
+ - Improvements to the Fox mode:
+   - More convenient and efficient handling of the two queues.
+   - Fox Log window now displays statistical data on the QSO rate.
 
- - The cty.dat file can now be updated from the settings. Just click the new 
-   button on the Colors tab.
+ - When the station locator is changed (e.g during portable
+   operations), the new locator will be sent automatically to PSK
+   Reporter.
 
- - New status display when fetching a new LotW file.
+ - The cty.dat file can now be updated by clicking a button on the
+   Settings -> Colors tab.
 
- - AutoSeq now also accepts MSHV multistream messages when in Hound mode.
+ - A new status display appears when fetching a new LotW file.
 
- - Better protection against unwanted effects caused by late FT8 decodes.
+ - Multi-streamed messages transmitted by MSHV are now handled
+   properly when WSJT-X is in Hound mode.
 
- - Fixing an inconsistency where in the Contest Name was not correctly
+ - Auto-sequencing now has better protection against unwanted effects
+   caused by late FT8 decodes.
+
+ - Fixed an inconsistency in which Contest Name was not correctly
    remembered.
 
- - Various other minor fixes and improvements to the code.
+ - Other minor bug fixes.
 
- - Updated hyperlinks to our homepage and to our new WSJT GROUP User Forum 
-   (https://groups.io/g/wsjtgroup/) can now also be found in the User Guide.
+ - Updated hyperlinks to our homepage and to our new WSJT GROUP User
+   Forum (https://groups.io/g/wsjtgroup/) can now also be found in the
+   User Guide.
 
- - Some clarifications to the build instructions for macOS.
+ - The build instructions for macOS have been clarified.
 
 
                         Release: WSJT-X 2.6.1
