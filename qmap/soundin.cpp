@@ -173,7 +173,6 @@ void SoundInThread::inputUDP()
   int ntr;
   int nhsym0=0;
   int iz=174;
-  int nBusy=0;
 
   // Main loop for input of UDP packets over the network:
   while (!qe) {
@@ -216,9 +215,7 @@ void SoundInThread::inputUDP()
 
         m_hsym=(k-2048)*11025.0/(2048.0*m_rate);
         if(m_hsym != nhsym0) {
-          if(m_dataSinkBusy) {
-            nBusy++;
-          } else {
+          if(!m_dataSinkBusy) {
             m_dataSinkBusy=true;
             emit readyForFFT(k);         //Signal to compute new FFTs
           }

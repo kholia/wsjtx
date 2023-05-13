@@ -19,10 +19,10 @@ subroutine q65c(itimer)
   common/datcom2/dd(2,5760000),ss(322,NFFT),savg(NFFT),nparams0
 
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
-  common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,                &
-       ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
+  common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
+       ndepth,ndiskdat,neme,newdat,nfcal,nfshift,                         &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
-       ndop00,nsave,max_drift,nhsym,mycall,mygrid,hiscall,hisgrid,        &
+       ndop00,nsave,max_nhsym,mycall,mygrid,hiscall,hisgrid,              &
        datetime,junk1,junk2
   equivalence (nparams,fcenter)
   data first/.true./
