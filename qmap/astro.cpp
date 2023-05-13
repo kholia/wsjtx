@@ -72,7 +72,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
 
   datcom_.ndop00=ndop00;               //Send self Doppler to decoder, via datcom
 //  qDebug() << "aa" << isec << datcom_.fcenter << nfreq << ndop00;
-  sprintf(cc,
+  snprintf(cc, sizeof(cc),
           "Az:    %6.1f\n"
           "El:    %6.1f\n"
           "MyDop: %6d\n"
@@ -140,7 +140,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
       if(f.open(QIODevice::WriteOnly | QIODevice::Append)) {
         QTextStream out(&f);
         out << t.toString("yyyy-MMM-dd hh:mm:ss");
-        sprintf(cc,"%7.1f %7.1f   %d %7.1f %7.1f %10.1f %7.2f\n",
+        snprintf(cc,sizeof(cc),"%7.1f %7.1f   %d %7.1f %7.1f %10.1f %7.2f\n",
                 azsun,elsun,iCycle,azOffset,elOffset,xavg,10.0*log10(xavg));
         out << cc;
         f.close();
@@ -168,7 +168,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
   if(ntxFreq != ntxFreq0) ndiff=1;
   ntxFreq0=ntxFreq;
   QTextStream out(&f);
-  sprintf(cc,"%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Moon\n"
+  snprintf(cc,sizeof(cc),"%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Moon\n"
           "%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Sun\n"
           "%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Source\n"
           "%4d,%6d,%6d,Doppler\n"
