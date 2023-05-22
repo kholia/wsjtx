@@ -87,8 +87,7 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
     ui->label->setVisible(b);
     ui->rate->setVisible(b);
   }
-  if(mode=="Q65-pileup") ui->RecentStationsPlainTextEdit->clear();
-  ui->RecentStationsPlainTextEdit->insertPlainText(t);
+  ui->RecentStationsPlainTextEdit->setPlainText(t);
 }
 
 int ActiveStations::maxRecent()
