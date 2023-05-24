@@ -7792,7 +7792,7 @@ void MainWindow::on_bandComboBox_activated (int index)
   m_bandEdited = true;
   band_changed (frequency);
   m_wideGraph->setRxBand (m_config.bands ()->find (frequency));
-  auto_tx_mode(false);
+  if (m_mode != "WSPR" && (m_mode != "FST4W") auto_tx_mode(false);
 }
 
 void MainWindow::band_changed (Frequency f)
