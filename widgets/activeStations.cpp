@@ -87,7 +87,10 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
     ui->label->setVisible(b);
     ui->rate->setVisible(b);
   }
+  bool bClickOK=m_clickOK;
+  m_clickOK=false;
   ui->RecentStationsPlainTextEdit->setPlainText(t);
+  m_clickOK=bClickOK;
 }
 
 int ActiveStations::maxRecent()
