@@ -2989,6 +2989,9 @@ QLabel[oob=&quot;true&quot;] {
                <height>16777215</height>
               </size>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::StrongFocus</enum>
+             </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Switch to Q65 mode. Right-click to toggle Q65 Pileup mode On/Off.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
