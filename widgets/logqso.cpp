@@ -221,7 +221,7 @@ void LogQSO::accept()
   }
 
   // validate
-  if (SpOp::NONE < special_op && special_op < SpOp::FOX)
+  if ((SpOp::NONE < special_op && special_op < SpOp::FOX) || (special_op > SpOp::HOUND))
     {
       if (xsent.isEmpty () || xrcvd.isEmpty ())
         {
