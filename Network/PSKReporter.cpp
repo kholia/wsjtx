@@ -32,6 +32,8 @@
 
 #include "moc_PSKReporter.cpp"
 
+#define DEBUGECLIPSE 0
+
 namespace
 {
   QLatin1String HOST {"report.pskreporter.info"};
@@ -291,19 +293,28 @@ namespace
   }
 }
 
-bool PSKReporter::impl::eclipse_active(QDateTime now)
+bool PSKReporter::impl::eclipse_active(QDateTime timeutc) 
 {
+#ifdef DEBUGECLIPSE
+    std::ofstream mylog("/temp/eclipse.log", std::ios_base::app);
+#endif
+    QDateTime dateNow =  QDateTime::currentDateTimeUtc();
     for (int i=0; i< eclipseDates.size(); ++i)
     {
-        QDateTime check = eclipseDates.at(i);
+        QDateTime check = eclipseDates.at(i); // already in UTC time
         // +- 6 hour window
-        QDateTime date1 = check.addSecs(-3600*6);
-        QDateTime date2 = check.addSecs( 3600*6);
-        if (now > date1 && now < date2)
+		qint64 secondsDiff = qAbs(check.secsTo(dateNow));
+		if (secondsDiff <= 3600*6) // 6 hour check
         {
+#ifdef DEBUGECLIPSE
+            mylog << dateNow.toString(Qt::ISODate) << " Eclipse! " << "secondsDiff=" << secondsDiff << std::endl;
+#endif
             return true;
         }
     }
+#ifdef DEBUGECLIPSE
+    mylog << timeutc.toString("yyyy-MM-dd HH:mm:ss") << " no eclipse" << "\n";
+#endif
     return false;
 }
 
@@ -312,7 +323,7 @@ void PSKReporter::impl::eclipse_load(QString eclipse_file)
     std::ifstream fs(qPrintable(eclipse_file));
     std::string mydate,mytime,myline;
 #ifdef DEBUGECLIPSE
-    std::ofstream mylog("eclipse.log");
+    std::ofstream mylog("c:/temp/eclipse.log");
     mylog << "eclipse_file=" << eclipse_file << std::endl;
 #endif
     if (fs.is_open())
@@ -320,11 +331,19 @@ void PSKReporter::impl::eclipse_load(QString eclipse_file)
           while(!fs.eof())
           {
               std::getline(fs, myline);
-              if (myline[0] != '#')
+              if (myline[0] != '#' && myline.length() > 2)  // make sure to skip blank lines
               {
-                  QString format = "yyyy-MM-dd hh:mm:ss";
-                  QDateTime qdate = QDateTime::fromString(QString::fromStdString(myline), format);
-                  eclipseDates.append(qdate);
+                  //QString format = "yyyy-MM-dd hh:mm:ss";
+                  QDateTime qdate = QDateTime::fromString(QString::fromStdString(myline), Qt::ISODate);
+				  QDateTime now = QDateTime::currentDateTimeUtc();
+				  // only add the date if we can cover the whole 12 hours
+				  //if (now < qdate.toUTC().addSecs(-3600*6))
+					eclipseDates.append(qdate);
+#ifdef DEBUGECLIPSE
+				//else
+				//  mylog << "not adding " << myline << std::endl;
+#endif
+	
               }
 #ifdef DEBUGECLIPSE
               mylog << myline << std::endl;
@@ -332,7 +351,7 @@ void PSKReporter::impl::eclipse_load(QString eclipse_file)
           }
     }
 #ifdef DEBUGECLIPSE
-    if (eclipse_active(QDateTime::currentDateTime())) mylog << "Eclipse is active" << std::endl;
+    if (eclipse_active(QDateTime::currentDateTime().toUTC())) mylog << "Eclipse is active" << std::endl;
     else mylog << "Eclipse is not active" << std::endl;
 #endif
 }
@@ -619,7 +638,7 @@ bool PSKReporter::addRemoteStation (QString const& call, QString const& grid, Ra
 #endif
       added++;
 
-      QDateTime qdateNow = QDateTime::currentDateTime();
+      QDateTime qdateNow = QDateTime::currentDateTime().toUTC();
       // we allow all spots through +/- 6 hours around an eclipse for the HamSCI group
       if (!spot_cache.contains(call) || freq > 49000000 || eclipse_active(qdateNow)) // then it's a new spot
       {
