@@ -6540,6 +6540,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
+  set_dateTimeQSO (-1);  // reset the QSO start time when DXCall changes
   m_hisCall = call;
   ui->dxGridEntry->clear();
   statusChanged();
