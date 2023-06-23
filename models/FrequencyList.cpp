@@ -1335,8 +1335,8 @@ FrequencyList_v2_101::FrequencyItems FrequencyList_v2_101::from_json_file(QFile 
     {
       throw ReadFileException{tr ("No Frequencies were found")};
     }
-  int valid_entry_count = 0;
-  int skipped_entry_count = 0;
+  int valid_entry_count [[maybe_unused]] = 0;
+  int skipped_entry_count [[maybe_unused]] = 0;
   for (auto const &item: arr)
     {
       QString mode_s, region_s;
