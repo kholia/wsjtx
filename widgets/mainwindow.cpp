@@ -470,17 +470,12 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_optimizingProgress.setMinimumDuration (15000); // only show after 15s delay
 
   //Attach or create a memory segment to be shared with QMAP.
-    int memSize=4096;
-    if(!mem_qmap.attach()) {
-      if(!mem_qmap.create(memSize)) {
-        MessageBox::information_message (this,
-            "Unable to create shared memory segment mem_qmap.");
-      }
-    }
-    ipc_qmap = (int*)mem_qmap.data();
-    mem_qmap.lock();
-    memset(ipc_qmap,0,memSize);         //Zero all of QMAP shared memory
-    mem_qmap.unlock();
+  int memSize=4096;
+  if(!mem_qmap.attach()) mem_qmap.create(memSize);
+  ipc_qmap = (int*)mem_qmap.data();
+  mem_qmap.lock();
+  memset(ipc_qmap,0,memSize);         //Zero all of QMAP shared memory
+  mem_qmap.unlock();
 
   // Closedown.
   connect (ui->actionExit, &QAction::triggered, this, &QMainWindow::close);
