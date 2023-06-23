@@ -2277,7 +2277,7 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     case Qt::Key_F11:
       if((e->modifiers() & Qt::ControlModifier) and (e->modifiers() & Qt::ShiftModifier)) {
         m_bandEdited = true;
-        band_changed(m_freqNominal-2000);
+        band_changed(m_freqNominal-1000);
       } else {
         n=11;
         if(e->modifiers() & Qt::ControlModifier) n+=100;
@@ -2293,7 +2293,7 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     case Qt::Key_F12:
       if((e->modifiers() & Qt::ControlModifier) and (e->modifiers() & Qt::ShiftModifier)) {
         m_bandEdited = true;
-        band_changed(m_freqNominal+2000);
+        band_changed(m_freqNominal+1000);
       } else {
         n=12;
         if(e->modifiers() & Qt::ControlModifier) n+=100;
@@ -3173,11 +3173,11 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>F11      </b></td><td>Move Rx frequency down 1 Hz</td></tr>
   <tr><td><b>Ctrl+F11 </b></td><td>Move identical Rx and Tx frequencies down 1 Hz</td></tr>
   <tr><td><b>Shift+F11 </b></td><td>Move Tx frequency down 60 Hz (FT8) or 90 Hz (FT4)</td></tr>
-  <tr><td><b>Ctrl+Shift+F11 </b></td><td>Move dial frequency down 2000 Hz</td></tr>
+  <tr><td><b>Ctrl+Shift+F11 </b></td><td>Move dial frequency down 1000 Hz</td></tr>
   <tr><td><b>F12      </b></td><td>Move Rx frequency up 1 Hz</td></tr>
   <tr><td><b>Ctrl+F12 </b></td><td>Move identical Rx and Tx frequencies up 1 Hz</td></tr>
   <tr><td><b>Shift+F12 </b></td><td>Move Tx frequency up 60 Hz (FT8) or 90 Hz (FT4)</td></tr>
-  <tr><td><b>Ctrl+Shift+F12 </b></td><td>Move dial frequency up 2000 Hz</td></tr>
+  <tr><td><b>Ctrl+Shift+F12 </b></td><td>Move dial frequency up 1000 Hz</td></tr>
   <tr><td><b>Alt+1-6  </b></td><td>Set now transmission to this number on Tab 1</td></tr>
   <tr><td><b>Ctl+1-6  </b></td><td>Set next transmission to this number on Tab 1</td></tr>
   <tr><td><b>Alt+B    </b></td><td>Toggle "Best S+P" status</td></tr>
