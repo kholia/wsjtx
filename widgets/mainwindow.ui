@@ -42,7 +42,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -186,7 +185,6 @@
           <property name="font">
            <font>
             <pointsize>10</pointsize>
-            <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
@@ -1289,7 +1287,7 @@ When not checked you can view the calibration results.</string>
                      </widget>
                     </item>
                     <item>
-                     <layout class="QHBoxLayout" name="horizontalLayout_4">
+                     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,6,0">
                       <item>
                        <widget class="QPushButton" name="pbR2T">
                         <property name="sizePolicy">
@@ -1302,6 +1300,12 @@ When not checked you can view the calibration results.</string>
                          <size>
                           <width>15</width>
                           <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>35</width>
+                          <height>16777215</height>
                          </size>
                         </property>
                         <property name="toolTip">
@@ -1317,9 +1321,15 @@ When not checked you can view the calibration results.</string>
                       </item>
                       <item>
                        <widget class="HintedSpinBox" name="sbFtol">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
                         <property name="minimumSize">
                          <size>
-                          <width>80</width>
+                          <width>0</width>
                           <height>0</height>
                          </size>
                         </property>
@@ -1355,6 +1365,12 @@ When not checked you can view the calibration results.</string>
                          <size>
                           <width>15</width>
                           <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>35</width>
+                          <height>16777215</height>
                          </size>
                         </property>
                         <property name="toolTip">
@@ -3167,7 +3183,7 @@ QPushButton[state=&quot;ok&quot;] {
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
