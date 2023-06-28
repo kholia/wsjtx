@@ -11,6 +11,37 @@
                                                          
 Copyright 2001 - 2023 by Joe Taylor, K1JT, and the WSJT Development Team
 
+
+                      Release: WSJT-X 2.7.0-rc2
+                             July 10, 2023
+                      -------------------------
+
+WSJT-X 2.7.0 Release Candidate 2 brings primarily a couple of bug fixes.
+
+ - CTRL+SHIFT+F11/F12 now changes the frequency by 1000 Hz instead of 
+   2000 Hz.
+
+ - Fixed a flaw with the QSO start time. It is now reset when the DX 
+   Call changes.
+
+ - Some improvements for upcoming HamSCI Festivals of Eclipse Ionospheric 
+   Science.
+
+ - Fixed a flaw that prevented contest logging of the ARRL Digi Contest.
+
+ - Right-clicking the Q65 mode button to toggle the Q65 Pileup mode on/off 
+   now also works on macOS.
+
+ - Fixed a compilation error on macOS Ventura.
+
+ - WSPR and FST4W band hopping now works again.
+
+ - It is now ensured that "U.S.A." is displayed when using certain 
+   cty.dat files.
+
+ - Corrected the problem with duplicated FT8 entries in ActiveStations 
+   window.
+
                       Release: WSJT-X 2.7.0-rc1
                              May 12, 2023
                       -------------------------
