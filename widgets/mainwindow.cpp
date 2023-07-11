@@ -6102,6 +6102,9 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
           t1 = t1.asprintf("%4.4d",ui->sbSerialNumber->value());
           sent=rst + t1;
         }
+        if(t1.contains(QRegularExpression {"\\d\\d\\d\\d"})) {
+          t1 = m_config.RTTY_Exchange();
+        }
       }
       if(SpecOp::EU_VHF==m_specOp) {
         QString a;
