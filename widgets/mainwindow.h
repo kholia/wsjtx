@@ -134,7 +134,10 @@ public slots:
   void setFreq4(int rxFreq, int txFreq);
   void msgAvgDecode2();
   void fastPick(int x0, int x1, int y);
-
+  void logModulatorTx(QString mode, unsigned symbolsLength, double framesPerSymbol, double frequency,
+                     double toneSpacing, SoundOutput *, AudioDevice::Channel = AudioDevice::Mono,
+                     bool synchronize = true, bool fastMode = false,
+                     double dBSNR = 99., double TRperiod=60.0);
 private:
   void change_layout (std::size_t) override;
   void keyPressEvent (QKeyEvent *) override;
@@ -844,7 +847,7 @@ private:
   void decodeDone ();
   bool subProcessFailed (QProcess *, int exit_code, QProcess::ExitStatus);
   void subProcessError (QProcess *, QProcess::ProcessError);
-  void statusUpdate () const;
+  void statusUpdate (QString extra_data = "") const;
   void update_watchdog_label ();
   void invalidate_frequencies_filter ();
   void on_the_minute ();

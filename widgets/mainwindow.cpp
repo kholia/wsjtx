@@ -510,6 +510,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect (this, &MainWindow::endTransmitMessage, m_modulator, &Modulator::stop);
   connect (this, &MainWindow::tune, m_modulator, &Modulator::tune);
   connect (this, &MainWindow::sendMessage, m_modulator, &Modulator::start);
+  connect (this, &MainWindow::sendMessage, this, &MainWindow::logModulatorTx);
   connect (&m_audioThread, &QThread::finished, m_modulator, &QObject::deleteLater);
 
   // hook up the audio input stream signals, slots and disposal
@@ -9268,7 +9269,30 @@ void MainWindow::on_cbCQTx_toggled(bool b)
   setXIT (ui->TxFreqSpinBox->value ());
 }
 
-void MainWindow::statusUpdate () const
+void MainWindow::logModulatorTx(QString mode, unsigned symbolsLength, double framesPerSymbol, double frequency,
+                     double toneSpacing, SoundOutput *, AudioDevice::Channel,
+                     bool synchronize, bool fastMode,
+                     double dBSNR, double TRperiod) {
+  
+  QString itone_str = ""; // need more space for encoding with >9 symbols.
+  for (unsigned i = 0; i < symbolsLength; i++) {
+      itone_str += QString::number(itone[i]) + " ";
+  }
+  QString extra_data = "\n{ \"kind\": \"extra_data\", \"mode\": \"";
+  extra_data += mode + "\", \"symbolsLength\": " + QString::number(symbolsLength);
+  extra_data += ", \"frequency\": " + QString::number(frequency) + ", \"toneSpacing\": " +  QString::number(toneSpacing);
+  extra_data += ", \"itone\": \"" + itone_str + "\", \"framesPerSymbol\": " + QString::number(framesPerSymbol); 
+  extra_data += ", \"fastMode\": ";
+  extra_data += fastMode ? "true" : "false";
+  extra_data += "}";
+  fprintf(stderr, "\n%s\n", extra_data.toStdString().c_str());
+  (void)dBSNR;
+  (void)TRperiod;
+  (void)synchronize;
+  statusUpdate(extra_data);
+}
+
+void MainWindow::statusUpdate (QString extra_data) const
 {
   if (!ui || m_block_udp_status_updates) return;
   auto submode = current_submode ();
@@ -9292,7 +9316,7 @@ void MainWindow::statusUpdate () const
     {
       tr_period = quint32_max;
     }
-
+  /*
   // Collect itone and related data to send in the status message packet
   char str[MAX_NUM_SYMBOLS+1];
   int i = 0, index = 0, num_symbols = 0;
@@ -9306,7 +9330,8 @@ void MainWindow::statusUpdate () const
   if (m_transmitting)
       for (i = 0; i < num_symbols; i++)
           index += snprintf(&str[index], MAX_NUM_SYMBOLS+1-index, "%d", itone[i]);
-
+  */
+  fprintf(stderr, "\nSTATUS UPDATE %s\n", extra_data.toStdString().c_str());
   m_messageClient->status_update (m_freqNominal, m_mode, m_hisCall,
                                   QString::number (ui->rptSpinBox->value ()),
                                   m_mode, ui->autoButton->isChecked (),
@@ -9317,7 +9342,7 @@ void MainWindow::statusUpdate () const
                                   submode != QChar::Null ? QString {submode} : QString {}, m_bFastMode,
                                   static_cast<quint8> (m_specOp),
                                   ftol, tr_period, m_multi_settings->configuration_name (),
-                                  m_currentMessage, str, num_symbols);
+                                  m_currentMessage, extra_data);
 }
 
 void MainWindow::childEvent (QChildEvent * e)
