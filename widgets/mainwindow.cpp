@@ -4151,9 +4151,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if(SpecOp::FOX!=m_specOp and (for_us or (abs(audioFreq - m_wideGraph->rxFreq()) <= 10))) bDisplayRight=true;
         }
       } else {
-        if((abs(audioFreq - m_wideGraph->rxFreq()) <= 10) and (!(m_mode=="Q65" and !bAvgMsg)) and
+        if((abs(audioFreq - m_wideGraph->rxFreq()) <= 10) and
            !m_config.enable_VHF_features()) bDisplayRight=true;
       }
+      if(m_mode=="Q65" and !bAvgMsg) bDisplayRight=false;
 
       if (bDisplayRight) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
