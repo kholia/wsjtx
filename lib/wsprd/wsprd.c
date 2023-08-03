@@ -146,6 +146,7 @@ unsigned long readwavfile(char *ptr_to_infile, int ntrmin, float *idat, float *q
     nr=fread(buf2,2,npoints,fp); //Read raw data
     fclose(fp);
     if( nr == 0 ) {
+        free(buf2);
         fprintf(stderr, "No data in file '%s'\n", ptr_to_infile);
         return 1;
     }	
