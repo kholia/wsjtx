@@ -4181,7 +4181,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       if (bDisplayRight) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
         // or contains MyCall
-        if(!m_bBestSPArmed) {
+        if(!m_bBestSPArmed or m_mode!="FT4") {
           ui->decodedTextBrowser2->displayDecodedText (decodedtext0, m_config.my_callsign (), m_mode, m_config.DXCC (),
                 m_logBook, m_currentBand, m_config.ppfx (), false, false, 0.0, bDisplayPoints, m_points);
         }
