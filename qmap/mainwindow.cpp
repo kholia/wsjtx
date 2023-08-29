@@ -247,6 +247,7 @@ void MainWindow::writeSettings()
   settings.setValue("PhaseX",(double)m_phasex);
   settings.setValue("PhaseY",(double)m_phasey);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
+  settings.setValue("Offset",ui->sbOffset->value());
 }
 
 //---------------------------------------------------------- readSettings()
@@ -297,6 +298,7 @@ void MainWindow::readSettings()
   m_NB=settings.value("NB",false).toBool();
   ui->NBcheckBox->setChecked(m_NB);
   ui->sbMaxDrift->setValue(settings.value("MaxDrift",0).toInt());
+  ui->sbOffset->setValue(settings.value("Offset",1500).toInt());
   m_NBslider=settings.value("NBslider",40).toInt();
   ui->NBslider->setValue(m_NBslider);
   m_gainx=settings.value("GainX",1.0).toFloat();
@@ -857,6 +859,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.nmode=10*m_modeQ65;
   datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
+  datcom_.offset=ui->sbOffset->value();
   datcom_.ndepth=1;
   if(datcom_.nagain==1)   datcom_.ndepth=3;
 

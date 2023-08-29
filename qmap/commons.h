@@ -34,6 +34,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int ndop00;                       //EME Self Doppler
   int nsave;                        //Number of s3(64,63) spectra saved
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
+  int offset;                       //Offset in Hz
   int nhsym;                        //Number of available JT65 half-symbols
   char mycall[12];
   char mygrid[6];
@@ -73,6 +74,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int ndop00;                       //EME Self Doppler
   int nsave;                        //Number of s3(64,63) spectra saved
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
+  int offset;                       //Offset in Hz
   int nhsym;                        //Number of available JT65 half-symbols
   char mycall[12];
   char mygrid[6];
