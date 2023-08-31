@@ -6676,6 +6676,10 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
         m_xSent=m_config.my_grid().left(4);
         m_xRcvd=m_hisGrid;
         break;
+      case SpecOp::Q65_PILEUP:
+        m_xSent=m_config.my_grid().left(4);
+        m_xRcvd=m_hisGrid;
+        break;
       default: break;
     }
 
