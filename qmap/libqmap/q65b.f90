@@ -15,6 +15,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
   integer*2 iwave(60*12000)
+  integer offset
   complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
   real*8 fcenter,freq0,freq1
