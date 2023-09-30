@@ -10500,7 +10500,7 @@ void MainWindow::remote_configure (QString const& mode, quint32 frequency_tolera
 {
   if (mode.size ())
     {
-      set_mode (mode);
+      if (mode != m_mode) set_mode (mode);
     }
   auto is_FST4W = "FST4W" == m_mode;
   if (frequency_tolerance != quint32_max && (ui->sbFtol->isVisible () || is_FST4W))
