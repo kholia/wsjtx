@@ -490,12 +490,12 @@ subroutine q65_ccf_22(s1,iz,jz,nfqso,ntol,iavg,ipk,jpk,  &
      ia=max(nint(100/df),nint((nfqso-ntol)/df))
      ib=min(nint(4900/df),nint((nfqso+ntol)/df))
   endif
+  if(ia.ge.ib) ia=ib-ntol/df                  !Protect against wacky settings
 
   do i=ia,ib
      s1avg(i)=sum(s1(i,1:jz))
   enddo
 
-  call pctile(s1avg(ia:ib),ib-ia+1,40,base0)
   ccfbest=0.
   ibest=0
   lagpk=0

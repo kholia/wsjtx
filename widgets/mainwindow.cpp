@@ -1683,6 +1683,7 @@ void MainWindow::dataSink(qint64 frames)
         int idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
+      qDebug() << "aa" << k << frames << m_ihsym << m_hsymStop;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
