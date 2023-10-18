@@ -3,7 +3,10 @@ subroutine pctile(x,npts,npct,xpct)
   real x(npts)
   real,allocatable :: tmp(:)
 
-  if(npts.lt.0) go to 900
+  if(npts.lt.0 .or. npct.lt.0 .or. npct.gt.100) then
+     xpct=1.0
+     go to 900
+  endif
   allocate(tmp(npts))
 
   tmp=x
