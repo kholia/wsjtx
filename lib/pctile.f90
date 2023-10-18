@@ -3,6 +3,7 @@ subroutine pctile(x,npts,npct,xpct)
   real x(npts)
   real,allocatable :: tmp(:)
 
+  if(npts.lt.0) go to 900
   allocate(tmp(npts))
 
   tmp=x
@@ -11,6 +12,7 @@ subroutine pctile(x,npts,npct,xpct)
   if(j.lt.1) j=1
   if(j.gt.npts) j=npts
   xpct=tmp(j)
+  deallocate(tmp)
 
-  return
+900 return
 end subroutine pctile
