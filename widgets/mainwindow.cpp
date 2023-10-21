@@ -8849,6 +8849,7 @@ void MainWindow::p1ReadFromStdout()                        //p1readFromStdout
         }
         killFileTimer.start (45*1000); //Kill in 45s (for slow modes)
       }
+      ndecodes_label.setText(QString::number(m_nWSPRdecodes));
       m_nWSPRdecodes=0;
       ui->DecodeButton->setChecked (false);
       if(m_uploadWSPRSpots && m_config.is_transceiver_online()) { // need working rig control
