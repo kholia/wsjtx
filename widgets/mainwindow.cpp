@@ -1084,6 +1084,13 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   QString jpleph = m_config.data_dir().absoluteFilePath("JPLEPH");
   jpl_setup_(const_cast<char *>(jpleph.toLocal8Bit().constData()),256);
 
+#ifdef WIN32
+  // backup libhamlib-4.dll file, so it is still available after the next program update
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
+  if (!f.exists()) QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+#endif
+
 // this must be the last statement of constructor
   if (!m_valid) throw std::runtime_error {"Fatal initialization exception"};
 }
