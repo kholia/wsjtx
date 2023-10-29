@@ -1092,8 +1092,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
       QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
       QTimer::singleShot (5000, [=] {  //wait until hamlib has been started
         extern char* hamlib_version2;
+        QString hamlib = QString(QLatin1String(hamlib_version2));
         m_settings->beginGroup("Configuration");
-        m_settings->setValue ("HamlibBackedUp", hamlib_version2);
+        m_settings->setValue ("HamlibBackedUp", hamlib);
         m_settings->endGroup();
       });
   }

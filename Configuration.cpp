@@ -2500,8 +2500,9 @@ void Configuration::impl::on_hamlib_download_button_clicked (bool /*clicked*/)
 {
 #ifdef WIN32
   extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
   SettingsGroup g {settings_, "Configuration"};
-  settings_->setValue ("HamlibBackedUp", hamlib_version2);
+  settings_->setValue ("HamlibBackedUp", hamlib);
   settings_->sync ();
   QDir dataPath = QCoreApplication::applicationDirPath();
   QFile f1 {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
