@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>662</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1371,7 +1371,7 @@ radio interface behave as expected.</string>
        <item row="12" column="0">
         <widget class="QGroupBox" name="hamlib_groupBox">
          <property name="title">
-          <string>Update Hamlib (Windows only)</string>
+          <string>Update Hamlib</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_18">
           <item row="0" column="0">
@@ -1391,6 +1391,16 @@ radio interface behave as expected.</string>
             </property>
            </widget>
           </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="revert_update_button">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Revert the last Hamlib update. &lt;/p&gt;&lt;p&gt;Note: This function is only available on Windows.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Revert Update</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="hamlib_download_button">
             <property name="toolTip">
@@ -1401,15 +1411,37 @@ radio interface behave as expected.</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QPushButton" name="revert_update_button">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Revert the last Hamlib update. &lt;/p&gt;&lt;p&gt;Note: This function is only available on Windows.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Revert Update</string>
-            </property>
-           </widget>
+          <item row="1" column="0" colspan="4">
+           <layout class="QGridLayout" name="hamlib_version_gridLayout" columnstretch="0,1">
+            <item row="0" column="0">
+             <widget class="QLabel" name="in_use_text">
+              <property name="text">
+               <string>In use:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="backed_up_text">
+              <property name="text">
+               <string>Backed up:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="in_use">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="backed_up">
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -3466,13 +3498,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
-  <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="CAT_data_bits_button_group"/>
   <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="TX_mode_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="PTT_method_button_group"/>
  </buttongroups>
 </ui>

@@ -1088,7 +1088,15 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   // backup libhamlib-4.dll file, so it is still available after the next program update
   QDir dataPath = QCoreApplication::applicationDirPath();
   QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
-  if (!f.exists()) QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+  if (!f.exists()) {
+      QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+      QTimer::singleShot (5000, [=] {  //wait until hamlib has been started
+        extern char* hamlib_version2;
+        m_settings->beginGroup("Configuration");
+        m_settings->setValue ("HamlibBackedUp", hamlib_version2);
+        m_settings->endGroup();
+      });
+  }
 #endif
 
 // this must be the last statement of constructor
