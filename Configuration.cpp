@@ -1756,7 +1756,14 @@ void Configuration::impl::read_settings ()
 #ifdef WIN32
   QTimer::singleShot (2500, [=] {display_file_information ();});
 #else
-  ui_->hamlib_groupBox->setVisible(false);
+  ui_->hamlib_groupBox->setTitle("Hamlib Version");
+  ui_->rbHamlib64->setVisible(false);
+  ui_->rbHamlib32->setVisible(false);
+  ui_->hamlib_download_button->setVisible(false);
+  ui_->revert_update_button->setVisible(false);
+  ui_->backed_up_text->setVisible(false);
+  ui_->backed_up->setVisible(false);
+  QTimer::singleShot (2500, [=] {display_file_information ();});
 #endif
 }
 
@@ -2582,7 +2589,8 @@ void Configuration::impl::display_file_information ()
 #ifdef WIN32
   QDir dataPath = QCoreApplication::applicationDirPath();
   extern char* hamlib_version2;
-  ui_->in_use->setText(hamlib_version2);
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  ui_->in_use->setText(hamlib);
   QFileInfo fi2(dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
   QString birthTime2 = fi2.birthTime().toString("yyyy-MM-dd hh:mm");
   QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
@@ -2595,6 +2603,10 @@ void Configuration::impl::display_file_information ()
   } else {
     ui_->backed_up->setText("");
   }
+#else
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  ui_->in_use->setText(hamlib);
 #endif
 }
 
