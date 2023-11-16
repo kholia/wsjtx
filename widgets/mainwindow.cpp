@@ -1235,7 +1235,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("FST4W_FTol",ui->sbFST4W_FTol->value());
   m_settings->setValue("FST4_FLow",ui->sbF_Low->value());
   m_settings->setValue("FST4_FHigh",ui->sbF_High->value());
-//  m_settings->setValue("SubMode",ui->sbSubmode->value());
+  if(m_mode=="JT9") m_settings->setValue("SubMode",ui->sbSubmode->value());
   m_settings->setValue("DTtol",m_DTtol);
   m_settings->setValue("Ftol", ui->sbFtol->value ());
   m_settings->setValue("MinSync",m_minSync);
@@ -1257,7 +1257,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("UploadSpots",m_uploadWSPRSpots);
   m_settings->setValue("NoOwnCall",ui->cbNoOwnCall->isChecked());
   m_settings->setValue ("BandHopping", ui->band_hopping_group_box->isChecked ());
-//  m_settings->setValue ("TRPeriod", ui->sbTR->value ());
+  if(m_mode=="JT9") m_settings->setValue ("TRPeriod", ui->sbTR->value ());
   m_settings->setValue ("MaxDrift", ui->sbMaxDrift->value());
   m_settings->setValue ("TRPeriod_FST4W", ui->sbTR_FST4W->value ());
   m_settings->setValue("FastMode",m_bFastMode);
@@ -1344,11 +1344,13 @@ void MainWindow::readSettings()
   ui->sbFST4W_RxFreq->setValue(m_settings->value("FST4W_RxFreq",1500).toInt());
   ui->sbF_Low->setValue(m_settings->value("FST4_FLow",600).toInt());
   ui->sbF_High->setValue(m_settings->value("FST4_FHigh",1400).toInt());
-//  m_nSubMode=m_settings->value("SubMode",0).toInt();
+  if(m_mode=="JT9") {
+    m_nSubMode=m_settings->value("SubMode",0).toInt();
+    ui->sbSubmode->setValue(m_nSubMode);
+  }
   if (m_mode=="Q65") m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
   if (m_mode=="JT65") m_nSubMode=m_settings->value("SubMode_JT65",0).toInt();
   if (m_mode=="JT4") m_nSubMode=m_settings->value("SubMode_JT4",0).toInt();
-//  ui->sbSubmode->setValue(m_nSubMode);
   if (m_mode=="Q65") ui->sbSubmode->setValue(m_nSubMode_Q65);
   if (m_mode=="JT65") ui->sbSubmode->setValue(m_nSubMode_JT65);
   if (m_mode=="JT4") ui->sbSubmode->setValue(m_nSubMode_JT4);
@@ -1362,7 +1364,7 @@ void MainWindow::readSettings()
   m_bSWL=m_settings->value("SWL",false).toBool();
   m_bFast9=m_settings->value("Fast9",false).toBool();
   m_bFastMode=m_settings->value("FastMode",false).toBool();
-//  ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
+  if(m_mode=="JT9") ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
   if (m_mode=="Q65") ui->sbTR->setValue (m_settings->value ("TRPeriod_Q65", 30).toInt());
   if (m_mode=="MSK144") ui->sbTR->setValue (m_settings->value ("TRPeriod_MSK144", 15).toInt());
   if (m_mode=="FST4") ui->sbTR->setValue (m_settings->value ("TRPeriod_FST4", 60).toInt());
