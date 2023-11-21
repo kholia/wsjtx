@@ -9613,7 +9613,8 @@ void MainWindow::readWidebandDecodes()
       m_EMECall[dxcall].t=60*nhr + nmin;
       if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
       bool bCQ=line.contains(" CQ ");
-      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
+//      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
+      m_EMECall[dxcall].ready2call=(bCQ);
       Frequency frequency = (m_freqNominal/1000000) * 1000000 + int(fsked*1000.0);
       bool bFromDisk=qmapcom.nQDecoderDone==2;
       if(!bFromDisk and (m_EMECall[dxcall].grid4.contains(grid_regexp)  or bCQ)) {
