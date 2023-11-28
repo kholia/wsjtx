@@ -363,6 +363,7 @@ set (wsjt_FSRCS
   lib/bpdecode128_90.f90
   lib/ft8/bpdecode174_91.f90
   lib/baddata.f90
+  lib/cablog.f90
   lib/calibrate.f90
   lib/ccf2.f90
   lib/ccf65.f90
@@ -1143,6 +1144,9 @@ target_link_libraries (jt65sim wsjt_fort wsjt_cxx)
 add_executable (sumsim lib/sumsim.f90)
 target_link_libraries (sumsim wsjt_fort wsjt_cxx)
 
+add_executable (cablog lib/cablog.f90)
+target_link_libraries (cablog)
+
 add_executable (test_snr lib/test_snr.f90)
 target_link_libraries (test_snr wsjt_fort)
 
@@ -1599,7 +1603,7 @@ install (TARGETS jt9 wsprd fmtave fcal fmeasure
 
 if(WSJT_BUILD_UTILS)
 install (TARGETS ft8code jt65code jt9code jt4code msk144code 
-  q65code fst4sim q65sim echosim hash22calc
+  q65code fst4sim q65sim echosim hash22calc cablog
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
