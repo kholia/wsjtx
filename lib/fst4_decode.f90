@@ -996,7 +996,7 @@ contains
       do i=-ia,ia                !Find freq range that has 50% of signal power
          sum2=sum2 + ss(i)-avg
          if(sum2.ge.0.25*sum1 .and. xi1.eq.-999.0) then
-            xi1=i - 1 + (sum2-0.25*sum1)/(sum2-sum2z)
+            xi1=i - 1 + (0.25*sum1-sum2)/(sum2-sum2z)
          endif
          if(sum2.ge.0.50*sum1 .and. xi2.eq.-999.0) then
             xi2=i - 1 + (sum2-0.50*sum1)/(sum2-sum2z)

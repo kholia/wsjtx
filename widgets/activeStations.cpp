@@ -64,9 +64,11 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
 {
   if(mode!=m_mode) {
     m_mode=mode;
+    ui->cbReadyOnly->setText("Ready only");
     if(m_mode=="Q65") {
       ui->header_label2->setText("  N    Frx   Fsked  S/N   Call     Grid  Tx  Age");
       ui->label->setText("QSOs:");
+      ui->cbReadyOnly->setText("CQ only");
     } else if(m_mode=="Q65-pileup") {
       ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
     } else {

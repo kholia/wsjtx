@@ -173,7 +173,6 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
-
 #include "pimpl_impl.hpp"
 #include "Logger.hpp"
 #include "qt_helpers.hpp"
@@ -331,9 +330,9 @@ public:
 
     connect (button_box, &QDialogButtonBox::accepted, this, &FrequencyDialog::accept);
     connect (button_box, &QDialogButtonBox::rejected, this, &FrequencyDialog::reject);
-    connect(start_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
-    connect(end_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
-    connect(enable_dates_checkbox_, &QCheckBox::stateChanged, this, &FrequencyDialog::toggleValidity);
+    connect (start_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
+    connect (end_date_time_edit_, &QDateTimeEdit::dateTimeChanged, this, &FrequencyDialog::checkSaneDates);
+    connect (enable_dates_checkbox_, &QCheckBox::stateChanged, this, &FrequencyDialog::toggleValidity);
     toggleValidity();
   }
 
@@ -585,6 +584,7 @@ private:
   Q_SLOT void on_revert_update_button_clicked (bool);
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
+  void display_file_information();
 
   Q_SLOT void on_cbx2ToneSpacing_clicked(bool);
   Q_SLOT void on_cbx4ToneSpacing_clicked(bool);
@@ -689,6 +689,7 @@ private:
   QString FD_exchange_;
   QString RTTY_exchange_;
   QString Contest_Name_;
+  QString hamlib_backed_up_;
 
   qint32 id_interval_;
   qint32 ntrials_;
@@ -1575,6 +1576,7 @@ void Configuration::impl::read_settings ()
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
   ui_->Contest_Name->setText(Contest_Name_);
+  hamlib_backed_up_ = settings_->value ("HamlibBackedUp",QString {}).toString ();
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
       && next_font_ != font_)
@@ -1751,6 +1753,18 @@ void Configuration::impl::read_settings ()
   pwrBandTuneMemory_ = settings_->value("pwrBandTuneMemory",false).toBool ();
   highlight_DXcall_ = settings_->value("highlight_DXcall",false).toBool ();
   highlight_DXgrid_ = settings_->value("highlight_DXgrid",false).toBool ();
+#ifdef WIN32
+  QTimer::singleShot (2500, [=] {display_file_information ();});
+#else
+  ui_->hamlib_groupBox->setTitle("Hamlib Version");
+  ui_->rbHamlib64->setVisible(false);
+  ui_->rbHamlib32->setVisible(false);
+  ui_->hamlib_download_button->setVisible(false);
+  ui_->revert_update_button->setVisible(false);
+  ui_->backed_up_text->setVisible(false);
+  ui_->backed_up->setVisible(false);
+  QTimer::singleShot (2500, [=] {display_file_information ();});
+#endif
 }
 
 void Configuration::impl::find_audio_devices ()
@@ -2492,6 +2506,11 @@ void Configuration::impl::on_decoded_text_font_push_button_clicked ()
 void Configuration::impl::on_hamlib_download_button_clicked (bool /*clicked*/)
 {
 #ifdef WIN32
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  SettingsGroup g {settings_, "Configuration"};
+  settings_->setValue ("HamlibBackedUp", hamlib);
+  settings_->sync ();
   QDir dataPath = QCoreApplication::applicationDirPath();
   QFile f1 {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
   QFile f2 {dataPath.absolutePath() + "/" + "libhamlib-4_new.dll"};
@@ -2501,14 +2520,14 @@ void Configuration::impl::on_hamlib_download_button_clicked (bool /*clicked*/)
   ui_->revert_update_button->setEnabled (false);
   if (ui_->rbHamlib32->isChecked()) {
     cty_download.configure(network_manager_,
-      "https://n0nb.users.sourceforge.net/dll32/libhamlib-4.dll",
-      dataPath.absoluteFilePath("libhamlib-4_new.dll"),
-      "Downloading latest libhamlib-4.dll");
+                           "https://n0nb.users.sourceforge.net/dll32/libhamlib-4.dll",
+                           dataPath.absoluteFilePath("libhamlib-4_new.dll"),
+                           "Downloading latest libhamlib-4.dll");
   } else {
     cty_download.configure(network_manager_,
-      "https://n0nb.users.sourceforge.net/dll64/libhamlib-4.dll",
-      dataPath.absoluteFilePath("libhamlib-4_new.dll"),
-      "Downloading latest libhamlib-4.dll");
+                           "https://n0nb.users.sourceforge.net/dll64/libhamlib-4.dll",
+                           dataPath.absoluteFilePath("libhamlib-4_new.dll"),
+                           "Downloading latest libhamlib-4.dll");
   }
   connect (&cty_download, &FileDownload::complete, this, &Configuration::impl::after_hamlib_downloaded, Qt::UniqueConnection);
   connect (&cty_download, &FileDownload::error, this, &Configuration::impl::error_during_hamlib_download, Qt::UniqueConnection);
@@ -2550,7 +2569,7 @@ void Configuration::impl::on_revert_update_button_clicked (bool /*clicked*/)
     ui_->hamlib_download_button->setEnabled (false);
     QFile::rename(dataPath.absolutePath() + "/" + "libhamlib-4.dll", dataPath.absolutePath() + "/" + "libhamlib-4_new.dll");
     QTimer::singleShot (1000, [=] {
-      QFile::rename(dataPath.absolutePath() + "/" + "libhamlib-4_old.dll", dataPath.absolutePath() + "/" + "libhamlib-4.dll");
+      QFile::copy(dataPath.absolutePath() + "/" + "libhamlib-4_old.dll", dataPath.absolutePath() + "/" + "libhamlib-4.dll");
     });
     QTimer::singleShot (2000, [=] {
       MessageBox::information_message (this, tr ("Hamlib successfully reverted \n\nReverted Hamlib will be used after restart"));
@@ -2565,6 +2584,31 @@ void Configuration::impl::on_revert_update_button_clicked (bool /*clicked*/)
 #endif
 }
 
+void Configuration::impl::display_file_information ()
+{
+#ifdef WIN32
+  QDir dataPath = QCoreApplication::applicationDirPath();
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  ui_->in_use->setText(hamlib);
+  QFileInfo fi2(dataPath.absolutePath() + "/" + "libhamlib-4_old.dll");
+  QString birthTime2 = fi2.birthTime().toString("yyyy-MM-dd hh:mm");
+  QFile f {dataPath.absolutePath() + "/" + "libhamlib-4_old.dll"};
+  if (f.exists()) {
+    if (hamlib_backed_up_=="") {
+          ui_->backed_up->setText(QString{"no hamlib data available, file saved %1"}.arg(birthTime2));
+    } else {
+          ui_->backed_up->setText(hamlib_backed_up_);
+    }
+  } else {
+    ui_->backed_up->setText("");
+  }
+#else
+  extern char* hamlib_version2;
+  QString hamlib = QString(QLatin1String(hamlib_version2));
+  ui_->in_use->setText(hamlib);
+#endif
+}
 
 void Configuration::impl::on_PTT_port_combo_box_activated (int /* index */)
 {
