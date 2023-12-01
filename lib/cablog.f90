@@ -11,13 +11,15 @@ program cablog
 
   nargs=iargc()
   if(nargs.ne.4) then
-     print*,"Program cablog converts the file 'wsjtx.log' to a bare-bones"
-     print*,"Cabrillo log for the ARRL International EME Contest. You will"
+     print*,"Program cablog converts file 'wsjtx.log' written by WSJT-X"
+     print*,"(or wsjt.log written by MAP65) to a bare-bones Cabrillo"
+     print*,"log for the ARRL International EME Contest. You will"
      print*,"certainly need to edit the header information, and you may"
      print*,"edit the log elsewhere as required."
      print*,' '
-     print*,'Usage:   cablog <MyCall> <sent> <rcvd> <infile>'
-     print*,'Example: cablog   W2ZQ    -15    -16  wsjtx.log'
+     print*,'Usage:    cablog <MyCall> <sent> <rcvd> <infile>'
+     print*,'Examples: cablog   W2ZQ    -15    -16  wsjtx.log'
+     print*,'          cablog   W2ZQ     O      O   wsjt.log'
      go to 999
   endif
   call getarg(1,mycall)
