@@ -33,7 +33,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
        nWTransmitting,result(50)
   common/cacb/ca
   save
-
+  
   if(mycall0(1:1).ne.' ') mycall=mycall0
   if(hiscall0(1:1).ne.' ') hiscall=hiscall0
   if(hisgrid(1:4).ne.'    ') grid4=hisgrid(1:4)
@@ -100,7 +100,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   nsnr0=-99             !Default snr for no decode
 
   if(abs(f0-85.3).lt.1.0) then
-     print*,'a',f0
+     print*,'a',f0,f0+80-48
      h=default_header(12000,30*12000)
      do ifile=0,1
         write(fname,1102) ifile

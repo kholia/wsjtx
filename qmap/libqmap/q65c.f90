@@ -20,22 +20,24 @@ subroutine q65c(itimer)
 
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
-       ndepth,ndiskdat,neme,newdat,nfcal,nfshift,                         &
+       ndepth,ndiskdat,neme,newdat,nn1,nn2,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
-       ndop00,nsave,max_nhsym,mycall,mygrid,hiscall,hisgrid,              &
+       ndop00,nsave,nn3,nn4,max_nhsym,mycall,mygrid,hiscall,hisgrid,      &
        datetime,junk1,junk2
   equivalence (nparams,fcenter)
   data first/.true./
   save first
 
   nparams=nparams0                     !Copy parameters into common/npar/
+  datetime(12:)='         '
+
   if(itimer.ne.0) then
      call timer('decode0 ',101)
      call fini_timer
      return
   endif
 
-  datetime(18:20)=':00'
+!  datetime(18:20)=':00'
   npatience=1
   newdat=1                          !Always on ??
 
