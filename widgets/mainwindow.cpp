@@ -10776,6 +10776,10 @@ void MainWindow::on_houndButton_clicked (bool checked)
 
 void MainWindow::on_ft8Button_clicked()
 {
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
     on_actionFT8_triggered();
 }
 
