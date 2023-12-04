@@ -8,7 +8,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
 !  pxdb     power in x channel (0-60 dB)
 !  ssz5a    polarized spectrum, for waterfall display
 !  nkhz     integer kHz portion of center frequency, e.g., 125 for 144.125
-!  ihsym    index number of this half-symbol (1-322)
+!  ihsym    index number of this half-symbol (1-373)
 !  nzap     number of samples zero'ed by noise blanker
 
   include 'njunk.f90'
@@ -16,7 +16,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   parameter (NFFT=32768)              !Length of FFTs
   real*8 ts,hsym
   real*8 fcenter
-  common/datcom/dd(2,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
+  common/datcom/dd(2,5760000),ss(373,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
   complex cx(NFFT)
@@ -45,7 +45,6 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   endif
 
   hsym=2048.d0*96000.d0/11025.d0      !Samples per JT65 half-symbol
-  if(nfsample.eq.95238)   hsym=2048.d0*95238.1d0/11025.d0
 
   if(k.lt.k0) then
      ts=1.d0 - hsym
@@ -113,7 +112,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   ihsym=ihsym+1
   cx=w*cx00                           !Apply window for 2nd forward FFT
   call four2a(cx,NFFT,1,1,1)          !Second forward FFT (X)
-  n=min(322,ihsym)
+  n=min(373,ihsym)
   do i=1,NFFT
      sx=real(cx(i))**2 + aimag(cx(i))**2
      ss(n,i)=sx                    ! Pol = 0

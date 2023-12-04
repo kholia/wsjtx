@@ -18,7 +18,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   parameter (NSMAX=60*96000)
   complex cx(NSMAX/64)               !Data at 1378.125 samples/s
   real dd(2,NSMAX)                   !I/Q data from Linrad
-  real ss(322,NFFT)                  !Symbol spectra
+  real ss(373,NFFT)                  !Symbol spectra
   real savg(NFFT)                    !Average spectrum
   real*8 fcenter                             !Center RF frequency, MHz
   character mycall*12,hiscall*12,hisgrid*6
@@ -45,7 +45,6 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   nwrite_q65=0
   df=96000.0/NFFT                     !df = 96000/NFFT = 2.930 Hz
-  if(nfsample.eq.95238) df=95238.1/NFFT
   ftol=0.010                          !Frequency tolerance (kHz)
   foffset=0.001*(1270 + nfcal)        !Offset from sync tone, plus CAL
   fqso=mousefqso + foffset - 0.5*(nfa+nfb) + nfshift !fqso at baseband (khz)

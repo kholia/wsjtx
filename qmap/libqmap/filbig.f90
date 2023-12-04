@@ -26,11 +26,6 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,c4a,n4)
 
   nfft1=MAXFFT1
   nfft2=MAXFFT2
-  if(nfsample.eq.95238) then
-     nfft1=5120000
-     nfft2=74088
-  endif
-
   if(first) then
      nflags=FFTW_ESTIMATE
      if(npatience.eq.1) nflags=FFTW_ESTIMATE_PATIENT
@@ -63,7 +58,6 @@ subroutine filbig(dd,nmax,f0,newdat,nfsample,c4a,n4)
      enddo
 
      df=96000.d0/nfft1
-     if(nfsample.eq.95238) df=95238.1d0/nfft1
      first=.false.
   endif
 

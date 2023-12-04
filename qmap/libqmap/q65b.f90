@@ -40,11 +40,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   nfft1=MAXFFT1
   nfft2=MAXFFT2
   df=96000.0/NFFT1
-  if(nfsample.eq.95238) then
-     nfft1=5120000
-     nfft2=322560
-     df=96000.0/nfft1
-  endif
   nh=nfft2/2
   f_mouse=1000.0*(fqso+48.0) + mousedf
   k0=nint((ipk*df3-1000.0)/df)

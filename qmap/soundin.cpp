@@ -15,7 +15,7 @@ extern "C"
   struct
   {
     double d8[60*96000];              //This is "common/datcom/..." in fortran
-    float ss[322*NFFT];
+    float ss[373*NFFT];
     float savg[NFFT];
     double fcenter;
     int nutc;

@@ -11,7 +11,7 @@ subroutine recvpkt(nsam,nblock2,userx_no,k,buf4,buf8)
   integer*2 jd(4),kd(2),nblock2
   real*4 yd(2)
   real*8 fcenter
-  common/datcom/dd(2,5760000),ss(322,NFFT),savg(NFFT),fcenter,nutc,  &
+  common/datcom/dd(2,5760000),ss(373,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   equivalence (kd,d4)
   equivalence (jd,d8,yd)
