@@ -59,6 +59,8 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
      ia=max(1,min(i,i0-nguard))
      ib=min(i0+nbw+nguard,32768)
      savg(ia:ib)=0.
+     write(*,3301) j,fpk+80-48,xdt,snr_sync
+3301 format(i3,f8.1,f8.2,f8.1)
      if(j.ge.MAX_CANDIDATES) exit
   enddo
   ncand=j                              !Total number of candidates found

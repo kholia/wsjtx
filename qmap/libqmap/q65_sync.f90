@@ -8,21 +8,15 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
   real ccf(0:LAGMAX)               !The WSJT "blue curve", peak at DT
   logical sync_ok
   logical first
-  integer isync(22),ipk(1)
+  integer isync0(22),isync(22),ipk(1)
 
 ! Q65 sync symbols
-  data isync/1,9,12,13,15,22,23,26,27,33,35,38,46,50,55,60,62,66,69,74,76,85/
-  data first/.true./
-  save first,isync
+  data isync0/1,9,12,13,15,22,23,26,27,33,35,38,46,50,55,60,62,66,69,74,76,85/
 
   tstep=0.15                      !0.5*tsym_Q65-30x, 0.25*tsys_Q65-60x
-  if(first) then
-     fac=0.6/tstep
-     do i=1,22                                !Expand the Q65 sync stride
-        isync(i)=nint((isync(i)-1)*fac) + 1
-     enddo
-     first=.false.
-  endif
+  do i=1,22                                !Expand sync stride for Q65-60x
+     isync(i)=4*(isync0(i)-1) + 1
+  enddo
 
   m=nts_q65/2
   i1=max(1,i0-m)
@@ -30,9 +24,9 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
   ccf=0.
   do lag=0,LAGMAX                     !Search over range of DT
      do j=1,22                        !Test for Q65 sync
-        k=isync(j) + lag
+        k=isync(j) + lag 
         ccf(lag)=ccf(lag) + sum(ss(k,i1:i2)) + sum(ss(k+1,i1:i2)) &
-             + sum(ss(k+2,i1:i2))
+             + sum(ss(k+2,i1:i2)) + sum(ss(k+3,i1:i2))
 ! Q: Should we use weighted sums, perhaps a Lorentzian peak?
      enddo
   enddo
