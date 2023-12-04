@@ -22,7 +22,7 @@ subroutine decode0(dd,ss,savg)
 
   nQDecoderDone=0
   if(newdat.ne.0) then
-     nz=96000*nhsym/5.3833
+     nz=96000*nhsym*0.15
      hist=0
      do i=1,nz
         j1=min(abs(dd(1,i)),32768.0)

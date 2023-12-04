@@ -15,9 +15,9 @@ subroutine q65_sync(ss,i0,nts_q65,sync_ok,snr,xdt)
   data first/.true./
   save first,isync
 
-  tstep=2048.0/11025.0        !0.185760 s: 0.5*tsym_jt65, 0.3096*tsym_q65
+  tstep=0.15                      !0.5*tsym_Q65-30x, 0.25*tsys_Q65-60x
   if(first) then
-     fac=0.6/tstep            !3.230
+     fac=0.6/tstep
      do i=1,22                                !Expand the Q65 sync stride
         isync(i)=nint((isync(i)-1)*fac) + 1
      enddo

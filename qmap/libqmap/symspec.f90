@@ -38,7 +38,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
      enddo
   endif
 
-  hsym=2048.d0*96000.d0/11025.d0      !Samples per JT65 half-symbol
+  hsym=0.15d0*96000.d0                 !Samples per Q65-30x half-symbol
 
   if(k.lt.k0) then
      ts=1.d0 - hsym

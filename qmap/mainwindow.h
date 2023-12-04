@@ -113,7 +113,7 @@ private:
   qint32  m_modeQ65;
   qint32  m_dB;
   qint32  m_fetched=0;
-  qint32  m_hsymStop=302;
+  qint32  m_hsymStop=371;
   qint32  m_nTransmitted=0;
   qint32  m_nDoubleClicked=0;
 
