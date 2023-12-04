@@ -6051,7 +6051,7 @@ void MainWindow::genCQMsg ()
        ( tlist.at(1)==my_callsign or
          tlist.at(2)==my_callsign ) and
        stdCall(my_callsign)) {
-      if(m_config.Individual_Contest_Name())  {
+      if(m_config.Individual_Contest_Name() && SpecOp::FOX != m_specOp)  {
            m_cqStr = m_config.Contest_Name();
       } else {
       if(SpecOp::NA_VHF == m_specOp)    m_cqStr="TEST";
@@ -10776,6 +10776,10 @@ void MainWindow::on_houndButton_clicked (bool checked)
 
 void MainWindow::on_ft8Button_clicked()
 {
+  if(m_specOp==SpecOp::HOUND) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
     on_actionFT8_triggered();
 }
 
