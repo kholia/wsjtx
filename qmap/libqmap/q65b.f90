@@ -8,15 +8,12 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 ! in common/cacb.  Decoded messages are sent back to the GUI.
 
   use q65_decode
-  use wavhdr
   use timer_module, only: timer
 
   parameter (MAXFFT1=5376000)              !56*96000
   parameter (MAXFFT2=336000)               !56*6000 (downsampled by 1/16)
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
-
-  type(hdr) h
   integer*2 iwave(60*12000)
   integer offset
   complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
@@ -28,7 +25,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*4 grid4
   character*60 result
   character*20 datetime
-  character fname*17
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/cacb/ca
@@ -99,20 +95,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   endif
   nsnr0=-99             !Default snr for no decode
 
-  if(abs(f0-85.3).lt.1.0) then
-     print*,'a',f0,f0+80-48
-     h=default_header(12000,30*12000)
-     do ifile=0,1
-        write(fname,1102) ifile
-1102    format('000000_',i6.6,'.wav')
-        open(50,file=fname,status='unknown',access='stream')
-        ia=ifile*30*12000 + 1
-        ib=ia + 30*12000 - 1
-        write(50) h,iwave(ia:ib)
-        close(50)
-     enddo
-  endif
-  
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
   call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
        newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
