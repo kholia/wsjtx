@@ -18,7 +18,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   real*8 fcenter
   common/datcom/dd(2,5760000),ss(373,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
-  real*4 ssz5a(NFFT),w(NFFT),w2a(NFFT),w2b(NFFT)
+  real*4 ssz5a(NFFT),w(NFFT)
   complex cx(NFFT)
   complex cx00(NFFT)
   complex cx0(0:1023),cx1(0:1023)
@@ -33,15 +33,9 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   endif
   if(k0.eq.99999999) then
      pi=4.0*atan(1.0)
-     w2a=0.
-     w2b=0.
      do i=1,NFFT
         w(i)=(sin(i*pi/NFFT))**2                          !Window
-        j=i-8916
-        if(j.gt.0 .and. j.lt.17833) w2b(i)=(sin(j*pi/17832.925))**2    ! b
      enddo
-     w2a=sqrt(2.0)*w2a
-     w2b=sqrt(2.0)*w2b
   endif
 
   hsym=2048.d0*96000.d0/11025.d0      !Samples per JT65 half-symbol
