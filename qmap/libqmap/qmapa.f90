@@ -10,6 +10,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      real :: snr          !Relative S/N of sync detection
      real :: f            !Freq of sync tone, 0 to 96000 Hz
      real :: xdt          !DT of matching sync pattern, -1.0 to +4.0 s
+     integer :: ntrperiod !60 for Q65-60x, 30 for Q65-30x
   end type candidate
 
   parameter (NFFT=32768)             !Size of FFTs done in symspec()

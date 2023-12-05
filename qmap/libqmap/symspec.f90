@@ -26,19 +26,20 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   data rms/999.0/,k0/99999999/,nadjx/0/,nadjy/0/
   save
 
+  hsym=0.15d0*96000.d0                 !Samples per Q65-30x half-symbol
+  npts=2*hsym                          !Full Q65-30x symbol
   if(k.gt.5751000) go to 999
-  if(k.lt.NFFT) then
+  if(k.lt.npts) then
      ihsym=0
      go to 999             !Wait for enough samples to start
   endif
   if(k0.eq.99999999) then
-     pi=4.0*atan(1.0)
-     do i=1,NFFT
-        w(i)=(sin(i*pi/NFFT))**2                          !Window
-     enddo
+!     pi=4.0*atan(1.0)
+!     do i=1,NFFT
+!        w(i)=(sin(i*pi/NFFT))**2                          !Window
+!     enddo
+     w=0.7                             !Flat window
   endif
-
-  hsym=0.15d0*96000.d0                 !Samples per Q65-30x half-symbol
 
   if(k.lt.k0) then
      ts=1.d0 - hsym
@@ -76,12 +77,9 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
      k1=k1+kstep
   enddo
 
-  npts=NFFT                           !Samples used in each half-symbol FFT
-
   ts=ts+hsym
   ja=ts                               !Index of first sample
   jb=ja+npts-1                        !Last sample
-
   i=0
   fac=0.0002
   do j=ja,jb                          !Copy data into cx
@@ -90,6 +88,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
      i=i+1
      cx(i)=fac*cmplx(x1,x2)
   enddo
+  cx(npts+1:)=0.
 
   if(nzap/178.lt.50 .and. (ndiskdat.eq.0 .or. ihsym.lt.280)) then
      nsum=nblks*kstep - nzap
