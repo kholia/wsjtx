@@ -7,6 +7,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
      real :: f            !Freq of sync tone, 0 to 96000 Hz
      real :: xdt          !DT of matching sync pattern, -1.0 to +4.0 s
      integer :: ntrperiod !60 for Q65-60x, 30 for Q65-30x
+     integer :: iseq      !0 for first half-minute, 1 for second half
   end type candidate
 
   parameter (NFFT=32768)                !FFTs done in symspec()
@@ -59,6 +60,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
         cand(j)%xdt=xdt
         cand(j)%snr=snr_sync
         cand(j)%ntrperiod=ntrperiod
+        cand(j)%iseq=iseq
         ia=max(1,min(i,i0-nguard))
         ib=min(i0+nbw+nguard,32768)
         savg(ia:ib)=0.
@@ -68,7 +70,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
      endif
 
      ntrperiod=30
-     if(ntrperiod.eq.30) cycle
+!     if(ntrperiod.eq.30) cycle
      
      call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
      if(sync_ok) then
@@ -78,6 +80,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
         cand(j)%xdt=xdt
         cand(j)%snr=snr_sync
         cand(j)%ntrperiod=ntrperiod
+        cand(j)%iseq=iseq
         ia=max(1,min(i,i0-nguard))
         ib=min(i0+nbw+nguard,32768)
         savg(ia:ib)=0.
@@ -94,6 +97,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
         cand(j)%xdt=xdt
         cand(j)%snr=snr_sync
         cand(j)%ntrperiod=ntrperiod
+        cand(j)%iseq=iseq
         ia=max(1,min(i,i0-nguard))
         ib=min(i0+nbw+nguard,32768)
         savg(ia:ib)=0.

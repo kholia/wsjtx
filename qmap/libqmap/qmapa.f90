@@ -11,6 +11,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      real :: f            !Freq of sync tone, 0 to 96000 Hz
      real :: xdt          !DT of matching sync pattern, -1.0 to +4.0 s
      integer :: ntrperiod !60 for Q65-60x, 30 for Q65-30x
+     integer :: iseq      !0 for first half-minute, 1 for second half
   end type candidate
 
   parameter (NFFT=32768)             !Size of FFTs done in symspec()
@@ -60,17 +61,19 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f
      ntrperiod=cand(icand)%ntrperiod
+     iseq=cand(icand)%iseq
 !###
-     if(icand.gt.1) exit
-     f0=-31.847 + 117.602
-     ntrperiod=30
-     iseq=1
-     mode_q65=2
+!     if(icand.gt.2) exit
+!     f0=-31.847 + 117.602
+!     ntrperiod=30
+!     iseq=icand-1
 !###
+     mode_q65=3                           !###
+     if(ntrperiod.eq.30) mode_q65=2       !###
      freq=f0+nkhz_center-48.0-1.27046
-     write(*,5001) icand,ntrperiod,iseq,f0,f0+nkhz_center-48.0,  &
-          cand(icand)%xdt,cand(icand)%snr
-5001 format('a',3i5,2f10.3,2f8.1)
+!     write(*,5001) icand,ntrperiod,iseq,mode_q65,f0,f0+nkhz_center-48.0,  &
+!          cand(icand)%xdt,cand(icand)%snr
+!5001 format('a',4i5,2f10.3,2f8.1)
      ikhz=nint(freq)
      idec=-1
      call timer('q65b    ',0)

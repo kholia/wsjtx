@@ -94,8 +94,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 !###
   nfa=800
   nfb=1200
-  write(*,4001) f0,f0+31.847,nfa,nfb,ntol,ntrperiod,iseq,mode_q65
-4001 format('b',2f10.3,6i6)
+!  write(*,4001) f0,f0+31.847,nfa,nfb,ntol,ntrperiod,iseq,mode_q65
+!4001 format('b',2f10.3,6i6)
   if(iseq.eq.1) iwave(1:360000)=iwave(360001:720000)
 !###
   
@@ -117,8 +117,15 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      ndecodes=ndecodes+1
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
-     write(result(ndecodes),1120) nutc,frx,fsked,xdt0,nsnr0,trim(msg0)
-1120 format(i4.4,f9.3,f7.1,f7.2,i5,2x,a)
+     if(ntrperiod.eq.60) then
+        write(result(ndecodes),1120) nutc,frx,fsked,xdt0,nsnr0,trim(msg0)
+1120    format(i4.4,f9.3,f7.1,f7.2,i5,2x,a)
+     else
+        nhhmmss=100*nutc
+        if(iseq.eq.1) nhhmmss=100*nutc+30
+        write(result(ndecodes),1121) nhhmmss,frx,fsked,xdt0,nsnr0,trim(msg0)
+1121    format(i6.6,f9.3,f7.1,f7.2,i5,2x,a)
+     endif
      write(12,1130) datetime,trim(result(ndecodes)(5:))
 1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
