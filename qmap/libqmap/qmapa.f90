@@ -56,13 +56,26 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   call filbig(dd,NSMAX,f0,newdat,nfsample,cx,n5) !Do the full-length FFT
   call timer('filbig  ',1)
 
+
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f
-     freq=cand(icand)%f+nkhz_center-48.0-1.27046
+     ntrperiod=cand(icand)%ntrperiod
+!###
+     if(icand.gt.1) exit
+     f0=-31.847 + 117.602
+     ntrperiod=30
+     iseq=1
+     mode_q65=2
+!###
+     freq=f0+nkhz_center-48.0-1.27046
+     write(*,5001) icand,ntrperiod,iseq,f0,f0+nkhz_center-48.0,  &
+          cand(icand)%xdt,cand(icand)%snr
+5001 format('a',3i5,2f10.3,2f8.1)
      ikhz=nint(freq)
      idec=-1
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,       &
+          ntrperiod,iseq,                                               &
           mycall,hiscall,hisgrid,mode_q65,f0,fqso,nkhz_center,newdat,   &
           nagain2,max_drift,offset,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)

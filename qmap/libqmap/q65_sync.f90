@@ -56,8 +56,8 @@ subroutine q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr,xdt)
         sq=sq+ccf(i)**2
         nsum=nsum+1
      endif
-     write(40,3040) i,i*tstep-1.0,ccf(i),fpk
-3040 format(i5,3f8.2)
+!     write(40,3040) i,i*tstep-1.0,ccf(i),fpk
+!3040 format(i5,3f8.2)
   enddo
   ave=xsum/nsum
   rms=sqrt(sq/nsum - ave*ave)

@@ -63,12 +63,12 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
         ib=min(i0+nbw+nguard,32768)
         savg(ia:ib)=0.
 !        write(*,3301) j,fpk+80-48,xdt,snr_sync,ntrperiod,iseq
-3301    format(i3,f8.1,f8.2,f8.1,2i5)
+3301    format(i3,f10.3,f8.2,f8.1,2i5)
         if(j.ge.MAX_CANDIDATES) exit
      endif
 
      ntrperiod=30
-!     if(ntrperiod.eq.30) cycle
+     if(ntrperiod.eq.30) cycle
      
      call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
      if(sync_ok) then

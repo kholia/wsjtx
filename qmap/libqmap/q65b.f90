@@ -1,4 +1,5 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
+     ntrperiod,iseq,                                                        &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
      max_drift,offset,ndepth,datetime,ndop00,idec)
 
@@ -90,8 +91,16 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   endif
   nsnr0=-99             !Default snr for no decode
 
+!###
+  nfa=800
+  nfb=1200
+  write(*,4001) f0,f0+31.847,nfa,nfb,ntol,ntrperiod,iseq,mode_q65
+4001 format('b',2f10.3,6i6)
+  if(iseq.eq.1) iwave(1:360000)=iwave(360001:720000)
+!###
+  
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
-  call map65_mmdec(nutc,iwave,nqd,nsubmode,nfa,nfb,1000,ntol,     &
+  call map65_mmdec(nutc,iwave,nqd,ntrperiod,nsubmode,nfa,nfb,1000,ntol,     &
        newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
    MHz=fcenter
   freq0=MHz + 0.001d0*ikhz
