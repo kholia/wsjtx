@@ -238,6 +238,7 @@ void MainWindow::writeSettings()
   settings.setValue("nModeQ65",m_modeQ65);
   settings.setValue("SaveNone",ui->actionNone->isChecked());
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
+  settings.setValue("ContinuousWaterfall",ui->continuous_waterfall->isChecked());
   settings.setValue("NEME",m_onlyEME);
   settings.setValue("KB8RQ",m_kb8rq);
   settings.setValue("NB",m_NB);
@@ -291,6 +292,7 @@ void MainWindow::readSettings()
 
   ui->actionNone->setChecked(settings.value("SaveNone",true).toBool());
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
+  ui->continuous_waterfall->setChecked(settings.value("ContinuousWaterfall",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
   m_onlyEME=settings.value("NEME",false).toBool();
   ui->actionOnly_EME_calls->setChecked(m_onlyEME);
@@ -370,7 +372,7 @@ void MainWindow::dataSink(int k)
 
   xSignalMeter->setValue(px);                   // Update the signal meters
   //Suppress scrolling if WSJT-X is transmitting
-  if((m_monitoring and ipc_wsjtx[4] != 1) or m_diskData) {
+  if((m_monitoring and (ipc_wsjtx[4] != 1 or ui->continuous_waterfall->isChecked())) or m_diskData) {
       m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
 
