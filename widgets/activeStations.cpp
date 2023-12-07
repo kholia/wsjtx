@@ -47,7 +47,7 @@ void ActiveStations::read_settings ()
   ui->sbMaxRecent->setValue(settings_->value("MaxRecent",10).toInt());
   ui->sbMaxAge->setValue(settings_->value("MaxAge",10).toInt());
   ui->cbReadyOnly->setChecked(settings_->value("ReadyOnly",false).toBool());
-  ui->cbWantedOnly->setChecked(settings_->value("WantedOnly",false).toBool());
+  ui->cbWantedOnly->setChecked(settings_->value("# WantedOnly",false).toBool());
 }
 
 void ActiveStations::write_settings ()
@@ -64,11 +64,11 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
 {
   if(mode!=m_mode) {
     m_mode=mode;
-    ui->cbReadyOnly->setText("Ready only");
+    ui->cbReadyOnly->setText(" Ready only");
     if(m_mode=="Q65") {
       ui->header_label2->setText("  N    Frx   Fsked  S/N  Q65  Call     Grid  Tx  Age");
       ui->label->setText("QSOs:");
-      ui->cbReadyOnly->setText("CQ only");
+      ui->cbReadyOnly->setText("* CQ only");
     } else if(m_mode=="Q65-pileup") {
       ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
     } else {
