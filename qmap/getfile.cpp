@@ -54,7 +54,7 @@ void getfile(QString fname, bool xpol, int dbDgrd)
 
 void savetf2(QString fname, bool xpol)
 {
-  int npts=2*56*96000;
+  int npts=2*60*96000;
   if(xpol) npts=2*npts;
 
   qint16* buf=(qint16*)malloc(2*npts);
@@ -68,7 +68,6 @@ void savetf2(QString fname, bool xpol)
     for(int i=0; i<npts; i+=2) {
       buf[i]=(qint16)datcom_.d4[j++];
       buf[i+1]=(qint16)datcom_.d4[j++];
-//      if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
     }
     fwrite(buf,2,npts,fp);
     fclose(fp);

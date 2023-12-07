@@ -403,10 +403,8 @@ void MainWindow::dataSink(int k)
 
   if(ihsym < m_hsymStop) m_decode_called=false;
 
-//  qDebug() << "aa" << m_hsymStop << ihsym << m_decode_called << k << ntrz;
   if(ihsym >= m_hsymStop and !m_decode_called) {   //Decode at t=56 s (for Q65 and data from disk)
     m_decode_called=true;
-//    qDebug() << "bb" << m_hsymStop << ihsym << m_decode_called << k << ntrz;    datcom_.newdat=1;
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
@@ -421,7 +419,6 @@ void MainWindow::dataSink(int k)
     }
     m_nTransmitted=0;
   }
-
   soundInThread.m_dataSinkBusy=false;
 }
 
