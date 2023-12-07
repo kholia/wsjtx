@@ -8,7 +8,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
 !  pxdb     power in x channel (0-60 dB)
 !  ssz5a    polarized spectrum, for waterfall display
 !  nkhz     integer kHz portion of center frequency, e.g., 125 for 144.125
-!  ihsym    index number of this half-symbol (1-373)
+!  ihsym    index number of this half-symbol (1-400)
 !  nzap     number of samples zero'ed by noise blanker
 
   include 'njunk.f90'
@@ -16,7 +16,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   parameter (NFFT=32768)              !Length of FFTs
   real*8 ts,hsym
   real*8 fcenter
-  common/datcom/dd(2,5760000),ss(373,NFFT),savg(NFFT),fcenter,nutc,  &
+  common/datcom/dd(2,5760000),ss(400,NFFT),savg(NFFT),fcenter,nutc,  &
        junk(NJUNK)
   real*4 ssz5a(NFFT),w(NFFT)
   complex cx(NFFT)
@@ -105,7 +105,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   ihsym=ihsym+1
   cx=w*cx00                           !Apply window for 2nd forward FFT
   call four2a(cx,NFFT,1,1,1)          !Second forward FFT (X)
-  n=min(373,ihsym)
+  n=min(400,ihsym)
   do i=1,NFFT
      sx=real(cx(i))**2 + aimag(cx(i))**2
      ss(n,i)=sx                    ! Pol = 0

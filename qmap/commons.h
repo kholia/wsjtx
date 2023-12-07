@@ -7,7 +7,7 @@ extern "C" {
 
 extern struct {                     //This is "common/datcom/..." in Fortran
   float d4[2*5760000];              //Raw I/Q data from Linrad
-  float ss[373*NFFT];               //Half-symbol spectra at 0,45,90,135 deg pol
+  float ss[400*NFFT];               //Half-symbol spectra at 0,45,90,135 deg pol
   float savg[NFFT];                 //Avg spectra at 0,45,90,135 deg pol
   double fcenter;                   //Center freq from Linrad (MHz)
   int nutc;                         //UTC as integer, HHMM
@@ -47,7 +47,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
 
 extern struct {                     //This is "common/datcom/..." in Fortran
   float d4[2*5760000];              //Raw I/Q data from Linrad
-  float ss[373*NFFT];               //Half-symbol spectra at 0,45,90,135 deg pol
+  float ss[400*NFFT];               //Half-symbol spectra at 0,45,90,135 deg pol
   float savg[NFFT];                 //Avg spectra at 0,45,90,135 deg pol
   double fcenter;                   //Center freq from Linrad (MHz)
   int nutc;                         //UTC as integer, HHMM

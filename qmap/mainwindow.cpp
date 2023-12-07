@@ -707,9 +707,9 @@ void MainWindow::diskDat()                                   //diskDat()
   m_diskData=true;
   datcom_.newdat=1;
   hsym=0.15*96000.0;                   //Samples per Q65-30x half-symbol or Q65-60x quarter-symbol
-  for(int i=0; i<380; i++) {           // Do the half-symbol FFTs
+  for(int i=0; i<400; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 0.5;
-    if(k > 56*96000) break;
+    if(k > 60*96000) break;
     dataSink(k);
     qApp->processEvents();             // Allow the waterfall to update
   }

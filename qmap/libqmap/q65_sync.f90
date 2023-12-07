@@ -4,7 +4,7 @@ subroutine q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr,xdt)
 
   parameter (NFFT=32768)
   parameter (LAGMAX=33)
-  real ss(373,NFFT)                !Symbol spectra
+  real ss(400,NFFT)                !Symbol spectra
   real ccf(0:LAGMAX)               !The WSJT "blue curve", peak at DT
   logical sync_ok
   integer isync0(22),isync(22),ipk(1)

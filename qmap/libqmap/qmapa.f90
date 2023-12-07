@@ -20,7 +20,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   parameter (NSMAX=60*96000)
   complex cx(NSMAX/64)               !Data at 1378.125 samples/s
   real dd(2,NSMAX)                   !I/Q data from Linrad
-  real ss(373,NFFT)                  !Symbol spectra
+  real ss(400,NFFT)                  !Symbol spectra
   real savg(NFFT)                    !Average spectrum
   real*8 fcenter                             !Center RF frequency, MHz
   character mycall*12,hiscall*12,hisgrid*6
@@ -56,7 +56,6 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   call timer('filbig  ',0)
   call filbig(dd,NSMAX,f0,newdat,nfsample,cx,n5) !Do the full-length FFT
   call timer('filbig  ',1)
-
 
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f

@@ -13,7 +13,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
   parameter (NFFT=32768)                !FFTs done in symspec()
   parameter (MAX_CANDIDATES=50)
   type(candidate) :: cand(MAX_CANDIDATES)
-  real ss(373,NFFT)                     !Symbol spectra
+  real ss(400,NFFT)                     !Symbol spectra
   real savg0(NFFT),savg(NFFT)           !Average spectra over whole Rx sequence
   integer ipk1(1)                       !Peak index of local portion of spectrum
   logical sync_ok                       !True if sync pattern is present

@@ -16,7 +16,7 @@ subroutine q65c(itimer)
   character*6 mygrid,hisgrid
   character*20 datetime
 
-  common/datcom2/dd(2,5760000),ss(373,NFFT),savg(NFFT),nparams0
+  common/datcom2/dd(2,5760000),ss(400,NFFT),savg(NFFT),nparams0
 
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &

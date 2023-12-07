@@ -39,7 +39,6 @@ void getfile(QString fname, bool xpol, int dbDgrd)
         datcom_.d4[j++]=(float)id[i+1];
       }
     }
-    qDebug() << "cc" << j << j/(2.0*96000.0);
     fclose(fp);
 
     datcom_.ndiskdat=1;
