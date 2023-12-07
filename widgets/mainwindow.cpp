@@ -9619,21 +9619,29 @@ void MainWindow::readWidebandDecodes()
   if(m_ActiveStationsWidget==NULL) return;
   int nhr=0;
   int nmin=0;
+  int nsec=0;
   int nsnr=0;
+  int iseq=0;
   while(m_fetched < qmapcom.ndecodes) {
+    // Recover and parse each decoded line.
     QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
     m_fetched++;
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
-    double frx=line.mid(4,9).toDouble();
-    double fsked=line.mid(13,7).toDouble();
-    QString msg=line.mid(34,-1);
+    nsec=line.mid(4,2).toInt();
+    iseq=0;
+    if(nsec==30) iseq=1;
+    qDebug() << m_fetched << iseq << line;
+    double frx=line.mid(6,9).toDouble();
+    double fsked=line.mid(16,7).toDouble();
+    QString submode=line.mid(36,3);
+    QString msg=line.mid(41,-1);
     int i1=msg.indexOf(" ");
     int i2=i1 +1 + msg.mid(i1+1,-1).indexOf(" ");
     QString dxcall=msg.mid(i1+1,i2-i1-1);
     if(stdCall(dxcall)) {
       QString w3=msg.mid(i2+1,-1);
-      nsnr=line.mid(29,3).toInt();
+      nsnr=line.mid(31,3).toInt();
       m_EMECall[dxcall].frx=frx;
       m_EMECall[dxcall].fsked=fsked;
       m_EMECall[dxcall].nsnr=nsnr;
