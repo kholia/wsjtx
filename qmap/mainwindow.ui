@@ -456,6 +456,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <addaction name="actionWide_Waterfall"/>
     <addaction name="separator"/>
     <addaction name="menuWaterfall_palette"/>
+    <addaction name="separator"/>
+    <addaction name="continuous_waterfall"/>
    </widget>
    <widget class="QMenu" name="menuSave">
     <property name="title">
@@ -834,6 +836,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="actionQuick_Start_Guide_to_Q65">
    <property name="text">
     <string>Quick-Start Guide to Q65</string>
+   </property>
+  </action>
+  <action name="continuous_waterfall">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Continuous Waterfall</string>
    </property>
   </action>
  </widget>
