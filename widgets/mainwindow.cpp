@@ -3907,15 +3907,15 @@ void MainWindow::callSandP2(int n)
       int nMHz=m_freqNominal/1000000;
       m_freqNominal=(nMHz*1000 + kHz)* 1000;
     }
-    m_deCall=w[3];
-    m_deGrid=w[4];
-    m_txFirst=(w[5]=="0");
+    m_deCall=w[4];
+    m_deGrid=w[5];
+    m_txFirst=(w[6]=="0");
 //    ui->TxFreqSpinBox->setValue(1500);
   } else {
     m_deCall=w[0];
     m_deGrid=w[1];
-    ui->RxFreqSpinBox->setValue(w[4].toInt());
-    m_txFirst = (w[5]=="0");
+    ui->RxFreqSpinBox->setValue(w[5].toInt());
+    m_txFirst = (w[6]=="0");
   }
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
@@ -9621,7 +9621,6 @@ void MainWindow::readWidebandDecodes()
   int nmin=0;
   int nsec=0;
   int nsnr=0;
-  int iseq=0;
   while(m_fetched < qmapcom.ndecodes) {
     // Recover and parse each decoded line.
     QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
@@ -9629,9 +9628,6 @@ void MainWindow::readWidebandDecodes()
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
     nsec=line.mid(4,2).toInt();
-    iseq=0;
-    if(nsec==30) iseq=1;
-    qDebug() << m_fetched << iseq << line;
     double frx=line.mid(6,9).toDouble();
     double fsked=line.mid(16,7).toDouble();
     QString submode=line.mid(36,3);
@@ -9645,7 +9641,8 @@ void MainWindow::readWidebandDecodes()
       m_EMECall[dxcall].frx=frx;
       m_EMECall[dxcall].fsked=fsked;
       m_EMECall[dxcall].nsnr=nsnr;
-      m_EMECall[dxcall].t=60*nhr + nmin;
+      m_EMECall[dxcall].t=3600*nhr + 60*nmin + nsec;
+      m_EMECall[dxcall].submode=submode;
       if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
       bool bCQ=line.contains(" CQ ");
 //      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
@@ -9685,8 +9682,11 @@ void MainWindow::readWidebandDecodes()
     if(m_ActiveStationsWidget->readyOnly() and !i->ready2call) bSkip=true;
     if(!bSkip) {
       int snr=i->nsnr;
-      int odd=1 - (i->t)%2;
-      int age=60*nhr + nmin - (i->t);
+      QString submode=i->submode;
+      int odd=0;
+      if(submode.left(2)=="30" and (i->t%60)==0) odd=1;
+      if(submode.left(2)=="60" and (i->t%120)==0) odd=1;
+      int age=(3600*nhr + 60*nmin + nsec - (i->t))/60;
       char c2[3]={32,32,0};
       if(age<0) age += 1440;
       if(age<=maxAge) {
@@ -9694,7 +9694,8 @@ void MainWindow::readWidebandDecodes()
         dxgrid4=(i->grid4+"... ").left(4);
         if(!m_EMEworked[dxcall.trimmed()]) c2[0]=35;       //# for not in log
         if(i->ready2call) c2[1]=42;                        //* for ready to call
-        t1=t1.asprintf("%7.3f %5.1f  %+03d   %8s %4s %3d %3d %2s\n",i->frx,i->fsked,snr,dxcall.toLatin1().constData(),
+        t1=t1.asprintf("%7.3f %5.1f  %+03d  %3s  %8s %4s %3d %3d %2s\n",i->frx,i->fsked,snr,
+                       submode.toLatin1().constData(),dxcall.toLatin1().constData(),
                        dxgrid4.toLatin1().constData(),odd,age,c2);
         f[k]=i->fsked;
         list.append(t1);
