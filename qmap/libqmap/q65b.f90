@@ -24,7 +24,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*12 mycall,hiscall
   character*6 hisgrid
   character*4 grid4
-  character*60 result
+  character*3 csubmode
+  character*60 result,ctmp
   character*20 datetime
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
@@ -117,15 +118,16 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      ndecodes=ndecodes+1
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
-     if(ntrperiod.eq.60) then
-        write(result(ndecodes),1120) nutc,frx,fsked,xdt0,nsnr0,trim(msg0)
-1120    format(i4.4,f9.3,f7.1,f7.2,i5,2x,a)
-     else
-        nhhmmss=100*nutc
-        if(iseq.eq.1) nhhmmss=100*nutc+30
-        write(result(ndecodes),1121) nhhmmss,frx,fsked,xdt0,nsnr0,trim(msg0)
-1121    format(i6.6,f9.3,f7.1,f7.2,i5,2x,a)
+     nhhmmss=100*nutc
+     csubmode(1:2)='60'
+     csubmode(3:3)=char(ichar('A')+nsubmode)
+     if(ntrperiod.eq.30) then
+        csubmode(1:2)='30'
+        nhhmmss=100*nutc + iseq*30
      endif
+     ctmp=csubmode//'  '//trim(msg0)
+     write(result(ndecodes),1120) nhhmmss,frx,fsked,xdt0,nsnr0,trim(ctmp)
+1120 format(i6.6,f9.3,f7.1,f7.2,i5,2x,a)
      write(12,1130) datetime,trim(result(ndecodes)(5:))
 1130 format(a11,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
