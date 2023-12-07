@@ -30,11 +30,11 @@ subroutine q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr,xdt)
   do lag=0,LAGMAX                     !Search over range of DT
      do j=1,22                        !Test for Q65 sync
         k=isync(j) + lag + iseq*200
+        if(k.ge.400) cycle
         if(ntrperiod.eq.60) then
            ccf(lag)=ccf(lag) + sum(ss(k,i1:i2)) + sum(ss(k+1,i1:i2)) &
                 + sum(ss(k+2,i1:i2)) + sum(ss(k+3,i1:i2))
         else
-           if(k.ge.372) cycle
            ccf(lag)=ccf(lag) + sum(ss(k,i1:i2)) + sum(ss(k+1,i1:i2))
         endif
 ! Q: Should we use weighted sums, perhaps a Lorentzian peak?

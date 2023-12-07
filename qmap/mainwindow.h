@@ -114,7 +114,7 @@ private:
   qint32  m_dB;
   qint32  m_fetched=0;
 //  qint32  m_hsymStop=371;
-  qint32  m_hsymStop=373;             //390*0.15 = 58.5 s
+  qint32  m_hsymStop=390;             //390*0.15 = 58.5 s
   qint32  m_nTransmitted=0;
   qint32  m_nDoubleClicked=0;
 
