@@ -210,10 +210,8 @@ void SoundInThread::inputUDP()
           int nsam=-1;
           recvpkt_(&nsam, &b.iblk, &b.nrx, &k, b.d8, b.d8);
           datcom_.fcenter=b.cfreq + m_fAdd;
-//          qDebug() << "bb" << b.cfreq << m_fAdd << datcom_.fcenter;
         }
-
-        m_hsym=(k-2048)*11025.0/(2048.0*m_rate);
+        m_hsym=(k-2048)/14400;           //14400 = 0.15 * 96000
         if(m_hsym != nhsym0) {
           if(!m_dataSinkBusy) {
             m_dataSinkBusy=true;

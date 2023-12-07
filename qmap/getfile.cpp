@@ -8,7 +8,8 @@ extern qint16 id[2*60*96000];
 
 void getfile(QString fname, bool xpol, int dbDgrd)
 {
-  int npts=2*56*96000;
+//  int npts=2*56*96000;
+  int npts=2*60*96000;
   if(xpol) npts=2*npts;
 
 // Degrade S/N by dbDgrd dB -- for tests only!!
@@ -23,7 +24,6 @@ void getfile(QString fname, bool xpol, int dbDgrd)
 
   if(fp != NULL) {
     auto n = fread(&datcom_.fcenter,sizeof(datcom_.fcenter),1,fp);
-//    qDebug() << "aa0" << sizeof(datcom_.fcenter) << n << datcom_.fcenter;
     n = fread(id,2,npts,fp);
     Q_UNUSED (n);
     int j=0;
@@ -32,22 +32,20 @@ void getfile(QString fname, bool xpol, int dbDgrd)
       for(int i=0; i<npts; i+=2) {
         datcom_.d4[j++]=fac*((float)id[i] + dgrd*gran());
         datcom_.d4[j++]=fac*((float)id[i+1] + dgrd*gran());
-//        if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
       }
     } else {
       for(int i=0; i<npts; i+=2) {
         datcom_.d4[j++]=(float)id[i];
         datcom_.d4[j++]=(float)id[i+1];
-//        if(!xpol) j+=2;               //Skip over d4(3,x) and d4(4,x)
       }
     }
+    qDebug() << "cc" << j << j/(2.0*96000.0);
     fclose(fp);
 
     datcom_.ndiskdat=1;
     int nfreq=(int)datcom_.fcenter;
     if(nfreq!=144 and nfreq != 432 and nfreq != 1296) datcom_.fcenter=1296.080;
-    int i0=fname.indexOf(".tf2");
-    if(i0<0) i0=fname.indexOf(".iq");
+    int i0=fname.indexOf(".iq");
     datcom_.nutc=0;
     if(i0>0) {
       datcom_.nutc=100*fname.mid(i0-4,2).toInt() + fname.mid(i0-2,2).toInt();
