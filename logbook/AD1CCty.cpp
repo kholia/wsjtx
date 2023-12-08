@@ -446,8 +446,8 @@ auto AD1CCty::lookup (QString const& call) const -> Record
           if (p != m_->prefixes_.end ())
             {
               impl::entity_by_id::iterator e = m_->lookup_entity (call, *p);
-              if ((m_->configuration_->include_WAE_entities () || !e->WAE_only_)
-                  && (!p->exact_ || call.size () == search_prefix.size ()))
+              // always lookup WAE entities, we substitute them later in displaytext.cpp if "Include extra WAE entites" is not selected
+              if (!p->exact_ || call.size () == search_prefix.size ())
                 {
                   return m_->fixup (*p, *e);
                 }

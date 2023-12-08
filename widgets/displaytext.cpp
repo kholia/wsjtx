@@ -387,6 +387,17 @@ QString DisplayText::appendWorkedB4 (QString message, QString call, QString cons
           countryName.replace ("European", "EU");
           countryName.replace ("African", "AF");
 
+          // assign WAE entities to the correct DXCC when "Include extra WAE entities" is not selected
+          if (!(m_config->include_WAE_entities())) {
+            countryName.replace ("Bear Is.", "Svalbard");
+            countryName.replace ("Shetland Is.", "Scotland");
+            countryName.replace ("AF Italy", "Italy");
+            countryName.replace ("Sicily", "Italy");
+            countryName.replace ("Vienna Intl Ctr", "Austria");
+            countryName.replace ("AF Turkey", "Turkey");
+            countryName.replace ("EU Turkey", "Turkey");
+          }
+
           extra += countryName;
         }
     }
