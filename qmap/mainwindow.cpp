@@ -941,18 +941,24 @@ void MainWindow::guiUpdate()
         t1="-";
         ui->decodedTextBrowser->append(t1.repeated(56));
         m_nline++;
+        QTextCursor cursor(ui->decodedTextBrowser->document()->findBlockByLineNumber(m_nline-1));
+        QTextBlockFormat f = cursor.blockFormat();
+        f.setBackground(QBrush(Qt::white));
+        cursor.setBlockFormat(f);
       }
       m_UTC0=t.left(4);
       t=t.trimmed();
       ui->decodedTextBrowser->append(t);
       m_fetched++;
       m_nline++;
+      QTextCursor cursor(ui->decodedTextBrowser->document()->findBlockByLineNumber(m_nline-1));
+      QTextBlockFormat f = cursor.blockFormat();
       if(t.mid(36,2)=="30") {
-        QTextCursor cursor(ui->decodedTextBrowser->document()->findBlockByLineNumber(m_nline-1));
-        QTextBlockFormat f = cursor.blockFormat();
         f.setBackground(QBrush(Qt::yellow));
-        cursor.setBlockFormat(f);
+      } else {
+        f.setBackground(QBrush(Qt::white));
       }
+      cursor.setBlockFormat(f);
     }
   }
   t1="";
