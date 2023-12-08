@@ -874,7 +874,6 @@ void MainWindow::decode()                                       //decode()
   } else {
     memcpy(datcom_.datetime, m_dateTime.toLatin1(), 11);
   }
-  qDebug() << "aa" << fname << m_dateTime << datcom_.datetime;
   datcom_.junk1=1234;                                     //Cecck for these values in m65
   datcom_.junk2=5678;
 
