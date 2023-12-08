@@ -176,6 +176,7 @@ private:
   QString m_dateTime;
   QString m_mode;
   QString m_UTC0="";
+  QDateTime m_dateTimeSeqStart;        //Nominal start time of Rx sequence about to be decoded
 
   QHash<QString,bool> m_worked;
 

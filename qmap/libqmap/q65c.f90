@@ -29,7 +29,7 @@ subroutine q65c(itimer)
   save first
 
   nparams=nparams0                     !Copy parameters into common/npar/
-  datetime(12:)='         '
+  datetime(12:)='00       '
 
   if(itimer.ne.0) then
      call timer('decode0 ',101)
@@ -37,7 +37,6 @@ subroutine q65c(itimer)
      return
   endif
 
-!  datetime(18:20)=':00'
   npatience=1
   newdat=1                          !Always on ??
 

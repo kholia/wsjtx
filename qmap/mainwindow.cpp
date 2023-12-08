@@ -410,7 +410,7 @@ void MainWindow::dataSink(int k)
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
-    m_dateTime=t.toString("yymmdd_hhmm");
+    m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
     if(m_saveAll and !m_diskData and m_nTransmitted<10) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
@@ -874,6 +874,7 @@ void MainWindow::decode()                                       //decode()
   } else {
     memcpy(datcom_.datetime, m_dateTime.toLatin1(), 11);
   }
+  qDebug() << "aa" << fname << m_dateTime << datcom_.datetime;
   datcom_.junk1=1234;                                     //Cecck for these values in m65
   datcom_.junk2=5678;
 
@@ -1072,4 +1073,3 @@ void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered()
 {
   QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf"});
 }
-
