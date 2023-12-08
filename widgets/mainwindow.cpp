@@ -3917,6 +3917,13 @@ void MainWindow::callSandP2(int n)
     ui->RxFreqSpinBox->setValue(w[5].toInt());
     m_txFirst = (w[6]=="0");
   }
+
+  if(w[3].left(2)=="30") {
+    ui->sbTR->setValue(30);
+  } else {
+    ui->sbTR->setValue(60);
+  }
+
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
   ui->dxGridEntry->setText(m_deGrid);
