@@ -61,24 +61,15 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      f0=cand(icand)%f
      ntrperiod=cand(icand)%ntrperiod
      iseq=cand(icand)%iseq
-!###
-!     if(icand.gt.2) exit
-!     f0=-31.847 + 117.602
-!     ntrperiod=30
-!     iseq=icand-1
-!###
-     mode_q65=3                           !###
-     if(ntrperiod.eq.30) mode_q65=2       !###
+     mode_q65_tmp=mode_q65
+     if(ntrperiod.eq.30) mode_q65_tmp=max(1,mode_q65-1)
      freq=f0+nkhz_center-48.0-1.27046
-!     write(*,5001) icand,ntrperiod,iseq,mode_q65,f0,f0+nkhz_center-48.0,  &
-!          cand(icand)%xdt,cand(icand)%snr
-!5001 format('a',4i5,2f10.3,2f8.1)
      ikhz=nint(freq)
      idec=-1
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,       &
           ntrperiod,iseq,                                               &
-          mycall,hiscall,hisgrid,mode_q65,f0,fqso,nkhz_center,newdat,   &
+          mycall,hiscall,hisgrid,mode_q65_tmp,f0,fqso,nkhz_center,newdat,   &
           nagain2,max_drift,offset,ndepth,datetime,ndop00,idec)
      call timer('q65b    ',1)
      tsec=sec_midn() - tsec0
