@@ -857,7 +857,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.nfsample=96000;
   if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
-  datcom_.nmode=10*m_modeQ65;
+  datcom_.nBaseSubmode=m_modeQ65;
   datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
   datcom_.offset=ui->sbOffset->value();

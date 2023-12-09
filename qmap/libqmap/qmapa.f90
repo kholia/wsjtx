@@ -1,6 +1,6 @@
 subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,nfshift,max_drift,offset,nfcal,mycall,  &
-     hiscall,hisgrid,nfsample,nmode,ndepth,datetime,ndop00,fselected)
+     hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,datetime,ndop00,fselected)
 
 !  Processes timf2 data received from Linrad to find and decode Q65 signals.
 
@@ -36,7 +36,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
   mfb=nfb-nkhz_center+48
-  mode_q65=nmode/10
+  mode_q65=nBaseSubmode
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
   f0_selected=fselected - nkhz_center + 48.0
 
