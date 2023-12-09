@@ -3923,6 +3923,11 @@ void MainWindow::callSandP2(int n)
   } else {
     ui->sbTR->setValue(60);
   }
+  if(w[3].right(1)=="A") ui->sbSubmode->setValue(0);
+  if(w[3].right(1)=="B") ui->sbSubmode->setValue(1);
+  if(w[3].right(1)=="C") ui->sbSubmode->setValue(2);
+  if(w[3].right(1)=="D") ui->sbSubmode->setValue(3);
+  if(w[3].right(1)=="E") ui->sbSubmode->setValue(4);
 
   m_bDoubleClicked=true;               //### needed?
   ui->dxCallEntry->setText(m_deCall);
@@ -9650,6 +9655,8 @@ void MainWindow::readWidebandDecodes()
       m_EMECall[dxcall].nsnr=nsnr;
       m_EMECall[dxcall].t=3600*nhr + 60*nmin + nsec;
       m_EMECall[dxcall].submode=submode;
+//### Make sure WSJT-X is set to a Q65 submode consistent with the executing QMAP.
+//      qDebug() << "aa" << submode << m_mode << m_nSubMode << bWrongMode;
       if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
       bool bCQ=line.contains(" CQ ");
 //      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));
