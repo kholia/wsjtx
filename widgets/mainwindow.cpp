@@ -5070,7 +5070,7 @@ void MainWindow::guiUpdate()
     if(m_decoderBusy) n=1;
     ipc_qmap[3]=n;
     n=0;
-    if(m_transmitting) n=1;
+    if(m_transmitting) n=m_TRperiod;
     ipc_qmap[4]=n;
     if(ipc_qmap[0] > 0) {             //ndecodes
       memcpy(&qmapcom, (char*)ipc_qmap, sizeof(qmapcom));  //Fetch the new decode(s)

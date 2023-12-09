@@ -412,7 +412,7 @@ void MainWindow::dataSink(int k)
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
-    if(m_saveAll and !m_diskData and m_nTransmitted<10) {
+    if(m_saveAll and !m_diskData and m_nTransmitted<30) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
@@ -799,7 +799,9 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 void MainWindow::decode()                                       //decode()
 {
 //Don't attempt to decode if decoder is already busy, or if we transmitted for 10 s or more.
-  if(m_decoderBusy or m_nTransmitted>10) return;
+  if(m_decoderBusy) return;
+  if(m_WSJTX_TRperiod==60 and m_nTransmitted>10) return;
+  if(m_WSJTX_TRperiod==30 and m_nTransmitted>35) return;
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
@@ -973,9 +975,11 @@ void MainWindow::guiUpdate()
     mem_qmap.lock();
     memcpy(&itest, (char*)ipc_wsjtx, 20);
     mem_qmap.unlock();
-    if(itest[4]==1) m_nTransmitted++;
-//    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4]
-//             << m_nTransmitted;
+    if(itest[4]>0) {
+      m_WSJTX_TRperiod=itest[4];
+      m_nTransmitted++;              //0 if WSJT-X is not transmitting, otherwise TRperiod
+    }
+//    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4] << m_nTransmitted;
     if(n60<n60z) m_nTransmitted=0;
     n60z=n60;
 
