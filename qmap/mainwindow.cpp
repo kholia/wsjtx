@@ -800,7 +800,7 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
-  if(m_nTx30>5 or m_nTx60>10) return; //Don't decode if WSJT-X transmitted too much
+  if(m_nTx60>10) return; //Don't decode if WSJT-X transmitted too much in 60 s mode
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
