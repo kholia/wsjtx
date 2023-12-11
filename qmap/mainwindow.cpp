@@ -412,14 +412,15 @@ void MainWindow::dataSink(int k)
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
-    if(m_saveAll and !m_diskData and m_nTransmitted<30) {
+    if(m_saveAll and !m_diskData and (m_nTx30<5 and m_nTx60<10)) {
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
       *future2 = QtConcurrent::run(savetf2, fname, false);
       watcher2->setFuture(*future2);
     }
-    m_nTransmitted=0;
+    m_nTx30=0;
+    m_nTx60=0;
   }
   soundInThread.m_dataSinkBusy=false;
 }
@@ -798,10 +799,8 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 
 void MainWindow::decode()                                       //decode()
 {
-//Don't attempt to decode if decoder is already busy, or if we transmitted for 10 s or more.
-  if(m_decoderBusy) return;
-  if(m_WSJTX_TRperiod==60 and m_nTransmitted>10) return;
-  if(m_WSJTX_TRperiod==30 and m_nTransmitted>35) return;
+  if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
+  if(m_nTx30>5 or m_nTx60>10) return; //Don't decode if WSJT-X transmitted too much
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
@@ -876,7 +875,7 @@ void MainWindow::decode()                                       //decode()
   } else {
     memcpy(datcom_.datetime, m_dateTime.toLatin1(), 11);
   }
-  datcom_.junk1=1234;                                     //Cecck for these values in m65
+  datcom_.junk1=1234;                                     //Check for these values in m65
   datcom_.junk2=5678;
 
   char *to = (char*) datcom2_.d4;
@@ -939,9 +938,10 @@ void MainWindow::guiUpdate()
   if(decodes_.ndecodes > m_fetched) {
     while(m_fetched<decodes_.ndecodes) {
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
+      if(t.trimmed()=="QMAP decoding finished") break;
       if(m_UTC0!="" and m_UTC0!=t.left(4)) {
         t1="-";
-        ui->decodedTextBrowser->append(t1.repeated(56));
+        ui->decodedTextBrowser->append(t1.repeated(60));
         m_nline++;
         QTextCursor cursor(ui->decodedTextBrowser->document()->findBlockByLineNumber(m_nline-1));
         QTextBlockFormat f = cursor.blockFormat();
@@ -963,6 +963,7 @@ void MainWindow::guiUpdate()
       cursor.setBlockFormat(f);
     }
   }
+
   t1="";
   t1=t1.asprintf("%.3f",datcom_.fcenter);
   ui->labFreq->setText(t1);
@@ -977,10 +978,15 @@ void MainWindow::guiUpdate()
     mem_qmap.unlock();
     if(itest[4]>0) {
       m_WSJTX_TRperiod=itest[4];
-      m_nTransmitted++;              //0 if WSJT-X is not transmitting, otherwise TRperiod
+      if(m_WSJTX_TRperiod==30) m_nTx30++;
+      if(m_WSJTX_TRperiod==60) m_nTx60++;
     }
-//    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4] << m_nTransmitted;
-    if(n60<n60z) m_nTransmitted=0;
+//    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4]
+//             << m_nTx30 << m_nTx60;
+    if(n60<n60z) {
+      m_nTx30=0;
+      m_nTx60=0;
+    }
     n60z=n60;
 
     if(m_pctZap>30.0) {

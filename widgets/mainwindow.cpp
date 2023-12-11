@@ -9637,6 +9637,7 @@ void MainWindow::readWidebandDecodes()
     // Recover and parse each decoded line.
     QString line=QString::fromLatin1(qmapcom.result[m_fetched]);
     m_fetched++;
+    if(m_fetched==qmapcom.ndecodes) break;
     nhr=line.mid(0,2).toInt();
     nmin=line.mid(2,2).toInt();
     nsec=line.mid(4,2).toInt();

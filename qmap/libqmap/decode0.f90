@@ -49,6 +49,8 @@ subroutine decode0(dd,ss,savg)
        nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,          &
        datetime,ndop00,fselected)
   call timer('qmapa   ',1)
+  ndecodes=ndecodes+1
+  result(ndecodes)='QMAP decoding finished'
 
   return
 end subroutine decode0

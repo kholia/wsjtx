@@ -128,7 +128,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      if(ndf.lt.-500) ikhz1=ikhz + (nq65df-500)/1000
      ndf=nq65df - 1000*(ikhz1-ikhz)
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
-     ndecodes=ndecodes+1
+     ndecodes=min(ndecodes+1,50-1)
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
      ctmp=csubmode//'  '//trim(msg0)
