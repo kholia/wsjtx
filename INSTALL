@@ -27,7 +27,7 @@ the Boost  C++ libraries.   For MS Windows  see the  section "Building
 from  Source on  MS  Windows" below.  For Apple  Mac  see the  section
 "Building from Source on Apple Mac".
 
-Qt v5, preferably v5.9 or later is required to build WSJT-X.
+Qt v5, preferably v5.12 or later is required to build WSJT-X.
 
 Qt v5  multimedia support, serial  port, and Linguist is  necessary as
 well  as  the  core  Qt  v5 components,  normally  installing  the  Qt
@@ -50,11 +50,9 @@ normally you can choose not to  install libusb-1.0-dev but if you have
 a SoftRock USB or similar SDR that uses a custom USB interface then it
 is required.
 
-The Hamlib  library is  required. Currently WSJT-X  needs to  be built
-using a  forked version of the  Hamlib git master. This  fork contains
-patches  not yet  accepted by  the Hamlib  development team  which are
-essential for  correct operation of  WSJT-X. To build the  Hamlib fork
-from sources something like the following recipe should suffice:
+The Hamlib library is required.  WSJT-X  can be built with any version 
+of the Hamlib git master.  To  build  Hamlib  from  sources  something
+like the following recipe should suffice:
 
 $ mkdir ~/hamlib-prefix
 $ cd ~/hamlib-prefix
@@ -113,13 +111,13 @@ Building from Source on MS Windows
 
 Because  building on  MS  Windows  is quite  complicated  there is  an
 Software Development Kit available  that provides all the prerequisite
-libraries and tools for building  WSJT-X. This SDK is called JT-SDK-QT
+libraries and tools for building WSJT-X. This SDK is called HAMLIB SDK
 which is documented here:
 
-http://physics.princeton.edu/pulsar/K1JT/wsjtx-doc/dev-guide-main.html
+https://sourceforge.net/projects/hamlib-sdk/
 
 If you need to build Hamlib rather than use the Hamlib kit included in
-the  JT-SDK the  following recipe  should help.  Reasons for  building
+the  HAMLIB SDK the following recipe should help. Reasons for building
 Hamlib from source might include picking up the very latest patches or
 building a different branch that you wish to contribute to.
 
@@ -143,7 +141,7 @@ In an MSYS shell:-
 
 $ mkdir ~/hamib-prefix
 $ cd ~/hamlib-prefix
-$ git clone git://git.code.sf.net/u/bsomervi/hamlib src
+$ git clone https://github.com/Hamlib/Hamlib src
 $ cd src
 $ git checkout integration
 $ ./bootstrap
@@ -177,10 +175,6 @@ Hamlib binary location as one of the paths in CMAKE_PREFIX_PATH.
 
 Building from Source on Apple Mac
 =================================
-
-These instructions are adapted from my Evernote page at:
-
-    https://www.evernote.com/pub/bsomervi/wsjt-xmacbuilds
 
 There are several  ways to get the required GNU  and other open source
 tools and libraries installed, my preference is MacPorts because it is
@@ -228,12 +222,11 @@ instructions are here:
 
 Hamlib
 ------
-First fetch hamlib from the repository, in this case my fork of Hamlib
-3 until the official repository has all the fixes we need:
+First fetch hamlib from the git master repository:
 
 $ mkdir -p ~/hamlib-prefix/build
 $ cd ~/hamlib-prefix
-$ git clone git://git.code.sf.net/u/bsomervi/hamlib src
+$ git clone https://github.com/Hamlib/Hamlib src
 $ cd src
 $ git checkout integration
 $ ./bootstrap
@@ -352,8 +345,8 @@ which installs the WSJT-X application bundle into ~/wsjtx-prefix
 Updating and Rebuilding Hamlib
 ==============================
 
-From  time  to time  new  fixes  will be  pushed  to  the Hamlib  fork
-repository integration branch. To pick them up type:
+From  time  to time  new  fixes  will be  pushed  to  the Hamlib  git 
+master repository. To pick them up type:
 
 $ cd ~/hamlib-prefix/src
 $ git pull
