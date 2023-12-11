@@ -58,7 +58,7 @@ from sources something like the following recipe should suffice:
 
 $ mkdir ~/hamlib-prefix
 $ cd ~/hamlib-prefix
-$ git clone git://git.code.sf.net/u/bsomervi/hamlib src
+$ git clone https://github.com/Hamlib/Hamlib src
 $ cd src
 $ git checkout integration
 $ ./bootstrap
