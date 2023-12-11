@@ -938,7 +938,6 @@ void MainWindow::guiUpdate()
   if(decodes_.ndecodes > m_fetched) {
     while(m_fetched<decodes_.ndecodes) {
       QString t=QString::fromLatin1(decodes_.result[m_fetched]);
-      if(t.trimmed()=="QMAP decoding finished") break;
       if(m_UTC0!="" and m_UTC0!=t.left(4)) {
         t1="-";
         ui->decodedTextBrowser->append(t1.repeated(60));
