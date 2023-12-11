@@ -800,8 +800,8 @@ void MainWindow::decode()                                       //decode()
 {
 //Don't attempt to decode if decoder is already busy, or if we transmitted for 10 s or more.
   if(m_decoderBusy) return;
-  if(m_WSJTX_TRperiod==60 and m_nTransmitted>10) return;
-  if(m_WSJTX_TRperiod==30 and m_nTransmitted>35) return;
+  if(m_WSJTX_TRperiod==60 and m_nTransmitted>10 and !ui->continuous_waterfall->isChecked()) return;
+  if(m_WSJTX_TRperiod==30 and m_nTransmitted>35 and !ui->continuous_waterfall->isChecked()) return;
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
