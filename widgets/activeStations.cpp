@@ -92,6 +92,21 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
   bool bClickOK=m_clickOK;
   m_clickOK=false;
   ui->RecentStationsPlainTextEdit->setPlainText(t);
+
+//Yellow background for Q65-30x decodes:
+  int istart=0;
+  while(istart<t.length()) {
+    int npos=t.indexOf(QRegularExpression(" 30[ABCD] "), istart);
+    if(npos<0) break;
+    QTextCursor cursor=ui->RecentStationsPlainTextEdit->textCursor();
+    cursor.setPosition(npos);
+    cursor.select(QTextCursor::LineUnderCursor);
+    QTextCharFormat fmt;
+    fmt.setBackground(QBrush(Qt::yellow));
+    cursor.setCharFormat(fmt);
+    istart=npos+10;
+  }
+
   m_clickOK=bClickOK;
 }
 

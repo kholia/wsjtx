@@ -954,11 +954,9 @@ void MainWindow::guiUpdate()
       m_nline++;
       QTextCursor cursor(ui->decodedTextBrowser->document()->findBlockByLineNumber(m_nline-1));
       QTextBlockFormat f = cursor.blockFormat();
-      if(t.mid(36,2)=="30") {
-        f.setBackground(QBrush(Qt::yellow));
-      } else {
-        f.setBackground(QBrush(Qt::white));
-      }
+      f.setBackground(QBrush(Qt::white));
+      if(t.mid(36,2)=="30") f.setBackground(QBrush(Qt::yellow));
+      if(t.indexOf(m_myCall)>10) f.setBackground(QBrush(Qt::red));
       cursor.setBlockFormat(f);
     }
   }
