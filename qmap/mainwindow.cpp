@@ -372,7 +372,7 @@ void MainWindow::dataSink(int k)
 
   xSignalMeter->setValue(px);                   // Update the signal meters
   //Suppress scrolling if WSJT-X is transmitting
-  if((m_monitoring and (ipc_wsjtx[4] != 1 or ui->continuous_waterfall->isChecked())) or m_diskData) {
+  if((m_monitoring and (ipc_wsjtx[4] == 0 or ui->continuous_waterfall->isChecked())) or m_diskData) {
       m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
 
