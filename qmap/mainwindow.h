@@ -143,6 +143,8 @@ private:
   float   m_phasey;
   float   m_pctZap;
 
+  int     m_myCallColor;
+
   QRect   m_wideGraphGeom;
 
   QLabel* lab1;                            // labels in status bar

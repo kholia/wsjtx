@@ -28,6 +28,8 @@ public:
   bool    m_fs96000;
   bool    m_restartSoundIn;
 
+  int     m_myCallColor;
+
   QString m_myCall;
   QString m_myGrid;
   QString m_saveDir;

@@ -71,11 +71,12 @@ MainWindow::MainWindow(QWidget *parent) :
   createStatusBar();
   connect(m_gui_timer, &QTimer::timeout, this, &MainWindow::guiUpdate);
 
-  m_waterfallAvg = 1;
-  m_network = true;
+  m_waterfallAvg=1;
+  m_network=true;
   m_restart=false;
   m_myCall="K1JT";
   m_myGrid="FN20qi";
+  m_myCallColor=0;
   m_saveDir="";
   m_azelDir="";
   m_loopall=false;
@@ -220,6 +221,7 @@ void MainWindow::writeSettings()
   settings.setValue("MyGrid",m_myGrid);
   settings.setValue("IDint",m_idInt);
   settings.setValue("AstroFont",m_astroFont);
+  settings.setValue("MyCallColor",m_myCallColor);
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
   settings.setValue("Timeout",m_timeout);
@@ -266,6 +268,7 @@ void MainWindow::readSettings()
   m_myGrid=settings.value("MyGrid","").toString();
   m_idInt=settings.value("IDint",0).toInt();
   m_astroFont=settings.value("AstroFont",20).toInt();
+  m_myCallColor=settings.value("MyCallColor",0).toInt();
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
   m_timeout=settings.value("Timeout",20).toInt();
@@ -438,6 +441,7 @@ void MainWindow::on_actionSettings_triggered()
   dlg.m_myGrid=m_myGrid;
   dlg.m_idInt=m_idInt;
   dlg.m_astroFont=m_astroFont;
+  dlg.m_myCallColor=m_myCallColor;
   dlg.m_saveDir=m_saveDir;
   dlg.m_azelDir=m_azelDir;
   dlg.m_timeout=m_timeout;
@@ -453,6 +457,7 @@ void MainWindow::on_actionSettings_triggered()
     m_myGrid=dlg.m_myGrid;
     m_idInt=dlg.m_idInt;
     m_astroFont=dlg.m_astroFont;
+    m_myCallColor=dlg.m_myCallColor;
     if(m_astro_window && m_astro_window->isVisible()) m_astro_window->setFontSize(m_astroFont);
     ui->actionFind_Delta_Phi->setEnabled(false);
     m_saveDir=dlg.m_saveDir;
@@ -956,7 +961,9 @@ void MainWindow::guiUpdate()
       QTextBlockFormat f = cursor.blockFormat();
       f.setBackground(QBrush(Qt::white));
       if(t.mid(36,2)=="30") f.setBackground(QBrush(Qt::yellow));
-      if(t.indexOf(m_myCall)>10) f.setBackground(QBrush(Qt::red));
+      if(t.indexOf(m_myCall)>10 and m_myCallColor==1) f.setBackground(QBrush(Qt::red));
+      if(t.indexOf(m_myCall)>10 and m_myCallColor==2) f.setBackground(QBrush(Qt::green));
+      if(t.indexOf(m_myCall)>10 and m_myCallColor==3) f.setBackground(QBrush(Qt::cyan));
       cursor.setBlockFormat(f);
     }
   }
