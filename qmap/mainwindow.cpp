@@ -267,8 +267,8 @@ void MainWindow::readSettings()
   m_myCall=settings.value("MyCall","").toString();
   m_myGrid=settings.value("MyGrid","").toString();
   m_idInt=settings.value("IDint",0).toInt();
-  m_astroFont=settings.value("AstroFont",20).toInt();
-  m_myCallColor=settings.value("MyCallColor",0).toInt();
+  m_astroFont=settings.value("AstroFont",18).toInt();
+  m_myCallColor=settings.value("MyCallColor",1).toInt();
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
   m_timeout=settings.value("Timeout",20).toInt();
@@ -286,7 +286,7 @@ void MainWindow::readSettings()
   ui->actionLinrad->setChecked(settings.value(
                                  "PaletteLinrad",false).toBool());
 
-  m_modeQ65=settings.value("nModeQ65",2).toInt();
+  m_modeQ65=settings.value("nModeQ65",3).toInt();
   if(m_modeQ65==1) ui->actionQ65A->setChecked(true);
   if(m_modeQ65==2) ui->actionQ65B->setChecked(true);
   if(m_modeQ65==3) ui->actionQ65C->setChecked(true);
