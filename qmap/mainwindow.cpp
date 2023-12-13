@@ -961,7 +961,7 @@ void MainWindow::guiUpdate()
       QTextBlockFormat f = cursor.blockFormat();
       f.setBackground(QBrush(Qt::white));
       if(t.mid(36,2)=="30") f.setBackground(QBrush(Qt::yellow));
-      if(t.indexOf(m_myCall)>10 and m_myCallColor==1) f.setBackground(QColor(255,105,102));
+      if(t.indexOf(m_myCall)>10 and m_myCallColor==1) f.setBackground(QColor(255,102,102));
       if(t.indexOf(m_myCall)>10 and m_myCallColor==2) f.setBackground(QBrush(Qt::green));
       if(t.indexOf(m_myCall)>10 and m_myCallColor==3) f.setBackground(QBrush(Qt::cyan));
       cursor.setBlockFormat(f);
