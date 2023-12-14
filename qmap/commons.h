@@ -43,6 +43,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   char datetime[20];
   int junk1;                        //Used to test extent of copy to shared memory
   int junk2;
+  bool bAlso30;                     //Process for 30-second submode as well as 60-second
 } datcom_;
 
 extern struct {                     //This is "common/datcom/..." in Fortran
@@ -83,6 +84,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   char datetime[20];
   int junk1;                        //Used to test extent of copy to shared memory
   int junk2;
+  bool bAlso30;                     //Process for 30-second submode as well as 60-second
 } datcom2_;
 
 extern struct {

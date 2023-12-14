@@ -482,6 +482,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionQ65C"/>
     <addaction name="actionQ65D"/>
     <addaction name="actionQ65E"/>
+    <addaction name="separator"/>
+    <addaction name="actionAlso_Q65_30x"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -759,7 +761,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Q65A</string>
+    <string>Q65-60A</string>
    </property>
   </action>
   <action name="actionQ65B">
@@ -767,7 +769,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Q65B</string>
+    <string>Q65-60B</string>
    </property>
   </action>
   <action name="actionQ65C">
@@ -778,7 +780,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Q65C</string>
+    <string>Q65-60C</string>
    </property>
   </action>
   <action name="actionQ65D">
@@ -786,7 +788,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Q65D</string>
+    <string>Q65-60D</string>
    </property>
   </action>
   <action name="actionQ65E">
@@ -794,7 +796,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Q65E</string>
+    <string>Q65-60E</string>
    </property>
   </action>
   <action name="actionQSG_Q65">
@@ -841,6 +843,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Continuous Waterfall</string>
+   </property>
+  </action>
+  <action name="actionAlso_Q65_30x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Also Q65-30x</string>
    </property>
   </action>
  </widget>

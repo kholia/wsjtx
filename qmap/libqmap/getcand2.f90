@@ -1,4 +1,4 @@
-subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
+subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,bAlso30,cand,ncand)
 
 ! Get candidates for Q65 decodes, based on presence of sync tone.
   
@@ -17,6 +17,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
   real savg0(NFFT),savg(NFFT)           !Average spectra over whole Rx sequence
   integer ipk1(1)                       !Peak index of local portion of spectrum
   logical sync_ok                       !True if sync pattern is present
+  logical*1 bAlso30
   data nseg/16/,npct/40/
 
   savg=savg0                            !Save the original spectrum
@@ -69,8 +70,8 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,cand,ncand)
         if(j.ge.MAX_CANDIDATES) exit
      endif
 
+     if(.not.bAlso30) cycle
      ntrperiod=30
-!     if(ntrperiod.eq.30) cycle
      
      call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
      if(sync_ok) then

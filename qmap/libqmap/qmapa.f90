@@ -1,6 +1,7 @@
 subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,nfshift,max_drift,offset,nfcal,mycall,  &
-     hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,datetime,ndop00,fselected)
+     hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,datetime,ndop00,    &
+     fselected,bAlso30)
 
 !  Processes timf2 data received from Linrad to find and decode Q65 signals.
 
@@ -22,7 +23,8 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   real dd(2,NSMAX)                   !I/Q data from Linrad
   real ss(400,NFFT)                  !Symbol spectra
   real savg(NFFT)                    !Average spectrum
-  real*8 fcenter                             !Center RF frequency, MHz
+  real*8 fcenter                     !Center RF frequency, MHz
+  logical*1 bAlso30
   character mycall*12,hiscall*12,hisgrid*6
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
@@ -42,7 +44,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   call timer('get_cand',0)
 ! Get a list of decoding candidates
-  call getcand2(ss,savg,nts_q65,nagain,ntol,f0_selected,cand,ncand)
+  call getcand2(ss,savg,nts_q65,nagain,ntol,f0_selected,bAlso30,cand,ncand)
   call timer('get_cand',1)
 
   nwrite_q65=0

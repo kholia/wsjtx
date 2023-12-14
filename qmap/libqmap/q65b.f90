@@ -120,6 +120,12 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   freq0=MHz + 0.001d0*ikhz
 
   if(nsnr0.gt.-99) then
+
+     do i=1,ndecodes                        !Check for dupes
+        i1=index(result(i),trim(msg0))
+        if(i1.ge.1) go to 800
+     enddo
+     
      nq65df=nint(1000*(0.001*k0*df+nkhz_center-48.0+1.000-1.27046-ikhz))-nfcal
      nq65df=nq65df + nfreq0 - 1000
      ikhz1=ikhz
@@ -128,16 +134,16 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      if(ndf.lt.-500) ikhz1=ikhz + (nq65df-500)/1000
      ndf=nq65df - 1000*(ikhz1-ikhz)
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
-     ndecodes=min(ndecodes+1,50)
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
      ctmp=csubmode//'  '//trim(msg0)
+     ndecodes=min(ndecodes+1,50)
      write(result(ndecodes),1120) nhhmmss,frx,fsked,xdt0,nsnr0,trim(ctmp)
 1120 format(i6.6,f9.3,f7.1,f7.2,i5,2x,a)
      write(12,1130) datetime1,trim(result(ndecodes)(7:))
 1130 format(a13,1x,a)
      result(ndecodes)=trim(result(ndecodes))//char(0)
-     idec=0
+800  idec=0
   endif
 
 900 flush(12)

@@ -12,6 +12,7 @@ subroutine q65c(itimer)
   real*8 fcenter
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
   logical first
+  logical*1 bAlso30
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
@@ -23,7 +24,7 @@ subroutine q65c(itimer)
        ndepth,ndiskdat,neme,newdat,nn1,nn2,nfcal,nfshift,                 &
        mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
        ndop00,nsave,nn3,nn4,max_nhsym,mycall,mygrid,hiscall,hisgrid,      &
-       datetime,junk1,junk2
+       datetime,junk1,junk2,bAlso30
   equivalence (nparams,fcenter)
   data first/.true./
   save first
@@ -39,10 +40,6 @@ subroutine q65c(itimer)
 
   npatience=1
   newdat=1                          !Always on ??
-
-!  write(*,3001) 'aa',newdat,nagain,nfa,nfb,ntol,fselected
-!3001 format(a2,5i6,f10.3)
-!  write(*,3001) 'bb',newdat,nagain,nfa,nfb,ntol,fselected
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)

@@ -245,12 +245,9 @@ void MainWindow::writeSettings()
   settings.setValue("KB8RQ",m_kb8rq);
   settings.setValue("NB",m_NB);
   settings.setValue("NBslider",m_NBslider);
-  settings.setValue("GainX",(double)m_gainx);
-  settings.setValue("GainY",(double)m_gainy);
-  settings.setValue("PhaseX",(double)m_phasex);
-  settings.setValue("PhaseY",(double)m_phasey);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
   settings.setValue("Offset",ui->sbOffset->value());
+  settings.setValue("Also30",m_bAlso30);
 }
 
 //---------------------------------------------------------- readSettings()
@@ -306,11 +303,9 @@ void MainWindow::readSettings()
   ui->sbOffset->setValue(settings.value("Offset",1500).toInt());
   m_NBslider=settings.value("NBslider",40).toInt();
   ui->NBslider->setValue(m_NBslider);
-  m_gainx=settings.value("GainX",1.0).toFloat();
-  m_gainy=settings.value("GainY",1.0).toFloat();
-  m_phasex=settings.value("PhaseX",0.0).toFloat();
-  m_phasey=settings.value("PhaseY",0.0).toFloat();
-
+  m_bAlso30=settings.value("Also30",false).toBool();
+  ui->actionAlso_Q65_30x->setChecked(m_bAlso30);
+  on_actionAlso_Q65_30x_toggled(m_bAlso30);
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
     !ui->actionAFMHot->isChecked() && !ui->actionBlue->isChecked()) {
     on_actionLinrad_triggered();
@@ -351,6 +346,7 @@ void MainWindow::dataSink(int k)
   if(!m_fs96000) nfsample=95238;
   symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
            &px, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
+  m_ihsym=ihsym;
 
   int nsec=QDateTime::currentSecsSinceEpoch();
   if(nsec==nsec0) {
@@ -406,10 +402,13 @@ void MainWindow::dataSink(int k)
     n=0;
   }
 
+  bool bCallDecoder=false;
   if(ihsym < m_hsymStop) m_decode_called=false;
+  if(ihsym==m_hsymStop and !m_decode_called) bCallDecoder=true; //Decode at t=58.5 s
+  if(m_bAlso30 and (ihsym==200)) bCallDecoder=true;
 
-  if(ihsym >= m_hsymStop and !m_decode_called) {   //Decode at t=56 s (for Q65 and data from disk)
-    m_decode_called=true;
+  if(bCallDecoder) {
+    if(ihsym==m_hsymStop) m_decode_called=true;
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
     QDateTime t = QDateTime::currentDateTimeUtc();
@@ -714,9 +713,13 @@ void MainWindow::diskDat()                                   //diskDat()
   hsym=0.15*96000.0;                   //Samples per Q65-30x half-symbol or Q65-60x quarter-symbol
   for(int i=0; i<400; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 0.5;
+    m_ihsym=k;
     if(k > 60*96000) break;
     dataSink(k);
     qApp->processEvents();             // Allow the waterfall to update
+    while(m_decoderBusy) {
+      qApp->processEvents();           // Wait for an early decode to finish
+    }
   }
 }
 
@@ -882,6 +885,7 @@ void MainWindow::decode()                                       //decode()
   }
   datcom_.junk1=1234;                                     //Check for these values in m65
   datcom_.junk2=5678;
+  datcom_.bAlso30=m_bAlso30;
 
   char *to = (char*) datcom2_.d4;
   char *from = (char*) datcom_.d4;
@@ -890,10 +894,12 @@ void MainWindow::decode()                                       //decode()
   datcom_.ndiskdat=0;
   m_call3Modified=false;
 
-  decodes_.ndecodes=0;
+  if(!m_bAlso30 or (m_bAlso30 and (m_ihsym==200))) {
+    decodes_.ndecodes=0;    //Start the decode cycle with a clean slate
+    m_fetched=0;
+  }
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
-  m_fetched=0;
   int itimer=0;
   m_decoder_start_time=QDateTime::currentDateTimeUtc();
   watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
@@ -965,6 +971,7 @@ void MainWindow::guiUpdate()
       if(t.indexOf(m_myCall)>10 and m_myCallColor==2) f.setBackground(QBrush(Qt::green));
       if(t.indexOf(m_myCall)>10 and m_myCallColor==3) f.setBackground(QBrush(Qt::cyan));
       cursor.setBlockFormat(f);
+//      qDebug() << "aa" << m_nline  << m_decoderBusy << t.trimmed();
     }
   }
 
@@ -1102,3 +1109,9 @@ void MainWindow::on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered()
 {
   QDesktopServices::openUrl (QUrl {"https://wsjt.sourceforge.io/Quick_Start_WSJT-X_2.7_QMAP.pdf"});
 }
+
+void MainWindow::on_actionAlso_Q65_30x_toggled(bool b)
+{
+  m_bAlso30=b;
+}
+

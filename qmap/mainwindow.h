@@ -82,6 +82,7 @@ private slots:
   void on_actionQ65E_triggered();
   void on_actionQuick_Start_Guide_to_Q65_triggered();
   void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
+  void on_actionAlso_Q65_30x_toggled(bool b);
 
 private:
   Ui::MainWindow *ui;
@@ -119,6 +120,7 @@ private:
   qint32  m_nDoubleClicked=0;
   qint32  m_nline=0;
   qint32  m_WSJTX_TRperiod=0;
+  qint32  m_ihsym;
 
   double  m_fAdd;
   double  m_xavg;
@@ -136,11 +138,8 @@ private:
   bool    m_NB;
   bool    m_fs96000;
   bool    m_decode_called=false;
+  bool    m_bAlso30=false;
 
-  float   m_gainx;
-  float   m_gainy;
-  float   m_phasex;
-  float   m_phasey;
   float   m_pctZap;
 
   int     m_myCallColor;
