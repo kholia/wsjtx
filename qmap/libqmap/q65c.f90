@@ -12,7 +12,7 @@ subroutine q65c(itimer)
   real*8 fcenter
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
   logical first
-  logical*1 bAlso30
+  logical*1 bAlso30,bSkip
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
@@ -40,6 +40,9 @@ subroutine q65c(itimer)
 
   npatience=1
   newdat=1                          !Always on ??
+
+  call chkstat(dd,max_nhsym,bSkip)
+  if(bSkip) return
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)

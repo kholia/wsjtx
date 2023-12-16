@@ -346,7 +346,6 @@ void MainWindow::dataSink(int k)
   if(!m_fs96000) nfsample=95238;
   symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
            &px, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
-  m_ihsym=ihsym;
 
   int nsec=QDateTime::currentSecsSinceEpoch();
   if(nsec==nsec0) {
@@ -715,7 +714,6 @@ void MainWindow::diskDat()                                   //diskDat()
   hsym=0.15*96000.0;                   //Samples per Q65-30x half-symbol or Q65-60x quarter-symbol
   for(int i=0; i<400; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 0.5;
-    m_ihsym=k;
     if(k > 60*96000) break;
     dataSink(k);
     qApp->processEvents();             // Allow the waterfall to update
@@ -892,11 +890,12 @@ void MainWindow::decode()                                       //decode()
   char *to = (char*) datcom2_.d4;
   char *from = (char*) datcom_.d4;
   memcpy(to, from, sizeof(datcom_));
+
   datcom_.nagain=0;
   datcom_.ndiskdat=0;
   m_call3Modified=false;
 
-  if(!m_bAlso30 or (m_bAlso30 and (m_ihsym==200))) {
+  if(!m_bAlso30 or (m_bAlso30 and (datcom2_.nhsym==200))) {
     decodes_.ndecodes=0;    //Start the decode cycle with a clean slate
     m_fetched=0;
   }
