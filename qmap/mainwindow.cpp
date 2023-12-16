@@ -415,6 +415,8 @@ void MainWindow::dataSink(int k)
     m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
     if(m_saveAll and !m_diskData and (m_nTx30<5 and m_nTx60<10)) {
+      QDir dir(m_saveDir);
+      if (!dir.exists()) dir.mkpath(".");
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
