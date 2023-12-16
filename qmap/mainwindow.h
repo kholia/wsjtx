@@ -159,7 +159,6 @@ private:
   QFuture<void>* future2;
   QFutureWatcher<void>* watcher1;
   QFutureWatcher<void>* watcher2;
-
   QFutureWatcher<void> watcher3;     //For decoder
 
   QDateTime m_decoder_start_time;
@@ -179,13 +178,8 @@ private:
   QString m_mode;
   QString m_UTC0="";
   QDateTime m_dateTimeSeqStart;        //Nominal start time of Rx sequence about to be decoded
-
   QHash<QString,bool> m_worked;
-
   SignalMeter *xSignalMeter;
-  SignalMeter *ySignalMeter;
-
-
   SoundInThread soundInThread;             //Instantiate the audio threads
 
   //---------------------------------------------------- private functions
