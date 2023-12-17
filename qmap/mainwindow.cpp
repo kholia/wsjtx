@@ -743,7 +743,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_)); //Send decodes and flags to WSJT-X
   mem_qmap.unlock();
   QString t1;
-  t1=t1.asprintf(" %d ",decodes_.ndecodes);
+  t1=t1.asprintf(" %d/%d ",decodes_.ndecodes, decodes_.ncand);
   lab4->setText(t1);
 }
 
