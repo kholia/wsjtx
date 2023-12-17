@@ -161,8 +161,6 @@ private:
   QFutureWatcher<void>* watcher2;
   QFutureWatcher<void> watcher3;     //For decoder
 
-  QDateTime m_decoder_start_time;
-
   QString m_path;
   QString m_pbdecoding_style1;
   QString m_pbmonitor_style;

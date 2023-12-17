@@ -902,7 +902,6 @@ void MainWindow::decode()                                       //decode()
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
   int itimer=0;
-  m_decoder_start_time=QDateTime::currentDateTimeUtc();
   watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
 
   decodeBusy(true);
