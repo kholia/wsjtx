@@ -288,7 +288,7 @@
         <item row="1" column="4" colspan="2">
          <widget class="QSpinBox" name="sbMaxDrift">
           <property name="toolTip">
-           <string>Maximum drift rate in units of symbol rate per transmissiion.</string>
+           <string>Maximum drift rate in units of symbol rate per transmission.</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

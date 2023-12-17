@@ -121,9 +121,9 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 
   if(nsnr0.gt.-99) then
 
-     do i=1,ndecodes                        !Check for dupes
-        i1=index(result(i),trim(msg0))
-        if(i1.ge.1) go to 800
+     do i=1,ndecodes                    !Check for dupes
+        i1=index(result(i)(42:),trim(msg0))
+        if(i1.gt.0) go to 800           !This is a dupe, don't save it again
      enddo
      
      nq65df=nint(1000*(0.001*k0*df+nkhz_center-48.0+1.000-1.27046-ikhz))-nfcal

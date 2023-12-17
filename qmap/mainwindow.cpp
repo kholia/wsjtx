@@ -897,7 +897,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.ndiskdat=0;
   m_call3Modified=false;
 
-  if(!m_bAlso30 or (m_bAlso30 and (datcom2_.nhsym==200))) {
+  if((!m_bAlso30 and (datcom2_.nhsym==330)) or (m_bAlso30 and (datcom2_.nhsym==200))) {
     decodes_.ndecodes=0;    //Start the decode cycle with a clean slate
     m_fetched=0;
   }
