@@ -707,6 +707,7 @@ void MainWindow::on_actionDecode_remaining_files_in_directory_triggered()
 
 void MainWindow::diskDat()                                   //diskDat()
 {
+  m_bDiskDatBusy=true;
   double hsym;
   //These may be redundant??
   m_diskData=true;
@@ -721,6 +722,7 @@ void MainWindow::diskDat()                                   //diskDat()
       qApp->processEvents();           // Wait for an early decode to finish
     }
   }
+  m_bDiskDatBusy=false;
 }
 
 void MainWindow::diskWriteFinished()                      //diskWriteFinished
@@ -730,9 +732,9 @@ void MainWindow::diskWriteFinished()                      //diskWriteFinished
 
 void MainWindow::decoderFinished()                      //diskWriteFinished
 {
-  m_startAnother=m_loopall;
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
+  m_startAnother=m_loopall;
   decodes_.nQDecoderDone=1;
   if(m_diskData) decodes_.nQDecoderDone=2;
   mem_qmap.lock();
@@ -743,7 +745,6 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   QString t1;
   t1=t1.asprintf(" %d ",decodes_.ndecodes);
   lab4->setText(t1);
-  QDateTime now=QDateTime::currentDateTimeUtc();
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
@@ -940,7 +941,7 @@ void MainWindow::guiUpdate()
 
   m_wide_graph_window->updateFreqLabel();
 
-  if(m_startAnother) {
+  if(m_startAnother and !m_bDiskDatBusy) {
     m_startAnother=false;
     on_actionOpen_next_in_directory_triggered();
   }
@@ -971,7 +972,6 @@ void MainWindow::guiUpdate()
       if(t.indexOf(m_myCall)>10 and m_myCallColor==2) f.setBackground(QBrush(Qt::green));
       if(t.indexOf(m_myCall)>10 and m_myCallColor==3) f.setBackground(QBrush(Qt::cyan));
       cursor.setBlockFormat(f);
-//      qDebug() << "aa" << m_nline  << m_decoderBusy << t.trimmed();
     }
   }
 
@@ -992,8 +992,6 @@ void MainWindow::guiUpdate()
       if(m_WSJTX_TRperiod==30) m_nTx30++;
       if(m_WSJTX_TRperiod==60) m_nTx60++;
     }
-//    qDebug() << "AAA" << n60 << itest[0] << itest[1] << itest[2] << itest[3] << itest[4]
-//             << m_nTx30 << m_nTx60;
     if(n60<n60z) {
       m_nTx30=0;
       m_nTx60=0;
