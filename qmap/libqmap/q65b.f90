@@ -92,13 +92,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   endif
   nsnr0=-99             !Default snr for no decode
 
-!###
-!  nfa=800
-!  nfb=1200
-!  write(*,4001) f0,f0+31.847,nfa,nfb,ntol,ntrperiod,iseq,mode_q65
-!4001 format('b',2f10.3,6i6)
   if(iseq.eq.1) iwave(1:360000)=iwave(360001:720000)
-!###
 
   csubmode(1:2)='60'
   csubmode(3:3)=char(ichar('A')+nsubmode)
