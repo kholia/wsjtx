@@ -1,7 +1,7 @@
 subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,nfshift,max_drift,offset,nfcal,mycall,  &
      hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,datetime,ndop00,    &
-     fselected,bAlso30)
+     fselected,bAlso30,nhsym)
 
 !  Processes timf2 data received from Linrad to find and decode Q65 signals.
 

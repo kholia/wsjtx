@@ -48,7 +48,7 @@ subroutine decode0(dd,ss,savg)
   call qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
        mousedf,mousefqso,nagain,nfshift,max_drift,offset,           &
        nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,          &
-       datetime,ndop00,fselected,bAlso30)
+       datetime,ndop00,fselected,bAlso30,nhsym)
   call timer('qmapa   ',1)
 
   return
