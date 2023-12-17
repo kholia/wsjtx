@@ -178,11 +178,11 @@
      <number>300</number>
     </property>
     <property name="singleStep">
-     <number>10</number>
+     <number>5</number>
     </property>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
