@@ -604,7 +604,7 @@ void MainWindow::createStatusBar()                           //createStatusBar
 
   lab4 = new QLabel("");
   lab4->setAlignment(Qt::AlignHCenter);
-  lab4->setMinimumSize(QSize(50,10));
+  lab4->setMinimumSize(QSize(80,10));
   lab4->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab4);
 }
@@ -744,7 +744,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_)); //Send decodes and flags to WSJT-X
   mem_qmap.unlock();
   QString t1;
-  t1=t1.asprintf(" %d/%d ",decodes_.ndecodes, decodes_.ncand);
+  t1=t1.asprintf(" %.1f s  %d/%d ", 0.15*datcom2_.nhsym, decodes_.ndecodes, decodes_.ncand);
   lab4->setText(t1);
 }
 
