@@ -405,6 +405,7 @@ void MainWindow::dataSink(int k)
   if(ihsym < m_hsymStop) m_decode_called=false;
   if(ihsym==m_hsymStop and !m_decode_called) bCallDecoder=true; //Decode at t=58.5 s
   if(m_bAlso30 and (ihsym==200)) bCallDecoder=true;
+  if(ihsym==330) bCallDecoder=true;
 
   if(bCallDecoder) {
     if(ihsym==m_hsymStop) m_decode_called=true;
