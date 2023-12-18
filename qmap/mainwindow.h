@@ -84,6 +84,8 @@ private slots:
   void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
   void on_actionAlso_Q65_30x_toggled(bool b);
 
+  void on_sbMaxDrift_valueChanged(int arg1);
+
 private:
   Ui::MainWindow *ui;
   QString m_appDir;
