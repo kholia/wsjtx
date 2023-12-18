@@ -193,7 +193,7 @@ private:
 };
 
 extern void getfile(QString fname, bool xpol, int idInt);
-extern void savetf2(QString fname, bool xpol);
+extern void save_iq(QString fname, bool xpol);
 extern int killbyname(const char* progName);
 
 extern "C" {

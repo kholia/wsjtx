@@ -248,6 +248,7 @@ void MainWindow::writeSettings()
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
   settings.setValue("Offset",ui->sbOffset->value());
   settings.setValue("Also30",m_bAlso30);
+  settings.setValue("CFOM",ui->cbCFOM->isChecked());
 }
 
 //---------------------------------------------------------- readSettings()
@@ -306,6 +307,7 @@ void MainWindow::readSettings()
   m_bAlso30=settings.value("Also30",false).toBool();
   ui->actionAlso_Q65_30x->setChecked(m_bAlso30);
   on_actionAlso_Q65_30x_toggled(m_bAlso30);
+  ui->cbCFOM->setChecked(settings.value("CFOM",false).toBool());
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
     !ui->actionAFMHot->isChecked() && !ui->actionBlue->isChecked()) {
     on_actionLinrad_triggered();
@@ -424,13 +426,14 @@ void MainWindow::dataSink(int k)
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
-    if(m_saveAll and !m_diskData and (m_nTx30<5 and m_nTx60<10)) {
+    if(m_saveAll and !m_diskData and (m_nTx30<5 and m_nTx60<10) and ihsym==m_hsymStop) {
       QDir dir(m_saveDir);
       if (!dir.exists()) dir.mkpath(".");
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
-      *future2 = QtConcurrent::run(savetf2, fname, false);
+      bool bCFOM=ui->cbCFOM->isChecked();
+      *future2 = QtConcurrent::run(save_iq, fname, bCFOM);
       watcher2->setFuture(*future2);
     }
     m_nTx30=0;
