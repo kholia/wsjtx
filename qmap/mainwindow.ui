@@ -40,26 +40,6 @@
      <layout class="QFormLayout" name="formLayout">
       <item row="1" column="0">
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="3" colspan="2">
-         <widget class="QPushButton" name="EraseButton">
-          <property name="minimumSize">
-           <size>
-            <width>50</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>&amp;Erase</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <widget class="QCheckBox" name="NBcheckBox">
-          <property name="text">
-           <string>NB</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="5">
          <widget class="QPushButton" name="DecodeButton">
           <property name="minimumSize">
@@ -73,18 +53,12 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1" rowspan="3">
-         <widget class="QLabel" name="labUTC">
-          <property name="minimumSize">
-           <size>
-            <width>140</width>
-            <height>0</height>
-           </size>
-          </property>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labFreq">
           <property name="maximumSize">
            <size>
-            <width>165</width>
-            <height>60</height>
+            <width>16777215</width>
+            <height>35</height>
            </size>
           </property>
           <property name="font">
@@ -96,11 +70,41 @@
            <enum>QFrame::Panel</enum>
           </property>
           <property name="text">
-           <string> 2023 Feb 02
-01:23:45 </string>
+           <string>1296.080</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="4" colspan="2">
+         <widget class="QSlider" name="NBslider">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>40</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -189,27 +193,44 @@
           </item>
          </layout>
         </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="labFreq">
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>35</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>16</pointsize>
-           </font>
-          </property>
-          <property name="frameShape">
-           <enum>QFrame::Panel</enum>
-          </property>
-          <property name="text">
-           <string>1296.080</string>
+        <item row="2" column="4" colspan="2">
+         <widget class="QSpinBox" name="sbOffset">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select offset announced by calling station, or use commonly used value for the band in use. Manually set WSJT-X TX and RX offset to same value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+          <property name="suffix">
+           <string> Hz</string>
+          </property>
+          <property name="prefix">
+           <string>Offset </string>
+          </property>
+          <property name="minimum">
+           <number>500</number>
+          </property>
+          <property name="maximum">
+           <number>2000</number>
+          </property>
+          <property name="singleStep">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>1500</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3" colspan="2">
+         <widget class="QPushButton" name="EraseButton">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>&amp;Erase</string>
           </property>
          </widget>
         </item>
@@ -226,6 +247,37 @@
           </property>
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" rowspan="3">
+         <widget class="QLabel" name="labUTC">
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>165</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
+          </property>
+          <property name="text">
+           <string> 2023 Feb 02
+01:23:45 </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -254,34 +306,10 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="4" colspan="2">
-         <widget class="QSlider" name="NBslider">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>80</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="minimum">
-           <number>0</number>
-          </property>
-          <property name="maximum">
-           <number>100</number>
-          </property>
-          <property name="value">
-           <number>40</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="3" column="3">
+         <widget class="QCheckBox" name="NBcheckBox">
+          <property name="text">
+           <string>NB</string>
           </property>
          </widget>
         </item>
@@ -304,33 +332,32 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="4" colspan="2">
-         <widget class="QSpinBox" name="sbOffset">
-          <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select offset announced by calling station, or use commonly used value for the band in use. Manually set WSJT-X TX and RX offset to same value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <property name="suffix">
-           <string> Hz</string>
-          </property>
-          <property name="prefix">
-           <string>Offset </string>
-          </property>
-          <property name="minimum">
-           <number>500</number>
-          </property>
-          <property name="maximum">
-           <number>2000</number>
-          </property>
-          <property name="singleStep">
-           <number>100</number>
-          </property>
-          <property name="value">
-           <number>1500</number>
-          </property>
-         </widget>
+        <item row="2" column="2" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="cbCFOM">
+            <property name="text">
+             <string>Apply CFOM</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -421,7 +448,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

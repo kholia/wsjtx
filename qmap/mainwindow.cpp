@@ -327,6 +327,7 @@ void MainWindow::dataSink(int k)
   static int nsum=0;
   static int ndiskdat;
   static int nb;
+  static int k0=0;
   static float px=0.0;
   static uchar lstrong[1024];
   static float slimit;
@@ -344,6 +345,15 @@ void MainWindow::dataSink(int k)
   if(m_NB) nb=1;
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
+
+
+  if(ui->cbCFOM->isChecked()) {
+    int ndop00=0;
+    if(m_astro_window) ndop00=m_astro_window->getSelfDop();
+    cfom_(datcom_.d4, &k0, &k, &ndop00);
+  }
+  k0=k;
+
   symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
            &px, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
 
@@ -838,9 +848,11 @@ void MainWindow::decode()                                       //decode()
       int nmin=m_path.mid(i0-2,2).toInt();
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
-      int ndop00;
-      astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
-      datcom_.ndop00=ndop00;               //Send self Doppler to decoder, via datcom
+      int ndop00=0;
+      if(ui->cbCFOM->isChecked()) {
+        astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
+      }
+      datcom_.ndop00=ndop00;               //Send self Doppler (or 0, if using CFOM) to decoder
       fname=m_path.mid(i0-11,11);
     }
   }
@@ -981,7 +993,9 @@ void MainWindow::guiUpdate()
   ui->labFreq->setText(t1);
 
   if(nsec != m_sec0) {                                     //Once per second
-//    qDebug() << "AAA" << nsec << m_fAdd;
+
+//    qDebug() << "AAA" << nsec;
+
     static int n60z=99;
     int n60=nsec%60;
     int itest[5];

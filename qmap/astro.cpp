@@ -71,7 +71,8 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
             &dgrd, &poloffset, &xnr, 6, 6);
 
   datcom_.ndop00=ndop00;               //Send self Doppler to decoder, via datcom
-//  qDebug() << "aa" << isec << datcom_.fcenter << nfreq << ndop00;
+  m_ndop00=ndop00;
+
   snprintf(cc, sizeof(cc),
           "Az:    %6.1f\n"
           "El:    %6.1f\n"
@@ -199,3 +200,7 @@ void Astro::on_cbOnOff_clicked(bool checked)
   if(checked) ui->cbAutoCycle->setChecked(false);
 }
 
+int Astro::getSelfDop()
+{
+  return m_ndop00;
+}

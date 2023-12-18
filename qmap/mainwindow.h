@@ -206,6 +206,9 @@ extern "C" {
                     const char* mygrid, int* ndop00, int len1);
 
   void q65c_(int* itimer);
+
+  void cfom_(float d4[], int* k0, int* k, int* ndop0);
+
   }
 
 #endif // MAINWINDOW_H

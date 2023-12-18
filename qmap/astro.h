@@ -17,6 +17,8 @@ public:
   void astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
                    int fQSO, int nsetftx, int ntxFreq, QString azelDir, double xavg);
   void setFontSize(int n);
+  int getSelfDop();
+
   ~Astro ();
 
 private slots:
@@ -27,6 +29,8 @@ private:
   Ui::Astro *ui;
   QString m_settings_filename;
   QString m_AzElDir0;
+
+  qint32  m_ndop00=0;
 };
 
 #endif
