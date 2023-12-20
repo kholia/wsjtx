@@ -1,7 +1,7 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      ntrperiod,iseq,                                                        &
      mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
-     max_drift,offset,ndepth,datetime,ndop00,idec)
+     max_drift,offset,ndepth,datetime,nCFOM,ndop00,idec)
 
 ! This routine provides an interface between QMAP and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the QMAP GUI.
@@ -130,6 +130,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
+!     write(*,'("A",i5,i8,f10.3,f10.1)') nCFOM,ndop00,frx,fsked
      ctmp=csubmode//'  '//trim(msg0)
      ndecodes=min(ndecodes+1,50)
      write(result(ndecodes),1120) nhhmmss,frx,fsked,xdt0,nsnr0,trim(ctmp)

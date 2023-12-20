@@ -348,12 +348,13 @@ void MainWindow::dataSink(int k)
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
 
-
   if(ui->cbCFOM->isChecked()) {
     int ndop00=0;
     if(m_astro_window) ndop00=m_astro_window->getSelfDop();
     cfom_(datcom_.d4, &k0, &k, &ndop00);
   }
+
+  if(m_bWTransmitting) zaptx_(datcom_.d4, &k0, &k);
   k0=k;
 
   symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
@@ -426,7 +427,7 @@ void MainWindow::dataSink(int k)
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
-    if(m_saveAll and !m_diskData and (m_nTx30<5 and m_nTx60<10) and ihsym==m_hsymStop) {
+    if(m_saveAll and !m_diskData and m_nTx60<10 and ihsym==m_hsymStop) {
       QDir dir(m_saveDir);
       if (!dir.exists()) dir.mkpath(".");
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
@@ -436,8 +437,8 @@ void MainWindow::dataSink(int k)
       *future2 = QtConcurrent::run(save_iq, fname, bCFOM);
       watcher2->setFuture(*future2);
     }
-    m_nTx30=0;
-    m_nTx60=0;
+    if(ihsym==200) m_nTx30=0;
+    if(ihsym==m_hsymStop) m_nTx60=0;
   }
   soundInThread.m_dataSinkBusy=false;
 }
@@ -852,10 +853,11 @@ void MainWindow::decode()                                       //decode()
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
       int ndop00=0;
-      if(ui->cbCFOM->isChecked()) {
+//      if(ui->cbCFOM->isChecked()) {
+      if(datcom_.nCFOM==0) {
         astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
       }
-      datcom_.ndop00=ndop00;               //Send self Doppler (or 0, if using CFOM) to decoder
+      datcom_.ndop00=ndop00;    //Send self Doppler (or 0, if disk data had CFOM already) to decoder
       fname=m_path.mid(i0-11,11);
     }
   }
@@ -879,7 +881,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.ntol=m_tol;
   datcom_.nxant=0;
   m_nutc0=datcom_.nutc;
-  datcom_.junk_1=0;
   datcom_.nfsample=96000;
   if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
@@ -1007,13 +1008,19 @@ void MainWindow::guiUpdate()
     mem_qmap.unlock();
     if(itest[4]>0) {
       m_WSJTX_TRperiod=itest[4];
+      m_bWTransmitting=true;
       if(m_WSJTX_TRperiod==30) m_nTx30++;
       if(m_WSJTX_TRperiod==60) m_nTx60++;
+    } else {
+      m_bWTransmitting=false;
     }
     if(n60<n60z) {
       m_nTx30=0;
       m_nTx60=0;
     }
+
+//    qDebug() << "aa" << n60z << n60 << m_nTx30 << m_nTx60 << m_bWTransmitting;
+
     n60z=n60;
 
     if(m_pctZap>30.0) {

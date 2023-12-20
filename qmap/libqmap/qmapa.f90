@@ -1,7 +1,7 @@
 subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      mousedf,mousefqso,nagain,nfshift,max_drift,offset,nfcal,mycall,  &
      hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,datetime,ndop00,    &
-     fselected,bAlso30,nhsym)
+     fselected,bAlso30,nhsym,nCFOM)
 
 !  Processes timf2 data received from Linrad to find and decode Q65 signals.
 
@@ -72,7 +72,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,       &
           ntrperiod,iseq,                                               &
           mycall,hiscall,hisgrid,mode_q65_tmp,f0,fqso,nkhz_center,newdat,   &
-          nagain2,max_drift,offset,ndepth,datetime,ndop00,idec)
+          nagain2,max_drift,offset,ndepth,datetime,nCFOM,ndop00,idec)
      call timer('q65b    ',1)
      tsec=sec_midn() - tsec0
      if(tsec.gt.30.0) exit    !Don't start another decode attempt after t=30 s.

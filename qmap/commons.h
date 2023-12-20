@@ -27,7 +27,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int ntimeout;                     //Max for timeouts in Messages and BandMap
   int ntol;                         //+/- decoding range around fQSO (Hz)
   int nxant;                        //1 ==> add 45 deg to measured pol angle
-  int junk_1;
+  int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
   int nfsample;                     //Input sample rate
   int nxpol;                        //1 if using xpol antennas, 0 otherwise
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
@@ -68,7 +68,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int ntimeout;                     //Max for timeouts in Messages and BandMap
   int ntol;                         //+/- decoding range around fQSO (Hz)
   int nxant;                        //1 ==> add 45 deg to measured pol angle
-  int junk_1;
+  int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
   int nfsample;                     //Input sample rate
   int nxpol;                        //1 if using xpol antennas, 0 otherwise
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)

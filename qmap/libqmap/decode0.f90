@@ -15,7 +15,7 @@ subroutine decode0(dd,ss,savg)
        nWTransmitting,result(50)
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,neme,newdat,nfa,nfb,nfcal,nfshift,                 &
-       mcall3,nkeep,ntol,nxant,nrxlog,nfsample,nxpol,nmode,               &
+       mcall3,nkeep,ntol,nxant,nCFOM,nfsample,nxpol,nmode,               &
        ndop00,nsave,max_drift,offset,nhsym,mycall,mygrid,                 &
        hiscall,hisgrid,datetime,junk1,junk2,bAlso30
   data neme0/-99/
@@ -48,7 +48,7 @@ subroutine decode0(dd,ss,savg)
   call qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
        mousedf,mousefqso,nagain,nfshift,max_drift,offset,           &
        nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,          &
-       datetime,ndop00,fselected,bAlso30,nhsym)
+       datetime,ndop00,fselected,bAlso30,nhsym,NCFOM)
   call timer('qmapa   ',1)
 
   return

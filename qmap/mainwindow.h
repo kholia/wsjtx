@@ -141,6 +141,7 @@ private:
   bool    m_decode_called=false;
   bool    m_bAlso30=false;
   bool    m_bDiskDatBusy=false;
+  bool    m_bWTransmitting=false;
 
   float   m_pctZap;
 
@@ -208,6 +209,8 @@ extern "C" {
   void q65c_(int* itimer);
 
   void cfom_(float d4[], int* k0, int* k, int* ndop0);
+
+  void zaptx_(float d4[], int* k0, int* k);
 
   }
 

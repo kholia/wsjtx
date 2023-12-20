@@ -40,15 +40,15 @@ void getfile(QString fname, bool xpol, int dbDgrd)
     }
     n = fread(datcom_.mygrid,sizeof(datcom_.mygrid),1,fp);
     short int one=0;
-    fread(&one,2,1,fp);
+    n= fread(&one,2,1,fp);
     Q_UNUSED(n);
-//    if(n>0) qDebug() << "bb" << datcom_.mygrid << one;
+    datcom_.nCFOM=one;
 
     fclose(fp);
 
     datcom_.ndiskdat=1;
     int nfreq=(int)datcom_.fcenter;
-    if(nfreq!=144 and nfreq != 432 and nfreq != 1296) datcom_.fcenter=1296.080;
+    if(nfreq!=144 and nfreq != 432 and nfreq != 1296) datcom_.fcenter=1296.090;
     int i0=fname.indexOf(".iq");
     datcom_.nutc=0;
     if(i0>0) {
@@ -60,7 +60,6 @@ void getfile(QString fname, bool xpol, int dbDgrd)
 void save_iq(QString fname, bool bCFOM)
 {
   int npts=2*60*96000;
-  if(bCFOM) npts=2*npts;
 
   qint16* buf=(qint16*)malloc(2*npts);
   char name[80];
