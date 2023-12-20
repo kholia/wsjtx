@@ -93,18 +93,27 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
   m_clickOK=false;
   ui->RecentStationsPlainTextEdit->setPlainText(t);
 
-//Yellow background for Q65-30x decodes:
-  int istart=0;
-  while(istart<t.length()) {
-    int npos=t.indexOf(QRegularExpression(" 30[ABCD] "), istart);
-    if(npos<0) break;
-    QTextCursor cursor=ui->RecentStationsPlainTextEdit->textCursor();
-    cursor.setPosition(npos);
-    cursor.select(QTextCursor::LineUnderCursor);
-    QTextCharFormat fmt;
-    fmt.setBackground(QBrush(Qt::yellow));
+//White background for Q65-60x decodes, yellow for Q65-30x:
+  int i0=0;
+  int i1=0;
+  int npos=0;
+  int nlines=t.count("\n");
+  QTextCursor cursor=ui->RecentStationsPlainTextEdit->textCursor();
+  QTextCharFormat fmt;
+  for(int i=0; i<nlines; i++) {
+    i1=t.indexOf("\n",i0);
+    npos=t.indexOf(QRegularExpression(" 30[ABCD] "), i0);
+    if(npos>0) {
+      cursor.setPosition(npos);
+      cursor.select(QTextCursor::LineUnderCursor);
+      fmt.setBackground(QBrush(Qt::yellow));
+    } else {
+      cursor.setPosition(i0+10);
+      cursor.select(QTextCursor::LineUnderCursor);
+      fmt.setBackground(QBrush(Qt::white));
+    }
     cursor.setCharFormat(fmt);
-    istart=npos+10;
+    i0=i1+1;
   }
 
   m_clickOK=bClickOK;
