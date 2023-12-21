@@ -75,7 +75,9 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
           nagain2,max_drift,offset,ndepth,datetime,nCFOM,ndop00,idec)
      call timer('q65b    ',1)
      tsec=sec_midn() - tsec0
-     if(tsec.gt.30.0) exit    !Don't start another decode attempt after t=30 s.
+! Don't start another decode attempt if it's too late...
+     if(nhsym.eq.330 .and. tsec.gt.6.0) exit
+     if(tsec.gt.16.0) exit
   enddo  ! icand
 
   return
