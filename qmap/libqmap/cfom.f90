@@ -7,7 +7,7 @@ subroutine cfom(dd,k0,k,ndop0)
   real*8 twopi,dphi
   logical first
   data first/.true./
-  save
+  save twopi,w,first
 
   if(first) then
      twopi=8.d0*atan(1.d0)
@@ -20,10 +20,10 @@ subroutine cfom(dd,k0,k,ndop0)
   wstep=cmplx(cos(dphi),sin(dphi))
 
   do j=k0+1,k
-     w=w*wstep
      c=w*cmplx(dd(1,j),dd(2,j))
      dd(1,j)=real(c)
      dd(2,j)=aimag(c)
+     w=w*wstep
   enddo
 
   return
