@@ -182,6 +182,8 @@ MainWindow::MainWindow(QWidget *parent) :
   if(ui->actionAFMHot->isChecked()) on_actionAFMHot_triggered();
   if(ui->actionBlue->isChecked()) on_actionBlue_triggered();
 
+  ui->cbCFOM->setVisible(false);
+
   connect (m_wide_graph_window.get (), &WideGraph::freezeDecode2, this, &MainWindow::freezeDecode);
   connect (m_wide_graph_window.get (), &WideGraph::f11f12, this, &MainWindow::bumpDF);
 
@@ -348,7 +350,7 @@ void MainWindow::dataSink(int k)
   nfsample=96000;
   if(!m_fs96000) nfsample=95238;
 
-  if(ui->cbCFOM->isChecked()) {
+  if(m_bCFOM) {
     int ndop00=0;
     if(m_astro_window) ndop00=m_astro_window->getSelfDop();
     cfom_(datcom_.d4, &k0, &k, &ndop00);
@@ -433,8 +435,7 @@ void MainWindow::dataSink(int k)
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
-      bool bCFOM=ui->cbCFOM->isChecked();
-      *future2 = QtConcurrent::run(save_iq, fname, bCFOM);
+      *future2 = QtConcurrent::run(save_iq, fname, m_bCFOM);
       watcher2->setFuture(*future2);
     }
     if(ihsym==200) m_nTx30=0;
@@ -853,7 +854,6 @@ void MainWindow::decode()                                       //decode()
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
       int ndop00=0;
-//      if(ui->cbCFOM->isChecked()) {
       if(datcom_.nCFOM==0) {
         astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
       }
@@ -996,6 +996,7 @@ void MainWindow::guiUpdate()
   t1=t1.asprintf("%.3f",datcom_.fcenter);
   ui->labFreq->setText(t1);
 
+
   if(nsec != m_sec0) {                                     //Once per second
 
 //    qDebug() << "AAA" << nsec;
@@ -1019,7 +1020,11 @@ void MainWindow::guiUpdate()
       m_nTx60=0;
     }
 
-//    qDebug() << "aa" << n60z << n60 << m_nTx30 << m_nTx60 << m_bWTransmitting;
+// Check for "cfom"
+    QFile f(m_appDir + "/cfom");
+    ui->cbCFOM->setVisible(f.exists());
+    m_bCFOM=ui->cbCFOM->isVisible() and ui->cbCFOM->isChecked();
+    if(m_bCFOM) qDebug() << "CFOM" << n60 << datcom_.ndop00 << datcom2_.ndop00;
 
     n60z=n60;
 
