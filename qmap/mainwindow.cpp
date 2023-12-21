@@ -1151,7 +1151,6 @@ void MainWindow::on_actionAlso_Q65_30x_toggled(bool b)
 
 void MainWindow::on_sbMaxDrift_valueChanged(int n)
 {
-  qDebug() << "aa";
   if(n>0) {
     ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ff6666; }");
   } else {
