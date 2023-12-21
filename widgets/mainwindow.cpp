@@ -1732,13 +1732,14 @@ void MainWindow::dataSink(qint64 frames)
       float width=m_fSpread;
       echocom_.nclearave=m_nclearave;
       int nDop=m_fAudioShift;
+      if(m_astroWidget->DopplerMethod()==2) nDop=0;   //Using CFOM
       int nDopTotal=m_fDop;
       int navg=ui->sbEchoAvg->value();
       if(m_diskData) {
         int idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
-//      qDebug() << "aa" << k << frames << m_ihsym << m_hsymStop;
+//      qDebug() << "aa" << m_astroWidget->DopplerMethod() << nDop << nfrit << m_fDop;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
