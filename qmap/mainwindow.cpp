@@ -854,7 +854,7 @@ void MainWindow::decode()                                       //decode()
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
       int ndop00=0;
-      if(datcom_.nCFOM==0) {
+      if((datcom_.nCFOM&&1)==0) {
         astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
       }
       datcom_.ndop00=ndop00;    //Send self Doppler (or 0, if disk data had CFOM already) to decoder
@@ -919,10 +919,11 @@ void MainWindow::decode()                                       //decode()
   }
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
-  int itimer=0;
-  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
-
-  decodeBusy(true);
+  if(m_nTx30<5) {
+    int itimer=0;
+    watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
+    decodeBusy(true);
+  }
 }
 
 void MainWindow::on_EraseButton_clicked()
@@ -1024,7 +1025,11 @@ void MainWindow::guiUpdate()
     QFile f(m_appDir + "/cfom");
     ui->cbCFOM->setVisible(f.exists());
     m_bCFOM=ui->cbCFOM->isVisible() and ui->cbCFOM->isChecked();
-    if(m_bCFOM) qDebug() << "CFOM" << n60 << datcom_.ndop00 << datcom2_.ndop00;
+    datcom_.nCFOM&=1;
+    if(m_bCFOM) {
+      datcom_.nCFOM|=2;
+      qDebug() << "CFOM" << n60 << datcom_.nCFOM << datcom_.ndop00 << datcom2_.ndop00;
+    }
 
     n60z=n60;
 
