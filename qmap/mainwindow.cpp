@@ -197,8 +197,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   writeSettings();
-  int itimer=1;
-  q65c_(&itimer);
+  q65c_(&m_one);
 
   if (soundInThread.isRunning()) {
     soundInThread.quit();
@@ -332,6 +331,7 @@ void MainWindow::dataSink(int k)
   static int ndiskdat;
   static int nb;
   static int k0=0;
+  static int ndop00=0;
   static float px=0.0;
   static uchar lstrong[1024];
   static float slimit;
@@ -351,7 +351,6 @@ void MainWindow::dataSink(int k)
   if(!m_fs96000) nfsample=95238;
 
   if(m_bCFOM) {
-    int ndop00=0;
     if(m_astro_window) ndop00=m_astro_window->getSelfDop();
     cfom_(datcom_.d4, &k0, &k, &ndop00);
   }
@@ -748,7 +747,6 @@ void MainWindow::diskWriteFinished()                      //diskWriteFinished
 
 void MainWindow::decoderFinished()                      //diskWriteFinished
 {
-  qDebug() << "bb Decoder Finished";
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
   m_startAnother=m_loopall;
@@ -921,9 +919,7 @@ void MainWindow::decode()                                       //decode()
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
   if(m_nTx30<5) {
-    int itimer=0;
-    qDebug() << "aa" << datcom_.nagain;
-    watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
+    watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &m_zero)));
     decodeBusy(true);
   }
 }

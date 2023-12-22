@@ -44,7 +44,6 @@ subroutine q65c(itimer)
   call chkstat(dd,max_nhsym,bSkip)
   if(bSkip) return
 
-  print*,'A'
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
   call timer('decode0 ',1)

@@ -122,6 +122,8 @@ private:
   qint32  m_nDoubleClicked=0;
   qint32  m_nline=0;
   qint32  m_WSJTX_TRperiod=0;
+  qint32  m_zero=0;
+  qint32  m_one=1;
 
   double  m_fAdd;
   double  m_xavg;
