@@ -79,6 +79,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 ! Don't start another decode attempt if it's too late...
      if(nhsym.eq.330 .and. tsec.gt.6.0) exit
      if(tsec.gt.16.0) exit
+     if(bClickDecode .and. idec.ge.0) exit
   enddo  ! icand
 
   return

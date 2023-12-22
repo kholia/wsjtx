@@ -18,7 +18,6 @@ subroutine chkstat(dd,ihsym,bSkip)
   n2=count(power(31:60).lt.15.0)
   if(ihsym.le.200 .and. n1.gt.15) bSkip=.true.
   if(ihsym.gt.200 .and. n2.gt.15) bSkip=.true.
-!  print*,'A',ihsym,n1,n2,bSkip
 
   return
 end subroutine chkstat
