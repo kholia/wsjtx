@@ -24,7 +24,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   real ss(400,NFFT)                  !Symbol spectra
   real savg(NFFT)                    !Average spectrum
   real*8 fcenter                     !Center RF frequency, MHz
-  logical*1 bAlso30
+  logical*1 bAlso30,bClickDecode
   character mycall*12,hiscall*12,hisgrid*6
   type(candidate) :: cand(MAX_CANDIDATES)
   character*60 result
@@ -53,6 +53,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   foffset=0.001*(1270 + nfcal)        !Offset from sync tone, plus CAL
   fqso=mousefqso + foffset - 0.5*(nfa+nfb) + nfshift !fqso at baseband (khz)
   nqd=0
+  bClickDecode=(nagain.eq.1)
   nagain2=0
 
   call timer('filbig  ',0)
@@ -69,10 +70,10 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      ikhz=nint(freq)
      idec=-1
      call timer('q65b    ',0)
-     call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,       &
-          ntrperiod,iseq,                                               &
-          mycall,hiscall,hisgrid,mode_q65_tmp,f0,fqso,nkhz_center,newdat,   &
-          nagain2,max_drift,offset,ndepth,datetime,nCFOM,ndop00,idec)
+     call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,           &
+          ntrperiod,iseq,mycall,hiscall,hisgrid,mode_q65_tmp,f0,fqso,       &
+          nkhz_center,newdat,nagain2,bClickDecode,max_drift,offset,         &
+          ndepth,datetime,nCFOM,ndop00,idec)
      call timer('q65b    ',1)
      tsec=sec_midn() - tsec0
 ! Don't start another decode attempt if it's too late...

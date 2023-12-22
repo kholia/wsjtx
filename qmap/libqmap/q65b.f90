@@ -1,7 +1,7 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
-     ntrperiod,iseq,                                                        &
-     mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center, newdat,nagain,  &
-     max_drift,offset,ndepth,datetime,nCFOM,ndop00,idec)
+     ntrperiod,iseq,mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center,  &
+     newdat,nagain,bClickDecode,max_drift,offset,ndepth,datetime,nCFOM,     &
+     ndop00,idec)
 
 ! This routine provides an interface between QMAP and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the QMAP GUI.
@@ -20,6 +20,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
   complex cx(0:MAXFFT2-1),cz(0:MAXFFT2)
   real*8 fcenter,freq0,freq1
+  logical*1 bClickDecode
   character*12 mycall0,hiscall0
   character*12 mycall,hiscall
   character*6 hisgrid
@@ -110,15 +111,17 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
   call map65_mmdec(nutc1,iwave,nqd,ntrperiod,nsubmode,nfa,nfb,1000,ntol,     &
        newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
-   MHz=fcenter
+  MHz=fcenter
   freq0=MHz + 0.001d0*ikhz
 
   if(nsnr0.gt.-99) then
 
-     do i=1,ndecodes                    !Check for dupes
-        i1=index(result(i)(42:),trim(msg0))
-        if(i1.gt.0) go to 800           !This is a dupe, don't save it again
-     enddo
+     if(.not.bClickDecode) then
+        do i=1,ndecodes                    !Check for dupes
+           i1=index(result(i)(42:),trim(msg0))
+           if(i1.gt.0) go to 800           !This is a dupe, don't save it again
+        enddo
+     endif
      
      nq65df=nint(1000*(0.001*k0*df+nkhz_center-48.0+1.000-1.27046-ikhz))-nfcal
      nq65df=nq65df + nfreq0 - 1000
@@ -130,6 +133,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
+     print*,'B',nCFOM,ndop00,frx,fsked,nsnr0,bClickDecode
      if(iand(nCFOM,2).eq.2) write(*,3001) nCFOM,ndop00,frx,fsked
 3001 format('A',i5,i8,f10.3,f10.1)
      ctmp=csubmode//'  '//trim(msg0)

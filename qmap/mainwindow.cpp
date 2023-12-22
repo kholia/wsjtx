@@ -748,6 +748,7 @@ void MainWindow::diskWriteFinished()                      //diskWriteFinished
 
 void MainWindow::decoderFinished()                      //diskWriteFinished
 {
+  qDebug() << "bb Decoder Finished";
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
   m_startAnother=m_loopall;
@@ -909,7 +910,7 @@ void MainWindow::decode()                                       //decode()
   char *from = (char*) datcom_.d4;
   memcpy(to, from, sizeof(datcom_));
 
-  datcom_.nagain=0;
+//  datcom_.nagain=0;
   datcom_.ndiskdat=0;
   m_call3Modified=false;
 
@@ -921,6 +922,7 @@ void MainWindow::decode()                                       //decode()
   decodes_.nQDecoderDone=0;
   if(m_nTx30<5) {
     int itimer=0;
+    qDebug() << "aa" << datcom_.nagain;
     watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &itimer)));
     decodeBusy(true);
   }
