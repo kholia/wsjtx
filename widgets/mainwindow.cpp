@@ -1110,9 +1110,9 @@ void MainWindow::not_GA_warning_message ()
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X " + version (false) + " made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after July 1, 2024.");
+                                "be nonfunctional after September 30, 2024.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2024, 07, 1}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2024, 9, 30}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
 }
@@ -2881,7 +2881,7 @@ void MainWindow::on_actionCopyright_Notice_triggered()
                            "\"The algorithms, source code, look-and-feel of WSJT-X and related "
                            "programs, and protocol specifications for the modes FSK441, FST4, FT8, "
                            "JT4, JT6M, JT9, JT65, JTMS, QRA64, Q65, MSK144 are Copyright (C) "
-                           "2001-2023 by one or more of the following authors: Joseph Taylor, "
+                           "2001-2024 by one or more of the following authors: Joseph Taylor, "
                            "K1JT; Bill Somerville, G4WJS; Steven Franke, K9AN; Nico Palermo, "
                            "IV3NWV; Greg Beam, KI7MT; Michael Black, W9MDB; Edson Pereira, PY2SDR; "
                            "Philip Karn, KA9Q; Uwe Risse, DG2YCB; Brian Moran, N9ADG; "
@@ -3304,7 +3304,7 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
     <td><b>Click</b> to set Rx frequency.<br/>
         <b>Shift-click</b> to set Tx frequency.<br/>
         <b>Ctrl-click</b> or <b>Right-click</b> to set Rx and Tx frequencies.<br/>
-        <b>Double-click</b> to also decode at Rx frequency.<br/>
+        <b>Double-click</b> to also decode at Rx frequency.
     </td>
   </tr>
   <tr>
@@ -3315,13 +3315,25 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
         messages.<br/>
         If <b>Hold Tx Freq</b> is checked or first callsign in message<br/>
         is your own call, Tx frequency is not changed unless <br/>
-        <b>Ctrl</b> is held down.<br/>
+        <b>Ctrl</b> is held down.
     </td>
   </tr>
   <tr>
     <td align="right">Erase button:</td>
     <td><b>Click</b> to erase QSO window.<br/>
         <b>Double-click</b> to erase QSO and Band Activity windows.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">Q65 Button:</td>
+    <td><b>Click</b> to switch to Q65 Mode.<br/>
+        <b>Right-click</b> to switch to Q65 Pileup Mode.
+    </td>
+  </tr>
+  <tr>
+    <td align="right">JT65 Button:</td>
+    <td><b>Click</b> to switch to JT65 Mode.<br/>
+        <b>Right-click</b> to switch to JT9 Mode.
     </td>
   </tr>
 </table>)"), font});
@@ -6614,17 +6626,13 @@ void MainWindow::on_RoundRobin_currentTextChanged(QString text)
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-  if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {
-      m_specOp=m_config.special_op_id();
-      if (m_specOp==SpecOp::Q65_PILEUP) {
-          m_config.setSpecial_None();
-          ui->tx1->setEnabled(true);
-          ui->txb1->setEnabled(true);
-      } else {
-          m_config.setSpecial_Q65_Pileup();
-      }
+  if(ui->q65Button->hasFocus() && (event->button() & Qt::RightButton)) {     // switch to Q65_Pileup mode
+      m_config.setSpecial_Q65_Pileup();
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
+  }
+  if(ui->jt65Button->hasFocus() && (event->button() & Qt::RightButton)) {    // switch to JT9 mode
+      on_actionJT9_triggered();
   }
 }
 
@@ -10800,29 +10808,33 @@ void MainWindow::on_houndButton_clicked (bool checked)
 
 void MainWindow::on_ft8Button_clicked()
 {
-  if(m_specOp==SpecOp::HOUND) {
+  if (m_specOp==SpecOp::HOUND) {
     m_config.setSpecial_None();
     m_specOp=m_config.special_op_id();
   }
-    on_actionFT8_triggered();
+  on_actionFT8_triggered();
 }
 
 void MainWindow::on_ft4Button_clicked()
 {
-    on_actionFT4_triggered();
+  on_actionFT4_triggered();
 }
 
 void MainWindow::on_msk144Button_clicked()
 {
-    on_actionMSK144_triggered();
+  on_actionMSK144_triggered();
 }
 
 void MainWindow::on_q65Button_clicked()
 {
-    on_actionQ65_triggered();
+  if (m_specOp==SpecOp::Q65_PILEUP) {
+    m_config.setSpecial_None();
+    m_specOp=m_config.special_op_id();
+  }
+  on_actionQ65_triggered();
 }
 
 void MainWindow::on_jt65Button_clicked()
 {
-    on_actionJT65_triggered();
+  on_actionJT65_triggered();
 }
