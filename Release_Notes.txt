@@ -20,7 +20,7 @@ numerous detail improvements and bug fixes, such as:
 
  - Added a new "Update Hamlib" function. On Windows, it allows the user to 
    update Hamlib directly from the program. The previously used version is 
-   backed up, so the user can now easily revert a hamlib update. 
+   backed up, so the user can easily revert a hamlib update. 
 
  - The Hamlib version in use is now displayed (also on Linux and macOS).
 
@@ -38,17 +38,17 @@ numerous detail improvements and bug fixes, such as:
 
  - For Q65, all messages for us are now displayed in the right window.
 
- - Averaging is now only allowed when the VHF features are enabled, and
-   the label texts are now only changes to "Single Period Decodes" and 
-   "Average Decodes" if averaging is enabled.
+ - Message averaging is now allowed only when VHF features are
+   enabled, and label texts are changed to "Single Period Decodes" and
+   "Average Decodes" only if averaging is enabled.
 
- - Some detail improvements to the Hamlib Transceiver. Among others, it
-   is now more stable when Rig Split has been selected.
+ - Some improvements to the Hamlib Transceiver code. Behavior is now
+   more stable when Rig Split has been selected.
 
  - Prevented redundant network communication between WSJT-X and DX Lab 
    Suite Commander.
 
- - Download of the LotW file works now without OpenSSL libraries.
+ - Download of the LotW file now works without OpenSSL libraries.
 
  - Made the spot counter work for WSPR.
 
@@ -58,11 +58,11 @@ numerous detail improvements and bug fixes, such as:
    extra WAE entities" is not selected.
 
  - Added a utility program 'cablog' which can be used to convert the
-   wsjtx.log file to Cabrillo format.
+   wsjtx.log file to Cabrillo format for the ARRL EME contest.
 
  - Minor improvements to the Active Stations window.
 
- - The Rx/Tx frequency for echo mode has been fixed at 1500 Hz.
+ - The Rx/Tx frequency for Echo mode has been fixed at 1500 Hz.
 
  - Some corrections and updates to the INSTALL instructions for Linux.
 
