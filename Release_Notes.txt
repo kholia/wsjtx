@@ -11,7 +11,81 @@
                                                          
 Copyright 2001 - 2024 by Joe Taylor, K1JT, and the WSJT Development Team
 
-                      Release: WSJT-X 2.7.0-rc2
+                       Release: WSJT-X 2.7.0-rc3
+                             January 1, 2024
+                      -------------------------
+
+WSJT-X 2.7.0 Release Candidate 3 brings some new features, as well as 
+numerous detail improvements and bug fixes, such as:
+
+ - Added a new "Update Hamlib" function. On Windows, it allows the user to 
+   update Hamlib directly from the program. The previously used version is 
+   backed up, so the user can now easily revert a hamlib update. 
+
+ - The Hamlib version in use is now displayed (also on Linux and macOS).
+
+ - The FT Roundup Messages protocol has been enhanced. It now allows also 
+   the exchange of static 4-digit numbers instead of serial numbers. This 
+   extends the usability of the FT RU protocol for other contest types.
+
+ - Improved direct switching between modes. Submode, as well as the status 
+   of the "Sh" and "Fast" checkboxes are now saved and restored by mode.
+
+ - Some right-click events were made more intuitive and consistent. 
+   - Right-clicking the Q65 button enables Q65 Pileup mode, a left-click 
+     brings you back to the normal Q65 mode.
+   - Right-click the JT65 button to switch to JT9 mode.
+
+ - For Q65, all messages for us are now displayed in the right window.
+
+ - Averaging is now only allowed when the VHF features are enabled, and
+   the label texts are now only changes to "Single Period Decodes" and 
+   "Average Decodes" if averaging is enabled.
+
+ - Some detail improvements to the Hamlib Transceiver. Among others, it
+   is now more stable when Rig Split has been selected.
+
+ - Prevented redundant network communication between WSJT-X and DX Lab 
+   Suite Commander.
+
+ - Download of the LotW file works now without OpenSSL libraries.
+
+ - Made the spot counter work for WSPR.
+
+ - Prevented insertion of an individual contest name when in Fox mode.
+
+ - WAE entities are now assigned to the correct DXCC when "Include 
+   extra WAE entities" is not selected.
+
+ - Added a utility program 'cablog' which can be used to convert the
+   wsjtx.log file to Cabrillo format.
+
+ - Minor improvements to the Active Stations window.
+
+ - The Rx/Tx frequency for echo mode has been fixed at 1500 Hz.
+
+ - Some corrections and updates to the INSTALL instructions for Linux.
+
+ - Updated CTY.DAT file.
+
+
+/////// NOT YET USED TEXT MODULES
+
+QMAP:
+- Use AlignCenter for Max Age and Max N controls in Active Stations window.
+- Must define 'offset' as a Fortran integer.  Increase NJUNK by 1.
+- Protect against wacky settings of nfa, nfb, in Q65 mode.
+
+WSJT-X:
+- ldpcsim174_91: Add the option to simulate the (174,91) code with noncoherent 8FSK on AWGN and block Rayleigh channels.
+- protect against invalid argument in pctile().
+- Change the label texts to "Single Period Decodes" and "Average Decodes" only if averaging is enabled.
+
+////////
+
+
+
+                     Release: WSJT-X 2.7.0-rc2
                              July 7, 2023
                       -------------------------
 
