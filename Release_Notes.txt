@@ -11,7 +11,7 @@
                                                          
 Copyright 2001 - 2024 by Joe Taylor, K1JT, and the WSJT Development Team
 
-                       Release: WSJT-X 2.7.0-rc3
+                      Release: WSJT-X 2.7.0-rc3
                              January 1, 2024
                       -------------------------
 
@@ -68,24 +68,7 @@ numerous detail improvements and bug fixes, such as:
 
  - Updated CTY.DAT file.
 
-
-/////// NOT YET USED TEXT MODULES
-
-QMAP:
-- Use AlignCenter for Max Age and Max N controls in Active Stations window.
-- Must define 'offset' as a Fortran integer.  Increase NJUNK by 1.
-- Protect against wacky settings of nfa, nfb, in Q65 mode.
-
-WSJT-X:
-- ldpcsim174_91: Add the option to simulate the (174,91) code with noncoherent 8FSK on AWGN and block Rayleigh channels.
-- protect against invalid argument in pctile().
-- Change the label texts to "Single Period Decodes" and "Average Decodes" only if averaging is enabled.
-
-////////
-
-
-
-                     Release: WSJT-X 2.7.0-rc2
+                      Release: WSJT-X 2.7.0-rc2
                              July 7, 2023
                       -------------------------
 
