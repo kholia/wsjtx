@@ -42,7 +42,7 @@ subroutine q65c(itimer)
   newdat=1                          !Always on ??
 
   call chkstat(dd,max_nhsym,bSkip)
-  if(bSkip) return
+  if(bSkip .and. nagain.eq.0) return
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
