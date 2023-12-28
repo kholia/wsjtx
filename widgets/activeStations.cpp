@@ -107,10 +107,12 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
       cursor.setPosition(npos);
       cursor.select(QTextCursor::LineUnderCursor);
       fmt.setBackground(QBrush(Qt::yellow));
+      fmt.setForeground(QBrush(Qt::black));
     } else {
       cursor.setPosition(i0+10);
       cursor.select(QTextCursor::LineUnderCursor);
-      fmt.setBackground(QBrush(Qt::white));
+      fmt.clearForeground();
+      fmt.clearBackground();
     }
     cursor.setCharFormat(fmt);
     i0=i1+1;
