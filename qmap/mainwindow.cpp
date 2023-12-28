@@ -384,7 +384,7 @@ void MainWindow::dataSink(int k)
 
   xSignalMeter->setValue(px);                   // Update the signal meters
   //Suppress scrolling if WSJT-X is transmitting
-  if((m_monitoring and (ipc_wsjtx[4] == 0 or ui->continuous_waterfall->isChecked())) or m_diskData) {
+  if((m_monitoring and (!m_bWTransmitting or ui->continuous_waterfall->isChecked())) or m_diskData) {
       m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
 
@@ -755,6 +755,7 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   mem_qmap.lock();
   decodes_.nWDecoderBusy=ipc_wsjtx[3];                   //Prevent overwriting values
   decodes_.nWTransmitting=ipc_wsjtx[4];                  //written here by WSJT-X
+  m_bWTransmitting=decodes_.nWTransmitting>0;
   memcpy((char*)ipc_wsjtx, &decodes_, sizeof(decodes_)); //Send decodes and flags to WSJT-X
   mem_qmap.unlock();
   QString t1;
@@ -1002,6 +1003,8 @@ void MainWindow::guiUpdate()
 
     static int n60z=99;
     int n60=nsec%60;
+
+// See if WSJT-X is transmitting
     int itest[5];
     mem_qmap.lock();
     memcpy(&itest, (char*)ipc_wsjtx, 20);
@@ -1014,12 +1017,13 @@ void MainWindow::guiUpdate()
     } else {
       m_bWTransmitting=false;
     }
+
     if(n60<n60z) {
       m_nTx30=0;
       m_nTx60=0;
     }
 
-// Check for "cfom"
+// Check for a file named "cfom"
     QFile f(m_appDir + "/cfom");
     ui->cbCFOM->setVisible(f.exists());
     m_bCFOM=ui->cbCFOM->isVisible() and ui->cbCFOM->isChecked();
