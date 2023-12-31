@@ -3927,8 +3927,8 @@ void MainWindow::callSandP2(int n)
   } else {
     m_deCall=w[0];
     m_deGrid=w[1];
-    ui->RxFreqSpinBox->setValue(w[5].toInt());
-    m_txFirst = (w[6]=="0");
+    ui->RxFreqSpinBox->setValue(w[4].toInt());
+    m_txFirst = (w[5]=="0");
   }
 
   if(w[3].left(2)=="30") {
