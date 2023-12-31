@@ -1107,6 +1107,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
 
 void MainWindow::not_GA_warning_message ()
 {
+  if(m_config.my_callsign()=="K1JT" or m_config.my_callsign()=="W2ZQ") return;
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X " + version (false) + " made\n"
                                 "available for testing purposes.  By design it will\n"
