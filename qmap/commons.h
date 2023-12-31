@@ -92,7 +92,7 @@ extern struct {
   int ncand;             //between QMAP and WSJT-X
   int nQDecoderDone;     //1 for real-time decodes, 2 for data from disk
   int nWDecoderBusy;     //Set to 1 when WSJT-X decoder is busy
-  int nWTransmitting;    //Set to 1 when WSJT-X is transmitting
+  int nWTransmitting;    //Set to TRperiod when WSJT-X is transmitting
   char result[50][60];   //Staging area for QMAP decodes
 } decodes_;
 

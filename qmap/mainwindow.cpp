@@ -326,8 +326,6 @@ void MainWindow::dataSink(int k)
   static int ntrz=0;
   static int nkhz;
   static int nfsample=96000;
-  static int nsec0=0;
-  static int nsum=0;
   static int ndiskdat;
   static int nb;
   static int k0=0;
@@ -335,7 +333,6 @@ void MainWindow::dataSink(int k)
   static float px=0.0;
   static uchar lstrong[1024];
   static float slimit;
-  static double xsum=0.0;
 
   if(m_diskData) {
     ndiskdat=1;
@@ -361,18 +358,7 @@ void MainWindow::dataSink(int k)
   symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
            &px, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
 
-  int nsec=QDateTime::currentSecsSinceEpoch();
-  if(nsec==nsec0) {
-    xsum+=pow(10.0,0.1*px);
-    nsum+=1;
-  } else {
-    m_xavg=0.0;
-    if(nsum>0) m_xavg=xsum/nsum;
-    xsum=pow(10.0,0.1*px);
-    nsum=1;
-  }
-  nsec0=nsec;
-
+  if(m_bWTransmitting) px=0.0;
   QString t;
   m_pctZap=nzap/178.3;
 
@@ -382,7 +368,7 @@ void MainWindow::dataSink(int k)
         .arg (m_pctZap, 5, 'f', 1)
         );
 
-  xSignalMeter->setValue(px);                   // Update the signal meters
+  xSignalMeter->setValue(px);                   // Update the signal meter
   //Suppress scrolling if WSJT-X is transmitting
   if((m_monitoring and (!m_bWTransmitting or ui->continuous_waterfall->isChecked())) or m_diskData) {
       m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
@@ -1017,6 +1003,9 @@ void MainWindow::guiUpdate()
     } else {
       m_bWTransmitting=false;
     }
+
+//    qDebug() << "AAA" << n60 << m_bWTransmitting << m_nTx60 << m_nTx30
+//             << itest[0] << itest[1] << itest[2] << itest[3] << itest[4];
 
     if(n60<n60z) {
       m_nTx30=0;
