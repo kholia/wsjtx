@@ -242,8 +242,6 @@ void MainWindow::writeSettings()
   settings.setValue("SaveNone",ui->actionNone->isChecked());
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
   settings.setValue("ContinuousWaterfall",ui->continuous_waterfall->isChecked());
-  settings.setValue("NEME",m_onlyEME);
-  settings.setValue("KB8RQ",m_kb8rq);
   settings.setValue("NB",m_NB);
   settings.setValue("NBslider",m_NBslider);
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
@@ -296,9 +294,6 @@ void MainWindow::readSettings()
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
   ui->continuous_waterfall->setChecked(settings.value("ContinuousWaterfall",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
-  m_onlyEME=settings.value("NEME",false).toBool();
-  ui->actionOnly_EME_calls->setChecked(m_onlyEME);
-  m_kb8rq=settings.value("KB8RQ",false).toBool();
   m_NB=settings.value("NB",false).toBool();
   ui->NBcheckBox->setChecked(m_NB);
   ui->sbMaxDrift->setValue(settings.value("MaxDrift",0).toInt());
@@ -423,7 +418,7 @@ void MainWindow::dataSink(int k)
       *future2 = QtConcurrent::run(save_iq, fname, m_bCFOM);
       watcher2->setFuture(*future2);
     }
-    if(ihsym==200) m_nTx30=0;
+    if(ihsym==200) m_nTx30b=0;
     if(ihsym==m_hsymStop) m_nTx60=0;
   }
   soundInThread.m_dataSinkBusy=false;
@@ -847,8 +842,6 @@ void MainWindow::decode()                                       //decode()
       fname=m_path.mid(i0-11,11);
     }
   }
-  datcom_.neme=0;
-  if(ui->actionOnly_EME_calls->isChecked()) datcom_.neme=1;
 
   int ispan=int(m_wide_graph_window->fSpan());
   if(ispan%2 == 1) ispan++;
@@ -861,9 +854,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.nfb=nfb;
   datcom_.nfcal=m_fCal;
   datcom_.nfshift=nfshift;
-  datcom_.mcall3=0;
-  if(m_call3Modified) datcom_.mcall3=1;
-  datcom_.ntimeout=m_timeout;
   datcom_.ntol=m_tol;
   datcom_.nxant=0;
   m_nutc0=datcom_.nutc;
@@ -887,6 +877,9 @@ void MainWindow::decode()                                       //decode()
   } else {
     memcpy(datcom_.datetime, m_dateTime.toLatin1(), 11);
   }
+  datcom_.ntx30a=m_nTx30a;
+  datcom_.ntx30b=m_nTx30b;
+  datcom_.ntx60=m_nTx60;
   datcom_.junk1=1234;                                     //Check for these values in m65
   datcom_.junk2=5678;
   datcom_.bAlso30=m_bAlso30;
@@ -905,7 +898,7 @@ void MainWindow::decode()                                       //decode()
   }
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
-  if(m_nTx30<5) {
+  if(m_nTx30a<5 or m_nTx30b<5 ) {
     watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &m_zero)));
     decodeBusy(true);
   }
@@ -998,17 +991,19 @@ void MainWindow::guiUpdate()
     if(itest[4]>0) {
       m_WSJTX_TRperiod=itest[4];
       m_bWTransmitting=true;
-      if(m_WSJTX_TRperiod==30) m_nTx30++;
+      if(m_WSJTX_TRperiod==30 and n60<30) m_nTx30a++;
+      if(m_WSJTX_TRperiod==30 and n60>=30) m_nTx30b++;
       if(m_WSJTX_TRperiod==60) m_nTx60++;
     } else {
       m_bWTransmitting=false;
     }
 
-//    qDebug() << "AAA" << n60 << m_bWTransmitting << m_nTx60 << m_nTx30
+//    qDebug() << "AAA" << n60 << m_bWTransmitting << m_nTx60 << m_nTx30a << m_nTx30b
 //             << itest[0] << itest[1] << itest[2] << itest[3] << itest[4];
 
     if(n60<n60z) {
-      m_nTx30=0;
+      m_nTx30a=0;
+      m_nTx30b=0;
       m_nTx60=0;
     }
 

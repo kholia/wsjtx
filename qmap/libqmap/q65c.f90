@@ -21,8 +21,8 @@ subroutine q65c(itimer)
 
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
-       ndepth,ndiskdat,neme,newdat,nn1,nn2,nfcal,nfshift,                 &
-       mcall3,nkeep,ntol,nxant,nCFOM,nfsample,nxpol,nmode,               &
+       ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,                 &
+       ntx30a,ntx30b,ntol,nxant,nCFOM,nfsample,nxpol,nmode,               &
        ndop00,nsave,nn3,nn4,max_nhsym,mycall,mygrid,hiscall,hisgrid,      &
        datetime,junk1,junk2,bAlso30
   equivalence (nparams,fcenter)
@@ -38,9 +38,11 @@ subroutine q65c(itimer)
      return
   endif
 
+  print*,'A',max_nhsym,ntx30a,ntx30b,ntx60,junk1,junk2,bAlso30
   npatience=1
   newdat=1                          !Always on ??
 
+!  call chkstat(dd,max_nhsym,ntx30a,ntx30b,ntx60,bSkip)
   call chkstat(dd,max_nhsym,bSkip)
   if(bSkip .and. nagain.eq.0) return
 

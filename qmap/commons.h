@@ -17,14 +17,14 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int nagain;                       //1 ==> decode only at fQSO +/- Tol
   int ndepth;                       //How much hinted decoding to do?
   int ndiskdat;                     //1 ==> data read from *.iq file
-  int neme;                         //Hinted decoding tries only for EME calls
+  int ntx60;                        //Number of seconds transmitted in Q65-60x
   int newdat;                       //1 ==> new data, must do long FFT
   int nfa;                          //Low decode limit (kHz)
   int nfb;                          //High decode limit (kHz)
   int nfcal;                        //Frequency correction, for calibration (Hz)
   int nfshift;                      //Shift of displayed center freq (kHz)
-  int mcall3;                       //1 ==> CALL3.TXT has been modified
-  int ntimeout;                     //Max for timeouts in Messages and BandMap
+  int ntx30a;                       //Number of seconds transmitted in first half minute , Q65-30x
+  int ntx30b;                       //Number of seconds transmitted in second half minute, Q65-30x
   int ntol;                         //+/- decoding range around fQSO (Hz)
   int nxant;                        //1 ==> add 45 deg to measured pol angle
   int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
@@ -58,14 +58,14 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int nagain;                       //1 ==> decode only at fQSO +/- Tol
   int ndepth;                       //How much hinted decoding to do?
   int ndiskdat;                     //1 ==> data read from *.iq file
-  int neme;                         //Hinted decoding tries only for EME calls
+  int ntx60;                        //Number of seconds transmitted in Q65-60x
   int newdat;                       //1 ==> new data, must do long FFT
   int nfa;                          //Low decode limit (kHz)
   int nfb;                          //High decode limit (kHz)
   int nfcal;                        //Frequency correction, for calibration (Hz)
   int nfshift;                      //Shift of displayed center freq (kHz)
-  int mcall3;                       //1 ==> CALL3.TXT has been modified
-  int ntimeout;                     //Max for timeouts in Messages and BandMap
+  int ntx30a;                       //Number of seconds transmitted in first half minute , Q65-30x
+  int ntx30b;                       //Number of seconds transmitted in second half minute, Q65-30x
   int ntol;                         //+/- decoding range around fQSO (Hz)
   int nxant;                        //1 ==> add 45 deg to measured pol angle
   int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
