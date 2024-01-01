@@ -219,7 +219,6 @@ void MainWindow::writeSettings()
   SettingsGroup g {&settings, "Common"};
   settings.setValue("MyCall",m_myCall);
   settings.setValue("MyGrid",m_myGrid);
-  settings.setValue("IDint",m_idInt);
   settings.setValue("AstroFont",m_astroFont);
   settings.setValue("MyCallColor",m_myCallColor);
   settings.setValue("SaveDir",m_saveDir);
@@ -261,7 +260,6 @@ void MainWindow::readSettings()
   SettingsGroup g {&settings, "Common"};
   m_myCall=settings.value("MyCall","").toString();
   m_myGrid=settings.value("MyGrid","").toString();
-  m_idInt=settings.value("IDint",0).toInt();
   m_astroFont=settings.value("AstroFont",18).toInt();
   m_myCallColor=settings.value("MyCallColor",1).toInt();
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
@@ -432,7 +430,6 @@ void MainWindow::on_actionSettings_triggered()
   DevSetup dlg(this);
   dlg.m_myCall=m_myCall;
   dlg.m_myGrid=m_myGrid;
-  dlg.m_idInt=m_idInt;
   dlg.m_astroFont=m_astroFont;
   dlg.m_myCallColor=m_myCallColor;
   dlg.m_saveDir=m_saveDir;
@@ -447,7 +444,6 @@ void MainWindow::on_actionSettings_triggered()
   if(dlg.exec() == QDialog::Accepted) {
     m_myCall=dlg.m_myCall;
     m_myGrid=dlg.m_myGrid;
-    m_idInt=dlg.m_idInt;
     m_astroFont=dlg.m_astroFont;
     m_myCallColor=dlg.m_myCallColor;
     if(m_astro_window && m_astro_window->isVisible()) m_astro_window->setFontSize(m_astroFont);
@@ -655,7 +651,6 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
     if(m_monitoring) on_monitorButton_clicked();
     m_diskData=true;
     int dbDgrd=0;
-    if(m_myCall=="K1JT" and m_idInt<0) dbDgrd=m_idInt;
     *future1 = QtConcurrent::run(getfile, fname, false, dbDgrd);
     watcher1->setFuture(*future1);
   }
@@ -682,7 +677,6 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       }
       m_diskData=true;
       int dbDgrd=0;
-      if(m_myCall=="K1JT" and m_idInt<0) dbDgrd=m_idInt;
       *future1 = QtConcurrent::run(getfile, fname, false, dbDgrd);
       watcher1->setFuture(*future1);
       return;

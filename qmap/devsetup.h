@@ -12,7 +12,6 @@ public:
   ~DevSetup();
 
   void initDlg();
-  qint32  m_idInt;
   qint32  m_pttPort;
   qint32  m_fCal;
   qint32  m_udpPort;
