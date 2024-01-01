@@ -1044,6 +1044,7 @@ void MainWindow::guiUpdate()
 void MainWindow::on_actionQ65A_triggered()
 {
   m_modeQ65=1;
+   ui->actionAlso_Q65_30x->setText("Also Q65-30A");
   lab3->setStyleSheet("QLabel{background-color: #ffb266}");
   lab3->setText("Q65-60A");
 }
@@ -1051,6 +1052,7 @@ void MainWindow::on_actionQ65A_triggered()
 void MainWindow::on_actionQ65B_triggered()
 {
   m_modeQ65=2;
+  ui->actionAlso_Q65_30x->setText("Also Q65-30A");
   lab3->setStyleSheet("QLabel{background-color: #b2ff66}");
   lab3->setText("Q65-60B");
 }
@@ -1058,6 +1060,7 @@ void MainWindow::on_actionQ65B_triggered()
 void MainWindow::on_actionQ65C_triggered()
 {
   m_modeQ65=3;
+  ui->actionAlso_Q65_30x->setText("Also Q65-30B");
   lab3->setStyleSheet("QLabel{background-color: #66ffff}");
   lab3->setText("Q65-60C");
 }
@@ -1065,6 +1068,7 @@ void MainWindow::on_actionQ65C_triggered()
 void MainWindow::on_actionQ65D_triggered()
 {
   m_modeQ65=4;
+  ui->actionAlso_Q65_30x->setText("Also Q65-30C");
   lab3->setStyleSheet("QLabel{background-color: #b266ff}");
   lab3->setText("Q65-60D");
 }
@@ -1072,6 +1076,7 @@ void MainWindow::on_actionQ65D_triggered()
 void MainWindow::on_actionQ65E_triggered()
 {
   m_modeQ65=5;
+  ui->actionAlso_Q65_30x->setText("Also Q65-30D");
   lab3->setStyleSheet("QLabel{background-color: #ff66ff}");
   lab3->setText("Q65-60E");
 }
