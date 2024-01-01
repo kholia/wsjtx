@@ -87,7 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_hsym0=-1;
   m_palette="CuteSDR";
   m_nutc0=9999;
-  m_kb8rq=false;
   m_NB=false;
   m_mode="Q65";
   m_fs96000=true;
@@ -225,7 +224,6 @@ void MainWindow::writeSettings()
   settings.setValue("MyCallColor",m_myCallColor);
   settings.setValue("SaveDir",m_saveDir);
   settings.setValue("AzElDir",m_azelDir);
-  settings.setValue("Timeout",m_timeout);
   settings.setValue("Fcal",m_fCal);
   settings.setValue("Fadd",m_fAdd);
   settings.setValue("NetworkInput", m_network);
@@ -268,7 +266,6 @@ void MainWindow::readSettings()
   m_myCallColor=settings.value("MyCallColor",1).toInt();
   m_saveDir=settings.value("SaveDir",m_appDir + "/save").toString();
   m_azelDir=settings.value("AzElDir",m_appDir).toString();
-  m_timeout=settings.value("Timeout",20).toInt();
   m_fCal=settings.value("Fcal",0).toInt();
   m_fAdd=settings.value("FAdd",0).toDouble();
   soundInThread.setFadd(m_fAdd);
@@ -440,7 +437,6 @@ void MainWindow::on_actionSettings_triggered()
   dlg.m_myCallColor=m_myCallColor;
   dlg.m_saveDir=m_saveDir;
   dlg.m_azelDir=m_azelDir;
-  dlg.m_timeout=m_timeout;
   dlg.m_fCal=m_fCal;
   dlg.m_fAdd=m_fAdd;
   dlg.m_network=m_network;
@@ -458,7 +454,6 @@ void MainWindow::on_actionSettings_triggered()
     ui->actionFind_Delta_Phi->setEnabled(false);
     m_saveDir=dlg.m_saveDir;
     m_azelDir=dlg.m_azelDir;
-    m_timeout=dlg.m_timeout;
     m_fCal=dlg.m_fCal;
     m_fAdd=dlg.m_fAdd;
     soundInThread.setFadd(m_fAdd);
@@ -890,7 +885,6 @@ void MainWindow::decode()                                       //decode()
 
 //  datcom_.nagain=0;
   datcom_.ndiskdat=0;
-  m_call3Modified=false;
 
   if((!m_bAlso30 and (datcom2_.nhsym==330)) or (m_bAlso30 and (datcom2_.nhsym==200))) {
     decodes_.ndecodes=0;    //Start the decode cycle with a clean slate

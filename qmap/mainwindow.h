@@ -99,7 +99,6 @@ private:
   qint32  m_tol;
   qint32  m_QSOfreq0;
   qint32  m_astroFont;
-  qint32  m_timeout;
   qint32  m_fCal;
   qint32  m_txFreq;
   qint32  m_setftx;
@@ -134,11 +133,9 @@ private:
   bool    m_loopall;
   bool    m_decoderBusy=false;
   bool    m_restart;
-  bool    m_call3Modified;
   bool    m_startAnother;
   bool    m_saveAll;
   bool    m_onlyEME;
-  bool    m_kb8rq;
   bool    m_NB;
   bool    m_fs96000;
   bool    m_decode_called=false;

@@ -14,8 +14,6 @@ public:
   void initDlg();
   qint32  m_idInt;
   qint32  m_pttPort;
-  qint32  m_timeout;
-  qint32  m_dPhi;
   qint32  m_fCal;
   qint32  m_udpPort;
   qint32  m_astroFont;
