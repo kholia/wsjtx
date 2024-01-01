@@ -29,7 +29,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int nxant;                        //1 ==> add 45 deg to measured pol angle
   int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
   int nfsample;                     //Input sample rate
-  int nxpol;                        //1 if using xpol antennas, 0 otherwise
+  int junk3;                        //
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
   int ndop00;                       //EME Self Doppler
   int nsave;                        //no longer used
@@ -70,7 +70,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int nxant;                        //1 ==> add 45 deg to measured pol angle
   int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
   int nfsample;                     //Input sample rate
-  int nxpol;                        //1 if using xpol antennas, 0 otherwise
+  int junk3;                        //
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
   int ndop00;                       //EME Self Doppler
   int nsave;                        //Number of s3(64,63) spectra saved

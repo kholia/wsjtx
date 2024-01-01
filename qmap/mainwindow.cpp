@@ -643,7 +643,7 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
     if(m_monitoring) on_monitorButton_clicked();
     m_diskData=true;
     int dbDgrd=0;
-    *future1 = QtConcurrent::run(getfile, fname, false, dbDgrd);
+    *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
     watcher1->setFuture(*future1);
   }
 }
@@ -669,7 +669,7 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       }
       m_diskData=true;
       int dbDgrd=0;
-      *future1 = QtConcurrent::run(getfile, fname, false, dbDgrd);
+      *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
       watcher1->setFuture(*future1);
       return;
     }
@@ -839,7 +839,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.nxant=0;
   m_nutc0=datcom_.nutc;
   datcom_.nfsample=96000;
-  datcom_.nxpol=0;
   datcom_.nBaseSubmode=m_modeQ65;
   datcom_.max_drift=ui->sbMaxDrift->value();
   datcom_.offset=ui->sbOffset->value();

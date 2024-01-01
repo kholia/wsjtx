@@ -5,7 +5,7 @@
 #include <QDebug>
 #include "commons.h"
 
-void getfile(QString fname, bool xpol, int dbDgrd);
+void getfile(QString fname, int dbDgrd);
 void save_iq(QString fname, bool bCFOM);
 float gran();
 
