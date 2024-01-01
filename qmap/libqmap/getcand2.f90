@@ -1,5 +1,5 @@
-subroutine getcand2(ss,savg0,nts_q65,nagain,nhsym,ntol,f0_selected,    &
-     bAlso30,cand,ncand)
+subroutine getcand2(ss,savg0,nts_q65,nagain,nhsym,ntx30a,ntx30b,     &
+     ntol,f0_selected,bAlso30,cand,ncand)
 
 ! Get candidates for Q65 decodes, based on presence of sync tone.
   
@@ -74,7 +74,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,nhsym,ntol,f0_selected,    &
      if(.not.bAlso30) cycle
      ntrperiod=30
      
-     if(nhsym.le.200) then
+     if(nhsym.le.200 .and. ntx30a.le.5) then
         call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
         if(sync_ok) then
 ! Sync tone is present, we have a candidate for decoding
@@ -92,7 +92,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,nhsym,ntol,f0_selected,    &
      endif
 
      iseq=1
-     if(nhsym.ge.330) then
+     if(nhsym.ge.330 .and. ntx30b.le.5) then
         call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
         if(sync_ok) then
 ! Sync tone is present, we have a candidate for decoding

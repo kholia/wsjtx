@@ -12,7 +12,7 @@ subroutine q65c(itimer)
   real*8 fcenter
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
   logical first
-  logical*1 bAlso30,bSkip
+  logical*1 bAlso30
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
@@ -41,20 +41,27 @@ subroutine q65c(itimer)
   npatience=1
   newdat=1                          !Always on ??
 
+  call chkstat(dd,nhsym,dbdiff)
+!  if(nhsym.eq.390) write(*,3001) nutc,nhsym,dbdiff
+!3001 format(i4.4,i6,f7.1)
+
+  if(dbdiff.gt.5.0) ntx30b=30
+  if(dbdiff.lt.-5.0) ntx30a=30
+
   if(ntx30a.gt.5) then
      dd(1:2,1:30*96000)=0.
      ss(1:200,1:NFFT)=0.
+     do i=1,NFFT
+        savg(i)=sum(ss(201:400,i))
+     enddo
   endif
   if(ntx30b.gt.5) then
      dd(1:2,30*96000+1:60*96000)=0.
      ss(201:400,1:NFFT)=0.
+     do i=1,NFFT
+        savg(i)=sum(ss(1:200,i))
+     enddo
   endif
-
-!  call chkstat(dd,nhsym,bSkip)
-!  if(bSkip .and. nagain.eq.0) then
-!     print*,'A',nhsym,ntx30a,ntx30b,ntx60,junk1,junk2,bAlso30
-!     return
-!  endif
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)

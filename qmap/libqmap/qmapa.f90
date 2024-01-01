@@ -1,7 +1,7 @@
 subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
-     mousedf,mousefqso,nagain,nfshift,max_drift,offset,nfcal,mycall,  &
-     hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,datetime,ndop00,    &
-     fselected,bAlso30,nhsym,nCFOM)
+     mousedf,mousefqso,nagain,ntx30a,ntx30b,nfshift,max_drift,offset, &
+     nfcal,mycall,hiscall,hisgrid,nfsample,nBaseSubmode,ndepth,       &
+     datetime,ndop00,fselected,bAlso30,nhsym,nCFOM)
 
 !  Processes timf2 data received from Linrad to find and decode Q65 signals.
 
@@ -32,7 +32,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   save
-
+  
   tsec0=sec_midn()
   if(nagain.eq.1) ndepth=3            !Use full depth for click-to-decode
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
@@ -44,8 +44,8 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   call timer('get_cand',0)
 ! Get a list of decoding candidates
-  call getcand2(ss,savg,nts_q65,nagain,nhsym,ntol,f0_selected,bAlso30,  &
-       cand,ncand)
+  call getcand2(ss,savg,nts_q65,nagain,nhsym,ntx30a,ntx30b,ntol,     &
+       f0_selected,bAlso30,cand,ncand)
   call timer('get_cand',1)
 
   nwrite_q65=0

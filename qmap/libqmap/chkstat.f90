@@ -1,23 +1,22 @@
-subroutine chkstat(dd,ihsym,bSkip)
+subroutine chkstat(dd,nhsym,dbdiff)
 
   real dd(2,5760000)
-  real power(60)
-  logical*1 bSkip
 
+  sq0=0.
+  sq1=0.
   k=0
   do i=1,60
      sq=0.
      do j=1,96000
         k=k+1
         sq=sq + dd(1,k)*dd(1,k) + dd(2,k)*dd(2,k)
-     enddo
-     power(i)=sq/(2.0*96000.0)
+     enddo 
+     if(i.ge.12 .and. i.le.24) sq0=sq0+sq
+     if(i.ge.42 .and. i.le.54) sq1=sq1+sq
   enddo
-  bSkip=.false.
-  n1=count(power(1:30).lt.15.0)
-  n2=count(power(31:60).lt.15.0)
-  if(ihsym.le.200 .and. n1.gt.15) bSkip=.true.
-  if(ihsym.gt.200 .and. n2.gt.15) bSkip=.true.
-
+  db0=db(1.0+sq0)
+  db1=db(1.0+sq1)
+  dbdiff=db0-db1
+  
   return
 end subroutine chkstat

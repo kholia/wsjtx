@@ -43,9 +43,9 @@ subroutine decode0(dd,ss,savg)
   hisgrid0=hisgrid
 
   call timer('qmapa   ',0)
-  call qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,           &
-       mousedf,mousefqso,nagain,nfshift,max_drift,offset,           &
-       nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,          &
+  call qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,                  &
+       mousedf,mousefqso,nagain,ntx30a,ntx30b,nfshift,max_drift,offset,    &
+       nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,                 &
        datetime,ndop00,fselected,bAlso30,nhsym,NCFOM)
   call timer('qmapa   ',1)
 
