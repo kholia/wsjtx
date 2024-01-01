@@ -185,10 +185,10 @@
              <item>
               <widget class="QSpinBox" name="fCalSpinBox">
                <property name="minimum">
-                <number>-20000</number>
+                <number>-50000</number>
                </property>
                <property name="maximum">
-                <number>20000</number>
+                <number>50000</number>
                </property>
               </widget>
              </item>
