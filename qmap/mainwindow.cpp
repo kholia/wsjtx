@@ -1032,9 +1032,7 @@ void MainWindow::guiUpdate()
     }
 
     QDateTime t = QDateTime::currentDateTimeUtc();
-    int fQSO=m_wide_graph_window->QSOfreq();
-    m_astro_window->astroUpdate(t, m_myGrid, m_hisGrid, fQSO, m_setftx,
-                          m_txFreq, m_azelDir, m_xavg);
+    m_astro_window->astroUpdate(t, m_myGrid, m_azelDir, m_xavg);
     m_setftx=0;
     QString utc = t.date().toString(" yyyy MMM dd \n") + t.time().toString();
     ui->labUTC->setText(utc);

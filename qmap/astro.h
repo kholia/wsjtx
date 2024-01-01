@@ -14,8 +14,7 @@ class Astro : public QWidget
 
 public:
   explicit Astro (QString const& settings_filename, QWidget *parent = 0);
-  void astroUpdate(QDateTime t, QString mygrid, QString hisgrid,
-                   int fQSO, int nsetftx, int ntxFreq, QString azelDir, double xavg);
+  void astroUpdate(QDateTime t, QString mygrid, QString azelDir, double xavg);
   void setFontSize(int n);
   int getSelfDop();
 
