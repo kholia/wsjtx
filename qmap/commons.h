@@ -32,7 +32,7 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int nxpol;                        //1 if using xpol antennas, 0 otherwise
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
   int ndop00;                       //EME Self Doppler
-  int nsave;                        //Number of s3(64,63) spectra saved
+  int nsave;                        //no longer used
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
   int offset;                       //Offset in Hz
   int nhsym;                        //Number of available JT65 half-symbols

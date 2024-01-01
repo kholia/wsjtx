@@ -12,7 +12,6 @@ public:
   ~DevSetup();
 
   void initDlg();
-  qint32  m_pttPort;
   qint32  m_fCal;
   qint32  m_udpPort;
   qint32  m_astroFont;
@@ -30,7 +29,6 @@ public:
   QString m_myGrid;
   QString m_saveDir;
   QString m_azelDir;
-  QString m_editorCommand;
 
 public slots:
   void accept();

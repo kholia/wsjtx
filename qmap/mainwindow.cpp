@@ -82,7 +82,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_loopall=false;
   m_startAnother=false;
   m_saveAll=false;
-  m_onlyEME=false;
   m_sec0=-1;
   m_hsym0=-1;
   m_palette="CuteSDR";
@@ -90,7 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_NB=false;
   m_mode="Q65";
   m_udpPort=50004;
-  m_nsave=0;
   m_modeQ65=0;
   m_TRperiod=60;
 
@@ -843,7 +841,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.nfsample=96000;
   datcom_.nxpol=0;
   datcom_.nBaseSubmode=m_modeQ65;
-  datcom_.nsave=m_nsave;
   datcom_.max_drift=ui->sbMaxDrift->value();
   datcom_.offset=ui->sbOffset->value();
   datcom_.ndepth=1;
@@ -1033,7 +1030,6 @@ void MainWindow::guiUpdate()
 
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_astro_window->astroUpdate(t, m_myGrid, m_azelDir, m_xavg);
-    m_setftx=0;
     QString utc = t.date().toString(" yyyy MMM dd \n") + t.time().toString();
     ui->labUTC->setText(utc);
     m_hsym0=khsym;

@@ -83,7 +83,6 @@ private slots:
   void on_actionQuick_Start_Guide_to_Q65_triggered();
   void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
   void on_actionAlso_Q65_30x_toggled(bool b);
-
   void on_sbMaxDrift_valueChanged(int arg1);
 
 private:
@@ -96,11 +95,8 @@ private:
   qint32  m_waterfallAvg;
   qint32  m_DF;
   qint32  m_tol;
-  qint32  m_QSOfreq0;
   qint32  m_astroFont;
   qint32  m_fCal;
-  qint32  m_txFreq;
-  qint32  m_setftx;
   qint32  m_sec0;
   qint32  m_nutc0;
   qint32  m_nrx;
@@ -108,8 +104,6 @@ private:
   qint32  m_paInDevice;
   qint32  m_udpPort;
   qint32  m_NBslider;
-  qint32  m_nsum;
-  qint32  m_nsave;
   qint32  m_TRperiod;
   qint32  m_modeQ65;
   qint32  m_dB;
@@ -134,7 +128,6 @@ private:
   bool    m_restart;
   bool    m_startAnother;
   bool    m_saveAll;
-  bool    m_onlyEME;
   bool    m_NB;
   bool    m_decode_called=false;
   bool    m_bAlso30=false;
