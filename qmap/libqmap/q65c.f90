@@ -23,7 +23,7 @@ subroutine q65c(itimer)
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,                 &
        ntx30a,ntx30b,ntol,nxant,nCFOM,nfsample,nxpol,nmode,               &
-       ndop00,nsave,nn3,nn4,max_nhsym,mycall,mygrid,hiscall,hisgrid,      &
+       ndop00,nsave,nn3,nn4,nhsym,mycall,mygrid,hiscall,hisgrid,      &
        datetime,junk1,junk2,bAlso30
   equivalence (nparams,fcenter)
   data first/.true./
@@ -38,13 +38,14 @@ subroutine q65c(itimer)
      return
   endif
 
-  print*,'A',max_nhsym,ntx30a,ntx30b,ntx60,junk1,junk2,bAlso30
   npatience=1
   newdat=1                          !Always on ??
 
-!  call chkstat(dd,max_nhsym,ntx30a,ntx30b,ntx60,bSkip)
-  call chkstat(dd,max_nhsym,bSkip)
-  if(bSkip .and. nagain.eq.0) return
+  call chkstat(dd,nhsym,bSkip)
+  if(bSkip .and. nagain.eq.0) then
+     print*,'A',nhsym,ntx30a,ntx30b,ntx60,junk1,junk2,bAlso30
+     return
+  endif
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)

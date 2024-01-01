@@ -788,6 +788,11 @@ void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
   if(m_nTx60>10) return; //Don't decode if WSJT-X transmitted too much in 60 s mode
+//No need to call decoder for first half, if we transmitted in the firsat half:
+  if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
+//No need to call decoder in second half, if we transmitted in that half:
+  if((datcom_.nhsym>=330) and (m_nTx30b>5)) return;
+
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
@@ -816,7 +821,7 @@ void MainWindow::decode()                                       //decode()
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
       int ndop00=0;
-      if((datcom_.nCFOM&&1)==0) {
+      if((datcom_.nCFOM&1)==0) {
         astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
       }
       datcom_.ndop00=ndop00;    //Send self Doppler (or 0, if disk data had CFOM already) to decoder
