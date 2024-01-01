@@ -89,7 +89,6 @@ MainWindow::MainWindow(QWidget *parent) :
   m_nutc0=9999;
   m_NB=false;
   m_mode="Q65";
-  m_fs96000=true;
   m_udpPort=50004;
   m_nsave=0;
   m_modeQ65=0;
@@ -226,7 +225,6 @@ void MainWindow::writeSettings()
   settings.setValue("Fcal",m_fCal);
   settings.setValue("Fadd",m_fAdd);
   settings.setValue("NetworkInput", m_network);
-  settings.setValue("FSam96000", m_fs96000);
   settings.setValue("paInDevice",m_paInDevice);
   settings.setValue("Scale_dB",m_dB);
   settings.setValue("UDPport",m_udpPort);
@@ -268,7 +266,6 @@ void MainWindow::readSettings()
   m_fAdd=settings.value("FAdd",0).toDouble();
   soundInThread.setFadd(m_fAdd);
   m_network = settings.value("NetworkInput",true).toBool();
-  m_fs96000 = settings.value("FSam96000",true).toBool();
   m_dB = settings.value("Scale_dB",0).toInt();
   m_udpPort = settings.value("UDPport",50004).toInt();
   soundInThread.setScale(m_dB);
@@ -335,7 +332,6 @@ void MainWindow::dataSink(int k)
   nb=0;
   if(m_NB) nb=1;
   nfsample=96000;
-  if(!m_fs96000) nfsample=95238;
 
   if(m_bCFOM) {
     if(m_astro_window) ndop00=m_astro_window->getSelfDop();
@@ -437,7 +433,6 @@ void MainWindow::on_actionSettings_triggered()
   dlg.m_fCal=m_fCal;
   dlg.m_fAdd=m_fAdd;
   dlg.m_network=m_network;
-  dlg.m_fs96000=m_fs96000;
   dlg.m_udpPort=m_udpPort;
   dlg.m_dB=m_dB;
   dlg.initDlg();
@@ -454,7 +449,6 @@ void MainWindow::on_actionSettings_triggered()
     m_fAdd=dlg.m_fAdd;
     soundInThread.setFadd(m_fAdd);
     m_wide_graph_window->setFcal(m_fCal);
-    m_fs96000=dlg.m_fs96000;
     m_network=dlg.m_network;
     m_udpPort=dlg.m_udpPort;
     m_dB=dlg.m_dB;
@@ -847,7 +841,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.nxant=0;
   m_nutc0=datcom_.nutc;
   datcom_.nfsample=96000;
-  if(!m_fs96000) datcom_.nfsample=95238;
   datcom_.nxpol=0;
   datcom_.nBaseSubmode=m_modeQ65;
   datcom_.nsave=m_nsave;

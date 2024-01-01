@@ -22,7 +22,6 @@ public:
   double  m_TxOffset;
 
   bool    m_network;
-  bool    m_fs96000;
   bool    m_restartSoundIn;
 
   int     m_myCallColor;

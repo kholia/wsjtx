@@ -136,7 +136,6 @@ private:
   bool    m_saveAll;
   bool    m_onlyEME;
   bool    m_NB;
-  bool    m_fs96000;
   bool    m_decode_called=false;
   bool    m_bAlso30=false;
   bool    m_bDiskDatBusy=false;
