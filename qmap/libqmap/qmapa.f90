@@ -44,7 +44,8 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   call timer('get_cand',0)
 ! Get a list of decoding candidates
-  call getcand2(ss,savg,nts_q65,nagain,ntol,f0_selected,bAlso30,cand,ncand)
+  call getcand2(ss,savg,nts_q65,nagain,nhsym,ntol,f0_selected,bAlso30,  &
+       cand,ncand)
   call timer('get_cand',1)
 
   nwrite_q65=0

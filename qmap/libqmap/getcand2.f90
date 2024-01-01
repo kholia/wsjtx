@@ -1,4 +1,5 @@
-subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,bAlso30,cand,ncand)
+subroutine getcand2(ss,savg0,nts_q65,nagain,nhsym,ntol,f0_selected,    &
+     bAlso30,cand,ncand)
 
 ! Get candidates for Q65 decodes, based on presence of sync tone.
   
@@ -53,58 +54,61 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,ntol,f0_selected,bAlso30,cand,ncand)
 ! Check to see if sync tone is present.
      ntrperiod=60
      iseq=0
-     call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
-     if(sync_ok) then
+     if(nhsym.ge.200) then
+        call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
+        if(sync_ok) then
 ! Sync tone is present, we have a candidate for decoding
-        j=j+1
-        cand(j)%f=fpk
-        cand(j)%xdt=xdt
-        cand(j)%snr=snr_sync
-        cand(j)%ntrperiod=ntrperiod
-        cand(j)%iseq=iseq
-        ia=max(1,min(i,i0-nguard))
-        ib=min(i0+nbw+nguard,32768)
-        savg(ia:ib)=0.
-!        write(*,3301) j,fpk+80-48,xdt,snr_sync,ntrperiod,iseq
-3301    format(i3,f10.3,f8.2,f8.1,2i5)
-        if(j.ge.MAX_CANDIDATES) exit
+           j=j+1
+           cand(j)%f=fpk
+           cand(j)%xdt=xdt
+           cand(j)%snr=snr_sync
+           cand(j)%ntrperiod=ntrperiod
+           cand(j)%iseq=iseq
+           ia=max(1,min(i,i0-nguard))
+           ib=min(i0+nbw+nguard,32768)
+           savg(ia:ib)=0.
+           if(j.ge.MAX_CANDIDATES) exit
+        endif
      endif
 
      if(.not.bAlso30) cycle
      ntrperiod=30
      
-     call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
-     if(sync_ok) then
+     if(nhsym.le.200) then
+        call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
+        if(sync_ok) then
 ! Sync tone is present, we have a candidate for decoding
-        j=j+1
-        cand(j)%f=fpk
-        cand(j)%xdt=xdt
-        cand(j)%snr=snr_sync
-        cand(j)%ntrperiod=ntrperiod
-        cand(j)%iseq=iseq
-        ia=max(1,min(i,i0-nguard))
-        ib=min(i0+nbw+nguard,32768)
-        savg(ia:ib)=0.
-!        write(*,3301) j,fpk+80-48,xdt,snr_sync,ntrperiod,iseq
-        if(j.ge.MAX_CANDIDATES) exit
+           j=j+1
+           cand(j)%f=fpk
+           cand(j)%xdt=xdt
+           cand(j)%snr=snr_sync
+           cand(j)%ntrperiod=ntrperiod
+           cand(j)%iseq=iseq
+           ia=max(1,min(i,i0-nguard))
+           ib=min(i0+nbw+nguard,32768)
+           savg(ia:ib)=0.
+           if(j.ge.MAX_CANDIDATES) exit
+        endif
      endif
 
      iseq=1
-     call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
-     if(sync_ok) then
+     if(nhsym.ge.330) then
+        call q65_sync(ss,i0,nts_q65,ntrperiod,iseq,sync_ok,snr_sync,xdt)
+        if(sync_ok) then
 ! Sync tone is present, we have a candidate for decoding
-        j=j+1
-        cand(j)%f=fpk
-        cand(j)%xdt=xdt
-        cand(j)%snr=snr_sync
-        cand(j)%ntrperiod=ntrperiod
-        cand(j)%iseq=iseq
-        ia=max(1,min(i,i0-nguard))
-        ib=min(i0+nbw+nguard,32768)
-        savg(ia:ib)=0.
-!        write(*,3301) j,fpk+80-48,xdt,snr_sync,ntrperiod,iseq
-        if(j.ge.MAX_CANDIDATES) exit
+           j=j+1
+           cand(j)%f=fpk
+           cand(j)%xdt=xdt
+           cand(j)%snr=snr_sync
+           cand(j)%ntrperiod=ntrperiod
+           cand(j)%iseq=iseq
+           ia=max(1,min(i,i0-nguard))
+           ib=min(i0+nbw+nguard,32768)
+           savg(ia:ib)=0.
+           if(j.ge.MAX_CANDIDATES) exit
+        endif
      endif
+
   enddo
   ncand=j                              !Total number of candidates found
 

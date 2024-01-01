@@ -41,11 +41,20 @@ subroutine q65c(itimer)
   npatience=1
   newdat=1                          !Always on ??
 
-  call chkstat(dd,nhsym,bSkip)
-  if(bSkip .and. nagain.eq.0) then
-     print*,'A',nhsym,ntx30a,ntx30b,ntx60,junk1,junk2,bAlso30
-     return
+  if(ntx30a.gt.5) then
+     dd(1:2,1:30*96000)=0.
+     ss(1:200,1:NFFT)=0.
   endif
+  if(ntx30b.gt.5) then
+     dd(1:2,30*96000+1:60*96000)=0.
+     ss(201:400,1:NFFT)=0.
+  endif
+
+!  call chkstat(dd,nhsym,bSkip)
+!  if(bSkip .and. nagain.eq.0) then
+!     print*,'A',nhsym,ntx30a,ntx30b,ntx60,junk1,junk2,bAlso30
+!     return
+!  endif
 
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
