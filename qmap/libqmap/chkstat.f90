@@ -1,22 +1,28 @@
-subroutine chkstat(dd,nhsym,dbdiff)
+subroutine chkstat(dd,nhsym,pdb)
 
   real dd(2,5760000)
+  real pdb(4)
+  integer ia(4),ib(4)
+  logical*1 btx0,btx1
 
-  sq0=0.
-  sq1=0.
-  k=0
-  do i=1,60
+  btx0=.false.
+  btx1=.false.
+  ia(1)=23*96000+1
+  ib(1)=24*96000
+  ia(2)=27*96000+1
+  ib(2)=28*96000
+  ia(3)=53*96000+1
+  ib(3)=54*96000
+  ia(4)=57*96000+1
+  ib(4)=58*96000
+
+  do j=1,4
      sq=0.
-     do j=1,96000
-        k=k+1
-        sq=sq + dd(1,k)*dd(1,k) + dd(2,k)*dd(2,k)
-     enddo 
-     if(i.ge.12 .and. i.le.24) sq0=sq0+sq
-     if(i.ge.42 .and. i.le.54) sq1=sq1+sq
+     do i=ia(j),ib(j)
+        sq=sq + dd(1,i)*dd(1,i) + dd(2,i)*dd(2,i)
+     enddo
+     pdb(j)=db(1.0 + sq/(2.0*96000.0))
   enddo
-  db0=db(1.0+sq0)
-  db1=db(1.0+sq1)
-  dbdiff=db0-db1
   
   return
 end subroutine chkstat

@@ -10,6 +10,7 @@ subroutine q65c(itimer)
   parameter (NFFT=32768)
   include 'njunk.f90'
   real*8 fcenter
+  real*4 pdb(4)
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
   logical first
   logical*1 bAlso30
@@ -41,12 +42,12 @@ subroutine q65c(itimer)
   npatience=1
   newdat=1                          !Always on ??
 
-  call chkstat(dd,nhsym,dbdiff)
-!  if(nhsym.eq.390) write(*,3001) nutc,nhsym,dbdiff
-!3001 format(i4.4,i6,f7.1)
-
-  if(dbdiff.gt.5.0) ntx30b=30
-  if(dbdiff.lt.-5.0) ntx30a=30
+  call chkstat(dd,nhsym,pdb)
+  if(abs(pdb(1)-pdb(2)).gt.3.0) ntx30a=20      !We transmitted in first half
+  if(abs(pdb(3)-pdb(4)).gt.3.0) ntx30b=20      !We transmitted in second half
+  
+!  write(*,3001) nutc,nhsym,pdb,ntx30a,ntx30b
+!3001 format(i4.4,i6,4f7.1,2i6)
 
   if(ntx30a.gt.5) then
      dd(1:2,1:30*96000)=0.
