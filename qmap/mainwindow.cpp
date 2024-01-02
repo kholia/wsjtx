@@ -284,6 +284,13 @@ void MainWindow::readSettings()
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
   ui->continuous_waterfall->setChecked(settings.value("ContinuousWaterfall",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
+  if(m_saveAll) {
+    lab5->setStyleSheet("QLabel{background-color: #ffff00}");
+    lab5->setText("Saving .iq  files");
+  } else {
+    lab5->setStyleSheet("");
+    lab5->setText("");
+  }
   m_NB=settings.value("NB",false).toBool();
   ui->NBcheckBox->setChecked(m_NB);
   ui->sbMaxDrift->setValue(settings.value("MaxDrift",0).toInt());
@@ -585,6 +592,13 @@ void MainWindow::createStatusBar()                           //createStatusBar
   lab4->setMinimumSize(QSize(80,10));
   lab4->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   statusBar()->addWidget(lab4);
+
+  lab5 = new QLabel("");
+  lab5->setAlignment(Qt::AlignHCenter);
+  lab5->setMinimumSize(QSize(100,10));
+  lab5->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+  lab5->setStyleSheet("");
+  statusBar()->addWidget(lab5);
 }
 
 void MainWindow::on_tolSpinBox_valueChanged(int i)             //tolSpinBox
@@ -748,6 +762,8 @@ void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
 void MainWindow::on_actionNone_triggered()                    //Save None
 {
   m_saveAll=false;
+  lab5->setStyleSheet("");
+  lab5->setText("");
 }
 
 // ### Implement "Save Last" here? ###
@@ -755,6 +771,8 @@ void MainWindow::on_actionNone_triggered()                    //Save None
 void MainWindow::on_actionSave_all_triggered()                //Save All
 {
   m_saveAll=true;
+  lab5->setStyleSheet("QLabel{background-color: #ffff00}");
+  lab5->setText("Saving .iq  files");
 }
 
 void MainWindow::on_DecodeButton_clicked()                    //Decode request
