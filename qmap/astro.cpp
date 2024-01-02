@@ -71,16 +71,16 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString azelDir, double xav
   m_ndop00=ndop00;
 
   snprintf(cc, sizeof(cc),
-          "Az:    %6.1f\n"
-          "El:    %6.1f\n"
-          "SelfDop:%5d\n"
-          "MoonDec:%5.1f\n"
-          "SunAz: %6.1f\n"
-          "SunEl: %6.1f\n"
-          "Freq:  %6d\n"
-          "Tsky:  %6d\n"
-          "MNR:   %6.1f\n"
-          "Dgrd:  %6.1f",
+          "Az:     %6.1f\n"
+          "El:     %6.1f\n"
+          "SelfDop:%6d\n"
+          "MoonDec:%6.1f\n"
+          "SunAz:  %6.1f\n"
+          "SunEl:  %6.1f\n"
+          "Freq:   %6d\n"
+          "Tsky:   %6d\n"
+          "MNR:    %6.1f\n"
+          "Dgrd:   %6.1f",
           azmoon,elmoon,ndop00,decmoon,azsun,elsun,
           nfreq,ntsky,xnr,dgrd);
   ui->astroTextBrowser->setText(" "+ date + "\nUTC: " + utc + "\n" + cc);
