@@ -1121,9 +1121,10 @@ void MainWindow::on_actionAlso_Q65_30x_toggled(bool b)
 
 void MainWindow::on_sbMaxDrift_valueChanged(int n)
 {
-  if(n>0) {
-    ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ff6666; }");
-  } else {
-    ui->sbMaxDrift->setStyleSheet("");
-  }
+  if(n==0) ui->sbMaxDrift->setStyleSheet("");
+  if(n>0 and n<=5) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ffff82; }");
+  if(n>5 and n<=20) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ffff00; }");
+  if(n>20 and n<=30) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ffb828; }");
+  if(n>30 and n<=40) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ffc0cb; }");
+  if(n>40) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ff8585; }");
 }
