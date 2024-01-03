@@ -403,6 +403,8 @@ void MainWindow::dataSink(int k)
       fname += ".iq";
       *future2 = QtConcurrent::run(save_iq, fname);
       watcher2->setFuture(*future2);
+      int len1=fname.length();
+      save_qm_(fname.toLatin1(), &datcom2_.nutc, datcom2_.d4,&m_nTx30a,&m_nTx30b,len1);
     }
     if(ihsym==m_hsymStop) {
       m_nTx30a=0;
@@ -870,7 +872,6 @@ void MainWindow::decode()                                       //decode()
   char *from = (char*) datcom_.d4;
   memcpy(to, from, sizeof(datcom_));
 
-//  datcom_.nagain=0;
   datcom_.ndiskdat=0;
 
   if((!m_bAlso30 and (datcom2_.nhsym==330)) or (m_bAlso30 and (datcom2_.nhsym==200))) {
@@ -879,6 +880,7 @@ void MainWindow::decode()                                       //decode()
   }
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
+
   if(m_nTx30a<5 or m_nTx30b<5 ) {
     watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &m_zero)));
     decodeBusy(true);
@@ -988,7 +990,6 @@ void MainWindow::guiUpdate()
     } else {
       lab2->setStyleSheet("");
     }
-
 
     if(m_monitoring) {
       lab1->setStyleSheet("QLabel{background-color: #00ff00}");

@@ -26,6 +26,7 @@ set (libq65_FSRCS
   q65_sync.f90
   qmapa.f90
   recvpkt.f90
+  save_qm.f90
   sun.f90
   symspec.f90
   timf2.f90

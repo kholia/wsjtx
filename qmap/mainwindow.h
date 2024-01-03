@@ -201,6 +201,8 @@ extern "C" {
 
   void zaptx_(float d4[], int* k0, int* k);
 
+  void save_qm_(const char* fname, int* nutc, float d4[], int* ntx30a, int* ntx30b, int len1);
+
   }
 
 #endif // MAINWINDOW_H
