@@ -5,7 +5,6 @@ set (libq65_FSRCS
   astro.f90
   astro0.f90
   astrosub.f90
-  cfom.f90
   chkstat.f90
   dcoord.f90
   decode0.f90
@@ -32,6 +31,7 @@ set (libq65_FSRCS
   timf2.f90
   tm2.f90
   toxyz.f90
+  zaptx.f90
 
   f77_wisdom.f
   )

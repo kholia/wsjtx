@@ -34,10 +34,10 @@ extern "C"
     int ntx30a;                       //Number of seconds transmitted in first half minute , Q65-30x
     int ntx30b;                       //Number of seconds transmitted in second half minute, Q65-30x
     int ntol;                         //+/- decoding range around fQSO (Hz)
-    int nxant;                        //1 ==> add 45 deg to measured pol angle
-    int nCFOM;                        //1 ==> CFOM already done, 0 otherwise
+    int junk5;                        //
+    int junk4;                        //
     int nfsample;                     //Input sample rate
-    int nxpol;                        //1 if using xpol antennas, 0 otherwise
+    int junk3;                        //
     int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
     int ndop00;                       //EME Self Doppler
     int nsave;                        //Number of s3(64,63) spectra saved

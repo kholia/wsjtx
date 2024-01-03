@@ -178,8 +178,6 @@ MainWindow::MainWindow(QWidget *parent) :
   if(ui->actionAFMHot->isChecked()) on_actionAFMHot_triggered();
   if(ui->actionBlue->isChecked()) on_actionBlue_triggered();
 
-  ui->cbCFOM->setVisible(false);
-
   connect (m_wide_graph_window.get (), &WideGraph::freezeDecode2, this, &MainWindow::freezeDecode);
   connect (m_wide_graph_window.get (), &WideGraph::f11f12, this, &MainWindow::bumpDF);
 
@@ -240,7 +238,6 @@ void MainWindow::writeSettings()
   settings.setValue("MaxDrift",ui->sbMaxDrift->value());
   settings.setValue("Offset",ui->sbOffset->value());
   settings.setValue("Also30",m_bAlso30);
-  settings.setValue("CFOM",ui->cbCFOM->isChecked());
 }
 
 //---------------------------------------------------------- readSettings()
@@ -300,7 +297,6 @@ void MainWindow::readSettings()
   m_bAlso30=settings.value("Also30",false).toBool();
   ui->actionAlso_Q65_30x->setChecked(m_bAlso30);
   on_actionAlso_Q65_30x_toggled(m_bAlso30);
-  ui->cbCFOM->setChecked(settings.value("CFOM",false).toBool());
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
     !ui->actionAFMHot->isChecked() && !ui->actionBlue->isChecked()) {
     on_actionLinrad_triggered();
@@ -321,7 +317,6 @@ void MainWindow::dataSink(int k)
   static int ndiskdat;
   static int nb;
   static int k0=0;
-  static int ndop00=0;
   static float px=0.0;
   static uchar lstrong[1024];
   static float slimit;
@@ -337,11 +332,6 @@ void MainWindow::dataSink(int k)
   nb=0;
   if(m_NB) nb=1;
   nfsample=96000;
-
-  if(m_bCFOM) {
-    if(m_astro_window) ndop00=m_astro_window->getSelfDop();
-    cfom_(datcom_.d4, &k0, &k, &ndop00);
-  }
 
   if(m_bWTransmitting) zaptx_(datcom_.d4, &k0, &k);
   k0=k;
@@ -411,11 +401,14 @@ void MainWindow::dataSink(int k)
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
-      *future2 = QtConcurrent::run(save_iq, fname, m_bCFOM);
+      *future2 = QtConcurrent::run(save_iq, fname);
       watcher2->setFuture(*future2);
     }
-    if(ihsym==200) m_nTx30b=0;
-    if(ihsym==m_hsymStop) m_nTx60=0;
+    if(ihsym==m_hsymStop) {
+      m_nTx30a=0;
+      m_nTx30b=0;
+      m_nTx60=0;
+    }
   }
   soundInThread.m_dataSinkBusy=false;
 }
@@ -703,6 +696,8 @@ void MainWindow::diskDat()                                   //diskDat()
   //These may be redundant??
   m_diskData=true;
   datcom_.newdat=1;
+  m_nTx30a=datcom_.ntx30a;
+  m_nTx30b=datcom_.ntx30b;
   hsym=0.15*96000.0;                   //Samples per Q65-30x half-symbol or Q65-60x quarter-symbol
   for(int i=0; i<400; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 0.5;
@@ -806,10 +801,10 @@ void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
   if(m_nTx60>10) return; //Don't decode if WSJT-X transmitted too much in 60 s mode
-//No need to call decoder for first half, if we transmitted in the firsat half:
+//No need to call decoder for first half, if we transmitted in the first half:
   if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
 //No need to call decoder in second half, if we transmitted in that half:
-  if((datcom_.nhsym>=330) and (m_nTx30b>5)) return;
+  if((datcom_.nhsym>200) and (m_nTx30b>5)) return;
 
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
@@ -830,6 +825,7 @@ void MainWindow::decode()                                       //decode()
     datcom_.ndiskdat=1;
     int i0=m_path.indexOf(".iq");
     if(i0>0) {
+      /*
       // Compute self Doppler using the filename for Date and Time
       int nyear=m_path.mid(i0-11,2).toInt()+2000;
       int month=m_path.mid(i0-9,2).toInt();
@@ -839,10 +835,8 @@ void MainWindow::decode()                                       //decode()
       double uth=nhr + nmin/60.0;
       int nfreq=(int)datcom_.fcenter;
       int ndop00=0;
-      if((datcom_.nCFOM&1)==0) {
-        astrosub00_(&nyear, &month, &nday, &uth, &nfreq, m_myGrid.toLatin1(),&ndop00,6);
-      }
-      datcom_.ndop00=ndop00;    //Send self Doppler (or 0, if disk data had CFOM already) to decoder
+      datcom_.ndop00=ndop00;    //Send self Doppler to decoder
+      */
       fname=m_path.mid(i0-11,11);
     }
   }
@@ -859,7 +853,6 @@ void MainWindow::decode()                                       //decode()
   datcom_.nfcal=m_fCal;
   datcom_.nfshift=nfshift;
   datcom_.ntol=m_tol;
-  datcom_.nxant=0;
   m_nutc0=datcom_.nutc;
   datcom_.nfsample=96000;
   datcom_.nBaseSubmode=m_modeQ65;
@@ -998,25 +991,11 @@ void MainWindow::guiUpdate()
       m_bWTransmitting=false;
     }
 
-//    qDebug() << "AAA" << n60 << m_bWTransmitting << m_nTx60 << m_nTx30a << m_nTx30b
-//             << itest[0] << itest[1] << itest[2] << itest[3] << itest[4];
-
-    if(n60<n60z) {
+    if((n60<n60z) and !m_diskData) {
       m_nTx30a=0;
       m_nTx30b=0;
       m_nTx60=0;
     }
-
-// Check for a file named "cfom"
-    QFile f(m_appDir + "/cfom");
-    ui->cbCFOM->setVisible(f.exists());
-    m_bCFOM=ui->cbCFOM->isVisible() and ui->cbCFOM->isChecked();
-    datcom_.nCFOM&=1;
-    if(m_bCFOM) {
-      datcom_.nCFOM|=2;
-      qDebug() << "CFOM" << n60 << datcom_.nCFOM << datcom_.ndop00 << datcom2_.ndop00;
-    }
-
     n60z=n60;
 
     if(m_pctZap>30.0) {

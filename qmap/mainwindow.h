@@ -133,7 +133,6 @@ private:
   bool    m_bAlso30=false;
   bool    m_bDiskDatBusy=false;
   bool    m_bWTransmitting=false;
-  bool    m_bCFOM=false;
 
   float   m_pctZap;
 
@@ -186,7 +185,7 @@ private:
 };
 
 extern void getfile(QString fname, bool xpol, int idInt);
-extern void save_iq(QString fname, bool xpol);
+extern void save_iq(QString fname);
 extern int killbyname(const char* progName);
 
 extern "C" {
@@ -199,8 +198,6 @@ extern "C" {
                     const char* mygrid, int* ndop00, int len1);
 
   void q65c_(int* itimer);
-
-  void cfom_(float d4[], int* k0, int* k, int* ndop0);
 
   void zaptx_(float d4[], int* k0, int* k);
 

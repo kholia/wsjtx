@@ -23,7 +23,13 @@ void getfile(QString fname, int dbDgrd)
 
   if(fp != NULL) {
     auto n = fread(&datcom_.fcenter,sizeof(datcom_.fcenter),1,fp);
-    n = fread(id,2,npts,fp);
+    n=fread(id,2,npts,fp);
+    n=fread(&datcom_.ntx30a,4,1,fp);
+    n=fread(&datcom_.ntx30b,4,1,fp);
+    if(n==0) {
+      datcom_.ntx30a=0;
+      datcom_.ntx30b=0;
+    }
     int j=0;
 
     if(dbDgrd<0) {
@@ -37,12 +43,6 @@ void getfile(QString fname, int dbDgrd)
         datcom_.d4[j++]=(float)id[i+1];
       }
     }
-    n = fread(datcom_.mygrid,sizeof(datcom_.mygrid),1,fp);
-    short int one=0;
-    n= fread(&one,2,1,fp);
-    Q_UNUSED(n);
-    datcom_.nCFOM=one;
-
     fclose(fp);
 
     datcom_.ndiskdat=1;
@@ -56,10 +56,9 @@ void getfile(QString fname, int dbDgrd)
   }
 }
 
-void save_iq(QString fname, bool bCFOM)
+void save_iq(QString fname)
 {
   int npts=2*60*96000;
-
   qint16* buf=(qint16*)malloc(2*npts);
   char name[80];
   strcpy(name,fname.toLocal8Bit());
@@ -69,15 +68,11 @@ void save_iq(QString fname, bool bCFOM)
     fwrite(&datcom_.fcenter,sizeof(datcom_.fcenter),1,fp);
     int j=0;
     for(int i=0; i<npts; i+=2) {
-      buf[i]=(qint16)datcom_.d4[j++];
-      buf[i+1]=(qint16)datcom_.d4[j++];
+      buf[i]=(qint16)qRound(datcom_.d4[j++]);
+      buf[i+1]=(qint16)qRound(datcom_.d4[j++]);
     }
     fwrite(buf,2,npts,fp);
-    if(bCFOM) {
-      fwrite(&datcom_.mygrid,sizeof(datcom_.mygrid),1,fp);
-      short int one=1;
-      fwrite(&one,2,1,fp);
-    }
+    fwrite(&datcom_.ntx30a,4,2,fp);   //Write ntx30a and ntx30b to disk
     fclose(fp);
   }
   free(buf);

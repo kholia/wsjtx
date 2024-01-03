@@ -6,7 +6,7 @@
 #include "commons.h"
 
 void getfile(QString fname, int dbDgrd);
-void save_iq(QString fname, bool bCFOM);
+void save_iq(QString fname);
 float gran();
 
 #endif // GETFILE_H
