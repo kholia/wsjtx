@@ -158,15 +158,18 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString azelDir, double xav
     mb.exec();
     return;
   }
+
   QTextStream out(&f);
   snprintf(cc,sizeof(cc),"%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Moon\n"
           "%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Sun\n"
           "%2.2d:%2.2d:%2.2d,%5.1f,%5.1f,Source\n"
-          "%4d,%6d,%6d,Doppler\n",
+          "%4d,%6d,%6d,Doppler\n"
+          "%3d,%1d,fQSO\n",
           nhr,nmin,isec,azmoon,elmoon,
           nhr,nmin,isec,azsun+azOffset,elsun+elOffset,
           nhr,nmin,isec,0.0,0.0,
-          nfreq,ndop,ndop00);
+          nfreq,ndop,ndop00,
+          datcom_.mousefqso,0);
   out << cc;
   f.close();
 }

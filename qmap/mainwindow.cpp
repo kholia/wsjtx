@@ -956,10 +956,7 @@ void MainWindow::guiUpdate()
   t1=t1.asprintf("%.3f",datcom_.fcenter);
   ui->labFreq->setText(t1);
 
-
   if(nsec != m_sec0) {                                     //Once per second
-
-//    qDebug() << "AAA" << nsec;
 
     static int n60z=99;
     int n60=nsec%60;
@@ -1017,6 +1014,7 @@ void MainWindow::guiUpdate()
       lab1->setText("");
     }
 
+    datcom_.mousefqso=m_wide_graph_window->QSOfreq();
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_astro_window->astroUpdate(t, m_myGrid, m_azelDir, m_xavg);
     QString utc = t.date().toString(" yyyy MMM dd \n") + t.time().toString();
