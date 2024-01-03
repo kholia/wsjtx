@@ -42,12 +42,20 @@ subroutine q65c(itimer)
   npatience=1
   newdat=1                          !Always on ??
 
-  call chkstat(dd,nhsym,pdb)
-  if(abs(pdb(1)-pdb(2)).gt.3.0) ntx30a=20      !We transmitted in first half
-  if(abs(pdb(3)-pdb(4)).gt.3.0) ntx30b=20      !We transmitted in second half
-  
-!  write(*,3001) nutc,nhsym,pdb,ntx30a,ntx30b
+  if(ndiskdat.eq.1) then
+     call chkstat(dd,nhsym,pdb)
+     if((abs(pdb(1)-pdb(2)).gt.3.0 .and. pdb(1).gt.1.0) .or.  &
+          pdb(1).lt.1.0) ntx30a=20                               !Tx 1st half
+     if((abs(pdb(3)-pdb(4)).gt.3.0 .and. pdb(3).gt.1.0) .or.  &
+          pdb(3).lt.1.0) ntx30b=20                               !Tx 2nd half
+     if(pdb(4).lt.0.04) then
+        ntx30a=0  !Older 56s files have no Tx
+        ntx30b=0  !Older 56s files have no Tx
+     endif
+
+!     write(*,3001) nutc,nhsym,pdb,ntx30a,ntx30b
 !3001 format(i4.4,i6,4f7.1,2i6)
+  endif
 
   if(ntx30a.gt.5) then
      dd(1:2,1:30*96000)=0.
