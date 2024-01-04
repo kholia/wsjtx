@@ -403,8 +403,11 @@ void MainWindow::dataSink(int k)
       fname += ".iq";
       *future2 = QtConcurrent::run(save_iq, fname);
       watcher2->setFuture(*future2);
-      int len1=fname.length();
-      save_qm_(fname.toLatin1(), &datcom2_.nutc, datcom2_.d4,&m_nTx30a,&m_nTx30b,len1);
+      QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
+      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter;
+      save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
+               datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, fname.length(), t.length(),
+               m_myCall.length(), m_myGrid.length());
     }
     if(ihsym==m_hsymStop) {
       m_nTx30a=0;
@@ -640,11 +643,11 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
   soundInThread.setMonitoring(m_monitoring);
   QString fname;
   fname=QFileDialog::getOpenFileName(this, "Open File", m_path,
-                                     "MAP65/QMAP Files (*.iq)");
+                                     "MAP65/QMAP Files (*.iq *.qm)");
   if(fname != "") {
     m_path=fname;
     int i;
-    i=fname.indexOf(".iq") - 11;
+    i=qMax(fname.indexOf(".iq") - 11, fname.indexOf(".qm") - 11);
     if(i>=0) {
       lab1->setStyleSheet("QLabel{background-color: #66ff66}");
       lab1->setText(" " + fname.mid(i,15) + " ");
@@ -662,7 +665,11 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
   int i,len;
   QFileInfo fi(m_path);
   QStringList list;
-  list= fi.dir().entryList().filter(".iq");
+  if(m_path.indexOf(".iq")>0) {
+    list= fi.dir().entryList().filter(".iq");
+  } else {
+    list= fi.dir().entryList().filter(".qm");
+  }
   for (i = 0; i < list.size()-1; ++i) {
     if(i==list.size()-2) m_loopall=false;
     len=list.at(i).length();
@@ -671,7 +678,7 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       QString fname=m_path.replace(n-len,len,list.at(i+1));
       m_path=fname;
       int i;
-      i=fname.indexOf(".iq") - 11;
+      i=qMax(fname.indexOf(".iq") - 11, fname.indexOf(".qm") - 11);
       if(i>=0) {
         lab1->setStyleSheet("QLabel{background-color: #66ff66}");
         lab1->setText(" " + fname.mid(i,len) + " ");
