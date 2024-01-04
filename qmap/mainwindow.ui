@@ -559,7 +559,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionDelete_all_iq_files_in_SaveDir">
    <property name="text">
-    <string>Delete all *.iq files in SaveDir</string>
+    <string>Delete all *.iq and *.qm files in SaveDir</string>
    </property>
   </action>
   <action name="actionErase_Band_Map_and_Messages">

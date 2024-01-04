@@ -404,10 +404,10 @@ void MainWindow::dataSink(int k)
       *future2 = QtConcurrent::run(save_iq, fname);
       watcher2->setFuture(*future2);
       QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
-      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter;
+//      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter;
       save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
-               datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, fname.length(), t.length(),
-               m_myCall.length(), m_myGrid.length());
+               datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
+               &datcom2_.nutc, fname.length(), t.length(), m_myCall.length(), m_myGrid.length());
     }
     if(ihsym==m_hsymStop) {
       m_nTx30a=0;
@@ -756,7 +756,7 @@ void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
   int i;
   QString fname;
   int ret = QMessageBox::warning(this, "Confirm Delete",
-      "Are you sure you want to delete all *.iq files in\n" +
+      "Are you sure you want to delete all *.iq and *.qm files in\n" +
        QDir::toNativeSeparators(m_saveDir) + " ?",
        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
   if(ret==QMessageBox::Yes) {
@@ -766,6 +766,8 @@ void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
     for(f=files.begin(); f!=files.end(); ++f) {
       fname=*f;
       i=(fname.indexOf(".iq"));
+      if(i==11) dir.remove(fname);
+      i=(fname.indexOf(".qm"));
       if(i==11) dir.remove(fname);
     }
   }

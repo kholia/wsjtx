@@ -1,9 +1,11 @@
-subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b)
+subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,nutc)
 
   parameter(NMAX=60*96000)
   character*(*) fname,prog_id,mycall,mygrid
   character prog_id_24*24,mycall_12*12,mygrid_6*6
   real*4 dd(2,NMAX)
+  real*8 fcenter
+  integer nxtra(16)                        !For possible future additions
   integer*1 id1(2,NMAX)
 
   ia=1
@@ -45,16 +47,18 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b)
   
   jz=len(fname)
   fname(jz-1:jz)="qm"
-  write(*,3001) fname(jz-13:jz),rms,db(rms*rms),dmax,nbad,ia,ib,      &
-       nsum/(2*96000),ntx30a,ntx30b
-3001 format(a14,3f7.1,i8,2i9,3i5)
+!  write(*,3001) fname(jz-13:jz),rms,db(rms*rms),dmax,nbad,ia,ib,      &
+!       nsum/(2*96000),ntx30a,ntx30b
+!3001 format(a14,3f7.1,i8,2i9,3i5)
 
   open(29,file=trim(fname),status='unknown',access='stream')
   prog_id_24=prog_id//"        "
   mycall_12=mycall
   mygrid_6=mygrid
-  write(29) prog_id_24,mycall_12,mygrid_6,ntx30a,ntx30b,ia,ib
-  write(29) id1(1:2,ia:ib)
+  write(29) prog_id_24,mycall_12,mygrid_6,fcenter,nutc,ntx30a,ntx30b,  &
+       ia,ib,nxtra                     !Write header to disk
+  write(29) id1(1:2,ia:ib)             !Write 8-bit data to disk
+  close(29)
 
   return
 end subroutine save_qm

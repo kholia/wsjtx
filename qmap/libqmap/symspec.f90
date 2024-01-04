@@ -93,7 +93,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
   if(nzap/178.lt.50 .and. (ndiskdat.eq.0 .or. ihsym.lt.280)) then
      nsum=nblks*kstep - nzap
      if(nsum.le.0) nsum=1
-     rmsx=sqrt(0.5*px/nsum)
+     rmsx=sqrt(px/nsum)
      rms=rmsx
   endif
   pxdb=0.

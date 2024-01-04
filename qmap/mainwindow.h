@@ -202,7 +202,8 @@ extern "C" {
   void zaptx_(float d4[], int* k0, int* k);
 
   void save_qm_(const char* fname, const char* prog_id, const char* mycall, const char* mygrid,
-                float d4[], int* ntx30a, int* ntx30b, int len1, int len2, int len3, int len4);
+                float d4[], int* ntx30a, int* ntx30b, double* fcenter, int* nutc,
+                int len1, int len2, int len3, int len4);
 
   void read_qm_(const char* fname, int len);
 
