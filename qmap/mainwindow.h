@@ -115,6 +115,8 @@ private:
   qint32  m_nDoubleClicked=0;
   qint32  m_nline=0;
   qint32  m_WSJTX_TRperiod=0;
+  qint32  m_dop00=0;
+  qint32  m_dop58=0;
   qint32  m_zero=0;
   qint32  m_one=1;
 
@@ -203,7 +205,7 @@ extern "C" {
 
   void save_qm_(const char* fname, const char* prog_id, const char* mycall, const char* mygrid,
                 float d4[], int* ntx30a, int* ntx30b, double* fcenter, int* nutc,
-                int len1, int len2, int len3, int len4);
+                int* dop00, int* dop58, int len1, int len2, int len3, int len4);
 
   void read_qm_(const char* fname, int len);
 

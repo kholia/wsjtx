@@ -407,7 +407,8 @@ void MainWindow::dataSink(int k)
 //      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter;
       save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
                datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
-               &datcom2_.nutc, fname.length(), t.length(), m_myCall.length(), m_myGrid.length());
+               &datcom2_.nutc, &m_dop00, &m_dop58,
+               fname.length(), t.length(), m_myCall.length(), m_myGrid.length());
     }
     if(ihsym==m_hsymStop) {
       m_nTx30a=0;
@@ -1039,6 +1040,8 @@ void MainWindow::guiUpdate()
     ui->labUTC->setText(utc);
     m_hsym0=khsym;
     m_sec0=nsec;
+    if(n60==0) m_dop00=datcom_.ndop00;
+    if(n60==58) m_dop58=datcom_.ndop00;
   }
 }
 

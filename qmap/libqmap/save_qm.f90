@@ -1,4 +1,5 @@
-subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,nutc)
+subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
+     nutc,ndop00,ndop58)
 
   parameter(NMAX=60*96000)
   character*(*) fname,prog_id,mycall,mygrid
@@ -56,7 +57,7 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,nutc)
   mycall_12=mycall
   mygrid_6=mygrid
   write(29) prog_id_24,mycall_12,mygrid_6,fcenter,nutc,ntx30a,ntx30b,  &
-       ia,ib,nxtra                     !Write header to disk
+       ndop00,ndop58,ia,ib,nxtra                     !Write header to disk
   write(29) id1(1:2,ia:ib)             !Write 8-bit data to disk
   close(29)
 
