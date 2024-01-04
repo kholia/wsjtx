@@ -203,6 +203,9 @@ extern "C" {
 
   void save_qm_(const char* fname, const char* prog_id, const char* mycall, const char* mygrid,
                 float d4[], int* ntx30a, int* ntx30b, int len1, int len2, int len3, int len4);
+
+  void read_qm_(const char* fname, int len);
+
   }
 
 #endif // MAINWINDOW_H

@@ -655,7 +655,11 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
     if(m_monitoring) on_monitorButton_clicked();
     m_diskData=true;
     int dbDgrd=0;
-    *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
+    if(m_path.indexOf(".iq")>0) {
+      *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
+    } else {
+      *future1 = QtConcurrent::run(read_qm_, fname.toLatin1(), fname.length());
+    }
     watcher1->setFuture(*future1);
   }
 }
@@ -685,7 +689,11 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       }
       m_diskData=true;
       int dbDgrd=0;
-      *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
+      if(m_path.indexOf(".iq")>0) {
+        *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
+      } else {
+        *future1 = QtConcurrent::run(read_qm_, fname.toLatin1(), fname.length());
+      }
       watcher1->setFuture(*future1);
       return;
     }
