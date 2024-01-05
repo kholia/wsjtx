@@ -6,7 +6,7 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
   character prog_id_24*24,mycall_12*12,mygrid_6*6
   real*4 dd(2,NMAX)
   real*8 fcenter
-  integer nxtra(16)                        !For possible future additions
+  integer nxtra(15)                        !For possible future additions
   integer*1 id1(2,NMAX)
 
   ia=1
@@ -25,10 +25,10 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
 
   nbad=0
   dmax=0.
-  fac=10.0/rms
+  fac0=10.0/rms
   do i=ia,ib
-     x=fac*dd(1,i)
-     y=fac*dd(2,i)
+     x=fac0*dd(1,i)
+     y=fac0*dd(2,i)
      ax=abs(x)
      ay=abs(y)
      dmax=max(dmax,ax,ay)
@@ -57,7 +57,7 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
   mycall_12=mycall
   mygrid_6=mygrid
   write(29) prog_id_24,mycall_12,mygrid_6,fcenter,nutc,ntx30a,ntx30b,  &
-       ndop00,ndop58,ia,ib,nxtra                     !Write header to disk
+       ndop00,ndop58,ia,ib,fac0,nxtra  !Write header to disk
   write(29) id1(1:2,ia:ib)             !Write 8-bit data to disk
   close(29)
 

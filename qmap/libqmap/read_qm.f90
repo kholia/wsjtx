@@ -5,17 +5,19 @@ subroutine read_qm(fname)
   character*(*) fname
   character prog_id*24,mycall*12,mygrid*6
   real*8 fcenter
-  integer nxtra(16)                        !For possible future additions
+  integer nxtra(15)                        !For possible future additions
   integer*1 id1(2,NMAX)
   common/datcom/dd(2,5760000),ss(400,NFFT),savg(NFFT),fcenter,nutc,junk(NJUNK)
 
   open(28,file=trim(fname),status='old',access='stream',err=900)
   read(28) prog_id,mycall,mygrid,fcenter,nutc,ntx30a,ntx30b,ndop00,ndop58,  &
-       ia,ib,nxtra
+       ia,ib,fac0,nxtra
+  fac=1.0
+  if(fac0.gt.0.0) fac=1.0/fac0
   id1=0
   read(28) id1(1:2,ia:ib)
   dd=0.
-  dd(1:2,ia:ib)=2.4*id1(1:2,ia:ib)    !### Why the boost by 2.4 ???
+  dd(1:2,ia:ib)=fac*id1(1:2,ia:ib)   !Boost back to previous level
 
 !  write(*,3001) prog_id,mycall(1:6),mygrid,fcenter,nutc,ntx30a,ntx30b,  &
 !       ndop00,ndop58,ia,ib
