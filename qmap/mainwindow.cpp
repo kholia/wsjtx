@@ -314,12 +314,15 @@ void MainWindow::dataSink(int k)
   static int ntrz=0;
   static int nkhz;
   static int nfsample=96000;
+  static int nsec0=0;
+  static int nsum=0;
   static int ndiskdat;
   static int nb;
   static int k0=0;
   static float px=0.0;
   static uchar lstrong[1024];
   static float slimit;
+  static double xsum=0.0;
 
   if(m_diskData) {
     ndiskdat=1;
@@ -338,6 +341,18 @@ void MainWindow::dataSink(int k)
 
   symspec_(&k, &ndiskdat, &nb, &m_NBslider, &nfsample,
            &px, s, &nkhz, &ihsym, &nzap, &slimit, lstrong);
+
+  int nsec=QDateTime::currentSecsSinceEpoch();
+  if(nsec==nsec0) {
+    xsum+=pow(10.0,0.1*px);
+    nsum+=1;
+  } else {
+    m_xavg=0.0;
+    if(nsum>0) m_xavg=xsum/nsum;
+    xsum=pow(10.0,0.1*px);
+    nsum=1;
+  }
+  nsec0=nsec;
 
   if(m_bWTransmitting) px=0.0;
   QString t;
