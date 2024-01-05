@@ -83,7 +83,7 @@ void Astro::astroUpdate(QDateTime t, QString mygrid, QString azelDir, double xav
           "Dgrd:   %6.1f",
           azmoon,elmoon,ndop00,decmoon,azsun,elsun,
           nfreq,ntsky,xnr,dgrd);
-  ui->astroTextBrowser->setText(" "+ date + "\nUTC: " + utc + "\n" + cc);
+  ui->astroTextBrowser->setText(" "+ date + "\nUTC:  " + utc + "\n" + cc);
 
   double azOffset=0.0;
   double elOffset=0.0;
