@@ -7,7 +7,10 @@ subroutine read_qm(fname)
   real*8 fcenter
   integer nxtra(15)                        !For possible future additions
   integer*1 id1(2,NMAX)
-  common/datcom/dd(2,5760000),ss(400,NFFT),savg(NFFT),fcenter,nutc,junk(NJUNK)
+  common/datcom/dd(2,5760000),ss(400,NFFT),savg(NFFT),                  &
+       fcenter,nutc,fselected,mousedf,mousefqso,nagain,                 &
+       ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,              &
+       ntx30a,ntx30b   !...
 
   open(28,file=trim(fname),status='old',access='stream',err=900)
   read(28) prog_id,mycall,mygrid,fcenter,nutc,ntx30a,ntx30b,ndop00,ndop58,  &

@@ -419,7 +419,8 @@ void MainWindow::dataSink(int k)
       *future2 = QtConcurrent::run(save_iq, fname);
       watcher2->setFuture(*future2);
       QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
-//      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter;
+//      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter
+//               << m_nTx30a << m_nTx30b << datcom2_.ntx30a << datcom2_.ntx30b;
       save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
                datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
                &datcom2_.nutc, &m_dop00, &m_dop58,
@@ -835,12 +836,6 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
-  if(m_nTx60>10) return; //Don't decode if WSJT-X transmitted too much in 60 s mode
-//No need to call decoder for first half, if we transmitted in the first half:
-  if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
-//No need to call decoder in second half, if we transmitted in that half:
-  if((datcom_.nhsym>200) and (m_nTx30b>5)) return;
-
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
 
@@ -914,10 +909,14 @@ void MainWindow::decode()                                       //decode()
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
 
-  if(m_nTx30a<5 or m_nTx30b<5 ) {
-    watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &m_zero)));
-    decodeBusy(true);
-  }
+//No need to call decoder for first half, if we transmitted in the first half:
+  if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
+
+//No need to call decoder in second half, if we transmitted in that half:
+  if((datcom_.nhsym>200) and (m_nTx30b>5)) return;
+
+  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &m_zero)));
+  decodeBusy(true);
 }
 
 void MainWindow::on_EraseButton_clicked()
