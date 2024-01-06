@@ -135,6 +135,7 @@ private:
   bool    m_bAlso30=false;
   bool    m_bDiskDatBusy=false;
   bool    m_bWTransmitting=false;
+  bool    m_bDecodeAgain=false;
 
   float   m_pctZap;
 

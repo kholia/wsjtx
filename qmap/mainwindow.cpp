@@ -766,6 +766,12 @@ void MainWindow::decoderFinished()                      //diskWriteFinished
   QString t1;
   t1=t1.asprintf(" %.1f s  %d/%d ", 0.15*datcom2_.nhsym, decodes_.ndecodes, decodes_.ncand);
   lab4->setText(t1);
+  if(m_bDecodeAgain) {
+    datcom_.nhsym=390;
+    datcom_.nagain=1;
+    m_bDecodeAgain=false;
+    decode();
+  }
 }
 
 void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
@@ -797,8 +803,6 @@ void MainWindow::on_actionNone_triggered()                    //Save None
   lab5->setText("");
 }
 
-// ### Implement "Save Last" here? ###
-
 void MainWindow::on_actionSave_all_triggered()                //Save All
 {
   m_saveAll=true;
@@ -811,6 +815,10 @@ void MainWindow::on_DecodeButton_clicked()                    //Decode request
   if(!m_decoderBusy) {
     datcom_.newdat=0;
     datcom_.nagain=1;
+    if(m_bAlso30 and m_nTx30a<5) {
+      datcom_.nhsym=200;                   //Decode the first half-minute
+      if(m_nTx30b<5) m_bDecodeAgain=true;  //Queue up decoding of the seciond half minute
+    }
     decode();
   }
 }
@@ -829,7 +837,7 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
   if(!m_decoderBusy) {
     datcom_.nagain=1;
     datcom_.newdat=0;
-    decode();
+    on_DecodeButton_clicked();
   }
 }
 
@@ -838,7 +846,6 @@ void MainWindow::decode()                                       //decode()
   if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
   QString fname="           ";
   ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
-
   if(datcom_.nagain==0 && (!m_diskData)) {
     qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
     int imin=ms/60000;
