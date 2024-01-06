@@ -807,7 +807,7 @@ void MainWindow::on_actionSave_all_triggered()                //Save All
 {
   m_saveAll=true;
   lab5->setStyleSheet("QLabel{background-color: #ffff00}");
-  lab5->setText("Saving .iq  files");
+  lab5->setText("Saving files");
 }
 
 void MainWindow::on_DecodeButton_clicked()                    //Decode request
