@@ -10176,10 +10176,7 @@ list1Done:
     if(list2.size()==m_Nslots) {
       break;
     }
-
-    if(m_foxQSO.count()>=5*3 /* could have 5 slots * 3 states ([0-2],4,5) */) {
-      break;
-    }
+    
   }
 
 list2Done:
