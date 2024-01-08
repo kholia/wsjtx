@@ -70,8 +70,15 @@ subroutine jt9a()
      call multimode_decoder(shared_data%ss,id2a,local_params,12000)
      local_params%nzhsym=50
   endif
-! Normal decoding pass
-  call multimode_decoder(shared_data%ss,shared_data%id2,local_params,12000)
+
+  if(local_params%nmode .eq. 144) then
+    ! MSK144
+    call decode_msk144(shared_data%id2, shared_data%params, data_dir)
+  else
+    ! Normal decoding pass
+    call multimode_decoder(shared_data%ss,shared_data%id2,local_params,12000)
+  endif
+
   call timer('decoder ',1)
 
 

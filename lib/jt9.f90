@@ -27,7 +27,7 @@ program jt9
   logical :: read_files = .true., tx9 = .false., display_help = .false.,     &
        bLowSidelobes = .false., nexp_decode_set = .false.,                   &
        have_ntol = .false.
-  type (option) :: long_options(32) = [                                      &
+  type (option) :: long_options(33) = [                                      &
     option ('help', .false., 'h', 'Display this help message', ''),          &
     option ('shmem',.true.,'s','Use shared memory for sample data','KEY'),   &
     option ('tr-period', .true., 'p', 'Tx/Rx period, default SECONDS=60',    &
@@ -64,6 +64,7 @@ program jt9
     option ('ft8', .false., '8', 'FT8 mode', ''),                            &
     option ('jt9', .false., '9', 'JT9 mode', ''),                            &
     option ('qra64', .false., 'q', 'QRA64 mode', ''),                        &
+    option ('msk144', .false., 'k', 'MSK144 mode', ''),                      &    
     option ('QSOprog', .true., 'Q', 'QSO progress (0-5), default PROGRESS=1',&
         'QSOprogress'),                                                      &
     option ('sub-mode', .true., 'b', 'Sub mode, default SUBMODE=A', 'A'),    &
@@ -91,7 +92,7 @@ program jt9
   TRperiod=60.d0
 
   do
-     call getopt('hs:e:a:b:r:m:p:d:f:F:w:t:9876543WYqTL:S:H:c:G:x:g:X:Q:',     &
+     call getopt('hs:e:a:b:r:m:p:d:f:F:w:t:9876543WYqkTL:S:H:c:G:x:g:X:Q:',     &
           long_options,c,optarg,arglen,stat,offset,remain,.true.)
      if (stat .ne. 0) then
         exit
@@ -129,7 +130,9 @@ program jt9
            read (optarg(:arglen), *) fhigh
         case ('q')
            mode = 164
-        case ('Q')
+         case ('k')
+           mode = 144
+         case ('Q')
            read (optarg(:arglen), *) nQSOProg
         case ('3')
            mode = 66
@@ -352,7 +355,12 @@ program jt9
         call multimode_decoder(shared_data%ss,id2a,      &
              shared_data%params,nfsample)
         cycle
+
+     ! MSK144        
+     else if (mode .eq. 144) then
+      call decode_msk144(shared_data%id2, shared_data%params, data_dir)
      endif
+
 ! Normal decoding pass
      call multimode_decoder(shared_data%ss,shared_data%id2, &
           shared_data%params,nfsample)
