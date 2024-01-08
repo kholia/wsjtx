@@ -54,7 +54,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   cx=fac*cx
 
 ! Here cx is frequency-domain data around the selected
-! QSO frequency, taken from the full-length FFT computed in filbig().
+! QSO frequency, taken from the full-length FFT computed in fftbig().
 ! Values for fsample, nfft1, nfft2, df, and the downsampled data rate
 ! are as follows:
 

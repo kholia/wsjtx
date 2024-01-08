@@ -57,9 +57,9 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   bClickDecode=(nagain.eq.1)
   nagain2=0
 
-  call timer('filbig  ',0)
-  call filbig(dd,NSMAX,f0,newdat,nfsample,cx,n5) !Do the full-length FFT
-  call timer('filbig  ',1)
+  call timer('fftbig  ',0)
+  call fftbig(dd,NSMAX) !Do the full-length FFT
+  call timer('fftbig  ',1)
 
   do icand=1,ncand                        !Attempt to decode each candidate
      f0=cand(icand)%f

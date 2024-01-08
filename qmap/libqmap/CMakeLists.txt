@@ -10,10 +10,10 @@ set (libq65_FSRCS
   decode0.f90
   dot.f90
   fchisq0.f90
-  filbig.f90
-  four2a.f90
+  fftbig.f90
+#  four2a.f90
   ftninit.f90
-  ftnquit.f90
+#  ftnquit.f90
   geocentric.f90
   getcand2.f90
   grid2deg.f90
