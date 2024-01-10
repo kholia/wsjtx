@@ -7,7 +7,7 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
   real*4 dd(2,NMAX)
   real*8 fcenter
   integer nxtra(15)                        !For possible future additions
-  integer*1 id1(2,NMAX)
+  integer*1,allocatable :: id1(:,:)
 
   ia=1
   ib=NMAX
@@ -26,6 +26,8 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
   nbad=0
   dmax=0.
   fac0=10.0/rms
+  allocate(id1(1:2,1:NMAX))
+  
   do i=ia,ib
      x=fac0*dd(1,i)
      y=fac0*dd(2,i)
@@ -56,10 +58,12 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
   prog_id_24=prog_id//"        "
   mycall_12=mycall
   mygrid_6=mygrid
+  nxtra=0
   write(29) prog_id_24,mycall_12,mygrid_6,fcenter,nutc,ntx30a,ntx30b,  &
        ndop00,ndop58,ia,ib,fac0,nxtra  !Write header to disk
   write(29) id1(1:2,ia:ib)             !Write 8-bit data to disk
   close(29)
+  deallocate(id1)
 
   return
 end subroutine save_qm
