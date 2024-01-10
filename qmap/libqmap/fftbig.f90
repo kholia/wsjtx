@@ -14,7 +14,7 @@ subroutine fftbig(dd,nmax)
   logical first
   common/cacb/ca
   equivalence (rfilt,cfilt)
-  data first/.true./,npatience/1/
+  data first/.true./,npatience/0/
   save
 
   if(nmax.lt.0) go to 900

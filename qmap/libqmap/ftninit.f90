@@ -16,9 +16,5 @@ subroutine ftninit
   open(17,file=appd//'/red.dat',status='unknown')
   open(19,file=appd//'/livecq.txt',status='unknown')
 
-  iret=fftwf_init_threads()            !Initialize FFTW threading 
-! Default to 1 thread, but use nthreads for the big ones
-  call fftwf_plan_with_nthreads(1)
-
   return
 end subroutine ftninit
