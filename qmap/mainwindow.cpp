@@ -109,8 +109,7 @@ MainWindow::MainWindow(QWidget *parent) :
   memset(ipc_wsjtx,0,memSize);         //Zero all of shared memory
   mem_qmap.unlock();
 
-  fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
-
+//  fftwf_import_wisdom_from_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
   readSettings();		             //Restore user's setup params
 
   m_pbdecoding_style1="QPushButton{background-color: cyan; \
@@ -199,7 +198,7 @@ MainWindow::~MainWindow()
     soundInThread.quit();
     soundInThread.wait(3000);
   }
-  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
+//  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
   delete ui;
 }
 
