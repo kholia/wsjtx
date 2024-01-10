@@ -461,6 +461,7 @@ p, li { white-space: pre-wrap; }
      <string>Save</string>
     </property>
     <addaction name="actionNone"/>
+    <addaction name="actionSave_decoded"/>
     <addaction name="actionSave_all"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -844,6 +845,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Also Q65-30x</string>
+   </property>
+  </action>
+  <action name="actionSave_decoded">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Save decoded</string>
    </property>
   </action>
  </widget>

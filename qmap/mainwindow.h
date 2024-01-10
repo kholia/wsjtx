@@ -85,6 +85,8 @@ private slots:
   void on_actionAlso_Q65_30x_toggled(bool b);
   void on_sbMaxDrift_valueChanged(int arg1);
 
+  void on_actionSave_decoded_triggered();
+
 private:
   Ui::MainWindow *ui;
   QString m_appDir;
@@ -130,6 +132,7 @@ private:
   bool    m_restart;
   bool    m_startAnother;
   bool    m_saveAll;
+  bool    m_saveDecoded;
   bool    m_NB;
   bool    m_decode_called=false;
   bool    m_bAlso30=false;

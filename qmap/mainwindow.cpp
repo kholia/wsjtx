@@ -60,8 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->actionQ65E->setActionGroup(modeGroup2);
 
   QActionGroup* saveGroup = new QActionGroup(this);
-  ui->actionSave_all->setActionGroup(saveGroup);
   ui->actionNone->setActionGroup(saveGroup);
+  ui->actionSave_all->setActionGroup(saveGroup);
+  ui->actionSave_decoded->setActionGroup(saveGroup);
 
   setWindowTitle (program_title ());
 
@@ -82,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
   m_loopall=false;
   m_startAnother=false;
   m_saveAll=false;
+  m_saveDecoded=false;
   m_sec0=-1;
   m_hsym0=-1;
   m_palette="CuteSDR";
@@ -232,6 +234,7 @@ void MainWindow::writeSettings()
   settings.setValue("nModeQ65",m_modeQ65);
   settings.setValue("SaveNone",ui->actionNone->isChecked());
   settings.setValue("SaveAll",ui->actionSave_all->isChecked());
+  settings.setValue("SaveDecoded",ui->actionSave_decoded->isChecked());
   settings.setValue("ContinuousWaterfall",ui->continuous_waterfall->isChecked());
   settings.setValue("NB",m_NB);
   settings.setValue("NBslider",m_NBslider);
@@ -279,11 +282,16 @@ void MainWindow::readSettings()
 
   ui->actionNone->setChecked(settings.value("SaveNone",true).toBool());
   ui->actionSave_all->setChecked(settings.value("SaveAll",false).toBool());
+  ui->actionSave_decoded->setChecked(settings.value("SaveDecoded",false).toBool());
   ui->continuous_waterfall->setChecked(settings.value("ContinuousWaterfall",false).toBool());
   m_saveAll=ui->actionSave_all->isChecked();
+  m_saveDecoded=ui->actionSave_decoded->isChecked();
   if(m_saveAll) {
     lab5->setStyleSheet("QLabel{background-color: #ffff00}");
-    lab5->setText("Saving .iq  files");
+    lab5->setText("Save all");
+  } else if(m_saveDecoded) {
+    lab5->setStyleSheet("QLabel{background-color: #ffff00}");
+    lab5->setText("Save decoded");
   } else {
     lab5->setStyleSheet("");
     lab5->setText("");
@@ -410,7 +418,8 @@ void MainWindow::dataSink(int k)
     QDateTime t = QDateTime::currentDateTimeUtc();
     m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
-    if(m_saveAll and !m_diskData and m_nTx60<10 and ihsym==m_hsymStop) {
+    if((m_saveAll or (m_saveDecoded and decodes_.ndecodes>0)) and !m_diskData and
+       m_nTx60<10 and ihsym==m_hsymStop) {
       QDir dir(m_saveDir);
       if (!dir.exists()) dir.mkpath(".");
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
@@ -419,8 +428,6 @@ void MainWindow::dataSink(int k)
       *future2 = QtConcurrent::run(save_iq, fname);
       watcher2->setFuture(*future2);
       QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
-//      qDebug() << "aa" << t.simplified() << m_myCall << m_myGrid << datcom_.fcenter
-//               << m_nTx30a << m_nTx30b << datcom2_.ntx30a << datcom2_.ntx30b;
       save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
                datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
                &datcom2_.nutc, &m_dop00, &m_dop58,
@@ -799,15 +806,25 @@ void MainWindow::on_actionDelete_all_iq_files_in_SaveDir_triggered()
 void MainWindow::on_actionNone_triggered()                    //Save None
 {
   m_saveAll=false;
+  m_saveDecoded=false;
   lab5->setStyleSheet("");
   lab5->setText("");
 }
 
-void MainWindow::on_actionSave_all_triggered()                //Save All
+void MainWindow::on_actionSave_decoded_triggered()
+{
+  m_saveDecoded=true;
+  m_saveAll=false;
+  lab5->setStyleSheet("QLabel{background-color: #ffff00}");
+  lab5->setText("Save decoded");
+}
+
+void MainWindow::on_actionSave_all_triggered()
 {
   m_saveAll=true;
+  m_saveDecoded=false;
   lab5->setStyleSheet("QLabel{background-color: #ffff00}");
-  lab5->setText("Saving files");
+  lab5->setText("Save all");
 }
 
 void MainWindow::on_DecodeButton_clicked()                    //Decode request
