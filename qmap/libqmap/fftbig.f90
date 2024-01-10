@@ -1,17 +1,17 @@
 subroutine fftbig(dd,nmax)
 
-! Filter and downsample complex data stored in array dd(2,nmax).  
-! Output is downsampled from 96000 Hz to 1375.125 Hz.
+! Do the full length FFT of complex data stored in array dd(2,nmax).  
 
+  use, intrinsic :: iso_c_binding
+  
+  use FFTW3
   use timer_module, only: timer
-  parameter (MAXFFT1=5376000,MAXFFT2=77175)
+  parameter (MAXFFT1=5376000)
   real*4  dd(2,nmax)                         !Input data
   complex ca(MAXFFT1)                        !FFT of input
-  complex c4a(MAXFFT2)                       !Output data
   real*8 df
-  integer*8 plan1
+  type(C_PTR) :: plan1                       !Pointer to FFTW plan
   logical first
-  include 'fftw3.f'
   common/cacb/ca
   equivalence (rfilt,cfilt)
   data first/.true./,npatience/1/
@@ -29,7 +29,7 @@ subroutine fftbig(dd,nmax)
      
 ! Plan the big FFT just once
      call timer('FFTplan ',0)
-     call sfftw_plan_dft_1d(plan1,nfft1,ca,ca,FFTW_BACKWARD,nflags)
+     plan1=fftwf_plan_dft_1d(nfft1,ca,ca,+1,nflags)
      call timer('FFTplan ',1)
      df=96000.d0/nfft1
      first=.false.
@@ -46,11 +46,11 @@ subroutine fftbig(dd,nmax)
      enddo
   endif
   call timer('FFTbig  ',0)
-  call sfftw_execute(plan1)
+  call fftwf_execute_dft(plan1,ca,ca)
   call timer('FFTbig  ',1)
   go to 999
 
-900 call sfftw_destroy_plan(plan1)
+900 call fftwf_destroy_plan(plan1)
 
 999 return
 end subroutine fftbig
