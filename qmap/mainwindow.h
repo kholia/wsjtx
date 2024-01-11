@@ -135,7 +135,7 @@ private:
   bool    m_saveDecoded;
   bool    m_NB;
   bool    m_decode_called=false;
-  bool    m_bAlso30=false;
+  bool    m_bAlso30=true;
   bool    m_bDiskDatBusy=false;
   bool    m_bWTransmitting=false;
   bool    m_bDecodeAgain=false;

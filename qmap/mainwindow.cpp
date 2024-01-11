@@ -301,7 +301,7 @@ void MainWindow::readSettings()
   ui->sbOffset->setValue(settings.value("Offset",1500).toInt());
   m_NBslider=settings.value("NBslider",40).toInt();
   ui->NBslider->setValue(m_NBslider);
-  m_bAlso30=settings.value("Also30",false).toBool();
+  m_bAlso30=settings.value("Also30",true).toBool();
   ui->actionAlso_Q65_30x->setChecked(m_bAlso30);
   on_actionAlso_Q65_30x_toggled(m_bAlso30);
   if(!ui->actionLinrad->isChecked() && !ui->actionCuteSDR->isChecked() &&
