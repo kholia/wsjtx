@@ -424,8 +424,8 @@ void MainWindow::dataSink(int k)
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
       fname += ".iq";
-      *future2 = QtConcurrent::run(save_iq, fname);
-      watcher2->setFuture(*future2);
+//      *future2 = QtConcurrent::run(save_iq, fname);
+//      watcher2->setFuture(*future2);
       QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
       save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
                datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
