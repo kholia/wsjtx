@@ -39,7 +39,7 @@ public slots:
   void showSoundInError(const QString& errorMsg);
   void showStatusMessage(const QString& statusMsg);
   void dataSink(int k);
-  void diskDat();
+  void diskDat(int iret);
   void decoderFinished();
   void freezeDecode(int n);
   void guiUpdate();
@@ -155,8 +155,6 @@ private:
 
   QMessageBox msgBox0;
 
-  QFuture<void>* future1;
-  QFutureWatcher<void>* watcher1;
   QFutureWatcher<void> watcher3;     //For decoder
 
   QString m_path;
@@ -208,7 +206,7 @@ extern "C" {
                 float d4[], int* ntx30a, int* ntx30b, double* fcenter, int* nutc,
                 int* dop00, int* dop58, int len1, int len2, int len3, int len4);
 
-  void read_qm_(const char* fname, int len);
+  void read_qm_(const char* fname, int* iret, int len);
 
   }
 

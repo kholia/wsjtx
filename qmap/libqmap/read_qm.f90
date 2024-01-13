@@ -1,4 +1,4 @@
-subroutine read_qm(fname)
+subroutine read_qm(fname,iret)
 
   include 'njunk.f90'
   parameter(NMAX=60*96000,NFFT=32768)
@@ -13,22 +13,36 @@ subroutine read_qm(fname)
        ntx30a,ntx30b   !...
 
   open(28,file=trim(fname),status='old',access='stream',err=900)
-  read(28) prog_id,mycall,mygrid,fcenter,nutc,ntx30a,ntx30b,ndop00,ndop58,  &
-       ia,ib,fac0,nxtra
+  read(28,end=910) prog_id,mycall,mygrid,fcenter,nutc,ntx30a,           &
+       ntx30b,ndop00,ndop58,ia,ib,fac0,nxtra
   fac=1.0
   if(fac0.gt.0.0) fac=1.0/fac0
   id1=0
-  read(28) id1(1:2,ia:ib)
+  read(28,end=910) id1(1:2,ia:ib)
   dd=0.
   dd(1:2,ia:ib)=fac*id1(1:2,ia:ib)   !Boost back to previous level
-
+  iret=3
+  if(ib.eq.NMAX/2) iret=1
+  if(ia.eq.NMAX/2+1) iret=2
+!  print*,'A',ia,ib,iret
 !  write(*,3001) prog_id,mycall(1:6),mygrid,fcenter,nutc,ntx30a,ntx30b,  &
 !       ndop00,ndop58,ia,ib
 !3001 format(a24,2x,a6,2x,a6,f10.3,i6.4,2i5/4i9)
   go to 999
 
-900 print*,'Cannot open ',fname
+900 iret=-1; go to 999
+910 iret=-2
 
 999 close(28)
+
+!  sq1=0.
+!  sq2=0.
+!  NH=NMAX/2
+!  do i=1,NMAX
+!     if(i.le.NH) sq1=sq1 + dd(1,i)*dd(1,i) + dd(2,i)*dd(2,i)
+!     if(i.gt.NH) sq2=sq2 + dd(1,i)*dd(1,i) + dd(2,i)*dd(2,i)
+!  enddo
+!  print*,'B',sqrt(sq1/NMAX),sqrt(sq2/NMAX)
+
   return
 end subroutine read_qm

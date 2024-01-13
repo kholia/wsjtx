@@ -132,9 +132,6 @@ MainWindow::MainWindow(QWidget *parent) :
   if(m_modeQ65==4) on_actionQ65D_triggered();
   if(m_modeQ65==5) on_actionQ65E_triggered();
 
-  future1 = new QFuture<void>;
-  watcher1 = new QFutureWatcher<void>;
-  connect(watcher1, SIGNAL(finished()),this,SLOT(diskDat()));
   connect(&watcher3, SIGNAL(finished()),this,SLOT(decoderFinished()));
 
 // Assign input device and start input thread
@@ -671,12 +668,13 @@ void MainWindow::on_actionOpen_triggered()                     //Open File
     if(m_monitoring) on_monitorButton_clicked();
     m_diskData=true;
     int dbDgrd=0;
+    int iret=4;
     if(m_path.indexOf(".iq")>0) {
-      *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
+      getfile(fname, dbDgrd);
     } else {
-      *future1 = QtConcurrent::run(read_qm_, fname.toLatin1(), fname.length());
+      read_qm_(fname.toLatin1(), &iret, fname.length());
     }
-    watcher1->setFuture(*future1);
+    if(iret > 0) diskDat(iret);
   }
 }
 
@@ -705,12 +703,13 @@ void MainWindow::on_actionOpen_next_in_directory_triggered()   //Open Next
       }
       m_diskData=true;
       int dbDgrd=0;
+      int iret=4;
       if(m_path.indexOf(".iq")>0) {
-        *future1 = QtConcurrent::run(getfile, fname, dbDgrd);
+        getfile(fname, dbDgrd);
       } else {
-        *future1 = QtConcurrent::run(read_qm_, fname.toLatin1(), fname.length());
+        read_qm_(fname.toLatin1(), &iret, fname.length());
       }
-      watcher1->setFuture(*future1);
+      if(iret > 0) diskDat(iret);
       return;
     }
   }
@@ -722,8 +721,12 @@ void MainWindow::on_actionDecode_remaining_files_in_directory_triggered()
   on_actionOpen_next_in_directory_triggered();
 }
 
-void MainWindow::diskDat()                                   //diskDat()
+void MainWindow::diskDat(int iret)                                   //diskDat()
 {
+  int ia=0;
+  int ib=400;
+  if(iret==1) ib=202;
+//  qDebug() << "aa" << iret << ia << ib;
   m_bDiskDatBusy=true;
   double hsym;
   //These may be redundant??
@@ -732,7 +735,7 @@ void MainWindow::diskDat()                                   //diskDat()
   m_nTx30a=datcom_.ntx30a;
   m_nTx30b=datcom_.ntx30b;
   hsym=0.15*96000.0;                   //Samples per Q65-30x half-symbol or Q65-60x quarter-symbol
-  for(int i=0; i<400; i++) {           // Do the half-symbol FFTs
+  for(int i=ia; i<ib; i++) {           // Do the half-symbol FFTs
     int k = i*hsym + 0.5;
     if(k > 60*96000) break;
     dataSink(k);
