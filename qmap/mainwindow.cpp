@@ -135,11 +135,6 @@ MainWindow::MainWindow(QWidget *parent) :
   future1 = new QFuture<void>;
   watcher1 = new QFutureWatcher<void>;
   connect(watcher1, SIGNAL(finished()),this,SLOT(diskDat()));
-
-  future2 = new QFuture<void>;
-  watcher2 = new QFutureWatcher<void>;
-  connect(watcher2, SIGNAL(finished()),this,SLOT(diskWriteFinished()));
-
   connect(&watcher3, SIGNAL(finished()),this,SLOT(decoderFinished()));
 
 // Assign input device and start input thread
@@ -423,9 +418,7 @@ void MainWindow::dataSink(int k)
       if (!dir.exists()) dir.mkpath(".");
       QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
           t.time().toString("hhmm");
-      fname += ".iq";
-//      *future2 = QtConcurrent::run(save_iq, fname);
-//      watcher2->setFuture(*future2);
+      fname += ".qm";
       QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
       save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
                datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
@@ -751,12 +744,7 @@ void MainWindow::diskDat()                                   //diskDat()
   m_bDiskDatBusy=false;
 }
 
-void MainWindow::diskWriteFinished()                      //diskWriteFinished
-{
-//  qDebug() << "diskWriteFinished";
-}
-
-void MainWindow::decoderFinished()                      //diskWriteFinished
+void MainWindow::decoderFinished()
 {
   ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);

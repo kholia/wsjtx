@@ -40,7 +40,6 @@ public slots:
   void showStatusMessage(const QString& statusMsg);
   void dataSink(int k);
   void diskDat();
-  void diskWriteFinished();
   void decoderFinished();
   void freezeDecode(int n);
   void guiUpdate();
@@ -157,9 +156,7 @@ private:
   QMessageBox msgBox0;
 
   QFuture<void>* future1;
-  QFuture<void>* future2;
   QFutureWatcher<void>* watcher1;
-  QFutureWatcher<void>* watcher2;
   QFutureWatcher<void> watcher3;     //For decoder
 
   QString m_path;
