@@ -47,12 +47,6 @@ subroutine save_qm(fname,prog_id,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
   enddo
   if(ia.gt.30*96000) id1(1:2,1:ia-1)=0
   if(ib.eq.30*96000) id1(1:2,ib+1:60*96000)=0
-  
-  jz=len(fname)
-  fname(jz-1:jz)="qm"
-!  write(*,3001) fname(jz-13:jz),rms,db(rms*rms),dmax,nbad,ia,ib,      &
-!       nsum/(2*96000),ntx30a,ntx30b
-!3001 format(a14,3f7.1,i8,2i9,3i5)
 
   open(29,file=trim(fname),status='unknown',access='stream')
   prog_id_24=prog_id//"        "
