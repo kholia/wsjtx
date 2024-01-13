@@ -40,7 +40,6 @@ public slots:
   void showStatusMessage(const QString& statusMsg);
   void dataSink(int k);
   void diskDat();
-  void diskWriteFinished();
   void decoderFinished();
   void freezeDecode(int n);
   void guiUpdate();
