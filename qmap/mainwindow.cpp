@@ -1037,7 +1037,7 @@ void MainWindow::guiUpdate()
       lab2->setStyleSheet("");
     }
 
-    if(m_monitoring) {
+    if(m_monitoring and !m_bWTransmitting) {
       lab1->setStyleSheet("QLabel{background-color: #00ff00}");
       m_nrx=soundInThread.nrx();
       khsym=soundInThread.mhsym();
@@ -1056,10 +1056,14 @@ void MainWindow::guiUpdate()
         lab1->setStyleSheet("QLabel{background-color: #ffc0cb}");
       }
       lab1->setText("Receiving " + t);
-    } else if (!m_diskData) {
+    } else if(m_bWTransmitting) {
+      lab1->setStyleSheet("QLabel{background-color: #ffff00}");  //Yellow
+      lab1->setText("WSJT-X Transmitting");
+    } else if(!m_diskData) {
       lab1->setStyleSheet("");
       lab1->setText("");
     }
+//    qDebug() << "aa" << n60 << m_bWTransmitting << decodes_.nWTransmitting << m_WSJTX_TRperiod;
 
     datcom_.mousefqso=m_wide_graph_window->QSOfreq();
     QDateTime t = QDateTime::currentDateTimeUtc();
