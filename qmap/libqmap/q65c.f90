@@ -23,7 +23,7 @@ subroutine q65c(itimer)
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,                 &
-       ntx30a,ntx30b,ntol,nxant,nCFOM,nfsample,nxpol,nmode,               &
+       ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,nxpol,nmode,               &
        ndop00,nsave,nn3,nn4,nhsym,mycall,mygrid,hiscall,hisgrid,      &
        datetime,junk1,junk2,bAlso30
   equivalence (nparams,fcenter)

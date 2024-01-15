@@ -16,6 +16,7 @@ extern "C" {
   void _gfortran_set_args(int argc, char *argv[]);
   void _gfortran_set_convert(int conv);
   void ftninit_(void);
+  void fftbig_(float dd[], int* nfft);
 }
 
 int main(int argc, char *argv[])
@@ -45,9 +46,9 @@ int main(int argc, char *argv[])
     int iform {1};
     // free FFT plan resources
     four2a_ (nullptr, &nfft, &ndim, &isign, &iform, 0);
+    fftbig_(nullptr, &nfft);
   }
   fftwf_forget_wisdom ();
   fftwf_cleanup ();
-
   return result;
 }

@@ -26,13 +26,13 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int ntx30a;                       //Number of seconds transmitted in first half minute , Q65-30x
   int ntx30b;                       //Number of seconds transmitted in second half minute, Q65-30x
   int ntol;                         //+/- decoding range around fQSO (Hz)
-  int junk5;                        //
+  int n60;                          //nsecs%60
   int junk4;                        //
   int nfsample;                     //Input sample rate
   int junk3;                        //
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
   int ndop00;                       //EME Self Doppler
-  int nsave;                        //no longer used
+  int nsave;                        //0=None, 1=SaveDecoded, 2=SaveAll
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
   int offset;                       //Offset in Hz
   int nhsym;                        //Number of available JT65 half-symbols
@@ -67,13 +67,13 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int ntx30a;                       //Number of seconds transmitted in first half minute , Q65-30x
   int ntx30b;                       //Number of seconds transmitted in second half minute, Q65-30x
   int ntol;                         //+/- decoding range around fQSO (Hz)
-  int junk5;                        //
+  int n60;                          //nsecs%60
   int junk4;                        //
   int nfsample;                     //Input sample rate
   int junk3;                        //
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
   int ndop00;                       //EME Self Doppler
-  int nsave;                        //Number of s3(64,63) spectra saved
+  int nsave;                        //0=None, 1=SaveDecoded, 2=SaveAll
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
   int offset;                       //Offset in Hz
   int nhsym;                        //Number of available JT65 half-symbols

@@ -118,8 +118,7 @@ private:
   qint32  m_WSJTX_TRperiod=0;
   qint32  m_dop00=0;
   qint32  m_dop58=0;
-  qint32  m_zero=0;
-  qint32  m_one=1;
+  qint32  m_n60;
 
   double  m_fAdd;
   double  m_xavg;
@@ -171,6 +170,8 @@ private:
   QString m_dateTime;
   QString m_mode;
   QString m_UTC0="";
+  QString m_revision;
+
   QDateTime m_dateTimeSeqStart;        //Nominal start time of Rx sequence about to be decoded
   QHash<QString,bool> m_worked;
   SignalMeter *xSignalMeter;

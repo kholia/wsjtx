@@ -149,6 +149,8 @@ MainWindow::MainWindow(QWidget *parent) :
   m_wide_graph_window->setTol(m_tol);
   m_wide_graph_window->setFcal(m_fCal);
   m_wide_graph_window->setFsample(96000);
+  QString rev{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
+  m_revision=rev;
 
 // Create "m_worked", a dictionary of all calls in wsjt.log
   QFile f("wsjt.log");
@@ -184,7 +186,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   writeSettings();
-  q65c_(&m_one);
+  int one=1;
+  q65c_(&one);
 
   if (soundInThread.isRunning()) {
     soundInThread.quit();
@@ -406,22 +409,7 @@ void MainWindow::dataSink(int k)
     if(ihsym==m_hsymStop) m_decode_called=true;
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
-    QDateTime t = QDateTime::currentDateTimeUtc();
-    m_dateTime=t.toString("yyMMdd_hhmm");
     decode();                                           //Start the decoder
-    if((m_saveAll or (m_saveDecoded and decodes_.ndecodes>0)) and !m_diskData and
-       m_nTx60<10 and ihsym==m_hsymStop) {
-      QDir dir(m_saveDir);
-      if (!dir.exists()) dir.mkpath(".");
-      QString fname=m_saveDir + "/" + t.date().toString("yyMMdd") + "_" +
-          t.time().toString("hhmm");
-      fname += ".qm";
-      QString t{"QMAP v" + QCoreApplication::applicationVersion() + " " + revision()};
-      save_qm_(fname.toLatin1(), t.toLatin1(), m_myCall.toLatin1(), m_myGrid.toLatin1(),
-               datcom2_.d4, &datcom2_.ntx30a, &datcom2_.ntx30b, &datcom2_.fcenter,
-               &datcom2_.nutc, &m_dop00, &m_dop58,
-               fname.length(), t.length(), m_myCall.length(), m_myGrid.length());
-    }
     if(ihsym==m_hsymStop) {
       m_nTx30a=0;
       m_nTx30b=0;
@@ -867,7 +855,7 @@ void MainWindow::decode()                                       //decode()
   datcom_.ndiskdat=0;
   if(m_diskData) {
     datcom_.ndiskdat=1;
-    int i0=m_path.indexOf(".iq");
+    int i0=qMax(m_path.indexOf(".iq"),m_path.indexOf(".qm"));
     if(i0>0) {
       fname=m_path.mid(i0-11,11);
     }
@@ -906,6 +894,10 @@ void MainWindow::decode()                                       //decode()
   datcom_.ntx30a=m_nTx30a;
   datcom_.ntx30b=m_nTx30b;
   datcom_.ntx60=m_nTx60;
+  datcom_.nsave=0;
+  if(m_saveDecoded) datcom_.nsave=1;
+  if(m_saveAll) datcom_.nsave=2;
+  datcom_.n60=m_n60;
   datcom_.junk1=1234;                                     //Check for these values in m65
   datcom_.junk2=5678;
   datcom_.bAlso30=m_bAlso30;
@@ -923,13 +915,25 @@ void MainWindow::decode()                                       //decode()
   decodes_.ncand=0;
   decodes_.nQDecoderDone=0;
 
-//No need to call decoder for first half, if we transmitted in the first half:
+  QString saveFileName="NoSave";
+  if(!m_diskData) {
+    QDateTime t = QDateTime::currentDateTimeUtc();
+    m_dateTime=t.toString("yyMMdd_hhmm");
+    QDir dir(m_saveDir);
+    if (!dir.exists()) dir.mkpath(".");
+    saveFileName=m_saveDir + "/" + m_dateTime + ".qm";
+  }
+
+  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_revision << saveFileName;
+
+  //No need to call decoder for first half, if we transmitted in the first half:
   if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
 
-//No need to call decoder in second half, if we transmitted in that half:
+  //No need to call decoder in second half, if we transmitted in that half:
   if((datcom_.nhsym>200) and (m_nTx30b>5)) return;
 
-  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &m_zero)));
+  int zero=0;
+  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &zero)));
   decodeBusy(true);
 }
 
@@ -1007,7 +1011,7 @@ void MainWindow::guiUpdate()
   if(nsec != m_sec0) {                                     //Once per second
 
     static int n60z=99;
-    int n60=nsec%60;
+    m_n60=nsec%60;
 
 // See if WSJT-X is transmitting
     int itest[5];
@@ -1017,19 +1021,19 @@ void MainWindow::guiUpdate()
     if(itest[4]>0) {
       m_WSJTX_TRperiod=itest[4];
       m_bWTransmitting=true;
-      if(m_WSJTX_TRperiod==30 and n60<30) m_nTx30a++;
-      if(m_WSJTX_TRperiod==30 and n60>=30) m_nTx30b++;
+      if(m_WSJTX_TRperiod==30 and m_n60<30) m_nTx30a++;
+      if(m_WSJTX_TRperiod==30 and m_n60>=30) m_nTx30b++;
       if(m_WSJTX_TRperiod==60) m_nTx60++;
     } else {
       m_bWTransmitting=false;
     }
 
-    if((n60<n60z) and !m_diskData) {
+    if((m_n60<n60z) and !m_diskData) {
       m_nTx30a=0;
       m_nTx30b=0;
       m_nTx60=0;
     }
-    n60z=n60;
+    n60z=m_n60;
 
     if(m_pctZap>30.0) {
       lab2->setStyleSheet("QLabel{background-color: #ff0000}");
@@ -1072,8 +1076,8 @@ void MainWindow::guiUpdate()
     ui->labUTC->setText(utc);
     m_hsym0=khsym;
     m_sec0=nsec;
-    if(n60==0) m_dop00=datcom_.ndop00;
-    if(n60==58) m_dop58=datcom_.ndop00;
+    if(m_n60==0) m_dop00=datcom_.ndop00;
+    if(m_n60==58) m_dop58=datcom_.ndop00;
   }
 }
 

@@ -14,8 +14,8 @@ subroutine decode0(dd,ss,savg)
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
-       ndepth,ndiskdat,ntx60,newdat,nfa,nfb,nfcal,nfshift,                 &
-       ntx30a,ntx30b,ntol,nxant,nCFOM,nfsample,nxpol,nmode,               &
+       ndepth,ndiskdat,ntx60,newdat,nfa,nfb,nfcal,nfshift,                &
+       ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,nxpol,nmode,                 &
        ndop00,nsave,max_drift,offset,nhsym,mycall,mygrid,                 &
        hiscall,hisgrid,datetime,junk1,junk2,bAlso30
   save
@@ -48,6 +48,10 @@ subroutine decode0(dd,ss,savg)
        nfcal,mycall,hiscall,hisgrid,nfsample,nmode,ndepth,                 &
        datetime,ndop00,fselected,bAlso30,nhsym,NCFOM)
   call timer('qmapa   ',1)
+
+  
+  write(*,3001) n60,datetime(1:11),nutc,newdat,nsave,ntx30a,ntx30b,ndecodes
+3001 format('A',i3,1x,a11,i6.4,5i5)
 
   return
 end subroutine decode0
