@@ -200,6 +200,10 @@ extern "C" {
                     const char* mygrid, int* ndop00, int len1);
 
   void q65c_(int* itimer);
+//             void q65c_(const char* fname, const char* revision, int* itimer,
+//             int len1, int len2);
+
+  void all_done_();
 
   void zaptx_(float d4[], int* k0, int* k);
 

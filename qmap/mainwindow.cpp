@@ -186,8 +186,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
   writeSettings();
-  int one=1;
-  q65c_(&one);
+  all_done_();
 
   if (soundInThread.isRunning()) {
     soundInThread.quit();
