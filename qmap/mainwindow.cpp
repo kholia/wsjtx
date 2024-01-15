@@ -900,6 +900,8 @@ void MainWindow::decode()                                       //decode()
   datcom_.junk1=1234;                                     //Check for these values in m65
   datcom_.junk2=5678;
   datcom_.bAlso30=m_bAlso30;
+  datcom_.ndop00=m_dop00;
+  datcom_.ndop58=m_dop58;
 
   char *to = (char*) datcom2_.d4;
   char *from = (char*) datcom_.d4;

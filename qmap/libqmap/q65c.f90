@@ -1,4 +1,4 @@
-subroutine q65c(fname,revision)
+subroutine q65c(fname0,revision0)
 
   use timer_module, only: timer
   use timer_impl, only: fini_timer !, limtrace
@@ -12,9 +12,12 @@ subroutine q65c(fname,revision)
   real*8 fcenter
   real*4 pdb(4)
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
+  integer values(8)
   logical first
   logical*1 bAlso30
-  character*(*) fname,revision
+  character*(*) fname0,revision0
+  character*120 fname
+  character*22 revision
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
@@ -25,18 +28,25 @@ subroutine q65c(fname,revision)
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,                 &
-       ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,nxpol,nmode,               &
+       ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,ndop58,nmode,               &
        ndop00,nsave,nn3,nn4,nhsym,mycall,mygrid,hiscall,hisgrid,      &
        datetime,junk1,junk2,bAlso30
   equivalence (nparams,fcenter)
   data first/.true./
   save first
 
+  fname=fname0
+  revision=revision0
   nparams=nparams0                     !Copy parameters into common/npar/
   datetime(12:)='00       '
-
   npatience=1
   newdat=1                          !Always on ??
+
+  if(ndiskdat.eq.0) then
+     if(nhsym.eq.200 .and. n60.ne.30) go to 999
+     if(nhsym.eq.330 .and. n60.ne.49) go to 999
+     if(nhsym.eq.390 .and. n60.ne.58) go to 999
+  endif
 
   if(ndiskdat.eq.1) then
      call chkstat(dd,nhsym,pdb)
@@ -48,9 +58,6 @@ subroutine q65c(fname,revision)
         ntx30a=0  !Older 56s files have no Tx
         ntx30b=0  !Older 56s files have no Tx
      endif
-
-!     write(*,3001) nutc,nhsym,pdb,ntx30a,ntx30b
-!3001 format(i4.4,i6,4f7.1,2i6)
   endif
 
   if(ntx30a.gt.5) then
@@ -71,11 +78,22 @@ subroutine q65c(fname,revision)
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
   call timer('decode0 ',1)
-  
-  write(*,3001) n60,datetime(1:11),nutc,newdat,nsave,ntx30a,ntx30b,ndecodes
-3001 format('A',i3,1x,a11,i6.4,5i5)
 
-  return
+  call date_and_time(VALUES=values)
+  n60b=values(7)
+  nd=n60b-n60
+  if(nd.lt.0) nd=nd+60
+  write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,revision
+3002 format('A',i5.4,8i5,2x,a22)
+
+  if(nsave.eq.2 .or. (nsave.eq.1 .and. ndecodes.ge.1)) then
+     call timer('save_qm ',0)
+     call save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
+     nutc,ndop00,ndop58)
+     call timer('save_qm ',1)
+  endif
+
+999 return
 end subroutine q65c
 
 subroutine all_done

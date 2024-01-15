@@ -29,9 +29,9 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int n60;                          //nsecs%60
   int junk4;                        //
   int nfsample;                     //Input sample rate
-  int junk3;                        //
+  int ndop58;                       //EME Self Doppler at t=58
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
-  int ndop00;                       //EME Self Doppler
+  int ndop00;                       //EME Self Doppler at t=0
   int nsave;                        //0=None, 1=SaveDecoded, 2=SaveAll
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
   int offset;                       //Offset in Hz
@@ -70,9 +70,9 @@ extern struct {                     //This is "common/datcom/..." in Fortran
   int n60;                          //nsecs%60
   int junk4;                        //
   int nfsample;                     //Input sample rate
-  int junk3;                        //
+  int ndop58;                       //EME Self Doppler at t=58
   int nBaseSubmode;                 //Base submode for Q65-60x (aka m_modeQ65)
-  int ndop00;                       //EME Self Doppler
+  int ndop00;                       //EME Self Doppler at t=0
   int nsave;                        //0=None, 1=SaveDecoded, 2=SaveAll
   int max_drift;                    //Maximum Q65 drift: units symbol_rate/TxT
   int offset;                       //Offset in Hz

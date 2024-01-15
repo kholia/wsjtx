@@ -15,7 +15,7 @@ subroutine decode0(dd,ss,savg)
        nWTransmitting,result(50)
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nfa,nfb,nfcal,nfshift,                &
-       ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,nxpol,nmode,                 &
+       ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,ndop58,nmode,                 &
        ndop00,nsave,max_drift,offset,nhsym,mycall,mygrid,                 &
        hiscall,hisgrid,datetime,junk1,junk2,bAlso30
   save
