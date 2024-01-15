@@ -1,4 +1,4 @@
-subroutine q65c(itimer)
+subroutine q65c(fname,revision)
 
   use timer_module, only: timer
   use timer_impl, only: fini_timer !, limtrace
@@ -14,12 +14,14 @@ subroutine q65c(itimer)
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
   logical first
   logical*1 bAlso30
+  character*(*) fname,revision
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
-
+  character*60 result
+  common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
+       nWTransmitting,result(50)
   common/datcom2/dd(2,5760000),ss(400,NFFT),savg(NFFT),nparams0
-
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,                 &
@@ -69,6 +71,9 @@ subroutine q65c(itimer)
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
   call timer('decode0 ',1)
+  
+  write(*,3001) n60,datetime(1:11),nutc,newdat,nsave,ntx30a,ntx30b,ndecodes
+3001 format('A',i3,1x,a11,i6.4,5i5)
 
   return
 end subroutine q65c
@@ -80,7 +85,6 @@ subroutine all_done
 
   call timer('decode0 ',101)
   call fini_timer
-  print*,'All Done'
 
   return
 end subroutine all_done

@@ -49,9 +49,5 @@ subroutine decode0(dd,ss,savg)
        datetime,ndop00,fselected,bAlso30,nhsym,NCFOM)
   call timer('qmapa   ',1)
 
-  
-  write(*,3001) n60,datetime(1:11),nutc,newdat,nsave,ntx30a,ntx30b,ndecodes
-3001 format('A',i3,1x,a11,i6.4,5i5)
-
   return
 end subroutine decode0

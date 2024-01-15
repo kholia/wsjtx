@@ -923,7 +923,7 @@ void MainWindow::decode()                                       //decode()
     saveFileName=m_saveDir + "/" + m_dateTime + ".qm";
   }
 
-  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_revision << saveFileName;
+//  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_revision << saveFileName;
 
   //No need to call decoder for first half, if we transmitted in the first half:
   if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
@@ -931,8 +931,11 @@ void MainWindow::decode()                                       //decode()
   //No need to call decoder in second half, if we transmitted in that half:
   if((datcom_.nhsym>200) and (m_nTx30b>5)) return;
 
-  int zero=0;
-  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_, &zero)));
+  int len1=saveFileName.length();
+  int len2=m_revision.length();
+  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_,
+          saveFileName.toLatin1().constData(),
+          m_revision.toLatin1().constData(), len1, len2)));
   decodeBusy(true);
 }
 

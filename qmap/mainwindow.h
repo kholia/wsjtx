@@ -199,9 +199,7 @@ extern "C" {
   void astrosub00_ (int* nyear, int* month, int* nday, double* uth, int* nfreq,
                     const char* mygrid, int* ndop00, int len1);
 
-  void q65c_(int* itimer);
-//             void q65c_(const char* fname, const char* revision, int* itimer,
-//             int len1, int len2);
+  void q65c_(const char* fname, const char* revision, int len1, int len2);
 
   void all_done_();
 
