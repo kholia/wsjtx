@@ -86,11 +86,9 @@ subroutine q65c(fname0,revision0)
   write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,revision
 3002 format('A',i5.4,8i5,2x,a22)
 
-  if(nsave.eq.2 .or. (nsave.eq.1 .and. ndecodes.ge.1)) then
-     call timer('save_qm ',0)
+  if(nhsym.eq.390 .and. (nsave.eq.2 .or. (nsave.eq.1 .and. ndecodes.ge.1))) then
      call save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
-     nutc,ndop00,ndop58)
-     call timer('save_qm ',1)
+          nutc,ndop00,ndop58)
   endif
 
 999 return
