@@ -1,7 +1,7 @@
 subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      ntrperiod,iseq,mycall0,hiscall0,hisgrid,mode_q65,f0,fqso,nkhz_center,  &
      newdat,nagain,bClickDecode,max_drift,offset,ndepth,datetime,nCFOM,     &
-     ndop00,idec)
+     ndop00,nhsym,idec)
 
 ! This routine provides an interface between QMAP and the Q65 decoder
 ! in WSJT-X.  All arguments are input data obtained from the QMAP GUI.
@@ -116,12 +116,12 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 
   if(nsnr0.gt.-99) then
 
-     if(.not.bClickDecode) then
-        do i=1,ndecodes                    !Check for dupes
-           i1=index(result(i)(42:),trim(msg0))
-           if(i1.gt.0) go to 800           !This is a dupe, don't save it again
-        enddo
-     endif
+     do i=1,ndecodes                    !Check for dupes
+        i1=index(result(i)(42:),trim(msg0))
+        if(bClickDecode) print*,'C',i,i1,result(i)(42:),trim(msg0)
+!          If this is a dupe, don't save it again:
+        if(i1.gt.0 .and. (.not.bClickDecode .or. nhsym.eq.390)) go to 800
+     enddo
      
      nq65df=nint(1000*(0.001*k0*df+nkhz_center-48.0+1.000-1.27046-ikhz))-nfcal
      nq65df=nq65df + nfreq0 - 1000

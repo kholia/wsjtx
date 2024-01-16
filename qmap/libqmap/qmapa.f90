@@ -74,7 +74,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,           &
           ntrperiod,iseq,mycall,hiscall,hisgrid,mode_q65_tmp,f0,fqso,       &
           nkhz_center,newdat,nagain2,bClickDecode,max_drift,offset,         &
-          ndepth,datetime,nCFOM,ndop00,idec)
+          ndepth,datetime,nCFOM,ndop00,nhsym,idec)
      call timer('q65b    ',1)
      tsec=sec_midn() - tsec0
 ! Don't start another decode attempt if it's too late...
