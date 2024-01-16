@@ -926,14 +926,15 @@ void MainWindow::decode()                                       //decode()
 
 //  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_nTx30a << m_nTx30b;
 
+  bool bSkipDecode=false;
   //No need to call decoder for first half, if we transmitted in the first half:
-  if((datcom_.nhsym<=200) and (m_nTx30a>5)) {
-    decodeBusy(false);
-    return;
-  }
+  if((datcom_.nhsym<=200) and (m_nTx30a>5)) bSkipDecode=true;
+  //No need to call decoder at 330, if we transmitted in 2nd half:
+  if((datcom_.nhsym==330) and (m_nTx30b>5)) bSkipDecode=true;
+  //No need to call decoder at all, if we transmitted in a 60 s submode.
+  if(m_nTx60>5) bSkipDecode=true;
 
-  //No need to call decoder in second half, if we transmitted in that half:
-  if((datcom_.nhsym==330) and (m_nTx30b>5)) {
+  if(bSkipDecode) {
     decodeBusy(false);
     return;
   }
