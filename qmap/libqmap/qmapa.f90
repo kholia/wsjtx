@@ -62,6 +62,11 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   call timer('fftbig  ',1)
 
   do icand=1,ncand                        !Attempt to decode each candidate
+     tsec=sec_midn() - tsec0
+! Don't start another decode attempt if it's too late...
+     if(nhsym.eq.200 .and. tsec.gt.10.0) exit
+     if(nhsym.eq.330 .and. tsec.gt.6.0) exit
+     if(nhsym.eq.390 .and. tsec.gt.16.0) exit
      f0=cand(icand)%f
      ntrperiod=cand(icand)%ntrperiod
      iseq=cand(icand)%iseq
@@ -76,10 +81,6 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
           nkhz_center,newdat,nagain2,bClickDecode,max_drift,offset,         &
           ndepth,datetime,nCFOM,ndop00,nhsym,idec)
      call timer('q65b    ',1)
-     tsec=sec_midn() - tsec0
-! Don't start another decode attempt if it's too late...
-     if(nhsym.eq.330 .and. tsec.gt.6.0) exit
-     if(tsec.gt.16.0) exit
      if(bClickDecode .and. idec.ge.0) exit
   enddo  ! icand
 
