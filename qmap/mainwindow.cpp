@@ -736,7 +736,6 @@ void MainWindow::diskDat(int iret)                                   //diskDat()
 
 void MainWindow::decoderFinished()
 {
-  ui->DecodeButton->setStyleSheet("");
   decodeBusy(false);
   m_startAnother=m_loopall;
   decodes_.nQDecoderDone=1;
@@ -838,8 +837,8 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 void MainWindow::decode()                                       //decode()
 {
   if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
+  decodeBusy(true);
   QString fname="           ";
-  ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
   if(datcom_.nagain==0 && (!m_diskData)) {
     qint64 ms = QDateTime::currentMSecsSinceEpoch() % 86400000;
     int imin=ms/60000;
@@ -925,13 +924,19 @@ void MainWindow::decode()                                       //decode()
     m_saveFileName=m_saveDir + "/" + m_dateTime + ".qm";
   }
 
-//  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_revision << m_saveFileName;
+//  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_nTx30a << m_nTx30b;
 
   //No need to call decoder for first half, if we transmitted in the first half:
-  if((datcom_.nhsym<=200) and (m_nTx30a>5)) return;
+  if((datcom_.nhsym<=200) and (m_nTx30a>5)) {
+    decodeBusy(false);
+    return;
+  }
 
   //No need to call decoder in second half, if we transmitted in that half:
-  if((datcom_.nhsym>200) and (m_nTx30b>5)) return;
+  if((datcom_.nhsym>200) and (m_nTx30b>5)) {
+    decodeBusy(false);
+    return;
+  }
 
   int len1=m_saveFileName.length();
   int len2=m_revision.length();
@@ -953,6 +958,8 @@ void MainWindow::decodeBusy(bool b)                             //decodeBusy()
 {
   m_decoderBusy=b;
   ui->DecodeButton->setEnabled(!b);
+  if(!b) ui->DecodeButton->setStyleSheet("");
+  if(b) ui->DecodeButton->setStyleSheet(m_pbdecoding_style1);
   ui->actionOpen->setEnabled(!b);
   ui->actionOpen_next_in_directory->setEnabled(!b);
   ui->actionDecode_remaining_files_in_directory->setEnabled(!b);
