@@ -933,7 +933,7 @@ void MainWindow::decode()                                       //decode()
   }
 
   //No need to call decoder in second half, if we transmitted in that half:
-  if((datcom_.nhsym>200) and (m_nTx30b>5)) {
+  if((datcom_.nhsym==330) and (m_nTx30b>5)) {
     decodeBusy(false);
     return;
   }
@@ -945,9 +945,6 @@ void MainWindow::decode()                                       //decode()
   memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
 
   watcher3.setFuture(QtConcurrent::run (q65c_));
-  //,
-  //        m_saveFileName.toLatin1().constData(),
-  //        m_revision.toLatin1().constData(), len1, len2)));
   decodeBusy(true);
 }
 

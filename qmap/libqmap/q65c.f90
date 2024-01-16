@@ -73,10 +73,12 @@ subroutine q65c
      enddo
   endif
 
+  if(nhsym.gt.200 .and. ntx30b.gt.5) go to 10
   call timer('decode0 ',0)
   call decode0(dd,ss,savg)
   call timer('decode0 ',1)
 
+10 continue
   call date_and_time(VALUES=values)
   n60b=values(7)
   nd=n60b-n60
