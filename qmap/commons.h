@@ -96,6 +96,11 @@ extern struct {
   char result[50][60];   //Staging area for QMAP decodes
 } decodes_;
 
+extern struct {
+  char revision[22];
+  char saveFileName[120];
+} savecom_;
+
 }
 
 #endif // COMMONS_H

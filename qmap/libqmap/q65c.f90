@@ -1,4 +1,4 @@
-subroutine q65c(fname0,revision0)
+subroutine q65c
 
   use timer_module, only: timer
   use timer_impl, only: fini_timer !, limtrace
@@ -15,7 +15,6 @@ subroutine q65c(fname0,revision0)
   integer values(8)
   logical first
   logical*1 bAlso30
-  character*(*) fname0,revision0
   character*120 fname
   character*22 revision
   character*12 mycall,hiscall
@@ -25,6 +24,7 @@ subroutine q65c(fname0,revision0)
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/datcom2/dd(2,5760000),ss(400,NFFT),savg(NFFT),nparams0
+  common/savecom/revision,fname
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nn1,nn2,nfcal,nfshift,                 &
@@ -35,8 +35,6 @@ subroutine q65c(fname0,revision0)
   data first/.true./
   save first
 
-  fname=fname0
-  revision=revision0
   nparams=nparams0                     !Copy parameters into common/npar/
   datetime(12:)='00       '
   npatience=1

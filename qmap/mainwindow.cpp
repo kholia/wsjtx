@@ -940,9 +940,14 @@ void MainWindow::decode()                                       //decode()
 
   int len1=m_saveFileName.length();
   int len2=m_revision.length();
-  watcher3.setFuture(QtConcurrent::run (std::bind (q65c_,
-          m_saveFileName.toLatin1().constData(),
-          m_revision.toLatin1().constData(), len1, len2)));
+
+  memcpy(savecom_.revision, m_revision.toLatin1(), len2);
+  memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
+
+  watcher3.setFuture(QtConcurrent::run (q65c_));
+  //,
+  //        m_saveFileName.toLatin1().constData(),
+  //        m_revision.toLatin1().constData(), len1, len2)));
   decodeBusy(true);
 }
 
