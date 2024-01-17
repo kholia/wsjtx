@@ -1123,7 +1123,7 @@ void MainWindow::on_actionQ65D_triggered()
 {
   m_modeQ65=4;
   ui->actionAlso_Q65_30x->setText("Also Q65-30C");
-  lab3->setStyleSheet("QLabel{background-color: #b266ff}");
+  lab3->setStyleSheet("QLabel{background-color: #d9b3ff}");
   lab3->setText("Q65-60D");
 }
 
