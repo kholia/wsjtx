@@ -83,8 +83,9 @@ subroutine q65c
   n60b=values(7)
   nd=n60b-n60
   if(nd.lt.0) nd=nd+60
-  write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,revision
-3002 format('A',i5.4,8i5,2x,a22)
+  write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,  &
+       nsave,revision
+3002 format('A',i5.4,i3,i5,7i4,1x,a22)
 
   if(nhsym.eq.390 .and. (nsave.eq.2 .or. (nsave.eq.1 .and. ndecodes.ge.1))) then
      call save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &

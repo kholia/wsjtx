@@ -52,7 +52,7 @@ subroutine save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
 
   open(29,file=trim(fname),status='unknown',access='stream')
   nxtra=0
-  write(29) revision//'  ',mycall_12,mygrid_6,fcenter,nutc,ntx30a,ntx30b,  &
+  write(29) revision//'  ',mycall,mygrid,fcenter,nutc,ntx30a,ntx30b,  &
        ndop00,ndop58,ia,ib,fac0,nxtra  !Write header to disk
   write(29) id1(1:2,ia:ib)             !Write 8-bit data to disk
   close(29)
