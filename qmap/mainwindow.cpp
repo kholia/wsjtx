@@ -311,6 +311,7 @@ void MainWindow::dataSink(int k)
   static float s[NFFT],splot[NFFT];
   static int n=0;
   static int ihsym=0;
+  static int ihsym0=0;
   static int nzap=0;
   static int ntrz=0;
   static int nkhz;
@@ -401,14 +402,20 @@ void MainWindow::dataSink(int k)
   bool bCallDecoder=false;
   if(ihsym < m_hsymStop) m_decode_called=false;
   if(ihsym==m_hsymStop and !m_decode_called) bCallDecoder=true; //Decode at t=58.5 s
-  if(m_bAlso30 and (ihsym==200)) bCallDecoder=true;
-  if(ihsym==330) bCallDecoder=true;
+  if(m_bAlso30 and (ihsym==200) and (m_n60==30)) bCallDecoder=true;
+  if((ihsym==330) and (m_n60==49)) bCallDecoder=true;
 
+  if((ihsym!=ihsym0+1) or (qAbs(ihsym-200)<3) or (qAbs(ihsym-330)<4) or (qAbs(ihsym-390)<4)) {
+    qDebug() << "aa" << ihsym0 << ihsym << m_n60
+             << bCallDecoder << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+  }
+
+  ihsym0=ihsym;
   if(bCallDecoder) {
     if(ihsym==m_hsymStop) m_decode_called=true;
     datcom_.nagain=0;
     datcom_.nhsym=ihsym;
-    decode();                                           //Start the decoder
+    decode();                                           //Prepare to start the decoder
     if(ihsym==m_hsymStop) {
       m_nTx30a=0;
       m_nTx30b=0;
@@ -713,7 +720,6 @@ void MainWindow::diskDat(int iret)                                   //diskDat()
   int ia=0;
   int ib=400;
   if(iret==1) ib=202;
-//  qDebug() << "aa" << iret << ia << ib;
   m_bDiskDatBusy=true;
   double hsym;
   //These may be redundant??
@@ -736,7 +742,7 @@ void MainWindow::diskDat(int iret)                                   //diskDat()
 
 void MainWindow::decoderFinished()
 {
-  decodeBusy(false);
+  qDebug() << "ee" << "decoder finished" << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
   m_startAnother=m_loopall;
   decodes_.nQDecoderDone=1;
   if(m_diskData) decodes_.nQDecoderDone=2;
@@ -749,6 +755,8 @@ void MainWindow::decoderFinished()
   QString t1;
   t1=t1.asprintf(" %.1f s  %d/%d ", 0.15*datcom2_.nhsym, decodes_.ndecodes, decodes_.ncand);
   lab4->setText(t1);
+  decodeBusy(false);
+
   if(m_bDecodeAgain) {
     datcom_.nhsym=390;
     datcom_.nagain=1;
@@ -836,7 +844,11 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 
 void MainWindow::decode()                                       //decode()
 {
-  if(m_decoderBusy) return;  //Don't attempt decode if decoder already busy
+  qDebug() << "bb" << "decoder called" << m_decoderBusy
+           << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+  if(m_decoderBusy) {
+    return;  //Don't attempt decode if decoder already busy
+  }
   decodeBusy(true);
   QString fname="           ";
   if(datcom_.nagain==0 && (!m_diskData)) {
@@ -892,9 +904,11 @@ void MainWindow::decode()                                       //decode()
   datcom_.ntx30a=m_nTx30a;
   datcom_.ntx30b=m_nTx30b;
   datcom_.ntx60=m_nTx60;
+
   datcom_.nsave=0;
   if(m_saveDecoded) datcom_.nsave=1;
   if(m_saveAll) datcom_.nsave=2;
+
   datcom_.n60=m_n60;
   datcom_.junk1=1234;                                     //Check for these values in m65
   datcom_.junk2=5678;
@@ -904,7 +918,7 @@ void MainWindow::decode()                                       //decode()
 
   char *to = (char*) datcom2_.d4;
   char *from = (char*) datcom_.d4;
-  memcpy(to, from, sizeof(datcom_));
+  memcpy(to, from, sizeof(datcom_));    //Copy the full datcom_ common block into datcom2_
 
   datcom_.ndiskdat=0;
 
@@ -924,13 +938,14 @@ void MainWindow::decode()                                       //decode()
     m_saveFileName=m_saveDir + "/" + m_dateTime + ".qm";
   }
 
-//  qDebug() << "aa" << m_n60 << datcom_.nhsym << m_nTx30a << m_nTx30b;
+  qDebug() << "cc" << m_n60 << datcom2_.nhsym << m_nTx30a << m_nTx30b
+           << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
 
   bool bSkipDecode=false;
   //No need to call decoder for first half, if we transmitted in the first half:
-  if((datcom_.nhsym<=200) and (m_nTx30a>5)) bSkipDecode=true;
+  if((datcom2_.nhsym<=200) and (m_nTx30a>5)) bSkipDecode=true;
   //No need to call decoder at 330, if we transmitted in 2nd half:
-  if((datcom_.nhsym==330) and (m_nTx30b>5)) bSkipDecode=true;
+  if((datcom2_.nhsym==330) and (m_nTx30b>5)) bSkipDecode=true;
   //No need to call decoder at all, if we transmitted in a 60 s submode.
   if(m_nTx60>5) bSkipDecode=true;
 
@@ -945,6 +960,7 @@ void MainWindow::decode()                                       //decode()
   memcpy(savecom_.revision, m_revision.toLatin1(), len2);
   memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
 
+  qDebug() << "dd" << "starting q65c()" << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
   watcher3.setFuture(QtConcurrent::run (q65c_));
   decodeBusy(true);
 }
@@ -1081,7 +1097,6 @@ void MainWindow::guiUpdate()
       lab1->setStyleSheet("");
       lab1->setText("");
     }
-//    qDebug() << "aa" << n60 << m_bWTransmitting << decodes_.nWTransmitting << m_WSJTX_TRperiod;
 
     datcom_.mousefqso=m_wide_graph_window->QSOfreq();
     QDateTime t = QDateTime::currentDateTimeUtc();

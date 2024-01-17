@@ -40,11 +40,11 @@ subroutine q65c
   npatience=1
   newdat=1                          !Always on ??
 
-  if(ndiskdat.eq.0) then
-     if(nhsym.eq.200 .and. n60.ne.30) go to 999
-     if(nhsym.eq.330 .and. n60.ne.49) go to 999
-     if(nhsym.eq.390 .and. n60.ne.58) go to 999
-  endif
+!  if(ndiskdat.eq.0) then
+!     if(nhsym.eq.200 .and. n60.ne.30) go to 999
+!     if(nhsym.eq.330 .and. n60.ne.49) go to 999
+!     if(nhsym.eq.390 .and. n60.ne.58) go to 999
+!  endif
 
   if(ndiskdat.eq.1) then
      call chkstat(dd,nhsym,pdb)
@@ -86,10 +86,14 @@ subroutine q65c
   write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,  &
        nsave,revision
 3002 format('A',i5.4,i3,i5,7i4,1x,a22)
+  flush(6)
 
-  if(nhsym.eq.390 .and. (nsave.eq.2 .or. (nsave.eq.1 .and. ndecodes.ge.1))) then
-     call save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
-          nutc,ndop00,ndop58)
+  if(ndiskdat.eq.0) then
+     if(nhsym.eq.390 .and. (nsave.eq.2 .or.                               &
+          (nsave.eq.1 .and. ndecodes.ge.1))) then
+        call save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
+             nutc,ndop00,ndop58)
+     endif
   endif
 
 999 return
