@@ -10,7 +10,7 @@ subroutine decode0(dd,ss,savg)
   logical*1 bAlso30
   character mycall*12,hiscall*12,mygrid*6,hisgrid*6,datetime*20
   character mycall0*12,hiscall0*12,hisgrid0*6
-  character*60 result
+  character*64 result
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &

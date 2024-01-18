@@ -26,7 +26,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*6 hisgrid
   character*4 grid4
   character*3 csubmode
-  character*60 result,ctmp
+  character*64 result,ctmp
   character*20 datetime,datetime1
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
@@ -118,7 +118,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 
      do i=1,ndecodes                    !Check for dupes
         i1=index(result(i)(42:),trim(msg0))
-        if(bClickDecode) print*,'C',i,i1,result(i)(42:),trim(msg0)
 !          If this is a dupe, don't save it again:
         if(i1.gt.0 .and. (.not.bClickDecode .or. nhsym.eq.390)) go to 800
      enddo

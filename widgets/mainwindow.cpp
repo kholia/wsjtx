@@ -225,7 +225,7 @@ struct {
   int nQDecoderDone;     //QMAP decoder is finished (0 or 1)
   int nWDecoderBusy;     //WSJT-X decoder is busy (0 or 1)
   int nWTransmitting;    //WSJT-X is transmitting (0 or 1)
-  char result[50][60];   //Decodes as character*60 arrays
+  char result[50][64];   //Decodes as character*64 arrays
 } qmapcom;
 int* ipc_qmap;
 

@@ -27,7 +27,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   logical*1 bAlso30,bClickDecode
   character mycall*12,hiscall*12,hisgrid*6
   type(candidate) :: cand(MAX_CANDIDATES)
-  character*60 result
+  character*64 result
   character*20 datetime
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)

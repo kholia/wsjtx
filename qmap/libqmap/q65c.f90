@@ -20,7 +20,7 @@ subroutine q65c
   character*12 mycall,hiscall
   character*6 mygrid,hisgrid
   character*20 datetime
-  character*60 result
+  character*64 result
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/datcom2/dd(2,5760000),ss(400,NFFT),savg(NFFT),nparams0
