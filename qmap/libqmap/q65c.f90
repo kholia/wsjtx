@@ -12,7 +12,7 @@ subroutine q65c
   real*8 fcenter
   real*4 pdb(4)
   integer nparams0(NJUNK+3),nparams(NJUNK+3)
-  integer values(8)
+!  integer values(8)
   logical first
   logical*1 bAlso30
   character*120 fname
@@ -79,18 +79,18 @@ subroutine q65c
   call timer('decode0 ',1)
 
 10 continue
-  call date_and_time(VALUES=values)
-  n60b=values(7)
-  nd=n60b-n60
-  if(nd.lt.0) nd=nd+60
-  write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,  &
-       nsave,revision
-3002 format('A',i5.4,i3,i5,7i4,1x,a22)
-  flush(6)
+!  call date_and_time(VALUES=values)
+!  n60b=values(7)
+!  nd=n60b-n60
+!  if(nd.lt.0) nd=nd+60
+!  write(*,3002) nutc,nagain,nhsym,n60,n60b,nd,ntx30a,ntx30b,ndecodes,  &
+!       nsave,revision
+!3002 format('A',i5.4,i3,i5,7i4,1x,a22)
+!  flush(6)
 
   if(ndiskdat.eq.0) then
-     if(nhsym.eq.390 .and. (nsave.eq.2 .or.                               &
-          (nsave.eq.1 .and. ndecodes.ge.1))) then
+     if(nhsym.eq.390 .and.                                                   &
+          (nsave.eq.2 .or. (nsave.eq.1 .and. ndecodes.ge.1))) then
         call save_qm(fname,revision,mycall,mygrid,dd,ntx30a,ntx30b,fcenter,  &
              nutc,ndop00,ndop58)
      endif

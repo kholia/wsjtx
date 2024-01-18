@@ -133,8 +133,8 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
-     if(iand(nCFOM,2).eq.2) write(*,3001) nCFOM,ndop00,frx,fsked
-3001 format('A',i5,i8,f10.3,f10.1)
+!     if(iand(nCFOM,2).eq.2) write(*,3001) nCFOM,ndop00,frx,fsked
+!3001 format('A',i5,i8,f10.3,f10.1)
      ctmp=csubmode//'  '//trim(msg0)
      ndecodes=min(ndecodes+1,50)
      write(result(ndecodes),1120) nhhmmss,frx,fsked,xdt0,nsnr0,trim(ctmp)

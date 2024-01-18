@@ -402,13 +402,14 @@ void MainWindow::dataSink(int k)
   bool bCallDecoder=false;
   if(ihsym < m_hsymStop) m_decode_called=false;
   if(ihsym==m_hsymStop and !m_decode_called) bCallDecoder=true; //Decode at t=58.5 s
-  if(m_bAlso30 and (ihsym==200) and (m_n60==30)) bCallDecoder=true;
-  if((ihsym==330) and (m_n60==49)) bCallDecoder=true;
+  if(m_bAlso30 and (ihsym==200)) bCallDecoder=true;
+  if(ihsym==330) bCallDecoder=true;
+  if(ihsym==ihsym0) bCallDecoder=false;
 
-  if((ihsym!=ihsym0+1) or (qAbs(ihsym-200)<3) or (qAbs(ihsym-330)<4) or (qAbs(ihsym-390)<4)) {
-    qDebug() << "aa" << ihsym0 << ihsym << m_n60
-             << bCallDecoder << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
-  }
+//  if((ihsym!=ihsym0+1) or (qAbs(ihsym-200)<3) or (qAbs(ihsym-330)<3) or (qAbs(ihsym-390)<3)) {
+//    qDebug() << "aa" << ihsym0 << ihsym << m_n60
+//             << bCallDecoder << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+//  }
 
   ihsym0=ihsym;
   if(bCallDecoder) {
@@ -742,7 +743,7 @@ void MainWindow::diskDat(int iret)                                   //diskDat()
 
 void MainWindow::decoderFinished()
 {
-  qDebug() << "ee" << "decoder finished" << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+//  qDebug() << "ee" << "decoder finished" << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
   m_startAnother=m_loopall;
   decodes_.nQDecoderDone=1;
   if(m_diskData) decodes_.nQDecoderDone=2;
@@ -844,8 +845,8 @@ void MainWindow::freezeDecode(int n)                          //freezeDecode()
 
 void MainWindow::decode()                                       //decode()
 {
-  qDebug() << "bb" << "decoder called" << m_decoderBusy
-           << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+//  qDebug() << "bb" << "decoder called" << m_decoderBusy
+//           << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
   if(m_decoderBusy) {
     return;  //Don't attempt decode if decoder already busy
   }
@@ -938,8 +939,8 @@ void MainWindow::decode()                                       //decode()
     m_saveFileName=m_saveDir + "/" + m_dateTime + ".qm";
   }
 
-  qDebug() << "cc" << m_n60 << datcom2_.nhsym << m_nTx30a << m_nTx30b
-           << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+//  qDebug() << "cc" << m_n60 << datcom2_.nhsym << m_nTx30a << m_nTx30b
+//           << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
 
   bool bSkipDecode=false;
   //No need to call decoder for first half, if we transmitted in the first half:
@@ -960,7 +961,7 @@ void MainWindow::decode()                                       //decode()
   memcpy(savecom_.revision, m_revision.toLatin1(), len2);
   memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
 
-  qDebug() << "dd" << "starting q65c()" << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
+//  qDebug() << "dd" << "starting q65c()" << 0.001*(QDateTime::currentMSecsSinceEpoch()%60000);
   watcher3.setFuture(QtConcurrent::run (q65c_));
   decodeBusy(true);
 }
