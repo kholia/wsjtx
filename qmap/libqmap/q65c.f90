@@ -40,12 +40,6 @@ subroutine q65c
   npatience=1
   newdat=1                          !Always on ??
 
-!  if(ndiskdat.eq.0) then
-!     if(nhsym.eq.200 .and. n60.ne.30) go to 999
-!     if(nhsym.eq.330 .and. n60.ne.49) go to 999
-!     if(nhsym.eq.390 .and. n60.ne.58) go to 999
-!  endif
-
   if(ndiskdat.eq.1) then
      call chkstat(dd,nhsym,pdb)
      if((abs(pdb(1)-pdb(2)).gt.3.0 .and. pdb(1).gt.1.0) .or.  &
