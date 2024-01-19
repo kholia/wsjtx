@@ -43,6 +43,7 @@ subroutine symspec(k,ndiskdat,nb,nbslider,nfsample,    &
 
   if(k.lt.k0) then
      ts=1.d0 - hsym
+     ss=0.
      savg=0.
      ihsym=0
      k1=0
