@@ -63,6 +63,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   do icand=1,ncand                        !Attempt to decode each candidate
      tsec=sec_midn() - tsec0
 ! Don't start another decode attempt if it's too late...
+     if(nhsym.eq.160 .and. tsec.gt.4.0) exit
      if(nhsym.eq.200 .and. tsec.gt.10.0) exit
      if(nhsym.eq.330 .and. tsec.gt.6.0) exit
      if(nhsym.eq.390 .and. tsec.gt.16.0) exit

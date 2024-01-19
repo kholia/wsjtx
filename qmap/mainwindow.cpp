@@ -402,6 +402,7 @@ void MainWindow::dataSink(int k)
   bool bCallDecoder=false;
   if(ihsym < m_hsymStop) m_decode_called=false;
   if(ihsym==m_hsymStop and !m_decode_called) bCallDecoder=true; //Decode at t=58.5 s
+  if(ihsym==160) bCallDecoder=true;
   if(m_bAlso30 and (ihsym==200)) bCallDecoder=true;
   if(ihsym==330) bCallDecoder=true;
   if(ihsym==ihsym0) bCallDecoder=false;
@@ -923,7 +924,7 @@ void MainWindow::decode()                                       //decode()
 
   datcom_.ndiskdat=0;
 
-  if((!m_bAlso30 and (datcom2_.nhsym==330)) or (m_bAlso30 and (datcom2_.nhsym==200))) {
+  if((!m_bAlso30 and (datcom2_.nhsym==330)) or (m_bAlso30 and (datcom2_.nhsym==160))) {
     decodes_.ndecodes=0;    //Start the decode cycle with a clean slate
     m_fetched=0;
   }
