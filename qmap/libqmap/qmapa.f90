@@ -15,6 +15,12 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      integer :: iseq      !0 for first half-minute, 1 for second half
   end type candidate
 
+  type good_decode
+     real :: f            !Freq of sync tone, 0 to 96000 Hz
+     integer :: ntrperiod !60 for Q65-60x, 30 for Q65-30x
+     integer :: iseq      !0 for first half-minute, 1 for second half
+  end type good_decode
+
   parameter (NFFT=32768)             !Size of FFTs done in symspec()
   parameter (MAX_CANDIDATES=50)
   parameter (MAXMSG=1000)            !Size of decoded message list
@@ -26,6 +32,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   logical*1 bAlso30,bClickDecode
   character mycall*12,hiscall*12,hisgrid*6
   type(candidate) :: cand(MAX_CANDIDATES)
+  type(good_decode) found(MAX_CANDIDATES)
   character*64 result
   character*20 datetime
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
@@ -62,7 +69,8 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
 
   do icand=1,ncand                        !Attempt to decode each candidate
      tsec=sec_midn() - tsec0
-     if(ndiskdat.eq.0) then !No more realtime decode attempts if it's too late
+     if(ndiskdat.eq.0) then
+        ! No more realtime decode attempts if it's nearly too late, already
         if(nhsym.eq.130 .and. tsec.gt.6.0) exit
         if(nhsym.eq.200 .and. tsec.gt.10.0) exit
         if(nhsym.eq.330 .and. tsec.gt.6.0) exit
@@ -71,6 +79,14 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      f0=cand(icand)%f
      ntrperiod=cand(icand)%ntrperiod
      iseq=cand(icand)%iseq
+
+! Skip this candidate if we already decoded it.
+     do j=1,ndecodes
+        if(abs(f0-found(j)%f).lt.0.005 .and.                                &
+           ntrperiod.eq.found(j)%ntrperiod .and.                            &
+           iseq.eq.found(j)%iseq) go to 10
+     enddo
+
      mode_q65_tmp=mode_q65
      if(ntrperiod.eq.30) mode_q65_tmp=max(1,mode_q65-1)
      freq=f0+nkhz_center-48.0-1.27046
@@ -83,6 +99,13 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
           ndepth,datetime,nCFOM,ndop00,nhsym,idec)
      call timer('q65b    ',1)
      if(bClickDecode .and. idec.ge.0) exit
+     if(idec.ge.0) then
+        ! Save some details on good decodes, to avoid duplicated effort
+        found(ndecodes)%f=f0
+        found(ndecodes)%ntrperiod=ntrperiod
+        found(ndecodes)%iseq=iseq
+     end if
+10   continue
   enddo  ! icand
 
   return
