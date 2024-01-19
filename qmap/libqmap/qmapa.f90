@@ -19,7 +19,6 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   parameter (MAX_CANDIDATES=50)
   parameter (MAXMSG=1000)            !Size of decoded message list
   parameter (NSMAX=60*96000)
-  complex cx(NSMAX/64)               !Data at 1378.125 samples/s
   real dd(2,NSMAX)                   !I/Q data from Linrad
   real ss(400,NFFT)                  !Symbol spectra
   real savg(NFFT)                    !Average spectrum
@@ -32,7 +31,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   save
-  
+
   tsec0=sec_midn()
   if(nagain.eq.1) ndepth=3            !Use full depth for click-to-decode
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
