@@ -15,19 +15,15 @@ subroutine read_qm(fname,iret)
   open(28,file=trim(fname),status='old',access='stream',err=900)
   read(28,end=910) prog_id,mycall,mygrid,fcenter,nutc,ntx30a,           &
        ntx30b,ndop00,ndop58,ia,ib,fac0,nxtra
+  iret=3
+  if(ib.eq.NMAX/2) iret=1
+  if(ia.eq.NMAX/2+1) iret=2
   fac=1.0
   if(fac0.gt.0.0) fac=1.0/fac0
   id1=0
   read(28,end=910) id1(1:2,ia:ib)
   dd=0.
   dd(1:2,ia:ib)=fac*id1(1:2,ia:ib)   !Boost back to previous level
-  iret=3
-  if(ib.eq.NMAX/2) iret=1
-  if(ia.eq.NMAX/2+1) iret=2
-!  print*,'A',ia,ib,iret,prog_id,' ',mycall,' ',mygrid,' ',fcenter,nutc
-!  write(*,3001) prog_id,mycall(1:6),mygrid,fcenter,nutc,ntx30a,ntx30b,  &
-!       ndop00,ndop58,ia,ib
-!3001 format(a24,2x,a6,2x,a6,f10.3,i6.4,2i5/4i9)
   go to 999
 
 900 iret=-1; go to 999
