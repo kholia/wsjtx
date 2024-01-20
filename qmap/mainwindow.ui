@@ -509,7 +509,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string> About QMAP</string>
+    <string>About QMAP</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F1</string>
