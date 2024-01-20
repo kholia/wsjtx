@@ -83,8 +83,8 @@ private slots:
   void on_actionQuick_Start_Guide_to_WSJT_X_2_7_and_QMAP_triggered();
   void on_actionAlso_Q65_30x_toggled(bool b);
   void on_sbMaxDrift_valueChanged(int arg1);
-
   void on_actionSave_decoded_triggered();
+  void on_actionExport_wav_file_at_fQSO_triggered();
 
 private:
   Ui::MainWindow *ui;

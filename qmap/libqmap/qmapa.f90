@@ -40,7 +40,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   save
 
   tsec0=sec_midn()
-  if(nagain.eq.1) ndepth=3            !Use full depth for click-to-decode
+  if(nagain.ge.1) ndepth=3            !Use full depth for click-to-decode
   nkhz_center=nint(1000.0*(fcenter-int(fcenter)))
   mfa=nfa-nkhz_center+48
   mfb=nfb-nkhz_center+48
@@ -60,8 +60,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   foffset=0.001*(1270 + nfcal)        !Offset from sync tone, plus CAL
   fqso=mousefqso + foffset - 0.5*(nfa+nfb) + nfshift !fqso at baseband (khz)
   nqd=0
-  bClickDecode=(nagain.eq.1)
-  nagain2=0
+  bClickDecode=(nagain.ge.1)
 
   call timer('fftbig  ',0)
   call fftbig(dd,NSMAX) !Do the full-length FFT
@@ -80,12 +79,14 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      ntrperiod=cand(icand)%ntrperiod
      iseq=cand(icand)%iseq
 
-! Skip this candidate if we already decoded it.
-     do j=1,ndecodes
-        if(abs(f0-found(j)%f).lt.0.005 .and.                                &
+     if(nagain.eq.0) then
+        ! Skip this candidate if we already decoded it.
+        do j=1,ndecodes
+           if(abs(f0-found(j)%f).lt.0.005 .and.                             &
            ntrperiod.eq.found(j)%ntrperiod .and.                            &
            iseq.eq.found(j)%iseq) go to 10
-     enddo
+        enddo
+     endif
 
      mode_q65_tmp=mode_q65
      if(ntrperiod.eq.30) mode_q65_tmp=max(1,mode_q65-1)
@@ -95,7 +96,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
      call timer('q65b    ',0)
      call q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,           &
           ntrperiod,iseq,mycall,hiscall,hisgrid,mode_q65_tmp,f0,fqso,       &
-          nkhz_center,newdat,nagain2,bClickDecode,max_drift,offset,         &
+          nkhz_center,newdat,nagain,bClickDecode,max_drift,offset,         &
           ndepth,datetime,nCFOM,ndop00,nhsym,idec)
      call timer('q65b    ',1)
      if(bClickDecode .and. idec.ge.0) exit

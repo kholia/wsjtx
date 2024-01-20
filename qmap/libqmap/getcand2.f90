@@ -39,7 +39,7 @@ subroutine getcand2(ss,savg0,nts_q65,nagain,nhsym,ntx30a,ntx30b,     &
   nguard=5                              !Guard range in bins
   i1=1
   i2=NFFT-nbw-nguard
-  if(nagain.eq.1) then
+  if(nagain.ge.1) then
      i1=nint((1000.0*f0_selected-ntol)/df)
      i2=nint((1000.0*f0_selected+ntol)/df)
   endif

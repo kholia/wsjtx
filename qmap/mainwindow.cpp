@@ -192,7 +192,6 @@ MainWindow::~MainWindow()
     soundInThread.quit();
     soundInThread.wait(3000);
   }
-//  fftwf_export_wisdom_to_filename (QDir {m_appDir}.absoluteFilePath ("qmap_wisdom.dat").toLocal8Bit ());
   delete ui;
 }
 
@@ -951,6 +950,7 @@ void MainWindow::decode()                                       //decode()
   memcpy(savecom_.revision, m_revision.toLatin1(), len2);
   memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
 
+  ui->actionExport_wav_file_at_fQSO->setEnabled(m_diskData);
   watcher3.setFuture(QtConcurrent::run (q65c_));
   decodeBusy(true);
 }
@@ -1183,4 +1183,12 @@ void MainWindow::on_sbMaxDrift_valueChanged(int n)
   if(n==0) ui->sbMaxDrift->setStyleSheet("");
   if(n==5) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ffff82; }");
   if(n>=10) ui->sbMaxDrift->setStyleSheet("QSpinBox { background-color: #ffff00; }");
+}
+
+void MainWindow::on_actionExport_wav_file_at_fQSO_triggered()
+{
+  qDebug() << "Export .wav file" << m_path;
+  datcom_.newdat=0;
+  datcom_.nagain=2;
+  decode();
 }

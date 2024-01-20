@@ -9,12 +9,14 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 ! in common/cacb.  Decoded messages are sent back to the GUI.
 
   use q65_decode
+  use wavhdr
   use timer_module, only: timer
 
   parameter (MAXFFT1=5376000)              !56*96000
   parameter (MAXFFT2=336000)               !56*6000 (downsampled by 1/16)
   parameter (NMAX=60*12000)
   parameter (RAD=57.2957795)
+  type(hdr) h
   integer*2 iwave(60*12000)
   integer offset
   complex ca(MAXFFT1)                      !FFT of raw I/Q data from Linrad
@@ -26,11 +28,13 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   character*6 hisgrid
   character*4 grid4
   character*3 csubmode
+  character*17 fname
   character*64 result,ctmp
   character*20 datetime,datetime1
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
        nWTransmitting,result(50)
   common/cacb/ca
+  data ifile/0/
   save
   
   if(mycall0(1:1).ne.' ') mycall=mycall0
@@ -46,8 +50,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   nh=nfft2/2
   f_mouse=1000.0*(fqso+48.0) + mousedf
   k0=nint((ipk*df3-1000.0)/df)
-  if(nagain.eq.1) k0=nint((f_mouse-1000.0)/df)
-
   if(k0.lt.nh .or. k0.gt.MAXFFT1-nfft2+1) go to 900
   fac=1.0/nfft2
   cx(0:nfft2-1)=ca(k0:k0+nfft2-1)
@@ -87,7 +89,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   nsubmode=mode_q65-1
   nfa=990                   !Tight limits around ipk for the wideband decode
   nfb=1010
-  if(nagain.eq.1) then      !For nagain=1, use limits of +/- ntol
+  if(nagain.ge.1) then      !For nagain>=1, use limits of +/- ntol
      nfa=max(100,1000-ntol)
      nfb=min(2500,1000+ntol)
   endif
@@ -108,9 +110,23 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      if(iseq.eq.1) datetime1(12:13)='30'
   endif
 
+!  if(nagain.eq.2) then
+!     h=default_header(12000,30*12000)
+!     ifile=ifile+1
+!     write(fname,1000) ifile
+!1000 format('000000_',i6.6,'.wav')
+!     open(27,file=fname,status='unknown',access='stream')
+!     ia=ifile*30*12000 + 1
+!     ib=ia + 30*12000 - 1
+!     write(27) h,iwave(ia:ib)
+!     close(27)
+!  endif
+!  print*,'A',nagain,ifile,fname
+  
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
+  nagain2=0
   call map65_mmdec(nutc1,iwave,nqd,ntrperiod,nsubmode,nfa,nfb,1000,ntol,     &
-       newdat,nagain,max_drift,ndepth,mycall,hiscall,hisgrid)
+       newdat,nagain2,max_drift,ndepth,mycall,hiscall,hisgrid)
   MHz=fcenter
   freq0=MHz + 0.001d0*ikhz
 
@@ -132,8 +148,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      freq1=freq0 + 0.001d0*(ikhz1-ikhz)
      frx=0.001*k0*df+nkhz_center-48.0+1.0 - 0.001*nfcal
      fsked=frx - 0.001*ndop00/2.0 - 0.001*offset
-!     if(iand(nCFOM,2).eq.2) write(*,3001) nCFOM,ndop00,frx,fsked
-!3001 format('A',i5,i8,f10.3,f10.1)
      ctmp=csubmode//'  '//trim(msg0)
      ndecodes=min(ndecodes+1,50)
      write(result(ndecodes),1120) nhhmmss,frx,fsked,xdt0,nsnr0,trim(ctmp)

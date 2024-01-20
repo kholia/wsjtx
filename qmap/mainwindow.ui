@@ -434,6 +434,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="separator"/>
     <addaction name="actionDelete_all_iq_files_in_SaveDir"/>
     <addaction name="separator"/>
+    <addaction name="actionExport_wav_file_at_fQSO"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -855,6 +856,11 @@ p, li { white-space: pre-wrap; }
     <string>Save decoded</string>
    </property>
   </action>
+  <action name="actionExport_wav_file_at_fQSO">
+   <property name="text">
+    <string>Export .wav file at fQSO</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -873,8 +879,8 @@ p, li { white-space: pre-wrap; }
    <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>269</x>
-     <y>255</y>
+     <x>287</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
      <x>126</x>
