@@ -368,8 +368,10 @@ void MainWindow::dataSink(int k)
 
   xSignalMeter->setValue(px);                   // Update the signal meter
   //Suppress scrolling if WSJT-X is transmitting
-  if((m_monitoring and (!m_bWTransmitting or ui->continuous_waterfall->isChecked())) or m_diskData) {
-      m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
+  if((m_monitoring and (!m_bWTransmitting or
+     ui->continuous_waterfall->isChecked())) or
+     (m_diskData and (px>0))) {
+    m_wide_graph_window->dataSink2(s,nkhz,ihsym,m_diskData,lstrong);
   }
 
   //Average over specified number of spectra
