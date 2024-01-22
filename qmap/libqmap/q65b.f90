@@ -44,10 +44,7 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 ! Find best frequency from sync_dat, the "orange sync curve".
   df3=96000.0/32768.0
   ipk=(1000.0*f0-1.0)/df3
-  if(nagain.ge.2) then
-     f_mouse=1000.0*(fqso+ikhz-48.0) + mousedf - 1270.0
-     ipk = nint(f_mouse/df3)
-  endif
+  if(nagain.ge.2) ipk = nint(1000.0*(fqso-nkhz_center+48.0)/df3)
   nfft1=MAXFFT1
   nfft2=MAXFFT2
   df=96000.0/NFFT1
@@ -55,7 +52,6 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
   k0=nint((ipk*df3-1000.0)/df)
   if(k0.lt.nh .or. k0.gt.MAXFFT1-nfft2+1) go to 900
   fac=1.0/nfft2
-  if(nagain.ge.2) print*,nagain,k0,k0*df
   cx(0:nfft2-1)=fac*ca(k0:k0+nfft2-1)
 
 ! Here cx is frequency-domain data around the selected

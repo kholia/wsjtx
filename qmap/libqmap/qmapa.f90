@@ -48,11 +48,13 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   nts_q65=2**(mode_q65-1)             !Q65 tone separation factor
   f0_selected=fselected - nkhz_center + 48.0
 
-  call timer('get_cand',0)
-! Get a list of decoding candidates
-  call getcand2(ss,savg,nts_q65,nagain,nhsym,ntx30a,ntx30b,ntol,     &
-       f0_selected,bAlso30,cand,ncand)
-  call timer('get_cand',1)
+  if(nagain.le.1) then
+     call timer('get_cand',0)
+     ! Get a list of decoding candidates
+     call getcand2(ss,savg,nts_q65,nagain,nhsym,ntx30a,ntx30b,ntol,     &
+          f0_selected,bAlso30,cand,ncand)
+     call timer('get_cand',1)
+  endif
 
   nwrite_q65=0
   df=96000.0/NFFT                     !df = 96000/NFFT = 2.930 Hz
@@ -65,6 +67,11 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   call timer('fftbig  ',0)
   call fftbig(dd,NSMAX) !Do the full-length FFT
   call timer('fftbig  ',1)
+
+  if(nagain.ge.2) then
+     ncand=1
+     fqso=fselected
+  endif
 
   do icand=1,ncand                        !Attempt to decode each candidate
      tsec=sec_midn() - tsec0

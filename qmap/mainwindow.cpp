@@ -951,7 +951,6 @@ void MainWindow::decode()                                       //decode()
   memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
 
   ui->actionExport_wav_file_at_fQSO->setEnabled(m_diskData);
-  qDebug() << "aa" << datcom2_.nagain;
   watcher3.setFuture(QtConcurrent::run (q65c_));
   decodeBusy(true);
 }
