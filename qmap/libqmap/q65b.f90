@@ -44,16 +44,19 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
 ! Find best frequency from sync_dat, the "orange sync curve".
   df3=96000.0/32768.0
   ipk=(1000.0*f0-1.0)/df3
+  if(nagain.ge.2) then
+     f_mouse=1000.0*(fqso+ikhz-48.0) + mousedf - 1270.0
+     ipk = nint(f_mouse/df3)
+  endif
   nfft1=MAXFFT1
   nfft2=MAXFFT2
   df=96000.0/NFFT1
   nh=nfft2/2
-  f_mouse=1000.0*(fqso+48.0) + mousedf
   k0=nint((ipk*df3-1000.0)/df)
   if(k0.lt.nh .or. k0.gt.MAXFFT1-nfft2+1) go to 900
   fac=1.0/nfft2
-  cx(0:nfft2-1)=ca(k0:k0+nfft2-1)
-  cx=fac*cx
+  if(nagain.ge.2) print*,nagain,k0,k0*df
+  cx(0:nfft2-1)=fac*ca(k0:k0+nfft2-1)
 
 ! Here cx is frequency-domain data around the selected
 ! QSO frequency, taken from the full-length FFT computed in fftbig().
@@ -110,18 +113,28 @@ subroutine q65b(nutc,nqd,fcenter,nfcal,nfsample,ikhz,mousedf,ntol,          &
      if(iseq.eq.1) datetime1(12:13)='30'
   endif
 
-!  if(nagain.eq.2) then
-!     h=default_header(12000,30*12000)
-!     ifile=ifile+1
-!     write(fname,1000) ifile
-!1000 format('000000_',i6.6,'.wav')
-!     open(27,file=fname,status='unknown',access='stream')
-!     ia=ifile*30*12000 + 1
-!     ib=ia + 30*12000 - 1
-!     write(27) h,iwave(ia:ib)
-!     close(27)
-!  endif
-!  print*,'A',nagain,ifile,fname
+  if(nagain.ge.2) then
+     ifile=ifile+1
+     write(fname,1000) ifile
+1000 format('000000_',i6.6,'.wav')
+     open(27,file=fname,status='unknown',access='stream')
+     if(nagain.eq.2) then
+        h=default_header(12000,60*12000)
+        ia=1
+        ib=60*12000
+     else if(nagain.eq.3) then
+        h=default_header(12000,30*12000)
+        ia=1
+        ib=30*12000
+     else
+        h=default_header(12000,30*12000)
+        ia=30*12000 + 1
+        ib=60*12000
+     endif
+     write(27) h,iwave(ia:ib)
+     close(27)
+     go to 900
+  endif
   
 ! NB: Frequency of ipk is now shifted to 1000 Hz.
   nagain2=0

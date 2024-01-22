@@ -86,6 +86,10 @@ private slots:
   void on_actionSave_decoded_triggered();
   void on_actionExport_wav_file_at_fQSO_triggered();
 
+  void on_actionExport_wav_file_at_fQSO_30a_triggered();
+
+  void on_actionExport_wav_file_at_fQSO_30b_triggered();
+
 private:
   Ui::MainWindow *ui;
   QString m_appDir;

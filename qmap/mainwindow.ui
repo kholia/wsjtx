@@ -435,6 +435,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionDelete_all_iq_files_in_SaveDir"/>
     <addaction name="separator"/>
     <addaction name="actionExport_wav_file_at_fQSO"/>
+    <addaction name="actionExport_wav_file_at_fQSO_30a"/>
+    <addaction name="actionExport_wav_file_at_fQSO_30b"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
@@ -858,7 +860,17 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionExport_wav_file_at_fQSO">
    <property name="text">
-    <string>Export .wav file at fQSO</string>
+    <string>Export .wav file at fQSO (60 s)</string>
+   </property>
+  </action>
+  <action name="actionExport_wav_file_at_fQSO_30b">
+   <property name="text">
+    <string>Export .wav file at fQSO (30 s, second part)</string>
+   </property>
+  </action>
+  <action name="actionExport_wav_file_at_fQSO_30a">
+   <property name="text">
+    <string>Export .wav file at fQSO (30 s, first part)</string>
    </property>
   </action>
  </widget>

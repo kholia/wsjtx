@@ -951,6 +951,7 @@ void MainWindow::decode()                                       //decode()
   memcpy(savecom_.saveFileName, m_saveFileName.toLatin1(),len1);
 
   ui->actionExport_wav_file_at_fQSO->setEnabled(m_diskData);
+  qDebug() << "aa" << datcom2_.nagain;
   watcher3.setFuture(QtConcurrent::run (q65c_));
   decodeBusy(true);
 }
@@ -1187,8 +1188,20 @@ void MainWindow::on_sbMaxDrift_valueChanged(int n)
 
 void MainWindow::on_actionExport_wav_file_at_fQSO_triggered()
 {
-  qDebug() << "Export .wav file" << m_path;
   datcom_.newdat=0;
   datcom_.nagain=2;
   decode();
 }
+
+void MainWindow::on_actionExport_wav_file_at_fQSO_30a_triggered()
+{
+  datcom_.newdat=0;
+  datcom_.nagain=3;
+  decode();
+}
+
+void MainWindow::on_actionExport_wav_file_at_fQSO_30b_triggered()
+{
+  datcom_.newdat=0;
+  datcom_.nagain=4;
+  decode();}
