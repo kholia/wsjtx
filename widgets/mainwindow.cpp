@@ -3954,7 +3954,14 @@ void MainWindow::callSandP2(int n)
   }
   setTxMsg(1);
   ui->txFirstCheckBox->setChecked(m_txFirst);
-  if (!ui->autoButton->isChecked()) ui->autoButton->click(); // Enable Tx
+  static qint64 ms0=0;
+  qint64 ms=QDateTime::currentMSecsSinceEpoch();
+  if(ui->autoButton->isChecked()) {
+    if((ms-ms0)<=500) ui->autoButton->click(); // Disable Tx on double click
+  } else if((ms-ms0)>500) {
+    ui->autoButton->click(); // Enable Tx on single click
+  }
+  ms0=ms;
   if(m_transmitting) m_restart=true;
 }
 

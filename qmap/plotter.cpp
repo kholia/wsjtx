@@ -599,6 +599,8 @@ void CPlotter::mousePressEvent(QMouseEvent *event)       //mousePressEvent
   int x=event->x();
   int y=event->y();
   int button=event->button();
+//  qDebug() << "aa" << x << y << int(FreqfromX(x)+0.5)
+//           << floor(datcom_.fcenter) + 0.001*int(FreqfromX(x)+0.5);
   if(y < h+30) {                                      // Wideband waterfall
     if(button==1) {
       setFQSO(x,false);
