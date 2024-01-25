@@ -36,7 +36,7 @@ subroutine qmapa(dd,ss,savg,newdat,nutc,fcenter,ntol,nfa,nfb,         &
   character*64 result
   character*20 datetime
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
-       nWTransmitting,result(50)
+       nWTransmitting,kHzRequested,result(50)
   save
 
   tsec0=sec_midn()

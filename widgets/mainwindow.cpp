@@ -225,6 +225,7 @@ struct {
   int nQDecoderDone;     //QMAP decoder is finished (0 or 1)
   int nWDecoderBusy;     //WSJT-X decoder is busy (0 or 1)
   int nWTransmitting;    //WSJT-X is transmitting (0 or 1)
+  int kHzRequested;      //Integer kHz dial frequency requested from QMAP
   char result[50][64];   //Decodes as character*64 arrays
 } qmapcom;
 int* ipc_qmap;
@@ -1740,7 +1741,6 @@ void MainWindow::dataSink(qint64 frames)
         int idir=-1;
         save_echo_params_(&nDopTotal,&nDop,&nfrit,&f1,&width,dec_data.d2,&idir);
       }
-//      qDebug() << "aa" << m_astroWidget->DopplerMethod() << nDop << nfrit << m_fDop;
       avecho_(dec_data.d2,&nDop,&nfrit,&nauto,&navg,&nqual,&f1,&xlevel,&sigdb,
           &dBerr,&dfreq,&width,&m_diskData);
       //Don't restart Monitor after an Echo transmission
@@ -5097,13 +5097,18 @@ void MainWindow::guiUpdate()
       memcpy(&qmapcom, (char*)ipc_qmap, sizeof(qmapcom));  //Fetch the new decode(s)
       readWidebandDecodes();
     }
+    if(ipc_qmap[5]>0) {
+//      qDebug() << "aa" << m_freqNominal << ipc_qmap[5];
+      setRig((m_freqNominal/1000000)*1000000 + 1000*ipc_qmap[5]);
+      ipc_qmap[5]=0;
+//      qDebug() << "bb" << m_freqNominal << ipc_qmap[5];
+    }
     mem_qmap.unlock();
   }
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec%60 << int(m_specOp);
-
+//    qDebug() << "AAA" << nsec%60 << ipc_qmap[5];
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
     if( SpecOp::HOUND == m_specOp ) {
@@ -9673,7 +9678,6 @@ void MainWindow::readWidebandDecodes()
       m_EMECall[dxcall].t=3600*nhr + 60*nmin + nsec;
       m_EMECall[dxcall].submode=submode;
 //### Make sure WSJT-X is set to a Q65 submode consistent with the executing QMAP.
-//      qDebug() << "aa" << submode << m_mode << m_nSubMode << bWrongMode;
       if(w3.contains(grid_regexp)) m_EMECall[dxcall].grid4=w3;
       bool bCQ=line.contains(" CQ ");
 //      m_EMECall[dxcall].ready2call=(bCQ or line.contains(" 73") or line.contains(" RR73"));

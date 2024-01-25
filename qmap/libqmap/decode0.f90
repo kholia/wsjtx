@@ -12,7 +12,7 @@ subroutine decode0(dd,ss,savg)
   character mycall0*12,hiscall0*12,hisgrid0*6
   character*64 result
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
-       nWTransmitting,result(50)
+       nWTransmitting,kHzRequested,result(50)
   common/npar/fcenter,nutc,fselected,mousedf,mousefqso,nagain,            &
        ndepth,ndiskdat,ntx60,newdat,nfa,nfb,nfcal,nfshift,                &
        ntx30a,ntx30b,ntol,n60,nCFOM,nfsample,ndop58,nmode,                 &

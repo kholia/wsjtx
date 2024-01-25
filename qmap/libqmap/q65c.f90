@@ -22,7 +22,7 @@ subroutine q65c
   character*20 datetime
   character*64 result
   common/decodes/ndecodes,ncand,nQDecoderDone,nWDecoderBusy,              &
-       nWTransmitting,result(50)
+       nWTransmitting,kHzRequested,result(50)
   common/datcom2/dd(2,5760000),ss(400,NFFT),savg(NFFT),nparams0
   common/savecom/revision,fname
 !### REMEMBER that /npar/ is not updated until nparams=nparams0 is executed. ###

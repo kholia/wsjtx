@@ -821,6 +821,13 @@ void MainWindow::on_DecodeButton_clicked()                    //Decode request
 
 void MainWindow::freezeDecode(int n)                          //freezeDecode()
 {
+  if(n==3) {
+    decodes_.kHzRequested=m_wide_graph_window->QSOfreq();
+    mem_qmap.lock();
+    ipc_wsjtx[5]=decodes_.kHzRequested;
+    mem_qmap.unlock();
+    return;
+  }
   if(n==2) {
     ui->tolSpinBox->setValue(5);
     datcom_.ntol=m_tol;
