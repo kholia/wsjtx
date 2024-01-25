@@ -4265,7 +4265,8 @@ void MainWindow::readFromStdout()                             //readFromStdout
            !m_config.enable_VHF_features()) bDisplayRight=true;
       }
       if(m_mode=="Q65" and !bAvgMsg) bDisplayRight=false;
-      if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
+      if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and
+         decodedtext.string().contains(m_baseCall)) bDisplayRight=true;
 
       if (bDisplayRight) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
