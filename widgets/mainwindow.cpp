@@ -4264,7 +4264,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if((abs(audioFreq - m_wideGraph->rxFreq()) <= 10) and
            !m_config.enable_VHF_features()) bDisplayRight=true;
       }
-      if(m_mode=="Q65" and !bAvgMsg) bDisplayRight=false;
+      if(m_mode=="Q65" and !bAvgMsg and !decodedtext.string().contains(m_baseCall)) bDisplayRight=false;
       if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
 
       if (bDisplayRight) {
@@ -6409,7 +6409,7 @@ void MainWindow::lookup()
 {
   QString hisCall {ui->dxCallEntry->text()};
   QString hisgrid0 {ui->dxGridEntry->text()};
-  if (!hisCall.size ()) return;
+  if (!hisCall.size () or (!(m_specOp==SpecOp::NONE or m_specOp==SpecOp::HOUND or m_specOp==SpecOp::Q65_PILEUP))) return;
   QFile f {m_config.writeable_data_dir ().absoluteFilePath ("CALL3.TXT")};
   if (f.open (QIODevice::ReadOnly | QIODevice::Text))
     {
