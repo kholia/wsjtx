@@ -4243,7 +4243,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         if((abs(audioFreq - m_wideGraph->rxFreq()) <= 10) and
            !m_config.enable_VHF_features()) bDisplayRight=true;
       }
-      if(m_mode=="Q65" and !bAvgMsg) bDisplayRight=false;
+      if(m_mode=="Q65" and !bAvgMsg and !decodedtext.string().contains(m_baseCall)) bDisplayRight=false;
       if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
 
       if (bDisplayRight) {
