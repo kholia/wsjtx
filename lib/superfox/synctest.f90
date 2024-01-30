@@ -11,10 +11,10 @@ program synctest
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   real ccf(-MMAX:MMAX,-JMAX:JMAX)        !2D CCF: DT, dFreq offsets
-  complex cdat(-15000:NMAX)              !Generated complex waveform
+  complex cdat(NMAX)                     !Generated complex waveform
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
-  complex crcvd(-15000:NMAX)             !Signal as received
+  complex crcvd(NMAX)                    !Signal as received
   complex c(0:NFFT-1)
   complex w,wstep,w0,wstep0
   integer ipk(2)
@@ -37,18 +37,19 @@ program synctest
   call getarg(4,arg)
   read(arg,*) snrdb
 
+  nsps=1024
   ntrperiod=15
   rms=100.
-  fsample=12000.d0                   !Sample rate (Hz)
+  fsample=12000.0                   !Sample rate (Hz)
   npts=fsample*ntrperiod             !Total samples in .wav file
-  twopi=8.d0*atan(1.d0)
+  twopi=8.0*atan(1.0)
   tsync=2.0
   nsync=fsample*tsync
   nsym=125                           !Number of channel symbols
   nsps=1024
   nsync=tsync*fsample
 
-  baud=12000.d0/nsps                 !Keying rate (6.67 baud fot 15-s sequences)
+  baud=12000.0/nsps                 !Keying rate (6.67 baud fot 15-s sequences)
   h=default_header(12000,npts)
   fname='000000_000001.wav'
   open(10,file=trim(fname),access='stream',status='unknown')
@@ -73,11 +74,11 @@ program synctest
   a1=f0 + syncwidth/2.0             !Frequency at midpoint of sync waveform
   a2=2.0*syncwidth/tsync            !Frequency drift rate
 
-! Generate complex sync signal
+! Generate complex LO and sync signal
   x0=0.5*(nsync+1)
   s=2.0/nsync
   cdat=0.
-  i0=xdt*12000.0
+  i0=nint(60.0*nsps + xdt*12000.0)
   do i=1,nsync
      if(i.eq.nsync/2+1) a2=-a2       !Reverse sign of drift at midpoint
      x=s*(i-x0)
@@ -98,14 +99,14 @@ program synctest
   write(10) h,iwave(1:npts)                !Save the .wav file
   close(10)
 
-  crcvd(-1000:0)=0.
+  crcvd=0.
   crcvd(1:NMAX)=cdat(1:NMAX) + cnoise
   ccf=0.
   df=12000.0/NFFT                         !0.366211
+  i1=60*nsps
   do m=-MMAX,MMAX
      lag=100*m
-!     c(0:nsync-1)=crcvd(1+lag:nsync+lag)*conjg(cdat(1:nsync))
-     c(0:nsync-1)=crcvd(1+lag:nsync+lag)*clo(1:nsync)
+     c(0:nsync-1)=crcvd(i1+1+lag:i1+nsync+lag)*clo(1:nsync)
      c(nsync:)=0.
      fac=1.e-3
      c=fac*c
@@ -119,6 +120,7 @@ program synctest
 
   ccf=ccf/maxval(ccf)
   ipk=maxloc(ccf)
+  print*,i0,ipk(1)
   ipk(1)=ipk(1)-MMAX-1
   ipk(2)=ipk(2)-JMAX-1
   ma=ipk(1)-10
@@ -133,10 +135,9 @@ program synctest
      write(*,1300) m/120.0,line
 1300 format(f6.3,2x,61a1)
   enddo
-  dt=ipk(1)/120.0
+  t=ipk(1)/120.0
   dfreq=ipk(2)*df
   f=1500.0+dfreq
-  t=dt
   write(*,1100) f0,xdt
 1100 format(/'f0:',f7.1,'  xdt:',f6.2)
   write(*,1112) f,t
