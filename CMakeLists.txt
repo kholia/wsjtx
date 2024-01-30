@@ -1154,6 +1154,12 @@ target_link_libraries (test_snr wsjt_fort)
 add_executable (q65sim lib/qra/q65/q65sim.f90)
 target_link_libraries (q65sim wsjt_fort wsjt_cxx)
 
+#add_executable (rstest lib/superfox/rstest.f90)
+#target_link_libraries (rstest wsjt_fort wsjt_cxx)
+
+add_executable (synctest lib/superfox/synctest.f90)
+target_link_libraries (synctest wsjt_fort wsjt_cxx)
+
 add_executable (q65code lib/qra/q65/q65code.f90)
 target_link_libraries (q65code wsjt_fort wsjt_cxx)
 
