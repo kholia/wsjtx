@@ -586,6 +586,10 @@ set (wsjt_FSRCS
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
   lib/77bit/hash22calc.f90
+  lib/superfox/gen_sfox.f90
+  lib/superfox/sync_sf.f90
+  lib/superfox/hard_symbols.f90
+  lib/superfox/ran1.f90
   )
 
 # temporary workaround for a gfortran v7.3 ICE on Fedora 27 64-bit

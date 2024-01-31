@@ -18,9 +18,9 @@ program synctest
   character fname*17,arg*12
   
   nargs=iargc()
-  if(nargs.ne.6) then
-     print*,'Usage:   synctest   f0    DT fspread delay width snr'
-     print*,'Example: synctest 1500.0 2.5    0.0   0.0   100  -20'
+  if(nargs.ne.8) then
+     print*,'Usage:   synctest   f0    DT fspread delay width nran nfiles snr'
+     print*,'Example: synctest 1500.0 2.5    0.0   0.0   100    0    10   -20'
      go to 999
   endif
   call getarg(1,arg)
@@ -34,71 +34,80 @@ program synctest
   call getarg(5,arg)
   read(arg,*) syncwidth
   call getarg(6,arg)
+  read(arg,*) nran
+  call getarg(7,arg)
+  read(arg,*) nfiles
+  call getarg(8,arg)
   read(arg,*) snrdb
 
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
-  idummy=0
-
-  do i=1,ND
-     idat(i)=128*ran1(idummy)
-  enddo
-  
   h=default_header(12000,NMAX)
-  fname='000000_000001.wav'
-  open(10,file=trim(fname),access='stream',status='unknown')
-
-  xnoise=0.
-  cnoise=0.
-  if(snrdb.lt.90) then
-     do i=1,NMAX                     !Generate Gaussian noise
-        x=gran()
-        y=gran()
-        xnoise(i)=x
-        cnoise(i)=cmplx(x,y)
-     enddo
-  endif
-
+  idummy=0
   bandwidth_ratio=2500.0/6000.0
   sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
   if(snrdb.gt.90.0) sig=1.0
+  ngood=0
+
+  do ifile=1,nfiles
+     do i=1,ND
+        call random_number(r)
+        if(nran.eq.1) r=ran1(idummy)
+        idat(i)=128*r
+     enddo
+  
+     fname='000000_000001.wav'
+     write(fname(8:13),'(i6.6)') ifile
+     open(10,file=trim(fname),access='stream',status='unknown')
+
+     xnoise=0.
+     cnoise=0.
+     if(snrdb.lt.90) then
+        do i=1,NMAX                     !Generate Gaussian noise
+           x=gran()
+           y=gran()
+           xnoise(i)=x
+           cnoise(i)=cmplx(x,y)
+        enddo
+     endif
 
 !Generate cdat (SuperFox waveform) and clo (LO needed for sync detection)
-  call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)  
+     call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)  
 
-  crcvd=0.
-  crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
+     crcvd=0.
+     crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
 
-  dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
-  fac=32767.0
-  if(snrdb.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
-  if(snrdb.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
-  write(10) h,iwave(1:NMAX)                !Save the .wav file
-  close(10)
+     dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
+     fac=32767.0
+     if(snrdb.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
+     if(snrdb.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
+     write(10) h,iwave(1:NMAX)                !Save the .wav file
+     close(10)
 
-  if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
-       delay,fspread)
+     if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
+          delay,fspread)
 
 ! Find signal freq and DT
 
-  call sync_sf(crcvd,clo,f,t)
+     call sync_sf(crcvd,clo,f,t)
 
-  call hard_symbols(crcvd,f,t,jdat)
-  nharderr=count(jdat.ne.idat)  
+     call hard_symbols(crcvd,f,t,jdat)
+     nharderr=count(jdat.ne.idat)  
   
-  write(*,1100) f0,xdt
+     write(*,1100) f0,xdt
 1100 format(/'f0:',f7.1,'  xdt:',f6.2)
-  write(*,1112) f,t
+     write(*,1112) f,t
 1112 format('f: ',f7.1,'   DT:',f6.2)
-  write(*,1110) f-f0,t-xdt
+     write(*,1110) f-f0,t-xdt
 1110 format('err:',f6.1,f12.2)
-  write(*,1120) nharderr
+     write(*,1120) nharderr
 1120 format('Hard errors:',i4)
+     if(nharderr.le.38) ngood=ngood+1
+!     write(13,1200) snrdb,nharderr
+!1200 format(f7.2,i5)
+  enddo
+  write(*,1300) snrdb,nfiles,ngood,float(ngood)/nfiles
+1300 format(f7.2,2i5,f7.2)
 
 999 end program synctest
-
-  include 'gen_sfox.f90'
-  include 'sync_sf.f90'
-  include 'hard_symbols.f90'
-  include 'ran1.f90'
