@@ -44,7 +44,6 @@ subroutine gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
 ! Sync waveform
   a1=f0 + syncwidth/2.0             !Frequency at midpoint of sync waveform
   a2=2.0*syncwidth/tsync            !Frequency drift rate
-  cdat=0.
   do i=1,nsync
      j=j+1
      if(i.eq.nsync/2+1) a2=-a2       !Reverse sign of drift at midpoint
