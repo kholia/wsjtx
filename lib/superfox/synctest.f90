@@ -14,6 +14,7 @@ program synctest
   complex crcvd(NMAX)                    !Signal as received
   real xdat(ND)                          !Temporary: for generating idat
   integer*1 idat(ND)                     !Encoded data, 7-bit integers
+  integer*1 jdat(ND)                     !Recovered hard-decision symbols
   character fname*17,arg*12
   
   nargs=iargc()
@@ -81,15 +82,20 @@ program synctest
 
   call sync_sf(crcvd,clo,f,t)
 
+  call hard_symbols(crcvd,f,t,jdat)
+  nharderr=count(jdat.ne.idat)  
+  
   write(*,1100) f0,xdt
 1100 format(/'f0:',f7.1,'  xdt:',f6.2)
   write(*,1112) f,t
 1112 format('f: ',f7.1,'   DT:',f6.2)
   write(*,1110) f-f0,t-xdt
 1110 format('err:',f6.1,f12.2)
+  write(*,1120) nharderr
+1120 format('Hard errors:',i4)
 
 999 end program synctest
 
   include 'gen_sfox.f90'
   include 'sync_sf.f90'
-
+  include 'hard_symbols.f90'
