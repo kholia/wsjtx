@@ -46,71 +46,86 @@ program synctest
   h=default_header(12000,NMAX)
   idummy=0
   bandwidth_ratio=2500.0/6000.0
-  sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
-  if(snrdb.gt.90.0) sig=1.0
-  ngood=0
 
-  do ifile=1,nfiles
-     do i=1,ND
-        call random_number(r)
-        if(nran.eq.1) r=ran1(idummy)
-        idat(i)=128*r
-     enddo
-  
-     fname='000000_000001.wav'
-     write(fname(8:13),'(i6.6)') ifile
-     open(10,file=trim(fname),access='stream',status='unknown')
+  do isnr=0,-30,-1
+     snr=isnr
+     if(snrdb.ne.0.0) snr=snrdb
+     sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snr)
+     if(snr.gt.90.0) sig=1.0
+     ngoodsync=0
+     ngood=0
 
-     xnoise=0.
-     cnoise=0.
-     if(snrdb.lt.90) then
-        do i=1,NMAX                     !Generate Gaussian noise
-           x=gran()
-           y=gran()
-           xnoise(i)=x
-           cnoise(i)=cmplx(x,y)
+     do ifile=1,nfiles
+        do i=1,ND
+           call random_number(r)
+           if(nran.eq.1) r=ran1(idummy)
+           idat(i)=128*r
         enddo
-     endif
+  
+        xnoise=0.
+        cnoise=0.
+        if(snr.lt.90) then
+           do i=1,NMAX                     !Generate Gaussian noise
+              x=gran()
+              y=gran()
+              xnoise(i)=x
+              cnoise(i)=cmplx(x,y)
+           enddo
+        endif
 
 !Generate cdat (SuperFox waveform) and clo (LO needed for sync detection)
-     call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)  
+        call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
 
-     crcvd=0.
-     crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
+        crcvd=0.
+        crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
 
-     dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
-     fac=32767.0
-     if(snrdb.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
-     if(snrdb.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
-     write(10) h,iwave(1:NMAX)                !Save the .wav file
-     close(10)
+        dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
+        fac=32767.0
+        if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
+        if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
-     if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
-          delay,fspread)
+        if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,&
+             delay,fspread)
 
 ! Find signal freq and DT
 
-     call sync_sf(crcvd,clo,f,t)
-     ferr=f-f0
-     terr=t-xdt
-     if(abs(ferr).gt.10.0 .or. abs(terr).gt.0.04) cycle
+        call sync_sf(crcvd,clo,snrdb,f,t)
+        ferr=f-f0
+        terr=t-xdt
+        if(abs(ferr).lt.10.0 .or. abs(terr).lt.0.02) ngoodsync=ngoodsync+1
 
-     call hard_symbols(crcvd,f,t,jdat)
-     nharderr=count(jdat.ne.idat)  
+        call hard_symbols(crcvd,f,t,jdat)
+        nharderr=count(jdat.ne.idat)  
   
-     write(*,1100) f0,xdt
-1100 format(/'f0:',f7.1,'  xdt:',f6.2)
-     write(*,1112) f,t
-1112 format('f: ',f7.1,'   DT:',f6.2)
-     write(*,1110) ferr,terr
-1110 format('err:',f6.1,f12.2)
-     write(*,1120) nharderr
-1120 format('Hard errors:',i4)
-     if(nharderr.le.38) ngood=ngood+1
-     write(13,1200) ifile,snrdb,ferr,terr,nharderr
-1200 format(i5,3f10.3,i5)
-  enddo
-  write(*,1300) snrdb,nfiles,ngood,float(ngood)/nfiles
-1300 format(f7.2,2i5,f7.2)
+        if(snrdb.ne.0) then
+           fname='000000_000001.wav'
+           write(fname(8:13),'(i6.6)') ifile
+           open(10,file=trim(fname),access='stream',status='unknown')
+           write(10) h,iwave(1:NMAX)                !Save the .wav file
+           close(10)
+           write(*,1100) f0,xdt
+1100       format(/'f0:',f7.1,'  xdt:',f6.2)
+           write(*,1112) f,t
+1112       format('f: ',f7.1,'   DT:',f6.2)
+           write(*,1110) ferr,terr
+1110       format('err:',f6.1,f12.2)
+           write(*,1120) nharderr
+1120       format('Hard errors:',i4)
+        endif
+        if(nharderr.le.38) ngood=ngood+1
+        write(13,1200) ifile,snr,ferr,terr,nharderr
+1200    format(i5,3f10.3,i5)
+     enddo  ! ifile
+     fgoodsync=float(ngoodsync)/nfiles
+     fgood=float(ngood)/nfiles
+     if(isnr.eq.0) write(*,1300)
+1300 format('    SNR     N  fsync  fgood'/  &
+            '----------------------------')
+     write(*,1310) snr,nfiles,fgoodsync,fgood
+1310 format(f7.2,i6,2f7.2)
+     if(snrdb.ne.0.0) exit
+     if(fgoodsync.lt.0.5) exit
+!     if(fgood.eq.0.0) exit
+  enddo  ! isnr
 
 999 end program synctest

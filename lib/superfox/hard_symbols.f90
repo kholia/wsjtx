@@ -14,6 +14,7 @@ subroutine hard_symbols(crcvd,f,t,jdat)
      ib=n*NSPS + i0
      if(n.gt.ND1) ib=(NS+n)*NSPS + i0
      ia=ib-NSPS+1
+     if(ia.lt.1 .or. ib.gt.NMAX) cycle
      c=crcvd(ia:ib)
      call four2a(c,NSPS,1,-1,1)          !Compute symbol spectrum
      do i=0,NSPS-1

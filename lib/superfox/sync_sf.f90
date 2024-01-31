@@ -1,4 +1,4 @@
-subroutine sync_sf(crcvd,clo,f,t)
+subroutine sync_sf(crcvd,clo,snrdb,f,t)
 
   include "sfox_params.f90"
   parameter (MMAX=150,JMAX=300)
@@ -29,21 +29,23 @@ subroutine sync_sf(crcvd,clo,f,t)
 
   ccf=ccf/maxval(ccf)
   ipk=maxloc(ccf)
-  print*,i0,ipk(1)
+!  print*,i0,ipk(1)
   ipk(1)=ipk(1)-MMAX-1
   ipk(2)=ipk(2)-JMAX-1
-  ma=max(-MMAX,ipk(1)-10)
-  mb=min(MMAX,ipk(1)+10)
-  ja=max(-JMAX,ipk(2)-30)
-  jb=min(JMAX,ipk(2)+30)
-  do m=ma,mb
-     do j=ja,jb
-        k=5.999*ccf(m,j)
-        line(j-ipk(2))=mark(k)
+  if(snrdb.ne.0.0) then
+     ma=max(-MMAX,ipk(1)-10)
+     mb=min(MMAX,ipk(1)+10)
+     ja=max(-JMAX,ipk(2)-30)
+     jb=min(JMAX,ipk(2)+30)
+     do m=ma,mb
+        do j=ja,jb
+           k=5.999*ccf(m,j)
+           line(j-ipk(2))=mark(k)
+        enddo
+        write(*,1300) m/120.0,line
+1300    format(f6.3,2x,61a1)
      enddo
-     write(*,1300) m/120.0,line
-1300 format(f6.3,2x,61a1)
-  enddo
+  endif
   t=ipk(1)/120.0
   dfreq=ipk(2)*df
   f=1500.0+dfreq
