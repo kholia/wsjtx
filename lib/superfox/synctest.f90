@@ -15,7 +15,6 @@ program synctest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   complex c(0:NFFT-1)
-  complex w,wstep,w0,wstep0
   integer ipk(2)
   character fname*17,arg*12
   character*1 line(-30:30),mark(0:5)
@@ -42,8 +41,6 @@ program synctest
 
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
-  twopi=8.0*atan(1.0)
-  tsync=NS*nsps/fsample
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
   h=default_header(12000,NMAX)
   fname='000000_000001.wav'
@@ -63,30 +60,11 @@ program synctest
   bandwidth_ratio=2500.0/6000.0
   sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
   if(snrdb.gt.90.0) sig=1.0
-  
-  w0=1.0
-  w=1.0
-  a0=1500.0+ syncwidth/2.0          !Frequency at midpoint of LO waveform
-  a1=f0 + syncwidth/2.0             !Frequency at midpoint of sync waveform
-  a2=2.0*syncwidth/tsync            !Frequency drift rate
 
-! Generate complex LO and sync signal
-  x0=0.5*(nsync+1)
-  s=2.0/nsync
-  cdat=0.
-  i0=nint(60.0*nsps + xdt*12000.0)
-  do i=1,nsync
-     if(i.eq.nsync/2+1) a2=-a2       !Reverse sign of drift at midpoint
-     x=s*(i-x0)
-     dphi0=(a0 + x*a2) * (twopi/fsample)
-     wstep0=cmplx(cos(dphi0),sin(dphi0))
-     w0=w0*wstep0
-     dphi=(a1 + x*a2) * (twopi/fsample)
-     wstep=cmplx(cos(dphi),sin(dphi))
-     w=w*wstep
-     clo(i)=conjg(sig*w0)
-     cdat(i+i0)=sig*w
-  enddo
+  call gen_sfox(f0,fsample,syncwidth,cdat,clo)
+  cdat=sig*cdat
+  crcvd=0.
+  crcvd(1:NMAX)=cshift(cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
 
   dat=aimag(cdat(1:NMAX)) + xnoise                 !Add generated AWGN noise
   fac=32767.0
@@ -95,15 +73,13 @@ program synctest
   write(10) h,iwave(1:NMAX)                !Save the .wav file
   close(10)
 
-  crcvd=0.
-  crcvd(1:NMAX)=cdat(1:NMAX) + cnoise
 
   if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
        delay,fspread)
 
   ccf=0.
   df=12000.0/NFFT                         !0.366211
-  i1=60*nsps
+  i1=ND1*nsps
   do m=-MMAX,MMAX
      lag=100*m
      c(0:nsync-1)=crcvd(i1+1+lag:i1+nsync+lag)*clo(1:nsync)
@@ -146,3 +122,6 @@ program synctest
 1110 format('err:',f6.1,f12.2)
 
 999 end program synctest
+
+  include 'gen_sfox.f90'
+  
