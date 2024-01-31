@@ -12,7 +12,7 @@ program synctest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-  real xdat(ND)                          !Temporary: for generating idat
+!  real xdat(ND)                          !Temporary: for generating idat
   integer*1 idat(ND)                     !Encoded data, 7-bit integers
   integer*1 jdat(ND)                     !Recovered hard-decision symbols
   character fname*17,arg*12
@@ -39,9 +39,11 @@ program synctest
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
+  idummy=0
 
-  call random_number(xdat)
-  idat=int(127.9999*xdat)
+  do i=1,ND
+     idat(i)=128*ran1(idummy)
+  enddo
   
   h=default_header(12000,NMAX)
   fname='000000_000001.wav'
@@ -99,3 +101,4 @@ program synctest
   include 'gen_sfox.f90'
   include 'sync_sf.f90'
   include 'hard_symbols.f90'
+  include 'ran1.f90'
