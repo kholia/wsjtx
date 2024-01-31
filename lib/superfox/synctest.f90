@@ -3,8 +3,7 @@ program synctest
 ! Generate and test sync waveforms for possible use in SuperFox signal.
 
   use wavhdr
-  parameter (NMAX=15*12000)              !Total samples in .wav file
-  parameter (NFFT=32768)
+  include "sfox_params.f90"
   parameter (MMAX=150,JMAX=300)
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
@@ -37,28 +36,19 @@ program synctest
   call getarg(4,arg)
   read(arg,*) snrdb
 
-  ntrperiod=15
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
-  npts=fsample*ntrperiod             !Total samples in .wav file
   twopi=8.0*atan(1.0)
-
-  nsps=1024
-  ns1=62
-  nsync=23
-  ns2=63
-  tsync=nsync*nsps/fsample
-  nsym=125                           !Number of channel symbols
-  nsync=tsync*fsample
-
+  tsync=NS*nsps/fsample
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
-  h=default_header(12000,npts)
+  h=default_header(12000,NMAX)
   fname='000000_000001.wav'
   open(10,file=trim(fname),access='stream',status='unknown')
+
   xnoise=0.
   cnoise=0.
   if(snrdb.lt.90) then
-     do i=1,npts                     !Generate Gaussian noise
+     do i=1,NMAX                     !Generate Gaussian noise
         x=gran()
         y=gran()
         xnoise(i)=x
@@ -96,9 +86,9 @@ program synctest
 
   dat=aimag(cdat(1:NMAX)) + xnoise                 !Add generated AWGN noise
   fac=32767.0
-  if(snrdb.ge.90.0) iwave(1:npts)=nint(fac*dat(1:npts))
-  if(snrdb.lt.90.0) iwave(1:npts)=nint(rms*dat(1:npts))
-  write(10) h,iwave(1:npts)                !Save the .wav file
+  if(snrdb.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
+  if(snrdb.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
+  write(10) h,iwave(1:NMAX)                !Save the .wav file
   close(10)
 
   crcvd=0.

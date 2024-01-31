@@ -1,0 +1,12 @@
+  parameter (KK=49)                       !Information bits
+  parameter (ND1=62)                      !Data symbols before sync waveform
+  parameter (ND2=63)                      !Data symbols after sync waveform
+  parameter (ND=ND1+ND2)                  !Total data symbols (125)
+  parameter (NS=23)                       !Sync symbols (for length)
+  parameter (NN=NS+ND)                    !Total channel symbols (148)
+  parameter (NSPS=1024)                   !Samples per symbol at 12000 S/s
+  parameter (NSYNC=NS*NSPS)               !Samples in sync waveform (23,552)
+  parameter (NZ=NSPS*NN)                  !Samples in full Tx waveform (151,552)
+  parameter (NMAX=15*12000)               !Samples in iwave (180,000)
+  parameter (NFFT=32768)                  !Length of FFT for sync waveform
+  parameter (NFFT1=2*NSPS)                !Length of FFTs for symbol spectra
