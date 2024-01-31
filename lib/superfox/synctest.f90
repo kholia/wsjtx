@@ -4,21 +4,17 @@ program synctest
 
   use wavhdr
   include "sfox_params.f90"
-  parameter (MMAX=150,JMAX=300)
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
-  real ccf(-MMAX:MMAX,-JMAX:JMAX)        !2D CCF: DT, dFreq offsets
   complex cdat(NMAX)                     !Generated complex waveform
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-  complex c(0:NFFT-1)
-  integer ipk(2)
+  real xdat(ND)                          !Temporary: for generating idat
+  integer*1 idat(ND)                     !Encoded data, 7-bit integers
   character fname*17,arg*12
-  character*1 line(-30:30),mark(0:5)
-  data mark/' ','.','-','+','X','$'/
   
   nargs=iargc()
   if(nargs.ne.6) then
@@ -42,6 +38,10 @@ program synctest
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
+
+  call random_number(xdat)
+  idat=int(127.9999*xdat)
+  
   h=default_header(12000,NMAX)
   fname='000000_000001.wav'
   open(10,file=trim(fname),access='stream',status='unknown')
@@ -62,7 +62,7 @@ program synctest
   if(snrdb.gt.90.0) sig=1.0
 
 !Generate cdat (SuperFox waveform) and clo (LO needed for sync detection)
-  call gen_sfox(f0,fsample,syncwidth,cdat,clo)  
+  call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)  
 
   crcvd=0.
   crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
@@ -77,44 +77,10 @@ program synctest
   if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
        delay,fspread)
 
-! Use the sync waveform to find signal freq and DT
-  ccf=0.
-  df=12000.0/NFFT                         !0.366211
-  i1=ND1*nsps
-  do m=-MMAX,MMAX
-     lag=100*m
-     c(0:nsync-1)=crcvd(i1+1+lag:i1+nsync+lag)*clo(1:nsync)
-     c(nsync:)=0.
-     fac=1.e-3
-     c=fac*c
-     call four2a(c,NFFT,1,-1,1)
-     do j=-JMAX,JMAX
-        k=j
-        if(k.lt.0) k=k+NFFT
-        ccf(m,j)=real(c(k))**2 + aimag(c(k))**2
-     enddo
-  enddo
+! Find signal freq and DT
 
-  ccf=ccf/maxval(ccf)
-  ipk=maxloc(ccf)
-  print*,i0,ipk(1)
-  ipk(1)=ipk(1)-MMAX-1
-  ipk(2)=ipk(2)-JMAX-1
-  ma=ipk(1)-10
-  mb=ipk(1)+10
-  ja=ipk(2)-30
-  jb=ipk(2)+30
-  do m=ma,mb
-     do j=ja,jb
-        k=5.999*ccf(m,j)
-        line(j-ipk(2))=mark(k)
-     enddo
-     write(*,1300) m/120.0,line
-1300 format(f6.3,2x,61a1)
-  enddo
-  t=ipk(1)/120.0
-  dfreq=ipk(2)*df
-  f=1500.0+dfreq
+  call sync_sf(crcvd,clo,f,t)
+
   write(*,1100) f0,xdt
 1100 format(/'f0:',f7.1,'  xdt:',f6.2)
   write(*,1112) f,t
@@ -125,4 +91,5 @@ program synctest
 999 end program synctest
 
   include 'gen_sfox.f90'
-  
+  include 'sync_sf.f90'
+
