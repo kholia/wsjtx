@@ -740,6 +740,7 @@ void MainWindow::decoderFinished()
 {
   m_startAnother=m_loopall;
   decodes_.nQDecoderDone=1;
+  decodes_.kHzRequested=0;
   if(m_diskData) decodes_.nQDecoderDone=2;
   mem_qmap.lock();
   decodes_.nWDecoderBusy=ipc_wsjtx[3];                   //Prevent overwriting values
