@@ -22,9 +22,9 @@ program synctest
   data mark/' ','.','-','+','X','$'/
   
   nargs=iargc()
-  if(nargs.ne.4) then
-     print*,'Usage:   synctest   f0    DT width snr'
-     print*,'Example: synctest 1500.0 2.5  1500 -20'
+  if(nargs.ne.6) then
+     print*,'Usage:   synctest   f0    DT fspread delay width snr'
+     print*,'Example: synctest 1500.0 2.5    0.0   0.0   100  -20'
      go to 999
   endif
   call getarg(1,arg)
@@ -32,8 +32,12 @@ program synctest
   call getarg(2,arg)
   read(arg,*) xdt
   call getarg(3,arg)
-  read(arg,*) syncwidth
+  read(arg,*) fspread
   call getarg(4,arg)
+  read(arg,*) delay
+  call getarg(5,arg)
+  read(arg,*) syncwidth
+  call getarg(6,arg)
   read(arg,*) snrdb
 
   rms=100.
@@ -93,6 +97,10 @@ program synctest
 
   crcvd=0.
   crcvd(1:NMAX)=cdat(1:NMAX) + cnoise
+
+  if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
+       delay,fspread)
+
   ccf=0.
   df=12000.0/NFFT                         !0.366211
   i1=60*nsps
