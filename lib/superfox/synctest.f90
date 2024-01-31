@@ -37,19 +37,21 @@ program synctest
   call getarg(4,arg)
   read(arg,*) snrdb
 
-  nsps=1024
   ntrperiod=15
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
   npts=fsample*ntrperiod             !Total samples in .wav file
   twopi=8.0*atan(1.0)
-  tsync=2.0
-  nsync=fsample*tsync
-  nsym=125                           !Number of channel symbols
+
   nsps=1024
+  ns1=62
+  nsync=23
+  ns2=63
+  tsync=nsync*nsps/fsample
+  nsym=125                           !Number of channel symbols
   nsync=tsync*fsample
 
-  baud=12000.0/nsps                 !Keying rate (6.67 baud fot 15-s sequences)
+  baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
   h=default_header(12000,npts)
   fname='000000_000001.wav'
   open(10,file=trim(fname),access='stream',status='unknown')
