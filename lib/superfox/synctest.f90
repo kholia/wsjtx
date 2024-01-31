@@ -20,7 +20,7 @@ program synctest
   nargs=iargc()
   if(nargs.ne.8) then
      print*,'Usage:   synctest   f0    DT fspread delay width nran nfiles snr'
-     print*,'Example: synctest 1500.0 2.5    0.0   0.0   100    0    10   -20'
+     print*,'Example: synctest 1500.0 0.15   0.5   1.0   100    0    10   -10'
      go to 999
   endif
   call getarg(1,arg)
