@@ -91,6 +91,9 @@ program synctest
 ! Find signal freq and DT
 
      call sync_sf(crcvd,clo,f,t)
+     ferr=f-f0
+     terr=t-xdt
+     if(abs(ferr).gt.10.0 .or. abs(terr).gt.0.04) cycle
 
      call hard_symbols(crcvd,f,t,jdat)
      nharderr=count(jdat.ne.idat)  
@@ -99,13 +102,13 @@ program synctest
 1100 format(/'f0:',f7.1,'  xdt:',f6.2)
      write(*,1112) f,t
 1112 format('f: ',f7.1,'   DT:',f6.2)
-     write(*,1110) f-f0,t-xdt
+     write(*,1110) ferr,terr
 1110 format('err:',f6.1,f12.2)
      write(*,1120) nharderr
 1120 format('Hard errors:',i4)
      if(nharderr.le.38) ngood=ngood+1
-!     write(13,1200) snrdb,nharderr
-!1200 format(f7.2,i5)
+     write(13,1200) ifile,snrdb,ferr,terr,nharderr
+1200 format(i5,3f10.3,i5)
   enddo
   write(*,1300) snrdb,nfiles,ngood,float(ngood)/nfiles
 1300 format(f7.2,2i5,f7.2)
