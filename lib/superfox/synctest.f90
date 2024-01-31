@@ -61,22 +61,23 @@ program synctest
   sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
   if(snrdb.gt.90.0) sig=1.0
 
-  call gen_sfox(f0,fsample,syncwidth,cdat,clo)
-  cdat=sig*cdat
-  crcvd=0.
-  crcvd(1:NMAX)=cshift(cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
+!Generate cdat (SuperFox waveform) and clo (LO needed for sync detection)
+  call gen_sfox(f0,fsample,syncwidth,cdat,clo)  
 
-  dat=aimag(cdat(1:NMAX)) + xnoise                 !Add generated AWGN noise
+  crcvd=0.
+  crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
+
+  dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
   fac=32767.0
   if(snrdb.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
   if(snrdb.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
   write(10) h,iwave(1:NMAX)                !Save the .wav file
   close(10)
 
-
   if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,  &
        delay,fspread)
 
+! Use the sync waveform to find signal freq and DT
   ccf=0.
   df=12000.0/NFFT                         !0.366211
   i1=ND1*nsps
