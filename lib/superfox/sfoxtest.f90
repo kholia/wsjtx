@@ -1,4 +1,4 @@
-program synctest
+program sfoxtest
 
 ! Generate and test sync waveforms for possible use in SuperFox signal.
 
@@ -12,7 +12,6 @@ program synctest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-!  real xdat(ND)                          !Temporary: for generating idat
   integer*1 idat(ND)                     !Encoded data, 7-bit integers
   integer*1 jdat(ND)                     !Recovered hard-decision symbols
   character fname*17,arg*12
@@ -135,4 +134,4 @@ program synctest
 !     if(fgood.eq.0.0) exit
   enddo  ! isnr
 
-999 end program synctest
+999 end program sfoxtest

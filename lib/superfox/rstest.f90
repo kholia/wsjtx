@@ -25,7 +25,7 @@ program rstest
 ! Initialize the Karn codec
   nq=2**mm
   nfz=3
-  call rs_init(mm,nq,nn,kk,nfz)             !Initialize the Karn RS codec
+  call rs_init_sf(mm,nq,nn,kk,nfz)             !Initialize the Karn RS codec
 
 ! Generate and random symbols wuth values 0 to nq-1
   do i=1,kk
@@ -37,7 +37,7 @@ program rstest
   write(*,1002) dgen(1:kk)
 1002 format(20i4)
 
-  call rs_encode(dgen,gsym0)                 !Encode dgen into gsym0
+  call rs_encode_sf(dgen,gsym0)                 !Encode dgen into gsym0
   write(*,1004)
 1004 format(/'Encoded channel symbols')
   write(*,1002) gsym0(1:nn)
@@ -50,7 +50,7 @@ program rstest
 1006 format(/'Recovered channel symbols, with errors:')
   write(*,1002) gsym(1:nn)
 
-  call rs_decode(gsym,era,0,dat,nfixed)
+  call rs_decode_sf(gsym,era,0,dat,nfixed)
   ibad=0
   do i=1,kk
      if(dat(i).ne.dgen(i)) ibad=ibad+1
