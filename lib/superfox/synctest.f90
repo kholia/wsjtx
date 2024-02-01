@@ -47,6 +47,16 @@ program synctest
   idummy=0
   bandwidth_ratio=2500.0/6000.0
 
+! Generate random data symbols
+  do i=1,ND
+     call random_number(r)
+     if(nran.eq.1) r=ran1(idummy)
+     idat(i)=128*r
+  enddo
+  
+! Generate cdat (SuperFox waveform) and clo (LO for sync detection)
+  call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
+
   do isnr=0,-30,-1
      snr=isnr
      if(snrdb.ne.0.0) snr=snrdb
@@ -56,12 +66,6 @@ program synctest
      ngood=0
 
      do ifile=1,nfiles
-        do i=1,ND
-           call random_number(r)
-           if(nran.eq.1) r=ran1(idummy)
-           idat(i)=128*r
-        enddo
-  
         xnoise=0.
         cnoise=0.
         if(snr.lt.90) then
@@ -72,9 +76,6 @@ program synctest
               cnoise(i)=cmplx(x,y)
            enddo
         endif
-
-!Generate cdat (SuperFox waveform) and clo (LO needed for sync detection)
-        call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
 
         crcvd=0.
         crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
