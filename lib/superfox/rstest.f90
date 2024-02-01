@@ -27,7 +27,7 @@ program rstest
   nfz=3
   call rs_init_sf(mm,nq,nn,kk,nfz)             !Initialize the Karn RS codec
 
-! Generate and random symbols wuth values 0 to nq-1
+! Generate and random symbols with values 0 to nq-1
   do i=1,kk
      dgen(i)=(nq-0.0001)*ran1(idum)
   enddo

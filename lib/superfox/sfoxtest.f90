@@ -12,8 +12,8 @@ program sfoxtest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-  integer*1 idat(ND)                     !Encoded data, 7-bit integers
-  integer*1 jdat(ND)                     !Recovered hard-decision symbols
+  integer idat(ND)                       !Encoded data, 7-bit integers
+  integer jdat(ND)                       !Recovered hard-decision symbols
   character fname*17,arg*12
   
   nargs=iargc()

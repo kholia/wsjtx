@@ -4,7 +4,7 @@ subroutine gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
   complex cdat(NMAX)                     !Generated complex waveform
   complex clo(NMAX)                      !Complex Local Oscillator
   complex w,wstep
-  integer*1 idat(ND)
+  integer idat(ND)
 
   twopi=8.0*atan(1.0)
   tsync=NS*NSPS/fsample

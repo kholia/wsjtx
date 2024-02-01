@@ -1,6 +1,6 @@
-  parameter (KK=49)                       !Information bits
-  parameter (ND1=62)                      !Data symbols before sync waveform
-  parameter (ND2=63)                      !Data symbols after sync waveform
+  parameter (KK=49)                       !Information symbols
+  parameter (ND1=25)                      !Data symbols before sync waveform
+  parameter (ND2=100)                     !Data symbols after sync waveform
   parameter (ND=ND1+ND2)                  !Total data symbols (125)
   parameter (NS=23)                       !Sync symbols (for length)
   parameter (NSPS=1024)                   !Samples per symbol at 12000 S/s
