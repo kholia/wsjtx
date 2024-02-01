@@ -77,6 +77,13 @@ program synctest
            enddo
         endif
 
+        f1=f0
+        if(f0.eq.0.0) then
+           f1=1500.0 + 200.0*(ran1(idummy)-0.5)
+           xdt=2.0*(ran1(idummy)-0.5)
+           call gen_sfox(idat,f1,fsample,syncwidth,cdat,clo)
+        endif
+        
         crcvd=0.
         crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
 
@@ -91,7 +98,7 @@ program synctest
 ! Find signal freq and DT
 
         call sync_sf(crcvd,clo,snrdb,f,t)
-        ferr=f-f0
+        ferr=f-f1
         terr=t-xdt
         if(abs(ferr).lt.10.0 .or. abs(terr).lt.0.02) ngoodsync=ngoodsync+1
 
@@ -104,7 +111,7 @@ program synctest
            open(10,file=trim(fname),access='stream',status='unknown')
            write(10) h,iwave(1:NMAX)                !Save the .wav file
            close(10)
-           write(*,1100) f0,xdt
+           write(*,1100) f1,xdt
 1100       format(/'f0:',f7.1,'  xdt:',f6.2)
            write(*,1112) f,t
 1112       format('f: ',f7.1,'   DT:',f6.2)
