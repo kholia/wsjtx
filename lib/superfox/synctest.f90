@@ -96,14 +96,13 @@ program synctest
              delay,fspread)
 
 ! Find signal freq and DT
-
         call sync_sf(crcvd,clo,snrdb,f,t)
         ferr=f-f1
         terr=t-xdt
         if(abs(ferr).lt.10.0 .or. abs(terr).lt.0.02) ngoodsync=ngoodsync+1
 
-        call hard_symbols(crcvd,f,t,jdat)
-        nharderr=count(jdat.ne.idat)  
+        call hard_symbols(crcvd,f,t,jdat)           !Get hard symbol values
+        nharderr=count(jdat.ne.idat)                !Count hard errors
   
         if(snrdb.ne.0) then
            fname='000000_000001.wav'
@@ -120,9 +119,9 @@ program synctest
            write(*,1120) nharderr
 1120       format('Hard errors:',i4)
         endif
-        if(nharderr.le.38) ngood=ngood+1
-        write(13,1200) ifile,snr,ferr,terr,nharderr
-1200    format(i5,3f10.3,i5)
+        if(nharderr.le.38) ngood=ngood+1            !(125-49)/2 = 38
+!        write(13,1200) ifile,snr,ferr,terr,nharderr
+!1200    format(i5,3f10.3,i5)
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
