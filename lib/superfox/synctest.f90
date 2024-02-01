@@ -99,7 +99,7 @@ program synctest
         call sync_sf(crcvd,clo,snrdb,f,t)
         ferr=f-f1
         terr=t-xdt
-        if(abs(ferr).lt.10.0 .or. abs(terr).lt.0.02) ngoodsync=ngoodsync+1
+        if(abs(ferr).lt.5.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
 
         call hard_symbols(crcvd,f,t,jdat)           !Get hard symbol values
         nharderr=count(jdat.ne.idat)                !Count hard errors
