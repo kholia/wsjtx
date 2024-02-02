@@ -12,9 +12,13 @@ program sfoxtest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-  integer idat(ND)                       !Encoded data, 7-bit integers
-  integer jdat(ND)                       !Recovered hard-decision symbols
+  integer imsg(KK)                       !Information symbols
+  integer jmsg(KK)                       !Decoded information 
+  integer*1 imsg1(7*KK)                  !Copy of imsg in 1-bit i*1 format
+  integer idat(NN)                       !Encoded data, 7-bit integers
+  integer jdat(NN)                       !Recovered hard-decision symbols
   character fname*17,arg*12
+  character c357*357,c14*14 !,chkmsg*15
   
   nargs=iargc()
   if(nargs.ne.8) then
@@ -46,12 +50,21 @@ program sfoxtest
   idummy=0
   bandwidth_ratio=2500.0/6000.0
 
-! Generate random data symbols
-  do i=1,ND
-     call random_number(r)
-     if(nran.eq.1) r=ran1(idummy)
-     idat(i)=128*r
+! Generate a message
+  do i=1,KK-2
+     imsg(i)=i
   enddo
+
+! Append a 14-bit CRC
+  imsg(KK-1:KK)=0
+  write(c357,'(51b7.7)') imsg(1:KK)
+  read(c357,'(357i1)') imsg1
+  call get_crc14(imsg1,7*KK,ncrc0)
+  write(c14,'(b14.14)') ncrc0
+  read(c14,'(2b7.7)') imsg(KK-1:KK)
+
+  call rs_init_sf(MM,NQ,NN,KK,NFZ)          !Initialize the Karn codec
+  call rs_encode_sf(imsg,idat)              !Encode imsg into idat
   
 ! Generate cdat (SuperFox waveform) and clo (LO for sync detection)
   call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
@@ -101,6 +114,12 @@ program sfoxtest
         if(abs(ferr).lt.5.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
 
         call hard_symbols(crcvd,f,t,jdat)           !Get hard symbol values
+        nera=0
+        call rs_decode_sf(idat,iera,nera,jmsg,nfixed)  !Call the decoder
+        write(c357,'(51b7.7)') jmsg(1:KK)
+        read(c357,'(357i1)') imsg11
+        call get_crc14(imsg1,7*KK,ncrc)
+
         nharderr=count(jdat.ne.idat)                !Count hard errors
   
         if(snrdb.ne.0) then
@@ -131,7 +150,6 @@ program sfoxtest
 1310 format(f7.2,i6,2f7.2)
      if(snrdb.ne.0.0) exit
      if(fgoodsync.lt.0.5) exit
-!     if(fgood.eq.0.0) exit
   enddo  ! isnr
 
 999 end program sfoxtest

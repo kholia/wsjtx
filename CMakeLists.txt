@@ -630,6 +630,10 @@ set (wsjt_CSRCS
   lib/vit213.c
   lib/wisdom.c
   lib/wrapkarn.c
+  lib/superfox/init_rs.c
+  lib/superfox/encode_rs.c
+  lib/superfox/decode_rs.c
+  lib/superfox/rs_sf.c
   ${ldpc_CSRCS}
   ${qra_CSRCS}
   )

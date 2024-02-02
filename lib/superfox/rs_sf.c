@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "rs_sf.h"
 
-void *rs_sf;
+static void *rs_sf;
 static int first=1;
 static int nn,kk,nroots,npad;
 

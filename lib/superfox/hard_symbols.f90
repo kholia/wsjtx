@@ -4,7 +4,7 @@ subroutine hard_symbols(crcvd,f,t,jdat)
   complex crcvd(NMAX)                    !Signal as received
   complex c(0:NSPS-1)                    !Work array, one symbol long
   real s(0:NSPS-1)                       !Power spectrum
-  integer jdat(ND)                       !Recovered hard-decision symbols
+  integer jdat(NN)                       !Recovered hard-decision symbols
   integer ipk(1)
 
   i0=nint(12000.0*t)
@@ -28,6 +28,7 @@ subroutine hard_symbols(crcvd,f,t,jdat)
         jdat(n)=ipk(1)+256-64
      endif
   enddo
+  jdat(NN-1:nn)=0
 
   return
 end subroutine hard_symbols
