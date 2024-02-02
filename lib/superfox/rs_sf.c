@@ -26,14 +26,21 @@ void rs_encode_sf_(int *dgen, int *sent)
 
   // Reverse data order for the Karn codec.
   for(i=0; i<kk; i++) {
-    dat1[i]=dgen[kk-1-i];
+    //    dat1[i]=dgen[kk-1-i];
+    dat1[i]=dgen[i];                      //### Temporary, no reversal ###
   }
   // Compute the parity symbols
   encode_rs_sf(rs_sf,dat1,b);
 
   // Move parity symbols and data into sent[] array, in reverse order.
-  for (i = 0; i < nroots; i++) sent[nroots-1-i] = b[i];
-  for (i = 0; i < kk; i++) sent[i+nroots] = dat1[kk-1-i];
+  for (i = 0; i < nroots; i++) {
+    //    sent[nroots-1-i] = b[i];
+    sent[i] = b[i];                      //### Temporary, no reversal ###
+  }
+  for (i = 0; i < kk; i++) {
+    //    sent[i+nroots] = dat1[kk-1-i];
+    sent[i+nroots] = dat1[i];            //### Temporary, no reversal ###
+  }
 }
 
 void rs_decode_sf_(int *recd0, int *era0, int *numera0, int *decoded, int *nerr)
@@ -48,10 +55,23 @@ void rs_decode_sf_(int *recd0, int *era0, int *numera0, int *decoded, int *nerr)
   int recd[255];
 
   numera=*numera0;
-  for(i=0; i<kk; i++) recd[i]=recd0[nn-1-i];
-  for(i=0; i<nroots; i++) recd[kk+i]=recd0[nroots-1-i];
-  if(numera) 
-    for(i=0; i<numera; i++) era_pos[i]=era0[i];
+  for(i=0; i<kk; i++) {
+    //    recd[i]=recd0[nn-1-i];
+    recd[i]=recd0[i];
+  }
+  for(i=0; i<nroots; i++) {
+    //    recd[kk+i]=recd0[nroots-1-i];
+    recd[kk+i]=recd0[kk+i];
+  }
+  if(numera) {
+    for(i=0; i<numera; i++) {
+      era_pos[i]=era0[i];
+      //      printf("erased %d  %d\n",i,era_pos[i]);
+    }
+  }
   *nerr=decode_rs_sf(rs_sf,recd,era_pos,numera);
-  for(i=0; i<kk; i++) decoded[i]=recd[kk-1-i];
+  for(i=0; i<kk; i++) {
+    //    decoded[i]=recd[kk-1-i];
+    decoded[i]=recd[nroots+i];
+  }
 }

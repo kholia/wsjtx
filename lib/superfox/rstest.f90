@@ -8,9 +8,9 @@ program rstest
   integer iera(0:200)                          !Positions of erasures
       
   nargs=iargc()
-  if(nargs.ne.4) then
-     print*,'Usage:   rstest  M  N   K  nerr'
-     print*,'Example: rstest  7 127 51   38'
+  if(nargs.ne.5) then
+     print*,'Usage:   rstest  M  N   K nera nerr'
+     print*,'Example: rstest  7 127 51   0   38'
      go to 999
   endif
   nkv=0
@@ -21,6 +21,8 @@ program rstest
   call getarg(3,arg)
   read(arg,*) kk
   call getarg(4,arg)
+  read(arg,*) nera
+  call getarg(5,arg)
   read(arg,*) nerr
   
 ! Initialize the Karn codec
@@ -28,9 +30,10 @@ program rstest
   nfz=3
   call rs_init_sf(mm,nq,nn,kk,nfz)             !Initialize the Karn RS codec
 
-! Generate and random symbols with values 0 to nq-1
+! Generate random message, kk symbols with values 0 to nq-1
   do i=1,kk
-     dgen(i)=int(nq*ran1(idum))
+!     dgen(i)=int(nq*ran1(idum))
+     dgen(i)=i
   enddo
 
   write(*,1000)
@@ -51,15 +54,17 @@ program rstest
 1006 format(/'Recovered channel symbols, with errors:')
   write(*,1002) gsym(1:nn)
 
-  nera=0
-  iera=0
+  do i=0,nera-1
+     iera(i)=i
+  enddo
+
   call rs_decode_sf(gsym,iera,nera,dat,nfixed)
   ibad=count(dat(1:kk).ne.dgen(1:kk))
   write(*,1008)
 1008 format(/'Decoded result:')
   write(*,1002) dat(1:kk)
-  write(*,1100) nerr,nfixed
-1100 format(/'nerr:',i3,'   nfixed:',i3)
+  write(*,1100) nerr,nera,nfixed
+1100 format(/'nerr:',i3,'   nera:',i3,'   nfixed:',i3)
   
 999 end program rstest
  

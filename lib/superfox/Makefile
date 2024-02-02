@@ -17,11 +17,11 @@ CFLAGS= -O9 -Wall
 
 all:	rs_sf.a rstest rs_125_49
 
-OBJS1 = rstest.o ran1.o
+OBJS1 = rstest.o ran1.o rs_sf.a
 rstest: $(OBJS1)
 	$(FC) -o rstest $(OBJS1) rs_sf.a
 
-OBJS2 = rs_125_49.o ran1.o get_crc14.o
+OBJS2 = rs_125_49.o ran1.o get_crc14.o rs_sf.a
 rs_125_49: $(OBJS2)
 	$(FC) -o rs_125_49 $(OBJS2) rs_sf.a
 
