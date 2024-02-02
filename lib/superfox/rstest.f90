@@ -5,14 +5,15 @@ program rstest
   integer gsym0(255)                         !Encoded data, Karn
   integer gsym(255)                          !Encoded data with errors
   integer dat(235)                           !Decoded data, i*4
-  integer iera(0:200)                          !Positions of erasures
+  integer iera(0:200)                        !Positions of erasures
       
   nargs=iargc()
   if(nargs.ne.5) then
-     print*,'Usage:    rstest  M  N   K nera nerr'
-     print*,'Examples: rstest  6 63  12   0   25'
-     print*,'          rstest  7 127 51   0   38'
-     print*,'          rstest  8 255 51   0  102'
+     print*,'Usage:    rstest  M  N   K  nera nerr'
+     print*,'Examples: rstest  6  63  12   0   25'
+     print*,'          rstest  7 127  51   0   38'
+     print*,'          rstest  8 255  51   0  102'
+     print*,'          rstest  8 255 235   0   10'
      go to 999
   endif
   nkv=0
@@ -34,7 +35,6 @@ program rstest
 
 ! Generate random message, kk symbols with values 0 to nq-1
   do i=1,kk
-!     dgen(i)=int(nq*ran1(idum))
      dgen(i)=i
   enddo
 
@@ -52,8 +52,8 @@ program rstest
   do i=1,nerr                                !Introduce errors
      gsym(i)=mod(gsym(i)+1,nq)
   enddo
-  write(*,1006)
-1006 format(/'Recovered channel symbols, with errors:')
+  write(*,1006) nera
+1006 format(/'Recovered channel symbols, with',i4,' errors at the start:')
   write(*,1002) gsym(1:nn)
 
   do i=0,nera-1
