@@ -15,12 +15,17 @@ CFLAGS= -O9 -Wall
 %.o: %.F90
 	${FC} ${FFLAGS} -c $<
 
-all:	rstest
+all:	rstest rs_125_49
 
-OBJS2 = rstest.o init_rs_sf.o encode_rs_sf.o decode_rs_sf.o \
+OBJS1 = rstest.o init_rs_sf.o encode_rs_sf.o decode_rs_sf.o \
 	rs_sf.o ran1.o
-rstest: $(OBJS2)
-	$(FC) -o rstest $(OBJS2)
+rstest: $(OBJS1)
+	$(FC) -o rstest $(OBJS1)
+
+OBJS2 = rs_125_49.o init_rs_sf.o encode_rs_sf.o decode_rs_sf.o \
+	rs_sf.o ran1.o get_crc14.o
+rs_125_49: $(OBJS2)
+	$(FC) -o rs_125_49 $(OBJS2)
 
 init_rs_sf.o: init_rs.c
 	gcc -DBIGSYM=1 $(CFLAGS) -c -o $@ $^
