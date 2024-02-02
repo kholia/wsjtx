@@ -5,6 +5,7 @@ program rstest
   integer gsym0(255)                         !Encoded data, Karn
   integer gsym(255)                          !Encoded data with errors
   integer dat(235)                           !Decoded data, i*4
+  integer iera(0:200)                          !Positions of erasures
       
   nargs=iargc()
   if(nargs.ne.4) then
@@ -21,7 +22,7 @@ program rstest
   read(arg,*) kk
   call getarg(4,arg)
   read(arg,*) nerr
-
+  
 ! Initialize the Karn codec
   nq=2**mm
   nfz=3
@@ -29,7 +30,7 @@ program rstest
 
 ! Generate and random symbols with values 0 to nq-1
   do i=1,kk
-     dgen(i)=(nq-0.0001)*ran1(idum)
+     dgen(i)=int(nq*ran1(idum))
   enddo
 
   write(*,1000)
@@ -50,16 +51,15 @@ program rstest
 1006 format(/'Recovered channel symbols, with errors:')
   write(*,1002) gsym(1:nn)
 
-  call rs_decode_sf(gsym,era,0,dat,nfixed)
-  ibad=0
-  do i=1,kk
-     if(dat(i).ne.dgen(i)) ibad=ibad+1
-  enddo
+  nera=0
+  iera=0
+  call rs_decode_sf(gsym,iera,nera,dat,nfixed)
+  ibad=count(dat(1:kk).ne.dgen(1:kk))
   write(*,1008)
 1008 format(/'Decoded result:')
   write(*,1002) dat(1:kk)
-  write(*,1100) nerr,nfixed,ibad
-1100 format(/'nerr:',i3,'   nfixed:',i3,'   ibad:',i3)
+  write(*,1100) nerr,nfixed
+1100 format(/'nerr:',i3,'   nfixed:',i3)
   
 999 end program rstest
  

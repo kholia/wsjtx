@@ -10,7 +10,7 @@ program rs_125_49
 !  integer dat(KK)                            !Decoded data, i*4
   integer dat(256)                            !Decoded data, i*4
   integer era(NN)
-  character c357*357,c14*14
+  character c357*357,c14*14,chkmsg*15
 
   nargs=iargc()
   if(nargs.ne.1) then
@@ -60,18 +60,16 @@ program rs_125_49
   nera=0
 
   call rs_decode_sf(gsym,era,nera,dat,nfixed)
-  write(*,1008)
-1008 format(/'Decoded result:')
-  write(*,1002) dat(1:KK)
-  if(nfixed.ge.0) write(*,1100) nerr,nfixed
-1100 format(/'nerr:',i3,'   nfixed:',i3)
-  if(nfixed.lt.0) write(*,1102) nerr,nfixed
-1102 format(/'nerr:',i3,'   nfixed:',i3,', decode failed.')
-
   write(c357,'(51b7.7)') dat(1:KK)
   read(c357,'(357i1)') dgen1
   call get_crc14(dgen1,7*KK,ncrc)
-  if(ncrc.ne.0) print*,'CRC check failed'
-  if(ncrc.eq.0) print*,'CRC check is OK'
+
+  write(*,1008)
+1008 format(/'Decoded result:')
+  chkmsg='Decode failed'
+  if(nfixed.ge.0 .and. ncrc.eq.0) chkmsg='CRC check OK'
+  write(*,1002) dat(1:KK)
+  write(*,1100) nerr,nfixed,trim(chkmsg)
+1100 format(/'nerr:',i3,'   nfixed:',i3,', ',a)
 
 999 end program rs_125_49
