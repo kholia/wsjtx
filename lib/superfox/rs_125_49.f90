@@ -2,33 +2,32 @@ program rs_125_49
 
   include 'sfox_params.f90'
   character arg*8
-!  integer dgen(KK)                           !Generated data, i*4
   integer dgen(256)                          !Generated data, i*4
   integer*1 dgen1(7*KK)                      !Copy of dgen in 1-bit i*1 format
   integer gsym0(NN)                          !Encoded data, Karn
   integer gsym(NN)                           !Encoded data with errors
-!  integer dat(KK)                            !Decoded data, i*4
-  integer dat(256)                            !Decoded data, i*4
-  integer era(NN)
+  integer dat(256)                           !Decoded data, i*4
+  integer iera(0:100)                        !Positions of erasures
   character c357*357,c14*14,chkmsg*15
 
   nargs=iargc()
-  if(nargs.ne.1) then
-     print*,'Usage:   rs_125_49 nerr'
-     print*,'Example: rs_125_49  38'
+  if(nargs.ne.2) then
+     print*,'Usage:   rs_125_49 nera nerr'
+     print*,'Example: rs_125_49   0   38'
      go to 999
   endif
   call getarg(1,arg)
+  read(arg,*) nera
+  call getarg(2,arg)
   read(arg,*) nerr
 
 ! Initialize the Karn codec
+  call rs_init_sf(MM,NQ,NN,KK,NFZ)
 
-  call rs_init_sf(MM,NQ,NN,KK,NFZ)             !Initialize RS(127,51)
-
-! Generate random message with values 0 to NQ-1
+! Generate a message with sequential values in the range 0 to NQ-1
   dgen=0
   do i=1,KK-2
-     dgen(i)=int(NQ*ran1(idum))
+     dgen(i)=i
   enddo
   write(c357,'(51b7.7)') dgen(1:KK)
   read(c357,'(357i1)') dgen1
@@ -48,18 +47,18 @@ program rs_125_49
   
   gsym0(KK-1:KK)=0                           !Puncture by removing the CRC
   gsym=gsym0
-  do i=1,nerr                                !Introduce errors
+  do i=1,nerr                    !Introduce errors in the first nerr positions
      gsym(i)=mod(gsym(i)+1,NQ)
   enddo
   write(*,1006)
 1006 format(/'Recovered channel symbols, punctured and with additional errors:')
   write(*,1002) gsym(1:NN)
 
-!  era(1)=KK-1
-!  era(2)=KK
-  nera=0
+  do i=0,nera-1                     !Specify locations of symbols to be erased
+     iera(i)=i
+  enddo
 
-  call rs_decode_sf(gsym,era,nera,dat,nfixed)
+  call rs_decode_sf(gsym,iera,nera,dat,nfixed)  !Call the decoder
   write(c357,'(51b7.7)') dat(1:KK)
   read(c357,'(357i1)') dgen1
   call get_crc14(dgen1,7*KK,ncrc)
@@ -67,9 +66,11 @@ program rs_125_49
   write(*,1008)
 1008 format(/'Decoded result:')
   chkmsg='Decode failed'
-  if(nfixed.ge.0 .and. ncrc.eq.0) chkmsg='CRC check OK'
+  if(nfixed.ge.0 .and. ncrc.eq.0) chkmsg='CRC OK'
   write(*,1002) dat(1:KK)
-  write(*,1100) nerr,nfixed,trim(chkmsg)
-1100 format(/'nerr:',i3,'   nfixed:',i3,', ',a)
+  maxfix=(nn-kk)/2 + nera/2
+  write(*,1100) nerr,nera,nfixed,maxfix,trim(chkmsg)
+1100 format(/'punctured: 2','   nerr:',i3,'   nera:',i3,'   nfixed:',i3, &
+          '   maxfix:',i3,3x,a)
 
 999 end program rs_125_49
