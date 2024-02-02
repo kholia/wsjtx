@@ -9,8 +9,10 @@ program rstest
       
   nargs=iargc()
   if(nargs.ne.5) then
-     print*,'Usage:   rstest  M  N   K nera nerr'
-     print*,'Example: rstest  7 127 51   0   38'
+     print*,'Usage:    rstest  M  N   K nera nerr'
+     print*,'Examples: rstest  6 63  12   0   25'
+     print*,'          rstest  7 127 51   0   38'
+     print*,'          rstest  8 255 51   0  102'
      go to 999
   endif
   nkv=0
