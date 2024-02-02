@@ -63,8 +63,9 @@ program rstest
   write(*,1008)
 1008 format(/'Decoded result:')
   write(*,1002) dat(1:kk)
-  write(*,1100) nerr,nera,nfixed
-1100 format(/'nerr:',i3,'   nera:',i3,'   nfixed:',i3)
+  maxfix=(nn-kk)/2 + nera/2
+  write(*,1100) nerr,nera,nfixed,maxfix
+1100 format(/'nerr:',i3,'   nera:',i3,'   nfixed:',i3,'   maxfix:',i3)
   
 999 end program rstest
  
