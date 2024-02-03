@@ -22,8 +22,8 @@ program sfoxtest
   
   nargs=iargc()
   if(nargs.ne.8) then
-     print*,'Usage:   synctest   f0    DT fspread delay width nran nfiles snr'
-     print*,'Example: synctest 1500.0 0.15   0.5   1.0   100    0    10   -10'
+     print*,'Usage:   sfoxtest   f0    DT fspread delay width nran nfiles snr'
+     print*,'Example: sfoxtest 1500.0 0.15   0.5   1.0   100    0    10   -10'
      go to 999
   endif
   call getarg(1,arg)
@@ -137,6 +137,7 @@ program sfoxtest
            write(*,1120) nharderr
 1120       format('Hard errors:',i4)
         endif
+
         if(nharderr.le.38) ngood=ngood+1            !(125-49)/2 = 38
 !        write(13,1200) ifile,snr,ferr,terr,nharderr
 !1200    format(i5,3f10.3,i5)
