@@ -13,7 +13,7 @@ program rstest
      print*,'Examples: rstest  6  63  12   0   25'
      print*,'          rstest  7 127  51   0   38'
      print*,'          rstest  8 255  51   0  102'
-     print*,'          rstest  8 255 235   0   10'
+     print*,'          rstest  8 255 223   0   16'
      go to 999
   endif
   nkv=0

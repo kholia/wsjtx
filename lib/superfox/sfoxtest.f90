@@ -76,6 +76,7 @@ program sfoxtest
      if(snr.gt.90.0) sig=1.0
      ngoodsync=0
      ngood=0
+     ntot=0
 
      do ifile=1,nfiles
         xnoise=0.
@@ -121,6 +122,7 @@ program sfoxtest
         call get_crc14(imsg1,7*KK,ncrc)
 
         nharderr=count(jdat.ne.idat)                !Count hard errors
+        ntot=ntot+nharderr
   
         if(snrdb.ne.0) then
            fname='000000_000001.wav'
@@ -147,8 +149,9 @@ program sfoxtest
      if(isnr.eq.0) write(*,1300)
 1300 format('    SNR     N  fsync  fgood'/  &
             '----------------------------')
-     write(*,1310) snr,nfiles,fgoodsync,fgood
-1310 format(f7.2,i6,2f7.2)
+     ave_harderr=float(ntot)/nfiles
+     write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr
+1310 format(f7.2,i6,2f7.2,f7.1)
      if(snrdb.ne.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
