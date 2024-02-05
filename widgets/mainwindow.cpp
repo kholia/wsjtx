@@ -5539,13 +5539,11 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
         m_bTxTime=false;
         if (m_auto) auto_tx_mode (false);
         if (m_tune) stop_tuning();
-        auto const& msg2 = tr("Double-clicking on combined messages\n"
-                              "not allowed on the standard FT8 sub-bands.\n\n"
-                              "First verify that the displayed <callsign>\n"
-                              "is not a decoding artefact.");
-        QTimer::singleShot (0, [=] {               // don't block guiUpdate
-          MessageBox::warning_message (this, tr ("Potential hash collision"), msg2);
-        });
+//        auto const& msg2 = tr("Double-clicking on combined messages\n"
+//                              "not allowed on the standard FT8 sub-bands.");
+//        QTimer::singleShot (0, [=] {               // don't block guiUpdate
+//          MessageBox::warning_message (this, tr ("Potential hash collision"), msg2);
+//        });
         break;
       } else {
           m_bDoubleClicked = true;
