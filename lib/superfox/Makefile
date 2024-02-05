@@ -15,7 +15,7 @@ CFLAGS= -O9 -Wall
 %.o: %.F90
 	${FC} ${FFLAGS} -c $<
 
-all:	rs_sf.a rstest rs_125_49
+all:	rs_sf.a rstest rs_125_49 rst8
 
 OBJS1 = rstest.o ran1.o rs_sf.a
 rstest: $(OBJS1)
@@ -25,7 +25,11 @@ OBJS2 = rs_125_49.o ran1.o get_crc14.o rs_sf.a
 rs_125_49: $(OBJS2)
 	$(FC) -o rs_125_49 $(OBJS2) rs_sf.a
 
-rs_sf.a: init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o
+#OBJS3 = rst8.o encode_rs_8.o decode_rs_8.o wrap_rs_8.o
+rst8:	rst8.o wrap_rs_8.o
+	$(FC) -o rst8 rst8.o wrap_rs_8.o librs.a
+
+rs_sf.a: init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o 
 	ar -crs rs_sf.a init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o
 
 init_rs_sf.o: init_rs.c
@@ -34,6 +38,11 @@ encode_rs_sf.o: encode_rs.c
 	gcc -DBIGSYM=1 $(CFLAGS) -c -o $@ $^
 decode_rs_sf.o: decode_rs.c
 	gcc -DBIGSYM=1 $(CFLAGS) -c -o $@ $^
+
+encode_rs_8.o: encode_rs.c
+	gcc -DFIXED=1 $(CFLAGS) -c -o $@ $^
+decode_rs_8.o: decode_rs.c
+	gcc -DFIXED=1 $(CFLAGS) -c -o $@ $^
 
 .PHONY : clean
 clean:

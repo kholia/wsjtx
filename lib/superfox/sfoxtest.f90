@@ -77,6 +77,7 @@ program sfoxtest
      ngoodsync=0
      ngood=0
      ntot=0
+     nworst=0
 
      do ifile=1,nfiles
         xnoise=0.
@@ -123,6 +124,7 @@ program sfoxtest
 
         nharderr=count(jdat.ne.idat)                !Count hard errors
         ntot=ntot+nharderr
+        nworst=max(nworst,nharderr)
   
         if(snrdb.ne.0) then
            fname='000000_000001.wav'
@@ -147,11 +149,11 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.0) write(*,1300)
-1300 format('    SNR     N  fsync  fgood'/  &
-            '----------------------------')
+1300 format('    SNR     N  fsync  fgood averr  worst'/  &
+            '-----------------------------------------')
      ave_harderr=float(ntot)/nfiles
-     write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr
-1310 format(f7.2,i6,2f7.2,f7.1)
+     write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst
+1310 format(f7.2,i6,2f7.2,f7.1,i6)
      if(snrdb.ne.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
