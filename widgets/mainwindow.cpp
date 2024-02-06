@@ -5517,9 +5517,9 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   }
   DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
   if(message.string().contains(";") && message.string().contains("<")) {
-    QVector<qint32> ft8Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
-    for(int i=0; i<ft8Freq.length()-1; i++) {
-        int kHzdiff=m_freqNominal - ft8Freq[i];
+    QVector<qint32> Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000,3575000,7047500,10140000,14080000,18104000,21140000,24919000,28180000,50318000};
+    for(int i=0; i<Freq.length()-1; i++) {
+        int kHzdiff=m_freqNominal - Freq[i];
         if(qAbs(kHzdiff) < 3000 ) {
         m_bTxTime=false;
         if (m_auto) auto_tx_mode (false);
