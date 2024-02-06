@@ -5515,21 +5515,6 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   } else {
     cursor=ui->decodedTextBrowser2->textCursor();
   }
-
-  if(modifiers==(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier)) {
-    //### What was the purpose of this ???  ###
-    cursor.setPosition(0);
-  } else {
-    cursor.setPosition(cursor.selectionStart());
-  }
-
-  if(SpecOp::FOX==m_specOp and m_decodedText2) {
-    if(m_houndQueue.count()<10 and m_nSortedHounds>0) {
-      QString t=cursor.block().text();
-      selectHound(t, modifiers==(Qt::AltModifier));  // alt double-click gets put at top of queue
-    }
-    return;
-  }
   DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
   if(message.string().contains(";") && message.string().contains("<")) {
     QVector<qint32> ft8Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
@@ -5544,16 +5529,26 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
 //        QTimer::singleShot (0, [=] {               // don't block guiUpdate
 //          MessageBox::warning_message (this, tr ("Potential hash collision"), msg2);
 //        });
-        break;
-      } else {
-          m_bDoubleClicked = true;
-          processMessage (message, modifiers);
-      }
+        return;
+        }
     }
-  } else {
-      m_bDoubleClicked = true;
-      processMessage (message, modifiers);
   }
+  if(modifiers==(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier)) {
+    //### What was the purpose of this ???  ###
+    cursor.setPosition(0);
+  } else {
+    cursor.setPosition(cursor.selectionStart());
+  }
+
+  if(SpecOp::FOX==m_specOp and m_decodedText2) {
+    if(m_houndQueue.count()<10 and m_nSortedHounds>0) {
+      QString t=cursor.block().text();
+      selectHound(t, modifiers==(Qt::AltModifier));  // alt double-click gets put at top of queue
+    }
+    return;
+  }
+  m_bDoubleClicked = true;
+  processMessage (message, modifiers);
 }
 
 void MainWindow::processMessage (DecodedText const& message, Qt::KeyboardModifiers modifiers)
