@@ -21,20 +21,10 @@ void rs_init_sf_(int *mm, int *nq, int *nn0, int *kk0, int *nfz)
   first=0;
 }
 
-void rs_encode_sf_(int *dgen, int *sent)
-// Encode the information symbols dgen[KK], producing channel symbols sent[NN].
+void rs_encode_sf_(int *msg, int *parsym)
+// Encode information symbols msg[KK], producing parity symbols parsym[nroots].
 {
-  int b[256];                    //These are the parity symbols
-  encode_rs_sf(rs_sf,dgen,b);    //Compute the parity symbols
-
-// Copy parity symbols into sent[] array, followed by information symbols
-  for (int i=0; i< nn; i++) {
-    if(i<nroots) {
-      sent[i]=b[i];
-    } else {
-      sent[i]=dgen[i-nroots];
-    }
-  }
+  encode_rs_sf(rs_sf,msg,parsym);    //Compute the parity symbols
 }
 
 void rs_decode_sf_(int *recd, int *era_pos, int *numera, int *nerr)

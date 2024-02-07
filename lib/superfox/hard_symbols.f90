@@ -28,7 +28,7 @@ subroutine hard_symbols(crcvd,f,t,jdat)
         jdat(n)=ipk(1)+256-64
      endif
   enddo
-  jdat(NN-1:nn)=0
+!  jdat(NN-1:nn)=0
 
   return
 end subroutine hard_symbols

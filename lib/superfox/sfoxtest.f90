@@ -12,13 +12,15 @@ program sfoxtest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-  integer imsg(KK)                       !Information symbols
-  integer jmsg(KK)                       !Decoded information
-  integer*1 imsg1(7*KK)                  !Copy of imsg in 1-bit i*1 format
-  integer idat(NN)                       !Encoded data, 7-bit integers
-  integer jdat(NN)                       !Recovered hard-decision symbols
+  integer msg0(KK)                       !Information symbols
+!  integer msg(KK)                        !Decoded information
+  integer parsym(NN-KK)                  !Parity symbols
+!  integer*1 msg1(MM*KK)                  !Copy of msg0 in 1-bit i*1 format
+  integer chansym0(NN)                   !Encoded data, 7-bit integers
+  integer chansym(NN)                    !Recovered hard-decision symbols
+  integer iera(NN)
   character fname*17,arg*12
-  character c357*357,c14*14 !,chkmsg*15
+!  character c357*357,c14*14 !,chkmsg*15
   
   nargs=iargc()
   if(nargs.ne.8) then
@@ -51,23 +53,19 @@ program sfoxtest
   bandwidth_ratio=2500.0/6000.0
 
 ! Generate a message
+  msg0=0
   do i=1,KK-2
-     imsg(i)=i
+     msg0(i)=i
   enddo
-
-! Append a 14-bit CRC
-  imsg(KK-1:KK)=0
-  write(c357,'(51b7.7)') imsg(1:KK)
-  read(c357,'(357i1)') imsg1
-  call get_crc14(imsg1,7*KK,ncrc0)
-  write(c14,'(b14.14)') ncrc0
-  read(c14,'(2b7.7)') imsg(KK-1:KK)
+! Append a CRC here ...
 
   call rs_init_sf(MM,NQ,NN,KK,NFZ)          !Initialize the Karn codec
-  call rs_encode_sf(imsg,idat)              !Encode imsg into idat
-  
+  call rs_encode_sf(msg0,parsym)            !Compute parity symbols
+  chansym0(1:kk)=msg0(1:kk)
+  chansym0(kk+1:nn)=parsym(1:nn-kk)
+
 ! Generate cdat (SuperFox waveform) and clo (LO for sync detection)
-  call gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
+  call gen_sfox(chansym0,f0,fsample,syncwidth,cdat,clo)
 
   do isnr=0,-30,-1
      snr=isnr
@@ -95,7 +93,7 @@ program sfoxtest
         if(f0.eq.0.0) then
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
            xdt=2.0*(ran1(idummy)-0.5)
-           call gen_sfox(idat,f1,fsample,syncwidth,cdat,clo)
+           call gen_sfox(chansym0,f1,fsample,syncwidth,cdat,clo)
         endif
         
         crcvd=0.
@@ -115,16 +113,13 @@ program sfoxtest
         terr=t-xdt
         if(abs(ferr).lt.5.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
 
-        call hard_symbols(crcvd,f,t,jdat)           !Get hard symbol values
+        call hard_symbols(crcvd,f,t,chansym)           !Get hard symbol values
         nera=0
-        call rs_decode_sf(idat,iera,nera,jmsg,nfixed)  !Call the decoder
-        write(c357,'(51b7.7)') jmsg(1:KK)
-        read(c357,'(357i1)') imsg11
-        call get_crc14(imsg1,7*KK,ncrc)
-
-        nharderr=count(jdat.ne.idat)                !Count hard errors
+        chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
+        nharderr=count(chansym.ne.chansym0)            !Count hard errors
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
+        call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder
   
         if(snrdb.ne.0) then
            fname='000000_000001.wav'
@@ -146,6 +141,7 @@ program sfoxtest
 !        write(13,1200) ifile,snr,ferr,terr,nharderr
 !1200    format(i5,3f10.3,i5)
      enddo  ! ifile
+!     print*,'D'
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.0) write(*,1300)
