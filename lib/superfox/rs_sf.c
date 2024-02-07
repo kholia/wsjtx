@@ -37,17 +37,7 @@ void rs_encode_sf_(int *dgen, int *sent)
   }
 }
 
-void rs_decode_sf_(int *recd, int *era_pos, int *numera, int *decoded,
-		   int *nerr)
-/*
-Decode received data recd[NN], producing decoded[KK]. Positiions of 
-erased symbols are specified in array era_pos[numera]. The number of 
-corrected errors is *nerr; if the data are uncorrectable, *nerr=-1 
-is returned.
-*/
+void rs_decode_sf_(int *recd, int *era_pos, int *numera, int *nerr)
 {
   *nerr=decode_rs_sf(rs_sf,recd,era_pos,*numera);
-  for(int i=0; i<kk; i++) {
-    decoded[i]=recd[nroots+i];
-  }
 }

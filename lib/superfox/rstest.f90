@@ -1,11 +1,17 @@
 program rstest
-
+  
   character arg*8
-  integer dgen(235)                          !Generated data, i*4
-  integer gsym0(255)                         !Encoded data, Karn
-  integer gsym(255)                          !Encoded data with errors
+  integer dat0(255)                          !Message symbols
+  integer parsym(255)                        !Parity symbols
+  integer chansym0(255)                      !Encoded data, Karn
+  integer chansym(255)                       !Encoded data with errors
   integer dat(235)                           !Decoded data, i*4
+!  integer, target :: parsym(255)
   integer iera(0:200)                        !Positions of erasures
+  integer gfpoly
+!  type(c_ptr) :: rs
+
+  data gfpoly/z'11d'/
       
   nargs=iargc()
   if(nargs.ne.5) then
@@ -27,41 +33,46 @@ program rstest
   read(arg,*) nera
   call getarg(5,arg)
   read(arg,*) nerr
-  
+
 ! Initialize the Karn codec
   nq=2**mm
   nfz=3
   call rs_init_sf(mm,nq,nn,kk,nfz)             !Initialize the Karn RS codec
 
-! Generate random message, kk symbols with values 0 to nq-1
+! Generate kk message symbols.  (Values must be in  range 0 to nq-1.)
   do i=1,kk
-     dgen(i)=i
+     dat0(i)=i
   enddo
 
-  write(*,1000)
-1000 format('Generated data symbols, values 0-127:')
-  write(*,1002) dgen(1:kk)
+  write(*,1000) mm,nn,kk,nera,nerr
+1000 format('M:',i2,'   N:',i4,'   K:',i4,'   nera:',i4,'   nerr:',i4/ &
+            'Generated data symbols')
+  write(*,1002) dat0(1:kk)
 1002 format(20i4)
 
-  call rs_encode_sf(dgen,gsym0)                 !Encode dgen into gsym0
+  call rs_encode_sf(dat0,parsym)                 !Compute parity symbols
+  chansym0(1:kk)=dat0(1:kk)
+  chansym0(kk+1:nn)=parsym(1:nn-kk)
+
   write(*,1004)
 1004 format(/'Encoded channel symbols')
-  write(*,1002) gsym0(1:nn)
+  write(*,1002) chansym0(1:nn)
   
-  gsym=gsym0
+  chansym=chansym0
   do i=1,nerr                                !Introduce errors
-     gsym(i)=mod(gsym(i)+1,nq)
+     chansym(i)=mod(chansym(i)+1,nq)
   enddo
   write(*,1006) nera
 1006 format(/'Recovered channel symbols, with',i4,' errors at the start:')
-  write(*,1002) gsym(1:nn)
+  write(*,1002) chansym(1:nn)
 
   do i=0,nera-1
      iera(i)=i
   enddo
 
-  call rs_decode_sf(gsym,iera,nera,dat,nfixed)
-  ibad=count(dat(1:kk).ne.dgen(1:kk))
+  call rs_decode_sf(chansym,iera,nera,nfixed)
+  dat(1:kk)=chansym(1:kk)
+  ibad=count(dat(1:kk).ne.dat0(1:kk))
   write(*,1008)
 1008 format(/'Decoded result:')
   write(*,1002) dat(1:kk)

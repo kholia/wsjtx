@@ -13,7 +13,7 @@ program sfoxtest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   integer imsg(KK)                       !Information symbols
-  integer jmsg(KK)                       !Decoded information 
+  integer jmsg(KK)                       !Decoded information
   integer*1 imsg1(7*KK)                  !Copy of imsg in 1-bit i*1 format
   integer idat(NN)                       !Encoded data, 7-bit integers
   integer jdat(NN)                       !Recovered hard-decision symbols

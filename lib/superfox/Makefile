@@ -15,7 +15,7 @@ CFLAGS= -O9 -Wall
 %.o: %.F90
 	${FC} ${FFLAGS} -c $<
 
-all:	rs_sf.a rstest rs_125_49 rst8
+all:	rs_sf.a rstest
 
 OBJS1 = rstest.o ran1.o rs_sf.a
 rstest: $(OBJS1)
