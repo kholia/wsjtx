@@ -20,44 +20,46 @@ program sfoxtest
   integer, allocatable :: chansym0(:)    !Encoded data, 7-bit integers
   integer, allocatable :: chansym(:)     !Recovered hard-decision symbols
   integer, allocatable :: iera(:)        !Positions of erasures
-  character fname*17,arg*12
+  character fname*17,arg*12,itu*2
 
   nargs=iargc()
-  if(nargs.ne.10) then
-     print*,'Usage:   sfoxtest  f0   DT fspread delay M  N  K v nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15   0.5   1.0  8 74 44 0   10   -10'
+  if(nargs.ne.9) then
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K v nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 0   10   -10'
+     print*,'  LQ: Low Latitude Quiet'
+     print*,'  MD: Mid Latitude Disturbed'
+     print*,'  HM: High Latitude Moderate'
+     print*,'  ... etc.'
      go to 999
   endif
   call getarg(1,arg)
   read(arg,*) f0
   call getarg(2,arg)
   read(arg,*) xdt
-  call getarg(3,arg)
-  read(arg,*) fspread
+  call getarg(3,itu)
   call getarg(4,arg)
-  read(arg,*) delay
-  call getarg(5,arg)
   read(arg,*) mm0
-  call getarg(6,arg)
+  call getarg(5,arg)
   read(arg,*) nn0
-  call getarg(7,arg)
+  call getarg(6,arg)
   read(arg,*) kk0
-  call getarg(8,arg)
+  call getarg(7,arg)
   read(arg,*) n
   verbose=n.ne.0
-  call getarg(9,arg)
+  call getarg(8,arg)
   read(arg,*) nfiles
-  call getarg(10,arg)
+  call getarg(9,arg)
   read(arg,*) snrdb
 
-  call sfox_init(mm0,nn0,kk0)
+  call sfox_init(mm0,nn0,kk0,itu,fspread,delay)
   syncwidth=100.0
   baud=12000.0/NSPS
   bw=NQ*baud
   
-  write(*,1000) MM,NN,KK,NSPS,baud,bw
+  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
-          '   Symbol Rate:',f7.3,'   BW:',f6.0)
+          '   Symbol Rate:',f7.3,'   BW:',f6.0/                   &
+          'Channel: ',a2,'   fspread:',f5.1,'   delay:',f5.1/)
 
 ! Allocate storage for arrays that depend on code parameters.
   allocate(msg0(1:KK))
@@ -179,12 +181,12 @@ program sfoxtest
 1310 format(f7.2,i6,2f7.2,f7.1,i6)
 
      if(snrdb.eq.0 .and. fgood.le.0.5 .and. fgood0.gt.0.5) then
-        threshold=isnr+1 - (fgood0-0.50)/(fgood0-fgood)
-        
+        threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
      
      fgood0=fgood
      if(snrdb.ne.0.0) exit
+     if(fgood.eq.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
   write(*,1320) threshold
