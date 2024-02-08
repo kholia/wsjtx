@@ -14,6 +14,7 @@ program sfoxtest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   real a(3)
+  logical verbose
 
   integer, allocatable :: msg0(:)        !Information symbols
   integer, allocatable :: parsym(:)      !Parity symbols
@@ -23,9 +24,9 @@ program sfoxtest
   character fname*17,arg*12
 
   nargs=iargc()
-  if(nargs.ne.9) then
-     print*,'Usage:   sfoxtest  f0   DT fspread delay M  N  K nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15   0.5   1.0  8 74 44  10   -10'
+  if(nargs.ne.10) then
+     print*,'Usage:   sfoxtest  f0   DT fspread delay M  N  K v nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15   0.5   1.0  8 74 44 0   10   -10'
      go to 999
   endif
   call getarg(1,arg)
@@ -43,8 +44,11 @@ program sfoxtest
   call getarg(7,arg)
   read(arg,*) kk0
   call getarg(8,arg)
-  read(arg,*) nfiles
+  read(arg,*) n
+  verbose=n.ne.0
   call getarg(9,arg)
+  read(arg,*) nfiles
+  call getarg(10,arg)
   read(arg,*) snrdb
 
   call sfox_init(mm0,nn0,kk0)
@@ -125,7 +129,7 @@ program sfoxtest
              delay,fspread)
 
 ! Find signal freq and DT
-        call sync_sf(crcvd,clo,snrdb,f,t)
+        call sync_sf(crcvd,clo,verbose,f,t)
         ferr=f-f1
         terr=t-xdt
         if(abs(ferr).lt.3.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
@@ -145,7 +149,7 @@ program sfoxtest
         nworst=max(nworst,nharderr)
         call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder
   
-        if(snrdb.ne.0) then
+        if(verbose) then
            fname='000000_000001.wav'
            write(fname(8:13),'(i6.6)') ifile
            open(10,file=trim(fname),access='stream',status='unknown')

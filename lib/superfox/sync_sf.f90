@@ -1,4 +1,4 @@
-subroutine sync_sf(crcvd,clo,snrdb,f,t)
+subroutine sync_sf(crcvd,clo,verbose,f,t)
 
   use sfox_mod
   parameter (MMAX=150,JMAX=300)
@@ -6,6 +6,7 @@ subroutine sync_sf(crcvd,clo,snrdb,f,t)
   complex clo(NMAX)                      !Complex Local Oscillator
   complex crcvd(NMAX)                    !Signal as received
   complex c(0:NFFT-1)                    !Work array
+  logical verbose
   integer ipk(2)
   character*1 line(-30:30),mark(0:5)
   data mark/' ','.','-','+','X','$'/
@@ -29,7 +30,7 @@ subroutine sync_sf(crcvd,clo,snrdb,f,t)
   ipk=maxloc(s)
   ipk(1)=ipk(1)-MMAX-1
   ipk(2)=ipk(2)-JMAX-1
-  if(snrdb.ne.0.0) then
+  if(verbose) then
      ma=max(-MMAX,ipk(1)-10)
      mb=min(MMAX,ipk(1)+10)
      ja=max(-JMAX,ipk(2)-30)
