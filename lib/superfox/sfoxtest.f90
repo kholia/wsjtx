@@ -13,6 +13,7 @@ program sfoxtest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
+  real a(3)
 
   integer, allocatable :: msg0(:)        !Information symbols
   integer, allocatable :: parsym(:)      !Parity symbols
@@ -20,11 +21,11 @@ program sfoxtest
   integer, allocatable :: chansym(:)     !Recovered hard-decision symbols
   integer, allocatable :: iera(:)        !Positions of erasures
   character fname*17,arg*12
-  
+
   nargs=iargc()
-  if(nargs.ne.8) then
-     print*,'Usage:   sfoxtest   f0    DT fspread delay width nran nfiles snr'
-     print*,'Example: sfoxtest 1500.0 0.15   0.5   1.0   100    0    10   -10'
+  if(nargs.ne.9) then
+     print*,'Usage:   sfoxtest  f0   DT fspread delay M  N  K nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15   0.5   1.0  8 74 44  10   -10'
      go to 999
   endif
   call getarg(1,arg)
@@ -36,15 +37,18 @@ program sfoxtest
   call getarg(4,arg)
   read(arg,*) delay
   call getarg(5,arg)
-  read(arg,*) syncwidth
+  read(arg,*) mm0
   call getarg(6,arg)
-  read(arg,*) nran
+  read(arg,*) nn0
   call getarg(7,arg)
-  read(arg,*) nfiles
+  read(arg,*) kk0
   call getarg(8,arg)
+  read(arg,*) nfiles
+  call getarg(9,arg)
   read(arg,*) snrdb
 
-  call sfox_init
+  call sfox_init(mm0,nn0,kk0)
+  syncwidth=100.0
   baud=12000.0/NSPS
   bw=NQ*baud
   
@@ -125,7 +129,12 @@ program sfoxtest
         ferr=f-f1
         terr=t-xdt
         if(abs(ferr).lt.3.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
+!        if(abs(terr).lt.0.01) ngoodsync=ngoodsync+1
 
+        a=0.
+        a(1)=1500.0-f
+        call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
+        f=1500.0
         call hard_symbols(crcvd,f,t,chansym)           !Get hard symbol values
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
@@ -152,7 +161,8 @@ program sfoxtest
 1120       format('Hard errors:',i4)
         endif
 
-        if(nharderr.le.38) ngood=ngood+1            !(125-49)/2 = 38
+        maxerr=(nn-kk)/2
+        if(nharderr.le.maxerr) ngood=ngood+1
 !        write(13,1200) ifile,snr,ferr,terr,nharderr
 !1200    format(i5,3f10.3,i5)
      enddo  ! ifile
