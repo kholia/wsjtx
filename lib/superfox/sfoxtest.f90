@@ -3,7 +3,8 @@ program sfoxtest
 ! Generate and test sync waveforms for possible use in SuperFox signal.
 
   use wavhdr
-  include "sfox_params.f90"
+  use sfox_mod
+!  include "sfox_params.f90"
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   real*4 xnoise(NMAX)                    !Random noise
@@ -12,15 +13,13 @@ program sfoxtest
   complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
-  integer msg0(KK)                       !Information symbols
-!  integer msg(KK)                        !Decoded information
-  integer parsym(NN-KK)                  !Parity symbols
-!  integer*1 msg1(MM*KK)                  !Copy of msg0 in 1-bit i*1 format
-  integer chansym0(NN)                   !Encoded data, 7-bit integers
-  integer chansym(NN)                    !Recovered hard-decision symbols
-  integer iera(NN)
+
+  integer, allocatable :: msg0(:)        !Information symbols
+  integer, allocatable :: parsym(:)      !Parity symbols
+  integer, allocatable :: chansym0(:)    !Encoded data, 7-bit integers
+  integer, allocatable :: chansym(:)     !Recovered hard-decision symbols
+  integer, allocatable :: iera(:)        !Positions of erasures
   character fname*17,arg*12
-!  character c357*357,c14*14 !,chkmsg*15
   
   nargs=iargc()
   if(nargs.ne.8) then
@@ -45,6 +44,20 @@ program sfoxtest
   call getarg(8,arg)
   read(arg,*) snrdb
 
+  call sfox_init
+  baud=12000.0/NSPS
+  bw=NQ*baud
+  
+  write(*,1000) MM,NN,KK,NSPS,baud,bw
+1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
+          '   Symbol Rate:',f7.3,'   BW:',f6.0)
+  
+  allocate(msg0(1:KK))
+  allocate(parsym(1:NN-KK))
+  allocate(chansym0(1:NN))
+  allocate(chansym(1:NN))
+  allocate(iera(1:NN))
+
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
@@ -67,7 +80,7 @@ program sfoxtest
 ! Generate cdat (SuperFox waveform) and clo (LO for sync detection)
   call gen_sfox(chansym0,f0,fsample,syncwidth,cdat,clo)
 
-  do isnr=0,-30,-1
+  do isnr=0,-20,-1
      snr=isnr
      if(snrdb.ne.0.0) snr=snrdb
      sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snr)
@@ -147,7 +160,7 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.0) write(*,1300)
-1300 format('    SNR     N  fsync  fgood averr  worst'/  &
+1300 format('    SNR     N  fsync  fgood  averr  worst'/  &
             '-----------------------------------------')
      ave_harderr=float(ntot)/nfiles
      write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst

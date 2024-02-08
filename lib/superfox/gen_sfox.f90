@@ -1,6 +1,7 @@
 subroutine gen_sfox(idat,f0,fsample,syncwidth,cdat,clo)
 
-  include "sfox_params.f90"
+  use sfox_mod
+!  include "sfox_params.f90"
   complex cdat(NMAX)                     !Generated complex waveform
   complex clo(NMAX)                      !Complex Local Oscillator
   complex w,wstep

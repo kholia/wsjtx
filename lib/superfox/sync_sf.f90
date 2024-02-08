@@ -1,6 +1,7 @@
 subroutine sync_sf(crcvd,clo,snrdb,f,t)
 
-  include "sfox_params.f90"
+  use sfox_mod
+!  include "sfox_params.f90"
   parameter (MMAX=150,JMAX=300)
   real ccf(-MMAX:MMAX,-JMAX:JMAX)        !2D CCF: DT, dFreq offsets
   complex clo(NMAX)                      !Complex Local Oscillator

@@ -25,10 +25,6 @@ OBJS2 = rs_125_49.o ran1.o get_crc14.o rs_sf.a
 rs_125_49: $(OBJS2)
 	$(FC) -o rs_125_49 $(OBJS2) rs_sf.a
 
-#OBJS3 = rst8.o encode_rs_8.o decode_rs_8.o wrap_rs_8.o
-rst8:	rst8.o wrap_rs_8.o
-	$(FC) -o rst8 rst8.o wrap_rs_8.o librs.a
-
 rs_sf.a: init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o 
 	ar -crs rs_sf.a init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o
 

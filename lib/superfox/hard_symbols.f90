@@ -1,6 +1,7 @@
 subroutine hard_symbols(crcvd,f,t,jdat)
 
-  include "sfox_params.f90"
+  use sfox_mod
+!  include "sfox_params.f90"
   complex crcvd(NMAX)                    !Signal as received
   complex c(0:NSPS-1)                    !Work array, one symbol long
   real s(0:NSPS-1)                       !Power spectrum
