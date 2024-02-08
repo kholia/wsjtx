@@ -56,10 +56,12 @@ program sfoxtest
   baud=12000.0/NSPS
   bw=NQ*baud
   
-  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay
+  maxerr=(NN-KK)/2
+  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay,maxerr
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
           '   Symbol Rate:',f7.3,'   BW:',f6.0/                   &
-          'Channel: ',a2,'   fspread:',f5.1,'   delay:',f5.1/)
+          'Channel: ',a2,'   fspread:',f5.1,'   delay:',f5.1,     &
+          '   MaxErr:',i3/)
 
 ! Allocate storage for arrays that depend on code parameters.
   allocate(msg0(1:KK))
@@ -168,7 +170,6 @@ program sfoxtest
 1120       format('Hard errors:',i4)
         endif
 
-        maxerr=(nn-kk)/2
         if(nharderr.le.maxerr) ngood=ngood+1
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
