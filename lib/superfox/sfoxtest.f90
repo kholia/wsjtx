@@ -111,12 +111,14 @@ program sfoxtest
         call sync_sf(crcvd,clo,snrdb,f,t)
         ferr=f-f1
         terr=t-xdt
-        if(abs(ferr).lt.5.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
+        if(abs(ferr).lt.3.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
 
         call hard_symbols(crcvd,f,t,chansym)           !Get hard symbol values
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
         nharderr=count(chansym.ne.chansym0)            !Count hard errors
+!        write(71,3071) f1,f,ferr,xdt,t,terr,nharderr
+!3071    format(6f10.3,i6)
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
         call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder

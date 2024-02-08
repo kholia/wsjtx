@@ -6,7 +6,7 @@
   parameter (ND=ND1+ND2)          !Total data symbols (125)
   parameter (NS=24)               !Sync symbols (for length)
   parameter (NSPS=1024)           !Samples per symbol at 12000 S/s
-  parameter (NSYNC=NS*NSPS)       !Samples in sync waveform (23,552)
+  parameter (NSYNC=NS*NSPS)       !Samples in sync waveform (24,576)
   parameter (NZ=NSPS*(ND+NS))     !Samples in full Tx waveform (151,552)
   parameter (NMAX=15*12000)       !Samples in iwave (180,000)
   parameter (NFFT=32768)          !Length of FFT for sync waveform
