@@ -1,10 +1,9 @@
 program sfoxtest
 
-! Generate and test sync waveforms for possible use in SuperFox signal.
+! Generate and test possible waveforms for SuperFox signal.
 
   use wavhdr
   use sfox_mod
-!  include "sfox_params.f90"
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   real*4 xnoise(NMAX)                    !Random noise
@@ -59,7 +58,8 @@ program sfoxtest
   write(*,1000) MM,NN,KK,NSPS,baud,bw
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
           '   Symbol Rate:',f7.3,'   BW:',f6.0)
-  
+
+! Allocate storage for arrays that depend on code parameters.
   allocate(msg0(1:KK))
   allocate(parsym(1:NN-KK))
   allocate(chansym0(1:NN))
@@ -84,6 +84,7 @@ program sfoxtest
   call rs_encode_sf(msg0,parsym)            !Compute parity symbols
   chansym0(1:kk)=msg0(1:kk)
   chansym0(kk+1:nn)=parsym(1:nn-kk)
+  fgood0=1.0
 
 ! Generate cdat (SuperFox waveform) and clo (LO for sync detection)
   call gen_sfox(chansym0,f0,fsample,syncwidth,cdat,clo)
@@ -167,10 +168,7 @@ program sfoxtest
 
         maxerr=(nn-kk)/2
         if(nharderr.le.maxerr) ngood=ngood+1
-!        write(13,1200) ifile,snr,ferr,terr,nharderr
-!1200    format(i5,3f10.3,i5)
      enddo  ! ifile
-!     print*,'D'
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.0) write(*,1300)
@@ -179,8 +177,17 @@ program sfoxtest
      ave_harderr=float(ntot)/nfiles
      write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst
 1310 format(f7.2,i6,2f7.2,f7.1,i6)
+
+     if(snrdb.eq.0 .and. fgood.le.0.5 .and. fgood0.gt.0.5) then
+        threshold=isnr+1 - (fgood0-0.50)/(fgood0-fgood)
+        
+     endif
+     
+     fgood0=fgood
      if(snrdb.ne.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
+  write(*,1320) threshold
+1320 format('Threshold sensitivity (50% decoding):',f6.1)
 
 999 end program sfoxtest
