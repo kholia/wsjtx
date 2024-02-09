@@ -55,13 +55,16 @@ program sfoxtest
   syncwidth=100.0
   baud=12000.0/NSPS
   bw=NQ*baud
-  
   maxerr=(NN-KK)/2
-  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay,maxerr
+  tsync=NSYNC/12000.0
+  txt=(NN-2+NS)*NSPS/12000.0
+
+  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay,maxerr,   &
+       tsync,txt
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
           '   Symbol Rate:',f7.3,'   BW:',f6.0/                   &
-          'Channel: ',a2,'   fspread:',f5.1,'   delay:',f5.1,     &
-          '   MaxErr:',i3/)
+          'Channel: ',a2,'   fspread:',f4.1,'   delay:',f5.1,     &
+          '   MaxErr:',i3,'  tsync:',f4.1,'   TxT:',f5.1/)
 
 ! Allocate storage for arrays that depend on code parameters.
   allocate(msg0(1:KK))
@@ -102,6 +105,8 @@ program sfoxtest
      ngood=0
      ntot=0
      nworst=0
+     sqt=0.
+     sqf=0.
 
      do ifile=1,nfiles
         xnoise=0.
@@ -137,8 +142,11 @@ program sfoxtest
         call sync_sf(crcvd,clo,verbose,f,t)
         ferr=f-f1
         terr=t-xdt
-        if(abs(ferr).lt.3.0 .and. abs(terr).lt.0.01) ngoodsync=ngoodsync+1
-!        if(abs(terr).lt.0.01) ngoodsync=ngoodsync+1
+        if(abs(ferr).lt.3.0 .and. abs(terr).lt.0.01) then
+           ngoodsync=ngoodsync+1
+           sqt=sqt + terr*terr
+           sqf=sqf + ferr*ferr
+        endif
 
         a=0.
         a(1)=1500.0-f
@@ -148,8 +156,6 @@ program sfoxtest
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
         nharderr=count(chansym.ne.chansym0)            !Count hard errors
-!        write(71,3071) f1,f,ferr,xdt,t,terr,nharderr
-!3071    format(6f10.3,i6)
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
         call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder
@@ -174,20 +180,24 @@ program sfoxtest
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
-     if(isnr.eq.0) write(*,1300)
-1300 format('    SNR     N  fsync  fgood  averr  worst'/  &
-            '-----------------------------------------')
-     ave_harderr=float(ntot)/nfiles
-     write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst
-1310 format(f7.2,i6,2f7.2,f7.1,i6)
+     if(snrdb.eq.0.0) then
+        if(isnr.eq.0) write(*,1300)
+1300    format('    SNR  iters fsync  fgood  averr  worst  rmsf  rmst'/  &
+               '-----------------------------------------------------')
+        ave_harderr=float(ntot)/nfiles
+        rmst=sqrt(sqt/ngoodsync)
+        rmsf=sqrt(sqf/ngoodsync)
+        write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst, &
+             rmsf,rmst
+1310    format(f7.2,i6,2f7.2,f7.1,i6,f7.2,f6.3)
 
-     if(snrdb.eq.0 .and. fgood.le.0.5 .and. fgood0.gt.0.5) then
-        threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
+        if(fgood.le.0.5 .and. fgood0.gt.0.5) then
+           threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
+        endif
+        fgood0=fgood
      endif
-     
-     fgood0=fgood
      if(snrdb.ne.0.0) exit
-     if(fgood.eq.0.0) exit
+!     if(fgood.eq.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
   write(*,1320) threshold
