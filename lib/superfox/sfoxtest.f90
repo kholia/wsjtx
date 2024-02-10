@@ -80,11 +80,15 @@ program sfoxtest
   h=default_header(12000,NMAX)
   idummy=0
   bandwidth_ratio=2500.0/6000.0
+  fgood0=1.0
 
 ! Generate a message
   msg0=0
   do i=1,KK-2
-     msg0(i)=i
+!     msg0(i)=i-1
+     msg0(i)=int(NQ*ran1(idummy))
+!     msg0(i)=0
+!     if(i.gt.ND1) msg0(i)=NQ-1
   enddo
 ! Append a CRC here ...
 
@@ -92,10 +96,12 @@ program sfoxtest
   call rs_encode_sf(msg0,parsym)            !Compute parity symbols
   chansym0(1:kk)=msg0(1:kk)
   chansym0(kk+1:nn)=parsym(1:nn-kk)
-  fgood0=1.0
 
-! Generate cdat (SuperFox waveform) and clo (LO for sync detection)
-  call gen_sfox(chansym0,f0,fsample,syncwidth,cdat,clo)
+! Generate clo, the LO for sync detection
+  call gen_sf_clo(fsample,syncwidth,clo)
+  
+! Generate cdat, the SuperFox waveform
+  call gen_sfox(chansym0,f0,fsample,syncwidth,cdat)
 
   do isnr=0,-20,-1
      snr=isnr
@@ -154,6 +160,7 @@ program sfoxtest
         call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
         f=1500.0
         call hard_symbols(crcvd,f,t,chansym)           !Get hard symbol values
+
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
         nharderr=count(chansym.ne.chansym0)            !Count hard errors

@@ -590,6 +590,7 @@ set (wsjt_FSRCS
   lib/superfox/gen_sfox.f90
   lib/superfox/sync_sf.f90
   lib/superfox/hard_symbols.f90
+  lib/superfox/gen_sf_clo.f90
   lib/superfox/ran1.f90
   )
 
