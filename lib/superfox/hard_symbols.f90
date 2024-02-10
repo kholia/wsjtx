@@ -21,6 +21,12 @@ subroutine hard_symbols(crcvd,f,t,jdat)
      do i=0,NSPS-1
         s(i)=real(c(i))**2 + aimag(c(i))**2
      enddo
+
+! Could we measure fspread, perhaps in the sync routine, and use that to
+! decide whether to smooth spectra here?
+!     call smo121(s,NSPS)                !Helps for LD, HM propagation...
+!     call smo121(s,NSPS)
+
      ipk=maxloc(s)
      ipk(1)=ipk(1)-j0
      if(ipk(1).ge.64) then
@@ -29,7 +35,6 @@ subroutine hard_symbols(crcvd,f,t,jdat)
         jdat(n)=ipk(1)+256-64
      endif
   enddo
-!  jdat(NN-1:nn)=0
 
   return
 end subroutine hard_symbols
