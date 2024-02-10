@@ -54,7 +54,7 @@ program sfoxtest
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay)
   syncwidth=100.0
   baud=12000.0/NSPS
-  tsym=1.0/naud
+  tsym=1.0/baud
   bw=NQ*baud
   maxerr=(NN-KK)/2
   tsync=NSYNC/12000.0
@@ -181,22 +181,18 @@ program sfoxtest
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
-     if(snrdb.eq.0.0) then
-        if(isnr.eq.0) write(*,1300)
-1300    format('    SNR  iters fsync  fgood  averr  worst  rmsf  rmst'/  &
-               '-----------------------------------------------------')
-        ave_harderr=float(ntot)/nfiles
-        rmst=sqrt(sqt/ngoodsync)
-        rmsf=sqrt(sqf/ngoodsync)
-        write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst, &
-             rmsf,rmst
-1310    format(f7.2,i6,2f7.2,f7.1,i6,f7.2,f6.3)
-
-        if(fgood.le.0.5 .and. fgood0.gt.0.5) then
-           threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
-        endif
-        fgood0=fgood
+     if(isnr.eq.0) write(*,1300)
+1300 format('    SNR  iters fsync  fgood  averr  worst  rmsf  rmst'/  &
+            '------------------------------------------------------')
+     ave_harderr=float(ntot)/nfiles
+     rmst=sqrt(sqt/ngoodsync)
+     rmsf=sqrt(sqf/ngoodsync)
+     write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
+1310 format(f7.2,i6,2f7.2,f7.1,i6,f7.2,f6.3)
+     if(fgood.le.0.5 .and. fgood0.gt.0.5) then
+        threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
+     fgood0=fgood
      if(snrdb.ne.0.0) exit
 !     if(fgood.eq.0.0) exit
      if(fgoodsync.lt.0.5) exit
