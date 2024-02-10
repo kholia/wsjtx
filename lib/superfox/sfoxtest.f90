@@ -13,7 +13,6 @@ program sfoxtest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   real a(3)
-  logical verbose
 
   integer, allocatable :: msg0(:)        !Information symbols
   integer, allocatable :: parsym(:)      !Parity symbols
@@ -23,9 +22,9 @@ program sfoxtest
   character fname*17,arg*12,itu*2
 
   nargs=iargc()
-  if(nargs.ne.9) then
-     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K v nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 0   10   -10'
+  if(nargs.ne.10) then
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K  sw nv nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 100  0   10   -10'
      print*,'  LQ: Low Latitude Quiet'
      print*,'  MD: Mid Latitude Disturbed'
      print*,'  HM: High Latitude Moderate'
@@ -44,15 +43,15 @@ program sfoxtest
   call getarg(6,arg)
   read(arg,*) kk0
   call getarg(7,arg)
-  read(arg,*) n
-  verbose=n.ne.0
+  read(arg,*) syncwidth
   call getarg(8,arg)
-  read(arg,*) nfiles
+  read(arg,*) nv
   call getarg(9,arg)
+  read(arg,*) nfiles
+  call getarg(10,arg)
   read(arg,*) snrdb
 
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay)
-  syncwidth=100.0
   baud=12000.0/NSPS
   tsym=1.0/baud
   bw=NQ*baud
@@ -146,7 +145,7 @@ program sfoxtest
              delay,fspread)
 
 ! Find signal freq and DT
-        call sync_sf(crcvd,clo,verbose,f,t)
+        call sync_sf(crcvd,clo,nv,f,t)
         ferr=f-f1
         terr=t-xdt
         if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/8.0) then
@@ -168,20 +167,20 @@ program sfoxtest
         nworst=max(nworst,nharderr)
         call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder
   
-        if(verbose) then
+        if(iand(nv,1).ne.0) then
            fname='000000_000001.wav'
            write(fname(8:13),'(i6.6)') ifile
            open(10,file=trim(fname),access='stream',status='unknown')
            write(10) h,iwave(1:NMAX)                !Save the .wav file
            close(10)
-           write(*,1100) f1,xdt
-1100       format(/'f0:',f7.1,'  xdt:',f6.2)
-           write(*,1112) f,t
-1112       format('f: ',f7.1,'   DT:',f6.2)
-           write(*,1110) ferr,terr
-1110       format('err:',f6.1,f12.2)
-           write(*,1120) nharderr
-1120       format('Hard errors:',i4)
+!           write(*,1100) f1,xdt
+!1100       format(/'f0:',f7.1,'  xdt:',f6.2)
+!           write(*,1112) f,t
+!1112       format('f: ',f7.1,'   DT:',f6.2)
+!           write(*,1110) ferr,terr
+!1110       format('err:',f6.1,f12.2)
+!           write(*,1120) nharderr
+!1120       format('Hard errors:',i4)
         endif
 
         if(nharderr.le.maxerr) ngood=ngood+1
