@@ -197,7 +197,7 @@ program sfoxtest
 !     if(fgood.eq.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
-  write(*,1320) threshold
-1320 format('Threshold sensitivity (50% decoding):',f6.1)
+  if(snrdb.eq.0.0) write(*,1320) threshold
+1320 format(/'Threshold sensitivity (50% decoding):',f6.1,' dB')
 
 999 end program sfoxtest
