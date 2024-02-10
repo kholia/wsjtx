@@ -54,6 +54,7 @@ program sfoxtest
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay)
   syncwidth=100.0
   baud=12000.0/NSPS
+  tsym=1.0/naud
   bw=NQ*baud
   maxerr=(NN-KK)/2
   tsync=NSYNC/12000.0
@@ -142,7 +143,7 @@ program sfoxtest
         call sync_sf(crcvd,clo,verbose,f,t)
         ferr=f-f1
         terr=t-xdt
-        if(abs(ferr).lt.3.0 .and. abs(terr).lt.0.01) then
+        if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/8.0) then
            ngoodsync=ngoodsync+1
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
