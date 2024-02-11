@@ -11,10 +11,11 @@ subroutine sfox_sync(crcvd,clo,nv,f,t)
   data mark/' ','.','-','+','X','$'/
 
   s=0.
-  df=12000.0/NFFT                         !0.366211
+  df=12000.0/NFFT                         !0.366211 Hz
+  lagstep=100
   i1=ND1*nsps
   do m=-MMAX,MMAX
-     lag=100*m
+     lag=lagstep*m
      c(0:nsync-1)=crcvd(i1+1+lag:i1+nsync+lag)*clo(1:nsync)
      c(nsync:)=0.
      call four2a(c,NFFT,1,-1,1)
@@ -43,7 +44,7 @@ subroutine sfox_sync(crcvd,clo,nv,f,t)
 1300    format(f6.3,2x,61a1)
      enddo
   endif
-  t=ipk(1)/120.0
+  t=ipk(1)*lagstep/12000.0
   dfreq=ipk(2)*df
   f=1500.0+dfreq
 
