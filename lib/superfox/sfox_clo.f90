@@ -1,4 +1,4 @@
-subroutine gen_sf_clo(fsample,syncwidth,clo)
+subroutine sfox_clo(fsample,syncwidth,clo)
 
 ! Generate complex LO for the SuperFox sync signal
   
@@ -23,4 +23,4 @@ subroutine gen_sf_clo(fsample,syncwidth,clo)
   enddo
 
   return
-end subroutine gen_sf_clo
+end subroutine sfox_clo

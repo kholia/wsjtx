@@ -1,4 +1,4 @@
-subroutine gen_sfox(idat,f0,fsample,syncwidth,cdat)
+subroutine sfox_gen(idat,f0,fsample,syncwidth,cdat)
 
   use sfox_mod
 !  include "sfox_params.f90"
@@ -53,4 +53,4 @@ subroutine gen_sfox(idat,f0,fsample,syncwidth,cdat)
   enddo
 
   return
-end subroutine gen_sfox
+end subroutine sfox_gen

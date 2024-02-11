@@ -1,4 +1,4 @@
-subroutine hard_symbols(crcvd,f,t,chansym)
+subroutine sfox_hard(crcvd,f,t,chansym)
 
   use sfox_mod
 !  include "sfox_params.f90"
@@ -32,4 +32,4 @@ subroutine hard_symbols(crcvd,f,t,chansym)
   enddo
 
   return
-end subroutine hard_symbols
+end subroutine sfox_hard

@@ -101,10 +101,10 @@ program sfoxtest
   chansym0(kk+1:nn)=parsym(1:nn-kk)
 
 ! Generate clo, the LO for sync detection
-  call gen_sf_clo(fsample,syncwidth,clo)
+  call sfox_clo(fsample,syncwidth,clo)
   
 ! Generate cdat, the SuperFox waveform
-  call gen_sfox(chansym0,f0,fsample,syncwidth,cdat)
+  call sfox_gen(chansym0,f0,fsample,syncwidth,cdat)
 
   do isnr=0,-20,-1
      snr=isnr
@@ -134,7 +134,7 @@ program sfoxtest
         if(f0.eq.0.0) then
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
            xdt=2.0*(ran1(idummy)-0.5)
-           call gen_sfox(chansym0,f1,fsample,syncwidth,cdat,clo)
+           call sfox_gen(chansym0,f1,fsample,syncwidth,cdat,clo)
         endif
         
         crcvd=0.
@@ -149,7 +149,7 @@ program sfoxtest
              delay,fspread)
 
 ! Find signal freq and DT
-        call sync_sf(crcvd,clo,nv,f,t)
+        call sfox_sync(crcvd,clo,nv,f,t)
         ferr=f-f1
         terr=t-xdt
         if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/8.0) then
@@ -162,7 +162,7 @@ program sfoxtest
         a(1)=1500.0-f
         call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
         f=1500.0
-        call hard_symbols(crcvd,f,t,chansym)           !Get hard symbol values
+        call sfox_hard(crcvd,f,t,chansym)           !Get hard symbol values
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1

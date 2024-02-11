@@ -587,10 +587,10 @@ set (wsjt_FSRCS
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
   lib/77bit/hash22calc.f90
-  lib/superfox/gen_sfox.f90
-  lib/superfox/sync_sf.f90
-  lib/superfox/hard_symbols.f90
-  lib/superfox/gen_sf_clo.f90
+  lib/superfox/sfox_gen.f90
+  lib/superfox/sfox_sync.f90
+  lib/superfox/sfox_hard.f90
+  lib/superfox/sfox_clo.f90
   lib/superfox/ran1.f90
   )
 

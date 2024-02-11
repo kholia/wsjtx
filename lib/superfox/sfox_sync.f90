@@ -1,4 +1,4 @@
-subroutine sync_sf(crcvd,clo,nv,f,t)
+subroutine sfox_sync(crcvd,clo,nv,f,t)
 
   use sfox_mod
   parameter (MMAX=150,JMAX=300)
@@ -46,8 +46,6 @@ subroutine sync_sf(crcvd,clo,nv,f,t)
   t=ipk(1)/120.0
   dfreq=ipk(2)*df
   f=1500.0+dfreq
-!  write(*,3001) ipk,t,dfreq,f
-!3001 format('B',2i5,f7.3,2f7.1)
 
   return
-end subroutine sync_sf
+end subroutine sfox_sync
