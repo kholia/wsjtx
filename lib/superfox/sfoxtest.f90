@@ -32,7 +32,7 @@ program sfoxtest
      print*,'         ... and similarly for LM LD MQ MD HQ HM'
      print*,'         sw = width of Sync sweep, in Hz'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
-     print*,'         snr=0 means loop over SNRs 0 to -20 dB'
+     print*,'         snr=0 means loop over SNRs 0 to -25 dB'
      go to 999
   endif
   call getarg(1,arg)
@@ -106,7 +106,7 @@ program sfoxtest
 ! Generate cdat, the SuperFox waveform
   call sfox_gen(chansym0,f0,fsample,syncwidth,cdat)
 
-  do isnr=0,-20,-1
+  do isnr=0,-25,-1
      snr=isnr
      if(snrdb.ne.0.0) snr=snrdb
      sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snr)
