@@ -25,14 +25,14 @@ program sfoxtest
   if(nargs.ne.10) then
      print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K  sw nv nfiles snr'
      print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 100  0   10   -10'
-     print*,'         f0=0 ==> f0, DT assume suitablels random values'
+     print*,'         f0=0 means f0, DT will assume suitable random values'
      print*,'         LQ: Low Latitude Quiet'
      print*,'         MM: Mid Latitude Moderate'
      print*,'         HD: High Latitude Disturbed'
-     print*,'         ... and similarly LM LD MQ MD HQ HM'
-     print*,'         sw = width of Sync sweep, Hz'
+     print*,'         ... and similarly for LM LD MQ MD HQ HM'
+     print*,'         sw = width of Sync sweep, in Hz'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
-     print*,'         snr=0 to loop over SNRs 0 to -20 dB'
+     print*,'         snr=0 means loop over SNRs 0 to -20 dB'
      go to 999
   endif
   call getarg(1,arg)
