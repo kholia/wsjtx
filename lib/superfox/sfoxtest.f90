@@ -13,13 +13,16 @@ program sfoxtest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   real a(3)
-  
   real, allocatable :: s3(:,:)           !Symbol spectra: will be s3(NQ,ND)
   integer, allocatable :: msg0(:)        !Information symbols
   integer, allocatable :: parsym(:)      !Parity symbols
   integer, allocatable :: chansym0(:)    !Encoded data, 7-bit integers
   integer, allocatable :: chansym(:)     !Recovered hard-decision symbols
   integer, allocatable :: iera(:)        !Positions of erasures
+  integer, allocatable :: rxdat(:)
+  integer, allocatable :: rxprob(:)
+  integer, allocatable :: rxdat2(:)
+  integer, allocatable :: rxprob2(:)
   character fname*17,arg*12,itu*2
 
   nargs=iargc()
@@ -78,6 +81,10 @@ program sfoxtest
   allocate(chansym0(1:NN))
   allocate(chansym(1:NN))
   allocate(iera(1:NN))
+  allocate(rxdat(0:ND-1))
+  allocate(rxprob(0:ND-1))
+  allocate(rxdat2(0:ND-1))
+  allocate(rxprob2(0:ND-1))
 
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
@@ -165,10 +172,19 @@ program sfoxtest
         call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
         f=1500.0
         call sfox_demod(crcvd,f,t,s3,chansym)    !Get s3 and hard symbol values
+        call sym_prob(s3,rxdat,rxprob,rxdat2,rxprob2)
+        chansym(1:ND)=rxdat  !### TEMPORARY ? ###
+!        do j=0,ND-1
+!        do j=0,5
+!           write(*,3001) j,chansym(1+j),rxdat(j),rxprob(j),rxdat2(j),rxprob2(j)
+!3001       format('prob'i5,5i8)
+!        enddo
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
         nharderr=count(chansym.ne.chansym0)            !Count hard errors
+!        nhard2=count(rxdat.ne.chansym0(1:ND))            !Count hard errors
+!        print*,'A',nharderr,nhard2
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
         call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder

@@ -11,10 +11,12 @@ subroutine sfox_demod(crcvd,f,t,s3,chansym)
   i0=nint(12000.0*t)
   df=12000.0/NSPS
   j0=nint(f/df)-NQ/2
+  chansym=0
   do n=1,ND                             !Loop over all symbols
      ib=n*NSPS + i0
      if(n.gt.ND1) ib=(NS+n)*NSPS + i0
      ia=ib-NSPS+1
+     chansym(n)=0
      if(ia.lt.1 .or. ib.gt.NMAX) cycle
      c=crcvd(ia:ib)
      call four2a(c,NSPS,1,-1,1)          !Compute symbol spectrum

@@ -591,6 +591,7 @@ set (wsjt_FSRCS
   lib/superfox/sfox_sync.f90
   lib/superfox/sfox_demod.f90
   lib/superfox/sfox_clo.f90
+  lib/superfox/sym_prob.f90
   lib/superfox/ran1.f90
   )
 
