@@ -13,7 +13,8 @@ program sfoxtest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   real a(3)
-
+  
+  real, allocatable :: s3(:,:)           !Symbol spectra: will be s3(NQ,ND)
   integer, allocatable :: msg0(:)        !Information symbols
   integer, allocatable :: parsym(:)      !Parity symbols
   integer, allocatable :: chansym0(:)    !Encoded data, 7-bit integers
@@ -71,6 +72,7 @@ program sfoxtest
           '   MaxErr:',i3,'  tsync:',f4.1,'   TxT:',f5.1/)
 
 ! Allocate storage for arrays that depend on code parameters.
+  allocate(s3(0:NQ-1,0:ND-1))
   allocate(msg0(1:KK))
   allocate(parsym(1:NN-KK))
   allocate(chansym0(1:NN))
@@ -162,7 +164,7 @@ program sfoxtest
         a(1)=1500.0-f
         call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
         f=1500.0
-        call sfox_hard(crcvd,f,t,chansym)           !Get hard symbol values
+        call sfox_demod(crcvd,f,t,s3,chansym)    !Get s3 and hard symbol values
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1

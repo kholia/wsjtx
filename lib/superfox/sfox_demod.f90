@@ -1,11 +1,11 @@
-subroutine sfox_hard(crcvd,f,t,chansym)
+subroutine sfox_demod(crcvd,f,t,s3,chansym)
 
   use sfox_mod
-!  include "sfox_params.f90"
   complex crcvd(NMAX)                    !Signal as received
   complex c(0:NSPS-1)                    !Work array, one symbol long
   real s(0:NQ-1)                         !Power spectrum
-  integer chansym(NN)                    !Recovered hard-decision symbols
+  real s3(0:NQ-1,0:ND-1)                 !Symbol spectra
+  integer chansym(NN)                    !Hard-decision symbol values
   integer ipk(1)
 
   i0=nint(12000.0*t)
@@ -20,6 +20,7 @@ subroutine sfox_hard(crcvd,f,t,chansym)
      call four2a(c,NSPS,1,-1,1)          !Compute symbol spectrum
      do j=0,NQ-1
         s(j)=real(c(j0+j))**2 + aimag(c(j0+j))**2
+        s3(j,n-1)=s(j)
      enddo
 
 ! Could we measure fspread, perhaps in the sync routine, and use that to
@@ -32,4 +33,4 @@ subroutine sfox_hard(crcvd,f,t,chansym)
   enddo
 
   return
-end subroutine sfox_hard
+end subroutine sfox_demod
