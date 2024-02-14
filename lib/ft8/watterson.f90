@@ -24,7 +24,7 @@ subroutine watterson(c,npts,nsig,fs,delay,fspread)
      do i=0,npts-1
         f=i*df
         if(i.gt.npts/2) f=(i-npts)*df
-        x=(f/(0.5*fspread))**2
+        x=(f/(0.707*fspread))**2
         a=0.
         if(x.le.50.0) then
            a=exp(-x)
