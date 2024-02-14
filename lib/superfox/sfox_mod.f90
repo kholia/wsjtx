@@ -7,24 +7,25 @@ contains
   subroutine sfox_init(mm0,nn0,kk0,itu,fspread,delay)
 
     character*2 itu
-    integer isps(30)
+    integer isps(50)
     integer iloc(1)
-    data isps/1000,1008,1024,1050,1080,1120,1152,1176,1200,1260,   &
-              1280,1296,1344,1350,1372,1400,1440,1470,1500,1512,   &
-              1536,1568,1600,1620,1680,1728,1920,1944,1960,2000/
-
+    data isps/1000,1008,1024,1029,1050,1080,1120,1125,1134,1152,   &
+              1176,1200,1215,1225,1250,1260,1280,1296,1323,1344,   &
+              1350,1372,1400,1440,1458,1470,1500,1512,1536,1568,   &
+              1575,1600,1620,1680,1701,1715,1728,1750,1764,1792,   &
+              1800,1875,1890,1920,1944,1960,2000,2016,2025,2048/
 
     MM=mm0              !Bits per symbol
     NQ=2**MM            !Q, number of MFSK tones
     NN=nn0              !Channel symbols, before puncture
     KK=kk0              !Information symbols, before puncture
     ND1=25              !Data symbols before sync 
-    ND2=NN-2-ND1        !Data symbols after sync 
-    ND=ND1+ND2          !Total data symbols
+    ND2=NN-ND1          !Data symbols after sync 
+    ND=NN               !Total data symbols
     NFZ=3               !First zero
 
     tsync=2.0
-    jsps=nint((12.6-tsync)*12000.0/ND)
+    jsps=nint((12.8-tsync)*12000.0/ND)
     iloc=minloc(abs(isps-jsps))
     NSPS=isps(iloc(1))  !Samples per symbol
     NS=nint(tsync*12000.0/NSPS)

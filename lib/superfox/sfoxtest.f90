@@ -96,13 +96,9 @@ program sfoxtest
 
 ! Generate a message
   msg0=0
-  do i=1,KK-2
-!     msg0(i)=i-1
+  do i=1,KK
      msg0(i)=int(NQ*ran1(idummy))
-!     msg0(i)=0
-!     if(i.gt.ND1) msg0(i)=NQ-1
   enddo
-! Append a CRC here ...
 
   call rs_init_sf(MM,NQ,NN,KK,NFZ)          !Initialize the Karn codec
   call rs_encode_sf(msg0,parsym)            !Compute parity symbols
@@ -115,7 +111,7 @@ program sfoxtest
 ! Generate cdat, the SuperFox waveform
   call sfox_gen(chansym0,f0,fsample,syncwidth,cdat)
 
-  do isnr=0,-25,-1
+  do isnr=-8,-20,-1
      snr=isnr
      if(snrdb.ne.0.0) snr=snrdb
      sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snr)
@@ -142,7 +138,7 @@ program sfoxtest
         f1=f0
         if(f0.eq.0.0) then
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
-           xdt=2.0*(ran1(idummy)-0.5)
+           xdt=0.6*(ran1(idummy)-0.5)
            call sfox_gen(chansym0,f1,fsample,syncwidth,cdat,clo)
         endif
         
