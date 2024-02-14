@@ -13,7 +13,6 @@ contains
               1280,1296,1344,1350,1372,1400,1440,1470,1500,1512,   &
               1536,1568,1600,1620,1680,1728,1920,1944,1960,2000/
 
-
     MM=mm0              !Bits per symbol
     NQ=2**MM            !Q, number of MFSK tones
     NN=nn0              !Channel symbols, before puncture
