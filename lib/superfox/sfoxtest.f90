@@ -144,7 +144,7 @@ program sfoxtest
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
 !           xdt=0.6*(ran1(idummy)-0.5)
            xdt=0.3*ran1(idummy)
-           call sfox_gen(chansym0,f1,fsample,syncwidth,cdat,clo)
+           call sfox_gen(chansym0,f1,fsample,syncwidth,cdat)
         endif
         
         crcvd=0.
