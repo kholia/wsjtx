@@ -6,7 +6,7 @@ program sfoxtest
   use sfox_mod
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
-  integer nparam(0:7)
+  integer param(0:8)
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
@@ -81,9 +81,9 @@ program sfoxtest
   allocate(s3(0:NQ-1,0:NN-1))
   allocate(msg0(1:KK))
   allocate(parsym(1:NN-KK))
-  allocate(chansym0(1:NN))
-  allocate(chansym(1:NN))
-  allocate(iera(1:NN))
+  allocate(chansym0(0:NN-1))
+  allocate(chansym(0:NN-1))
+  allocate(iera(0:NN-1))
   allocate(rxdat(0:NN-1))
   allocate(rxprob(0:NN-1))
   allocate(rxdat2(0:NN-1))
@@ -106,8 +106,8 @@ program sfoxtest
 
   call rs_init_sf(MM,NQ,NN,KK,NFZ)          !Initialize the Karn codec
   call rs_encode_sf(msg0,parsym)            !Compute parity symbols
-  chansym0(1:kk)=msg0(1:kk)
-  chansym0(kk+1:nn)=parsym(1:nn-kk)
+  chansym0(0:kk-1)=msg0(1:kk)
+  chansym0(kk:nn-1)=parsym(1:nn-kk)
 
 ! Generate clo, the LO for sync detection
   call sfox_clo(fsample,syncwidth,clo)
@@ -143,7 +143,6 @@ program sfoxtest
         f1=f0
         if(f0.eq.0.0) then
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
-!           xdt=0.6*(ran1(idummy)-0.5)
            xdt=0.3*ran1(idummy)
            call sfox_gen(chansym0,f1,fsample,syncwidth,cdat)
         endif
@@ -169,10 +168,7 @@ program sfoxtest
            ngoodsync=ngoodsync+1
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
-!        else
-!           write(*,3003) ferr,terr
-!3003       format('Sync failed:',f8.1,f8.3)
-        endif
+       endif
 
         a=0.
         a(1)=1500.0-f
@@ -180,42 +176,28 @@ program sfoxtest
         f=1500.0
         call sfox_demod(crcvd,f,t,s3,chansym)    !Get s3 and hard symbol values
         call sym_prob(s3,rxdat,rxprob,rxdat2,rxprob2)
-        if(igoodsync.eq.1) then
-           do j=0,NN-1
-              if(chansym(1+j).ne.rxdat(j)) write(*,3001) xdt,j,chansym(1+j),  &
-                   rxdat(j),rxprob(j),rxdat2(j),rxprob2(j)
-3001          format(f7.3,i5,5i8)
-           enddo
-        endif
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
         nharderr=count(chansym.ne.chansym0)            !Count hard errors
-!        nhard2=count(rxdat.ne.chansym0(1:NN))            !Count hard errors
-!        print*,'A',nharderr,nhard2
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
-        call rs_decode_sf(rxdat,iera,nera,nfixed)    !Call the BM decoder
+
+!        call rs_decode_sf(rxdat,iera,nera,nfixed)    !Call the BM decoder
         ntrials=1000
-!        call ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials,nparam,correct,ntry)
-        
+        call ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials,  &
+             correct,param,ntry)
+
         if(iand(nv,1).ne.0) then
            fname='000000_000001.wav'
            write(fname(8:13),'(i6.6)') ifile
            open(10,file=trim(fname),access='stream',status='unknown')
            write(10) h,iwave(1:NMAX)                !Save the .wav file
            close(10)
-!           write(*,1100) f1,xdt
-!1100       format(/'f0:',f7.1,'  xdt:',f6.2)
-!           write(*,1112) f,t
-!1112       format('f: ',f7.1,'   DT:',f6.2)
-!           write(*,1110) ferr,terr
-!1110       format('err:',f6.1,f12.2)
-!           write(*,1120) nharderr
-!1120       format('Hard errors:',i4)
-        endif
+       endif
 
-        if(nharderr.le.maxerr) ngood=ngood+1
+!        if(nharderr.le.maxerr) ngood=ngood+1
+       if(count(correct.ne.chansym0).eq.0) ngood=ngood+1
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles

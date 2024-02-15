@@ -1,4 +1,5 @@
-subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
+subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
+     correct,param,ntry)
 
 ! Soft-decision decoder for Reed-Solomon codes.
  
@@ -14,8 +15,8 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
 
   use sfox_mod
 
-  integer, dimension(0:NN-1) :: rxdat,rxprob,rxdat2,rxprob2,workdat,   &
-       correct,indexes
+  real s3(0:NQ-1,0:NN-1)          !Symbol spectra
+  integer chansym0(0:NN-1)        !Transmitted codeword
   integer rxdat(0:NN-1)           !Hard-decision symbol values
   integer rxprob(0:NN-1)          !Probabilities that rxdat values are correct
   integer rxdat2(0:NN-1)          !Second most probable symbol values
@@ -26,8 +27,9 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
   integer probs(0:NN-1)           !Temp array for sorting probabilities
   integer thresh0(0:NN-1)         !Temp array for thresholds
   integer era_pos(0:NN-KK-1)      !Index values for erasures
+  integer param(0:8)
   integer*8 nseed,ir              !No unsigned int in Fortran
-  integer pass,tmp
+  integer pass,tmp,thresh
   
   integer perr(0:7,0:7)
   data perr/ 4, 9,11,13,14,14,15,15, &
@@ -57,12 +59,13 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
   do pass=1,nsym-1
      do k=0,nsym-pass-1
         if(probs(k).lt.probs(k+1)) then
+           tmp=probs(k)
            probs(k)=probs(k+1)
            probs(k+1)=tmp
            tmp=indexes(k)
            indexes(k)=indexes(k+1)
            indexes(k+1)=tmp
-        enddo
+        endif
      enddo
   enddo
 
@@ -83,7 +86,8 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
      param(5)=0
      param(7)=1000*1000               !???
      ntry=0
-     return
+!     print*,'AA1',nerr
+     go to 900
   endif
 
 ! Hard-decision decoding failed.  Try the FT soft-decision method.
@@ -101,10 +105,10 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
   do i=0,NN-1
      nsum=nsum+rxprob(i)
      j=indexes(NN-1-i)
-     ratio=(float)rxprob2(j)/((float)rxprob(j)+0.01)
+     ratio=float(rxprob2(j))/(float(rxprob(j))+0.01)
      ii=7.999*ratio
-     jj=(NN-1-i)/8
-     thresh0(i)=1.3*perr(jj)(ii)
+     jj=int((7.999/NN)*(NN-1-i))
+     thresh0(i)=1.3*perr(jj,ii)
   enddo
   if(nsum.le.0) return
 
@@ -118,30 +122,35 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
 ! Run through the ranked symbols, starting with the worst, i=0.
 ! NB: j is the symbol-vector index of the symbol with rank i.
 
+     ncaught=0
      numera=0
      do i=0,NN-1
-        j=indexes(126-i)
+        j=indexes(NN-1-i)
         thresh=thresh0(i)
-
 ! Generate a random number ir, 0 <= ir <= 100 (see POSIX.1-2001 example).
-        nseed=nseed*1103515245 + 12345
-        ir=mod(nseed/65536),32768)
-        ir=(100*ir)/32768
-        nseed=iand(ir,4294967295)
+!        nseed=nseed*1103515245 + 12345
+!        ir=mod(nseed/65536,32768)
+!        ir=(100*ir)/32768
+!        nseed=iand(ir,2147483647)
 
-        if((ir.lt.thresh ) .and. numera.lt.(NN-KK)) then
+        ir=100.0*ran1(nseed)
+        if((ir.lt.thresh) .and. numera.lt.(NN-KK)) then
            era_pos(numera)=j
            numera=numera+1
+           if(rxdat(j).ne.chansym0(j)) then
+              ncaught=ncaught+1
+           endif
         endif
      enddo
-
-!     nerr=decode_rs_int(rs,workdat,era_pos,numera,0);
      call rs_decode_sf(workdat,era_pos,numera,nerr)    !Call the decoder
-
+     do i=0,NN-1
+        write(60,3101) i,chansym0(i),workdat(i),workdat(i)-chansym0(i)
+3101    format(4i8)
+     enddo
      if( nerr.ge.0) then
       ! We have a candidate codeword.  Find its hard and soft distance from
       ! the received word.  Also find pp1 and pp2 from the full array 
-      ! s3(64,127) of synchronized symbol spectra.
+      ! s3(NQ,NN) of synchronized symbol spectra.
         ncandidates=ncandidates+1
         nhard=0
         nsoft=0
@@ -151,7 +160,7 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
               if(workdat(i) .ne. rxdat2(i)) nsoft=nsoft+rxprob(i)
            endif
         enddo
-        nsoft=(NN-1)*nsoft/nsum
+        nsoft=NN*nsoft/nsum
         ntotal=nsoft+nhard
 
         pp=0.
@@ -168,8 +177,8 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
         else
            if(pp.gt.pp2 .and. pp.ne.pp1) pp2=pp
         endif
-        if(nhard_min <= 41 && ntotal_min <= 71) exit   !### New values ###
-     enddo
+        if(nhard_min.le.60 .and. ntotal_min.le.90) exit   !### Needs tuning
+     endif
      if(k.eq.ntrials) ntry=k
   enddo
 
@@ -177,12 +186,13 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
   param(1)=nhard_min
   param(2)=nsoft_min
   param(3)=nera_best
-!  param(4)= pp1 > 0 ? 1000.0*pp2/pp1 : 1000.0
+  param(4)=1000
+  if(pp1.gt.0.0) param(4)=1000.0*pp2/pp1
   param(5)=ntotal_min
   param(6)=ntry
   param(7)=1000.0*pp2
   param(8)=1000.0*pp1
   if(param(0).eq.0) param(2)=-1
 
-  return
+900 return
 end subroutine ftrsd3

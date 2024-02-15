@@ -33,5 +33,8 @@ subroutine sfox_demod(crcvd,f,t,s3,chansym)
      chansym(n)=ipk(1) - 1
   enddo
 
+  call pctile(s3,NQ*NN,50,base)
+  s3=s3/base
+
   return
 end subroutine sfox_demod
