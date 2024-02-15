@@ -186,4 +186,3 @@ subroutine ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
 
   return
 end subroutine ftrsd3
-
