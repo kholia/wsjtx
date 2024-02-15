@@ -114,8 +114,9 @@ program sfoxtest
   
 ! Generate cdat, the SuperFox waveform
   call sfox_gen(chansym0,f0,fsample,syncwidth,cdat)
+  isnr0=-8
 
-  do isnr=-8,-20,-1
+  do isnr=isnr0,-20,-1
      snr=isnr
      if(snrdb.ne.0.0) snr=snrdb
      sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snr)
@@ -218,7 +219,7 @@ program sfoxtest
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
-     if(isnr.eq.0) write(*,1300)
+     if(isnr.eq.isnr0) write(*,1300)
 1300 format('    SNR  iters fsync  fgood  averr  worst  rmsf  rmst'/  &
             '------------------------------------------------------')
      ave_harderr=float(ntot)/nfiles
