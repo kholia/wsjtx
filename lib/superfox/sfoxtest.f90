@@ -6,6 +6,7 @@ program sfoxtest
   use sfox_mod
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
+  integer nparam(0:7)
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
@@ -13,7 +14,7 @@ program sfoxtest
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   real a(3)
-  real, allocatable :: s3(:,:)           !Symbol spectra: will be s3(NQ,ND)
+  real, allocatable :: s3(:,:)           !Symbol spectra: will be s3(NQ,NN)
   integer, allocatable :: msg0(:)        !Information symbols
   integer, allocatable :: parsym(:)      !Parity symbols
   integer, allocatable :: chansym0(:)    !Encoded data, 7-bit integers
@@ -23,6 +24,8 @@ program sfoxtest
   integer, allocatable :: rxprob(:)
   integer, allocatable :: rxdat2(:)
   integer, allocatable :: rxprob2(:)
+  integer, allocatable :: correct(:)
+  
   character fname*17,arg*12,itu*2
 
   nargs=iargc()
@@ -75,16 +78,17 @@ program sfoxtest
           '   MaxErr:',i3,'  tsync:',f4.1,'   TxT:',f5.1/)
 
 ! Allocate storage for arrays that depend on code parameters.
-  allocate(s3(0:NQ-1,0:ND-1))
+  allocate(s3(0:NQ-1,0:NN-1))
   allocate(msg0(1:KK))
   allocate(parsym(1:NN-KK))
   allocate(chansym0(1:NN))
   allocate(chansym(1:NN))
   allocate(iera(1:NN))
-  allocate(rxdat(0:ND-1))
-  allocate(rxprob(0:ND-1))
-  allocate(rxdat2(0:ND-1))
-  allocate(rxprob2(0:ND-1))
+  allocate(rxdat(0:NN-1))
+  allocate(rxprob(0:NN-1))
+  allocate(rxdat2(0:NN-1))
+  allocate(rxprob2(0:NN-1))
+  allocate(correct(0:NN-1))
 
   rms=100.
   fsample=12000.0                   !Sample rate (Hz)
@@ -138,7 +142,8 @@ program sfoxtest
         f1=f0
         if(f0.eq.0.0) then
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
-           xdt=0.6*(ran1(idummy)-0.5)
+!           xdt=0.6*(ran1(idummy)-0.5)
+           xdt=0.3*ran1(idummy)
            call sfox_gen(chansym0,f1,fsample,syncwidth,cdat,clo)
         endif
         
@@ -157,10 +162,15 @@ program sfoxtest
         call sfox_sync(crcvd,clo,nv,f,t)
         ferr=f-f1
         terr=t-xdt
+        igoodsync=0
         if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/8.0) then
+           igoodsync=1
            ngoodsync=ngoodsync+1
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
+!        else
+!           write(*,3003) ferr,terr
+!3003       format('Sync failed:',f8.1,f8.3)
         endif
 
         a=0.
@@ -169,22 +179,25 @@ program sfoxtest
         f=1500.0
         call sfox_demod(crcvd,f,t,s3,chansym)    !Get s3 and hard symbol values
         call sym_prob(s3,rxdat,rxprob,rxdat2,rxprob2)
-        chansym(1:ND)=rxdat  !### TEMPORARY ? ###
-!        do j=0,ND-1
-!        do j=0,5
-!           write(*,3001) j,chansym(1+j),rxdat(j),rxprob(j),rxdat2(j),rxprob2(j)
-!3001       format('prob'i5,5i8)
-!        enddo
+        if(igoodsync.eq.1) then
+           do j=0,NN-1
+              if(chansym(1+j).ne.rxdat(j)) write(*,3001) xdt,j,chansym(1+j),  &
+                   rxdat(j),rxprob(j),rxdat2(j),rxprob2(j)
+3001          format(f7.3,i5,5i8)
+           enddo
+        endif
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
         nharderr=count(chansym.ne.chansym0)            !Count hard errors
-!        nhard2=count(rxdat.ne.chansym0(1:ND))            !Count hard errors
+!        nhard2=count(rxdat.ne.chansym0(1:NN))            !Count hard errors
 !        print*,'A',nharderr,nhard2
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
-        call rs_decode_sf(chansym,iera,nera,nfixed)    !Call the decoder
-  
+        call rs_decode_sf(rxdat,iera,nera,nfixed)    !Call the BM decoder
+        ntrials=1000
+!        call ftrsd3(rxdat,rxprob,rxdat2,rxprob2,ntrials,nparam,correct,ntry)
+        
         if(iand(nv,1).ne.0) then
            fname='000000_000001.wav'
            write(fname(8:13),'(i6.6)') ifile

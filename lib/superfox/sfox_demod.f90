@@ -4,15 +4,14 @@ subroutine sfox_demod(crcvd,f,t,s3,chansym)
   complex crcvd(NMAX)                    !Signal as received
   complex c(0:NSPS-1)                    !Work array, one symbol long
   real s(0:NQ-1)                         !Power spectrum
-  real s3(0:NQ-1,0:ND-1)                 !Symbol spectra
+  real s3(0:NQ-1,0:NN-1)                 !Symbol spectra
   integer chansym(NN)                    !Hard-decision symbol values
   integer ipk(1)
 
   i0=nint(12000.0*t)
   df=12000.0/NSPS
   j0=nint(f/df)-NQ/2
-  chansym=0
-  do n=1,ND                             !Loop over all symbols
+  do n=1,NN                             !Loop over all symbols
      ib=n*NSPS + i0
      if(n.gt.ND1) ib=(NS+n)*NSPS + i0
      ia=ib-NSPS+1

@@ -1,7 +1,7 @@
 module sfox_mod
   
   parameter (NMAX=15*12000)       !Samples in iwave (180,000)
-  integer MM,NQ,NN,KK,ND1,ND2,ND,NFZ,NSPS,NS,NSYNC,NZ,NFFT,NFFT1
+  integer MM,NQ,NN,KK,ND1,ND2,NFZ,NSPS,NS,NSYNC,NZ,NFFT,NFFT1
 
 contains
   subroutine sfox_init(mm0,nn0,kk0,itu,fspread,delay)
@@ -17,21 +17,20 @@ contains
 
     MM=mm0              !Bits per symbol
     NQ=2**MM            !Q, number of MFSK tones
-    NN=nn0              !Channel symbols, before puncture
-    KK=kk0              !Information symbols, before puncture
+    NN=nn0              !Number of channel symbols
+    KK=kk0              !Information symbols
     ND1=25              !Data symbols before sync 
     ND2=NN-ND1          !Data symbols after sync 
-    ND=NN               !Total data symbols
     NFZ=3               !First zero
 
     tsync=2.0
-    jsps=nint((12.8-tsync)*12000.0/ND)
+    jsps=nint((12.8-tsync)*12000.0/NN)
     iloc=minloc(abs(isps-jsps))
     NSPS=isps(iloc(1))  !Samples per symbol
     NS=nint(tsync*12000.0/NSPS)
     if(mod(NS,2).eq.1) NS=NS+1
     NSYNC=NS*NSPS       !Samples in sync waveform
-    NZ=NSPS*(ND+NS)     !Samples in full Tx waveform
+    NZ=NSPS*(NN+NS)     !Samples in full Tx waveform
     NFFT=32768          !Length of FFT for sync waveform
     NFFT1=2*NSPS        !Length of FFTs for symbol spectra
 

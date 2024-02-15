@@ -4,7 +4,7 @@ subroutine sfox_gen(idat,f0,fsample,syncwidth,cdat)
 !  include "sfox_params.f90"
   complex cdat(NMAX)                     !Generated complex waveform
   complex w,wstep
-  integer idat(ND)
+  integer idat(NN)
 
   twopi=8.0*atan(1.0)
   tsync=NS*NSPS/fsample

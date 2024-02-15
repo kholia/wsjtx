@@ -592,6 +592,7 @@ set (wsjt_FSRCS
   lib/superfox/sfox_demod.f90
   lib/superfox/sfox_clo.f90
   lib/superfox/sym_prob.f90
+  lib/superfox/getpp3.f90
   lib/superfox/ran1.f90
   )
 
@@ -637,6 +638,7 @@ set (wsjt_CSRCS
   lib/superfox/encode_rs.c
   lib/superfox/decode_rs.c
   lib/superfox/rs_sf.c
+  lib/superfox/ftrsd3.c
   ${ldpc_CSRCS}
   ${qra_CSRCS}
   )
