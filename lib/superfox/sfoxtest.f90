@@ -114,6 +114,7 @@ program sfoxtest
   call rs_encode_sf(msg0,parsym)            !Compute parity symbols
   chansym0(0:kk-1)=msg0(1:kk)
   chansym0(kk:nn-1)=parsym(1:nn-kk)
+!  chansym0=NQ/2  !### TEMPORARY, for SNR calibration ###
 
 ! Generate clo, the LO for sync detection
   call timer('clo     ',0)
@@ -161,16 +162,16 @@ program sfoxtest
         
         crcvd=0.
         crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
-
-        dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
-        fac=32767.0
-        if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
-        if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
-
         call timer('watterso',0)
         if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,&
              delay,fspread)
         call timer('watterso',1)
+
+        dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
+!        call plotspec(dat)     !### TEMPORARY, for SNR calibration ###
+        fac=32767.0
+        if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
+        if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
 ! Find signal freq and DT
         call timer('sync    ',0)
@@ -248,3 +249,5 @@ program sfoxtest
 
 999 call timer('sfoxtest',101)
 end program sfoxtest
+
+! include 'plotspec.f90'    !### TEMPORARY, for SNR calibration ###

@@ -143,10 +143,7 @@ subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
         endif
      enddo
      call rs_decode_sf(workdat,era_pos,numera,nerr)    !Call the decoder
-     do i=0,NN-1
-        write(60,3101) i,chansym0(i),workdat(i),workdat(i)-chansym0(i)
-3101    format(4i8)
-     enddo
+
      if( nerr.ge.0) then
       ! We have a candidate codeword.  Find its hard and soft distance from
       ! the received word.  Also find pp1 and pp2 from the full array 
