@@ -4,6 +4,9 @@ program sfoxtest
 
   use wavhdr
   use sfox_mod
+  use timer_module, only: timer
+  use timer_impl, only: init_timer !, limtrace
+
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   integer param(0:8)
@@ -62,6 +65,9 @@ program sfoxtest
   call getarg(10,arg)
   read(arg,*) snrdb
 
+  call init_timer ('timer.out')
+  call timer('sfoxtest',0)
+
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay)
   baud=12000.0/NSPS
   tsym=1.0/baud
@@ -110,10 +116,14 @@ program sfoxtest
   chansym0(kk:nn-1)=parsym(1:nn-kk)
 
 ! Generate clo, the LO for sync detection
+  call timer('clo     ',0)
   call sfox_clo(fsample,syncwidth,clo)
-  
+  call timer('clo     ',1)
+
 ! Generate cdat, the SuperFox waveform
+  call timer('gen     ',0)
   call sfox_gen(chansym0,f0,fsample,syncwidth,cdat)
+  call timer('gen     ',1)
   isnr0=-8
 
   do isnr=isnr0,-20,-1
@@ -144,7 +154,9 @@ program sfoxtest
         if(f0.eq.0.0) then
            f1=1500.0 + 200.0*(ran1(idummy)-0.5)
            xdt=0.3*ran1(idummy)
+           call timer('gen     ',0)
            call sfox_gen(chansym0,f1,fsample,syncwidth,cdat)
+           call timer('gen     ',1)
         endif
         
         crcvd=0.
@@ -155,11 +167,15 @@ program sfoxtest
         if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
+        call timer('watterso',0)
         if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,&
              delay,fspread)
+        call timer('watterso',1)
 
 ! Find signal freq and DT
+        call timer('sync    ',0)
         call sfox_sync(crcvd,clo,nv,f,t)
+        call timer('sync    ',1)
         ferr=f-f1
         terr=t-xdt
         igoodsync=0
@@ -172,10 +188,17 @@ program sfoxtest
 
         a=0.
         a(1)=1500.0-f
+        call timer('twkfreq ',0)
         call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
+        call timer('twkfreq ',1)
         f=1500.0
+        call timer('demod   ',0)
         call sfox_demod(crcvd,f,t,s3,chansym)    !Get s3 and hard symbol values
+        call timer('demod   ',1)
+
+        call timer('prob    ',0)
         call sym_prob(s3,rxdat,rxprob,rxdat2,rxprob2)
+        call timer('prob    ',1)
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
@@ -185,8 +208,10 @@ program sfoxtest
 
 !        call rs_decode_sf(rxdat,iera,nera,nfixed)    !Call the BM decoder
         ntrials=1000
+        call timer('ftrsd3  ',0)
         call ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials,  &
              correct,param,ntry)
+        call timer('ftrsd3  ',1)
 
         if(iand(nv,1).ne.0) then
            fname='000000_000001.wav'
@@ -219,5 +244,7 @@ program sfoxtest
   enddo  ! isnr
   if(snrdb.eq.0.0) write(*,1320) threshold
 1320 format(/'Threshold sensitivity (50% decoding):',f6.1,' dB')
+  call timer('sfoxtest',1)
 
-999 end program sfoxtest
+999 call timer('sfoxtest',101)
+end program sfoxtest
