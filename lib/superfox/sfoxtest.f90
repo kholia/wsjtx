@@ -101,7 +101,7 @@ program sfoxtest
   baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
   h=default_header(12000,NMAX)
   idummy=0
-  bandwidth_ratio=2500.0/6000.0
+  bandwidth_ratio=2500.0/12000.0
   fgood0=1.0
 
 ! Generate a message
@@ -131,6 +131,7 @@ program sfoxtest
      snr=isnr
      if(snrdb.ne.0.0) snr=snrdb
      sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snr)
+     sigr=sqrt(2.)*sig
      if(snr.gt.90.0) sig=1.0
      ngoodsync=0
      ngood=0
@@ -167,7 +168,7 @@ program sfoxtest
              delay,fspread)
         call timer('watterso',1)
 
-        dat=aimag(sig*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
+        dat=aimag(sigr*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
 !        call plotspec(dat)     !### TEMPORARY, for SNR calibration ###
         fac=32767.0
         if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
