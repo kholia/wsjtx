@@ -14,7 +14,8 @@ subroutine sym_prob(s3,rxdat,rxprob,rxdat2,rxprob2)
   integer rxdat(0:NN-1),rxprob(0:NN-1),rxdat2(0:NN-1),rxprob2(0:NN-1)
 
   afac=1.1
-  scale=255.999
+!  scale=255.999
+  scale=2047.999
 
 ! Compute average spectral value
   ave=sum(s3)/(NQ*ND)

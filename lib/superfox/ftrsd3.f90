@@ -69,6 +69,7 @@ subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
      enddo
   enddo
 
+  correct=-1
   era_pos=0
   numera=0
   workdat=rxdat
@@ -108,7 +109,7 @@ subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
      ratio=float(rxprob2(j))/(float(rxprob(j))+0.01)
      ii=7.999*ratio
      jj=int((7.999/NN)*(NN-1-i))
-     thresh0(i)=1.3*perr(jj,ii)
+     thresh0(i)=0.60*perr(jj,ii)
   enddo
   if(nsum.le.0) return
 
