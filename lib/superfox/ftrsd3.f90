@@ -109,7 +109,7 @@ subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
      ratio=float(rxprob2(j))/(float(rxprob(j))+0.01)
      ii=7.999*ratio
      jj=int((7.999/NN)*(NN-1-i))
-     thresh0(i)=0.60*perr(jj,ii)
+     thresh0(i)=0.90*perr(jj,ii)
   enddo
   if(nsum.le.0) return
 
@@ -135,7 +135,7 @@ subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
 !        nseed=iand(ir,2147483647)
 
         ir=100.0*ran1(nseed)
-        if((ir.lt.thresh) .and. numera.lt.(NN-KK)) then
+        if((ir.lt.thresh) .and. numera.lt. 0.69*(NN-KK)) then
            era_pos(numera)=j
            numera=numera+1
            if(rxdat(j).ne.chansym0(j)) then
@@ -191,6 +191,6 @@ subroutine ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials0,  &
   param(7)=1000.0*pp2
   param(8)=1000.0*pp1
   if(param(0).eq.0) param(2)=-1
-
+!write(*,*) ntry,ncandidates,nera_best,nhard_min,nsoft_min,ntotal_min,pp1,pp2
 900 return
 end subroutine ftrsd3
