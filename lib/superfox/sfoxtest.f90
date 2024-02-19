@@ -74,7 +74,7 @@ program sfoxtest
   bw=NQ*baud
   maxerr=(NN-KK)/2
   tsync=NSYNC/12000.0
-  txt=(NN-2+NS)*NSPS/12000.0
+  txt=(NN+NS)*NSPS/12000.0
 
   write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay,maxerr,   &
        tsync,txt
