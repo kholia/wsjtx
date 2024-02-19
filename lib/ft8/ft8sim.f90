@@ -101,13 +101,23 @@ program ft8sim_gfsk
      wave=imag(c)
      peak=maxval(abs(wave))
      nslots=1
-   
+
+     psig=0.
+     pnoise=0.
      if(snrdb.lt.90) then
         do i=1,NMAX                   !Add gaussian noise at specified SNR
            xnoise=gran()
+           if(i.ge.6001 .and. i.le.157692) then
+              psig=psig + wave(i)*wave(i)     !Signal power
+              pnoise=pnoise + xnoise*xnoise   !Noise power in signal interval
+           endif
            wave(i)=wave(i) + xnoise
         enddo
      endif
+
+! Noise power in signal interval and 2500 Hz bandwidth:
+     pnoise=bandwidth_ratio*pnoise
+     snr_2500=db(psig/pnoise)                 !SNR in 2500 Hz bandwidth
 
      gain=100.0
      if(snrdb.lt.90.0) then
@@ -125,7 +135,7 @@ program ft8sim_gfsk
      open(10,file=fname,status='unknown',access='stream')
      write(10) h,iwave                !Save to *.wav file
      close(10)
-     write(*,1110) ifile,xdt,f0,snrdb,fname
-1110 format(i4,f7.2,f8.2,f7.1,2x,a17)
+     write(*,1110) ifile,xdt,f0,snrdb,fname,snr_2500
+1110 format(i4,f7.2,f8.2,f7.1,2x,a17,f8.2)
   enddo    
 999 end program ft8sim_gfsk
