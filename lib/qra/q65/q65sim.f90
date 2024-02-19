@@ -222,13 +222,19 @@ program q65sim
         fac=sqrt(1.0/avep)
         cspread=fac*cspread                   !Normalize to constant avg power
         cdat=cspread*cdat                     !Apply Rayleigh fading
-
-!        do i=0,nfft-1
-!           p=real(cspread(i))**2 + aimag(cspread(i))**2
-!           write(14,3010) i,p,cspread(i)
-!3010       format(i8,3f12.6)
-!        enddo
      endif
+
+!     psig=0.
+!     pnoise=0.
+!     do i=1,npts
+!        if(i.gt.12000 .and. i.lt.624000) then
+!           psig=psig + aimag(cdat(i))**2
+!           pnoise=pnoise + xnoise(i)*xnoise(i)
+!        endif
+!     enddo
+!     pnoise=pnoise*bandwidth_ratio
+!     snr_2500=db(psig/pnoise)                 !Calibration confirmation!
+!     print*,'SNR_2500:',snr_2500
 
      dat=aimag(cdat) + xnoise                 !Add generated AWGN noise
      fac=32767.0
