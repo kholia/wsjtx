@@ -28,13 +28,13 @@ program sfoxtest
   integer, allocatable :: rxdat2(:)
   integer, allocatable :: rxprob2(:)
   integer, allocatable :: correct(:)
-  
+  logical hard_sync
   character fname*17,arg*12,itu*2
 
   nargs=iargc()
-  if(nargs.ne.10) then
-     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K  sw nv nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 100  0   10   -10'
+  if(nargs.ne.11) then
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K  sw v hs nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 100 0  F   10   -10'
      print*,'         f0=0 means f0, DT will assume suitable random values'
      print*,'         LQ: Low Latitude Quiet'
      print*,'         MM: Mid Latitude Moderate'
@@ -42,6 +42,7 @@ program sfoxtest
      print*,'         ... and similarly for LM LD MQ MD HQ HM'
      print*,'         sw = width of Sync sweep, in Hz'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
+     print*,'         hs = T for hard-wired sync'
      print*,'         snr=0 means loop over SNRs 0 to -25 dB'
      go to 999
   endif
@@ -61,8 +62,10 @@ program sfoxtest
   call getarg(8,arg)
   read(arg,*) nv
   call getarg(9,arg)
-  read(arg,*) nfiles
+  hard_sync=arg(1:1).eq.'T'
   call getarg(10,arg)
+  read(arg,*) nfiles
+  call getarg(11,arg)
   read(arg,*) snrdb
 
   call init_timer ('timer.out')
@@ -174,10 +177,15 @@ program sfoxtest
         if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
+        if(hard_sync) then
+           f=f1
+           t=xdt
+        else
 ! Find signal freq and DT
-        call timer('sync    ',0)
-        call sfox_sync(crcvd,clo,nv,f,t)
-        call timer('sync    ',1)
+           call timer('sync    ',0)
+           call sfox_sync(crcvd,clo,nv,f,t)
+           call timer('sync    ',1)
+        endif
         ferr=f-f1
         terr=t-xdt
         igoodsync=0
@@ -186,7 +194,7 @@ program sfoxtest
            ngoodsync=ngoodsync+1
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
-       endif
+        endif
 
         a=0.
         a(1)=1500.0-f
