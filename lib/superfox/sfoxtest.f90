@@ -229,13 +229,14 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.isnr0) write(*,1300)
-1300 format('    SNR  iters fsync  fgood  averr  worst  rmsf  rmst'/  &
-            '------------------------------------------------------')
+1300 format('    SNR  Eb/No  iters fsync  fgood   averr  worst rmsf rmst'/  &
+            '------------------------------------------------------------')
      ave_harderr=float(ntot)/nfiles
      rmst=sqrt(sqt/ngoodsync)
      rmsf=sqrt(sqf/ngoodsync)
-     write(*,1310) snr,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
-1310 format(f7.2,i6,2f7.2,f7.1,i6,f7.2,f6.3)
+     ebno=snr-10*log10(baud/2500*mm0*KK/NN)
+     write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
+1310 format(f7.2,f7.2 i6,2f7.3,f7.1,i6,f7.2,f6.3)
      if(fgood.le.0.5 .and. fgood0.gt.0.5) then
         threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
