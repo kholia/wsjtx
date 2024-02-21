@@ -171,7 +171,6 @@ program sfoxtest
         call timer('watterso',1)
 
         dat=aimag(sigr*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
-!        call plotspec(dat)     !### TEMPORARY, for SNR calibration ###
         fac=32767.0
         if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
@@ -188,7 +187,7 @@ program sfoxtest
         ferr=f-f1
         terr=t-xdt
         igoodsync=0
-        if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/8.0) then
+        if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/4.0) then
            igoodsync=1
            ngoodsync=ngoodsync+1
            sqt=sqt + terr*terr
@@ -249,7 +248,7 @@ program sfoxtest
      endif
      fgood0=fgood
      if(snrdb.ne.0.0) exit
-!     if(fgood.eq.0.0) exit
+     if(fgood.eq.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
   if(snrdb.eq.0.0) write(*,1320) threshold
@@ -259,4 +258,3 @@ program sfoxtest
 999 call timer('sfoxtest',101)
 end program sfoxtest
 
-! include 'plotspec.f90'    !### TEMPORARY, for SNR calibration ###

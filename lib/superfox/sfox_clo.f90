@@ -28,6 +28,8 @@ subroutine sweep(f0,syncwidth,fsample,w,c,iz)
      if(i.eq.iz/2+1) a2=-a2         !Reverse sign of drift at midpoint
      x=s*(i-x0)
      dphi=(a0 + x*a2)*(twopi/fsample)
+!     j=i/(4*1024)
+!     dphi=(a0 + (j-1.5)*200.0 + x*a2)*(twopi/fsample)
      wstep=cmplx(cos(dphi),sin(dphi))
      w=w*wstep
      c(i)=w

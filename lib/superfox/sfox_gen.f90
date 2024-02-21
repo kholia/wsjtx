@@ -1,7 +1,6 @@
 subroutine sfox_gen(idat,f0,fsample,syncwidth,cdat)
 
   use sfox_mod
-!  include "sfox_params.f90"
   complex cdat(NMAX)                     !Generated complex waveform
   complex ctmp(NSYNC)
   complex w,wstep
