@@ -165,11 +165,12 @@ program sfoxtest
         endif
         
         crcvd=0.
-        crcvd(1:NMAX)=cshift(sig*cdat(1:NMAX),-nint(xdt*fsample)) + cnoise
+        crcvd(1:NMAX)=cshift(cdat(1:NMAX),-nint(xdt*fsample))
         call timer('watterso',0)
         if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,&
              delay,fspread)
         call timer('watterso',1)
+        crcvd=sig*crcvd+cnoise
 
         dat=aimag(sigr*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
 !        call plotspec(dat)     !### TEMPORARY, for SNR calibration ###
@@ -244,7 +245,7 @@ program sfoxtest
      rmsf=sqrt(sqf/ngoodsync)
      ebno=snr-10*log10(baud/2500*mm0*KK/NN)
      write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
-1310 format(f7.2,f7.2 i6,2f7.3,f7.1,i6,f7.2,f6.3)
+1310 format(f7.2,f7.2 i6,2f7.4,f7.1,i6,f7.2,f6.3)
      if(fgood.le.0.5 .and. fgood0.gt.0.5) then
         threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
