@@ -217,7 +217,7 @@ program sfoxtest
         nworst=max(nworst,nharderr)
 
 !        call rs_decode_sf(rxdat,iera,nera,nfixed)    !Call the BM decoder
-        ntrials=-1
+        ntrials=1000
         call timer('ftrsd3  ',0)
         call ftrsd3(s3,chansym0,rxdat,rxprob,rxdat2,rxprob2,ntrials,  &
              correct,param,ntry)

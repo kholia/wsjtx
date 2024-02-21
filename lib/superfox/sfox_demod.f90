@@ -26,8 +26,8 @@ subroutine sfox_demod(crcvd,f,t,s3,chansym)
 
 ! Could we measure fspread, perhaps in the sync routine, and use that to
 ! decide whether to smooth spectra here?
-!     call smo121(s,NSPS)                !Helps for LD, HM propagation...
-!     call smo121(s,NSPS)
+!     call smo121(s,NQ)                !Helps for LD, HM propagation...
+!     call smo121(s,NQ)
 
      ipk=maxloc(s(0:NQ-1))
      chansym(n)=ipk(1) - 1
