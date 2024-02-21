@@ -4,7 +4,7 @@ module sfox_mod
   integer MM,NQ,NN,KK,ND1,ND2,NFZ,NSPS,NS,NSYNC,NZ,NFFT,NFFT1
 
 contains
-  subroutine sfox_init(mm0,nn0,kk0,itu,fspread,delay)
+  subroutine sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample)
 
     character*2 itu
     integer isps(50)
@@ -24,10 +24,10 @@ contains
     NFZ=3               !First zero
 
     tsync=2.0
-    jsps=nint((12.8-tsync)*12000.0/NN)
+    jsps=nint((12.8-tsync)*fsample/NN)
     iloc=minloc(abs(isps-jsps))
     NSPS=isps(iloc(1))  !Samples per symbol
-    NS=nint(tsync*12000.0/NSPS)
+    NS=nint(tsync*fsample/NSPS)
     if(mod(NS,2).eq.1) NS=NS+1
     NSYNC=NS*NSPS       !Samples in sync waveform
     NZ=NSPS*(NN+NS)     !Samples in full Tx waveform

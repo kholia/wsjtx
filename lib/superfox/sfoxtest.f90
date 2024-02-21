@@ -71,13 +71,14 @@ program sfoxtest
   call init_timer ('timer.out')
   call timer('sfoxtest',0)
 
-  call sfox_init(mm0,nn0,kk0,itu,fspread,delay)
-  baud=12000.0/NSPS
+  fsample=12000.0                   !Sample rate (Hz)
+  call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample)
+  baud=fsample/NSPS
   tsym=1.0/baud
   bw=NQ*baud
   maxerr=(NN-KK)/2
-  tsync=NSYNC/12000.0
-  txt=(NN+NS)*NSPS/12000.0
+  tsync=NSYNC/fsample
+  txt=(NN+NS)*NSPS/fsample
 
   write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay,maxerr,   &
        tsync,txt
@@ -100,11 +101,9 @@ program sfoxtest
   allocate(correct(0:NN-1))
 
   rms=100.
-  fsample=12000.0                   !Sample rate (Hz)
-  baud=12000.0/nsps                 !Keying rate, 11.719 baud for nsps=1024
-  h=default_header(12000,NMAX)
+  baud=fsample/nsps                 !Keying rate, 11.719 baud for nsps=1024
   idummy=0
-  bandwidth_ratio=2500.0/12000.0
+  bandwidth_ratio=2500.0/fsample
   fgood0=1.0
 
 ! Generate a message
@@ -199,7 +198,7 @@ program sfoxtest
         a=0.
         a(1)=1500.0-f
         call timer('twkfreq ',0)
-        call twkfreq(crcvd,crcvd,NMAX,12000.0,a)
+        call twkfreq(crcvd,crcvd,NMAX,fsample,a)
         call timer('twkfreq ',1)
         f=1500.0
         call timer('demod   ',0)
@@ -224,6 +223,7 @@ program sfoxtest
         call timer('ftrsd3  ',1)
 
         if(iand(nv,1).ne.0) then
+           h=default_header(12000,NMAX)
            fname='000000_000001.wav'
            write(fname(8:13),'(i6.6)') ifile
            open(10,file=trim(fname),access='stream',status='unknown')
