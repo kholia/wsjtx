@@ -3,6 +3,7 @@ subroutine sfox_gen(idat,f0,fsample,syncwidth,cdat)
   use sfox_mod
 !  include "sfox_params.f90"
   complex cdat(NMAX)                     !Generated complex waveform
+  complex ctmp(NSYNC)
   complex w,wstep
   integer idat(NN)
 
@@ -25,20 +26,10 @@ subroutine sfox_gen(idat,f0,fsample,syncwidth,cdat)
      enddo
   enddo
 
-! Sync waveform
-  a1=f0 + syncwidth/2.0             !Frequency at midpoint of sync waveform
-  a2=2.0*syncwidth/tsync            !Frequency drift rate
-  x0=0.5*(nsync+1)
-  s=2.0/nsync
-  do i=1,nsync
-     j=j+1
-     if(i.eq.nsync/2+1) a2=-a2       !Reverse sign of drift at midpoint
-     x=s*(i-x0)
-     dphi=(a1 + x*a2) * (twopi/fsample)
-     wstep=cmplx(cos(dphi),sin(dphi))
-     w=w*wstep
-     cdat(j)=w
-  enddo
+! Calculate and insert sync waveform
+  call sweep(f0,syncwidth,fsample,w,ctmp,nsync)
+  cdat(j:j+nsync-1)=ctmp
+  j=j+nsync
 
 ! Final group of data symbols:
   do n=1,ND2
