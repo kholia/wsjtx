@@ -105,11 +105,6 @@ program sfoxtest
   bandwidth_ratio=2500.0/fsample
   fgood0=1.0
 
-! Generate a sync pattern
-  do i=1,NS
-     isync(i)=NQ*ran1(idummy)
-  enddo
-
 ! Generate a message
   msg0=0
   do i=1,KK
@@ -234,7 +229,6 @@ program sfoxtest
            close(10)
        endif
 
-!        if(nharderr.le.maxerr) ngood=ngood+1
        if(count(correct.ne.chansym0).eq.0) ngood=ngood+1
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
