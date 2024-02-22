@@ -31,14 +31,15 @@ program sfoxtest
   character fname*17,arg*12,itu*2
 
   nargs=iargc()
-  if(nargs.ne.10) then
-     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K v hs nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 0  F   10   -10'
+  if(nargs.ne.11) then
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K ts v hs nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 7 127 48  3 0  F   10   -10'
      print*,'         f0=0 means f0, DT will assume suitable random values'
      print*,'         LQ: Low Latitude Quiet'
      print*,'         MM: Mid Latitude Moderate'
      print*,'         HD: High Latitude Disturbed'
      print*,'         ... and similarly for LM LD MQ MD HQ HM'
+     print*,'         ts: approximate sync duration (s)'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
      print*,'         hs = T for hard-wired sync'
      print*,'         snr=0 means loop over SNRs'
@@ -56,19 +57,21 @@ program sfoxtest
   call getarg(6,arg)
   read(arg,*) kk0
   call getarg(7,arg)
-  read(arg,*) nv
+  read(arg,*) ts
   call getarg(8,arg)
-  hard_sync=arg(1:1).eq.'T'
+  read(arg,*) nv
   call getarg(9,arg)
-  read(arg,*) nfiles
+  hard_sync=arg(1:1).eq.'T'
   call getarg(10,arg)
+  read(arg,*) nfiles
+  call getarg(11,arg)
   read(arg,*) snrdb
 
   call init_timer ('timer.out')
   call timer('sfoxtest',0)
 
   fsample=12000.0                   !Sample rate (Hz)
-  call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample)
+  call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ts)
   baud=fsample/NSPS
   tsym=1.0/baud
   bw=NQ*baud
@@ -231,14 +234,14 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.isnr0) write(*,1300)
-1300 format('    SNR  Eb/No  iters fsync  fgood   averr  worst rmsf rmst'/  &
+1300 format('    SNR  Eb/No  iters fsync  fgood  averr  worst rmsf   rmst'/  &
             '------------------------------------------------------------')
      ave_harderr=float(ntot)/nfiles
      rmst=sqrt(sqt/ngoodsync)
      rmsf=sqrt(sqf/ngoodsync)
      ebno=snr-10*log10(baud/2500*mm0*KK/NN)
      write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
-1310 format(f7.2,f7.2 i6,2f7.4,f7.1,i6,f7.2,f6.3)
+1310 format(f7.2,f7.2 i6,2f7.4,f7.1,i6,f6.1,f7.3)
      if(fgood.le.0.5 .and. fgood0.gt.0.5) then
         threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
