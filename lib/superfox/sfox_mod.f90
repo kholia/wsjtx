@@ -36,7 +36,6 @@ contains
     NFFT=32768          !Length of FFT for sync waveform
     NFFT1=2*NSPS        !Length of FFTs for symbol spectra
 
-    print*,'AAA',NS,NSPS,NSYNC/12000.0
     fspread=0.0
     delay=0.0
     if(itu.eq.'LQ') then
