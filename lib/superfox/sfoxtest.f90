@@ -178,7 +178,7 @@ program sfoxtest
         else
 ! Find signal freq and DT
            call timer('sync    ',0)
-           call sfox_sync(crcvd,nv,f,t)
+           call sfox_sync(crcvd,fsample,f,t)
            call timer('sync    ',1)
         endif
         ferr=f-f1

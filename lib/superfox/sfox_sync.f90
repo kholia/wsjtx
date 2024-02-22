@@ -1,27 +1,30 @@
-subroutine sfox_sync(crcvd,nv,f,t)
+subroutine sfox_sync(crcvd,fsample,f,t)
 
   use sfox_mod
-  parameter (NFFT2=2048,NH=NFFT2/2)
-  parameter (NSZ=562)                    !Number of 1/8-symbol steps
-  complex clo(NMAX)                      !Complex Local Oscillator
-  complex crcvd(NMAX)                    !Signal as received
-  complex c(0:NFFT2-1)                   !Work array
-  real s(NH/2,NSZ)
+  complex crcvd(NMAX)                      !Signal as received
+  complex, allocatable :: c(:)             !Work array
+  real, allocatable :: s(:,:)              !Symbol spectra, 1/8 symbol steps
 !  character*1 line(-30:30),mark(0:5)
 !  data mark/' ','.','-','+','X','$'/
 
-  df=12000.0/NFFT2                       !5.86 Hz
-  istep=NH/8
-  tstep=istep/12000.0                    !0.0107 s
+  nh=NFFT1/2                               !1024
+  istep=nh/8                               !128
+  nsz=(nint(3.0*fsample) + NS*NSPS)/istep  !473
+  df=fsample/NFFT1                         !5.86 Hz
+  tstep=istep/fsample                      !0.0107 s
+
+  allocate(c(0:nfft1-1))
+  allocate(s(nh/2,nsz))
+
   ia=1-istep
-  fac=1.0/NFFT2
-  do j=1,NSZ
+  fac=1.0/NFFT1
+  do j=1,nsz
      ia=ia+istep
-     ib=ia+NH-1
+     ib=ia+nh-1
      c(0:NSPS-1)=fac*crcvd(ia:ib)
      c(NSPS:)=0.
-     call four2a(c,NFFT2,1,-1,1)
-     do i=1,NH/2
+     call four2a(c,NFFT1,1,-1,1)
+     do i=1,nh/2
         s(i,j)=real(c(i))**2 + aimag(c(i))**2
      enddo
   enddo
@@ -32,7 +35,7 @@ subroutine sfox_sync(crcvd,nv,f,t)
   i0=nint(1500.0/df)
   ipk=-999
   jpk=-999
-  do j=1,NSZ-8*NS
+  do j=1,nsz-8*NS
      do i=-iz,iz
         p=0.
         do k=1,NS
@@ -50,9 +53,7 @@ subroutine sfox_sync(crcvd,nv,f,t)
 
   dfreq=ipk*df
   f=1500.0+dfreq
-  t=(jpk-201)*128.0/12000.0
-!  write(*,4001) ipk,jpk,pmax,dfreq,t
-!4001 format(2i8,3f10.3)
+  t=(jpk-201)*istep/fsample
 
   return
 end subroutine sfox_sync
