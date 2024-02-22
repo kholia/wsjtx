@@ -13,7 +13,6 @@ program sfoxtest
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
-  complex clo(NMAX)                      !Complex Local Oscillator
   complex cnoise(NMAX)                   !Complex noise
   complex crcvd(NMAX)                    !Signal as received
   real a(3)
@@ -32,18 +31,17 @@ program sfoxtest
   character fname*17,arg*12,itu*2
 
   nargs=iargc()
-  if(nargs.ne.11) then
-     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K  sw v hs nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 100 0  F   10   -10'
+  if(nargs.ne.10) then
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N  K v hs nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 8 74 44 0  F   10   -10'
      print*,'         f0=0 means f0, DT will assume suitable random values'
      print*,'         LQ: Low Latitude Quiet'
      print*,'         MM: Mid Latitude Moderate'
      print*,'         HD: High Latitude Disturbed'
      print*,'         ... and similarly for LM LD MQ MD HQ HM'
-     print*,'         sw = width of Sync sweep, in Hz'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
      print*,'         hs = T for hard-wired sync'
-     print*,'         snr=0 means loop over SNRs 0 to -25 dB'
+     print*,'         snr=0 means loop over SNRs'
      go to 999
   endif
   call getarg(1,arg)
@@ -58,14 +56,12 @@ program sfoxtest
   call getarg(6,arg)
   read(arg,*) kk0
   call getarg(7,arg)
-  read(arg,*) syncwidth
-  call getarg(8,arg)
   read(arg,*) nv
-  call getarg(9,arg)
+  call getarg(8,arg)
   hard_sync=arg(1:1).eq.'T'
-  call getarg(10,arg)
+  call getarg(9,arg)
   read(arg,*) nfiles
-  call getarg(11,arg)
+  call getarg(10,arg)
   read(arg,*) snrdb
 
   call init_timer ('timer.out')
@@ -106,6 +102,11 @@ program sfoxtest
   bandwidth_ratio=2500.0/fsample
   fgood0=1.0
 
+! Generate a sync pattern
+  do i=1,NS
+     isync(i)=NQ*ran1(idummy)
+  enddo
+
 ! Generate a message
   msg0=0
   do i=1,KK
@@ -118,14 +119,9 @@ program sfoxtest
   chansym0(kk:nn-1)=parsym(1:nn-kk)
 !  chansym0=NQ/2  !### TEMPORARY, for SNR calibration ###
 
-! Generate clo, the LO for sync detection
-  call timer('clo     ',0)
-  call sfox_clo(fsample,syncwidth,clo)
-  call timer('clo     ',1)
-
 ! Generate cdat, the SuperFox waveform
   call timer('gen     ',0)
-  call sfox_gen(chansym0,f0,fsample,syncwidth,cdat)
+  call sfox_gen(chansym0,f0,fsample,cdat)
   call timer('gen     ',1)
   isnr0=-8
 
@@ -156,10 +152,10 @@ program sfoxtest
 
         f1=f0
         if(f0.eq.0.0) then
-           f1=1500.0 + 200.0*(ran1(idummy)-0.5)
+           f1=1500.0 + 20.0*(ran1(idummy)-0.5)
            xdt=0.3*ran1(idummy)
            call timer('gen     ',0)
-           call sfox_gen(chansym0,f1,fsample,syncwidth,cdat)
+           call sfox_gen(chansym0,f1,fsample,cdat)
            call timer('gen     ',1)
         endif
         
@@ -177,12 +173,12 @@ program sfoxtest
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
         if(hard_sync) then
-           f=f1
-           t=xdt
+           f=f1  ! + 5.0*(ran1(idummy)-0.5)
+           t=xdt ! + 0.01*(ran1(idummy)-0.5)
         else
 ! Find signal freq and DT
            call timer('sync    ',0)
-           call sfox_sync(crcvd,clo,nv,f,t)
+           call sfox_sync(crcvd,nv,f,t)
            call timer('sync    ',1)
         endif
         ferr=f-f1
@@ -194,6 +190,11 @@ program sfoxtest
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
         endif
+
+        write(50,3050) ifile,ferr/baud,terr/tsym
+3050    format(i8,2f10.4)
+        flush(50)
+!        write(51) snr,f1,xdt,crcvd(1:76000)
 
         a=0.
         a(1)=1500.0-f
@@ -249,7 +250,7 @@ program sfoxtest
      endif
      fgood0=fgood
      if(snrdb.ne.0.0) exit
-     if(fgood.eq.0.0) exit
+!     if(fgood.eq.0.0) exit
      if(fgoodsync.lt.0.5) exit
   enddo  ! isnr
   if(snrdb.eq.0.0) write(*,1320) threshold
