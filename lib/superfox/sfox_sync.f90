@@ -39,7 +39,7 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
   ipk=-999
   jpk=-999
   jz=nsz-8*NS
-  allocate(ccf(-iz-1:iz+1,1:jz))
+  allocate(ccf(-iz:iz,1:jz))
   ccf=0.
   do j=1,jz
      do i=-iz,iz
@@ -58,8 +58,12 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
      enddo
   enddo
 
-  call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
-  call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
+  dxi=0.
+  dxj=0.
+  if(jpk.gt.1 .and. jpk.lt.jz .and. abs(ipk).lt.iz) then
+     call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
+     call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
+  endif
 
   dfreq=(ipk+dxi)*df
   f=1500.0+dfreq
