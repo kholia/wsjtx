@@ -2,7 +2,6 @@ module sfox_mod
   
   parameter (NMAX=15*12000)       !Samples in iwave (180,000)
   integer MM,NQ,NN,KK,ND1,ND2,NFZ,NSPS,NS,NSYNC,NZ,NFFT,NFFT1
-  integer isync(50)
 
 contains
   subroutine sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ts)

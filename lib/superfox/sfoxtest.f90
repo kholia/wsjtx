@@ -10,6 +10,7 @@ program sfoxtest
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   integer param(0:8)
+  integer isync(50)
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
@@ -108,6 +109,7 @@ program sfoxtest
 ! Generate a sync pattern
   do i=1,NS
      isync(i)=NQ*ran1(idummy)
+     if(i.gt.20) isync(i)=NQ/2
   enddo
 
 ! Generate a message
@@ -124,7 +126,7 @@ program sfoxtest
 
 ! Generate cdat, the SuperFox waveform
   call timer('gen     ',0)
-  call sfox_gen(chansym0,f0,fsample,cdat)
+  call sfox_gen(chansym0,f0,fsample,isync,cdat)
   call timer('gen     ',1)
   isnr0=-8
 
@@ -158,7 +160,7 @@ program sfoxtest
            f1=1500.0 + 20.0*(ran1(idummy)-0.5)
            xdt=0.3*ran1(idummy)
            call timer('gen     ',0)
-           call sfox_gen(chansym0,f1,fsample,cdat)
+           call sfox_gen(chansym0,f1,fsample,isync,cdat)
            call timer('gen     ',1)
         endif
         
@@ -181,7 +183,7 @@ program sfoxtest
         else
 ! Find signal freq and DT
            call timer('sync    ',0)
-           call sfox_sync(crcvd,fsample,f,t)
+           call sfox_sync(crcvd,fsample,isync,f,t,f1,xdt)
            call timer('sync    ',1)
         endif
         ferr=f-f1
@@ -234,7 +236,6 @@ program sfoxtest
            close(10)
        endif
 
-!        if(nharderr.le.maxerr) ngood=ngood+1
        if(count(correct.ne.chansym0).eq.0) ngood=ngood+1
      enddo  ! ifile
      fgoodsync=float(ngoodsync)/nfiles
