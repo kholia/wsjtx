@@ -34,12 +34,12 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
 
   pmax=0.
   ntol=100
-  iz=nint(ntol/df)+2
+  iz=nint(ntol/df)
   i0=nint(1500.0/df)
   ipk=-999
   jpk=-999
   jz=nsz-8*NS
-  allocate(ccf(-iz:iz,1:jz))
+  allocate(ccf(-iz-1:iz+1,1:jz))
   ccf=0.
   do j=1,jz
      do i=-iz,iz
