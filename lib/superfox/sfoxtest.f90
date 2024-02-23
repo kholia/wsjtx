@@ -31,6 +31,11 @@ program sfoxtest
   logical hard_sync
   character fname*17,arg*12,itu*2
 
+! Shortcut: this is OK for NS <= 24 only
+  data isync(1:24)/ 21, 94, 55,125, 94, 29, 11, 64, 63,  6,  &
+              59, 67, 52, 39,116, 98, 67, 68, 75, 87,  &
+              64, 64, 64, 64/
+
   nargs=iargc()
   if(nargs.ne.11) then
      print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K ts v hs nfiles snr'
@@ -102,27 +107,20 @@ program sfoxtest
 
   rms=100.
   baud=fsample/nsps                 !Keying rate, 11.719 baud for nsps=1024
-  idummy=0
+  idum=-1
   bandwidth_ratio=2500.0/fsample
   fgood0=1.0
-
-! Generate a sync pattern
-  do i=1,NS
-     isync(i)=NQ*ran1(idummy)
-     if(i.gt.20) isync(i)=NQ/2
-  enddo
 
 ! Generate a message
   msg0=0
   do i=1,KK
-     msg0(i)=int(NQ*ran1(idummy))
+     msg0(i)=int(NQ*ran1(idum))
   enddo
 
   call rs_init_sf(MM,NQ,NN,KK,NFZ)          !Initialize the Karn codec
   call rs_encode_sf(msg0,parsym)            !Compute parity symbols
   chansym0(0:kk-1)=msg0(1:kk)
   chansym0(kk:nn-1)=parsym(1:nn-kk)
-!  chansym0=NQ/2  !### TEMPORARY, for SNR calibration ###
 
 ! Generate cdat, the SuperFox waveform
   call timer('gen     ',0)
@@ -157,8 +155,8 @@ program sfoxtest
 
         f1=f0
         if(f0.eq.0.0) then
-           f1=1500.0 + 20.0*(ran1(idummy)-0.5)
-           xdt=0.3*ran1(idummy)
+           f1=1500.0 + 20.0*(ran1(idum)-0.5)
+           xdt=0.3*ran1(idum)
            call timer('gen     ',0)
            call sfox_gen(chansym0,f1,fsample,isync,cdat)
            call timer('gen     ',1)
@@ -178,16 +176,18 @@ program sfoxtest
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
         if(hard_sync) then
-           f=f1  ! + 5.0*(ran1(idummy)-0.5)
-           t=xdt ! + 0.01*(ran1(idummy)-0.5)
+           f=f1  ! + 5.0*(ran1(idum)-0.5)
+           t=xdt ! + 0.01*(ran1(idum)-0.5)
         else
 ! Find signal freq and DT
            call timer('sync    ',0)
            call sfox_sync(crcvd,fsample,isync,f,t,f1,xdt)
            call timer('sync    ',1)
         endif
+
         ferr=f-f1
         terr=t-xdt
+
         igoodsync=0
         if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/4.0) then
            igoodsync=1
@@ -195,11 +195,6 @@ program sfoxtest
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
         endif
-
-        write(50,3050) ifile,ferr/baud,terr/tsym
-3050    format(i8,2f10.4)
-        flush(50)
-!        write(51) snr,f1,xdt,crcvd(1:76000)
 
         a=0.
         a(1)=1500.0-f
