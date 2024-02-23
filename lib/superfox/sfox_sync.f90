@@ -1,4 +1,4 @@
-subroutine sfox_sync(crcvd,fsample,isync,f,t,f1,xdt)
+subroutine sfox_sync(crcvd,fsample,isync,f,t)
 
   use sfox_mod
   complex crcvd(NMAX)                      !Signal as received
@@ -6,8 +6,8 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t,f1,xdt)
   integer isync(50)
   real, allocatable :: s(:,:)              !Symbol spectra, 1/8 symbol steps
   real, allocatable :: ccf(:,:)            !
-  character*1 line(-30:30),mark(0:6)
-  data mark/' ','.','-','+','X','$','#'/
+!  character*1 line(-30:30),mark(0:6)
+!  data mark/' ','.','-','+','X','$','#'/
 
   nh=NFFT1/2                               !1024
   istep=nh/8                               !128
@@ -57,26 +57,12 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t,f1,xdt)
      enddo
   enddo
 
-  dfreq=ipk*df
+  call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
+  call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
+
+  dfreq=(ipk+dxi)*df
   f=1500.0+dfreq
-  t=(jpk-201)*istep/fsample
-  if(NS.ne.-99) go to 900
+  t=(jpk+dxj-201.0)*istep/fsample
 
-  ferr=f-f1
-  terr=t-xdt
-  if(abs(ferr).lt.5.357 .and. abs(terr).lt.0.0233) go to 900
-
-  ccf=ccf/pmax
-  do j=jpk-10,jpk+10
-     do i=-iz,iz
-        k=6.001*ccf(i,j)
-        line(i)=mark(k)
-     enddo
-     write(*,1000) j,line(-iz:iz)
-1000 format(i5,2x,61a1)
-  enddo
-  write(*,1100) ferr,terr
-1100 format('ferr:',f7.1,'   terr:',f7.2)
-
-900 return
+  return
 end subroutine sfox_sync

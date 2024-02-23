@@ -33,8 +33,8 @@ program sfoxtest
 
 ! Shortcut: this is OK for NS <= 24 only
   data isync(1:24)/ 21, 94, 55,125, 94, 29, 11, 64, 63,  6,  &
-              59, 67, 52, 39,116, 98, 67, 68, 75, 87,  &
-              64, 64, 64, 64/
+                    59, 67, 52, 39,116, 98, 67, 68, 75, 87,  &
+                    116, 22,113,105/
 
   nargs=iargc()
   if(nargs.ne.11) then
@@ -107,9 +107,9 @@ program sfoxtest
 
   rms=100.
   baud=fsample/nsps                 !Keying rate, 11.719 baud for nsps=1024
-  idum=-1
   bandwidth_ratio=2500.0/fsample
   fgood0=1.0
+!  isync(NS-3:NS)=NQ/2               !Set last few sync symbols to NQ/2
 
 ! Generate a message
   msg0=0
@@ -181,7 +181,7 @@ program sfoxtest
         else
 ! Find signal freq and DT
            call timer('sync    ',0)
-           call sfox_sync(crcvd,fsample,isync,f,t,f1,xdt)
+           call sfox_sync(crcvd,fsample,isync,f,t)
            call timer('sync    ',1)
         endif
 
