@@ -1,6 +1,7 @@
 subroutine sfox_sync(crcvd,fsample,isync,f,t)
 
   use sfox_mod
+  parameter (NSTEPS=8)
   complex crcvd(NMAX)                      !Signal as received
   complex, allocatable :: c(:)             !Work array
   integer isync(50)
@@ -10,7 +11,7 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
 !  data mark/' ','.','-','+','X','$','#'/
 
   nh=NFFT1/2                               !1024
-  istep=nh/8                               !128
+  istep=nh/NSTEPS                          !128
   nsz=(nint(3.0*fsample) + NS*NSPS)/istep  !473
   df=fsample/NFFT1                         !5.86 Hz
   tstep=istep/fsample                      !0.0107 s
@@ -18,7 +19,7 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
   allocate(c(0:nfft1-1))
   allocate(s(nh/2,nsz))
 
-! Compute symbol spectra with df=baud/2 and 1/8 symbol steps.  
+! Compute symbol spectra with df=baud/2 and NSTEPS steps per symbol.
   ia=1-istep
   fac=1.0/NFFT1
   do j=1,nsz
@@ -38,7 +39,7 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
   i0=nint(1500.0/df)
   ipk=-999
   jpk=-999
-  jz=nsz-8*NS
+  jz=nsz-NSTEPS*NS
   allocate(ccf(-iz:iz,1:jz))
   ccf=0.
   do j=1,jz
@@ -46,7 +47,7 @@ subroutine sfox_sync(crcvd,fsample,isync,f,t)
         p=0.
         do k=1,NS
            ii=i0+i+(2*(isync(k)-NQ/2))
-           jj=j + 8*(k-1)
+           jj=j + NSTEPS*(k-1)
            p=p + s(ii,jj)
         enddo
         ccf(i,j)=p
