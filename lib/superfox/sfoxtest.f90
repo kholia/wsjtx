@@ -159,7 +159,7 @@ program sfoxtest
            call sfox_gen(chansym0,f1,fsample,isync,cdat)
            call timer('gen     ',1)
         endif
-        
+
         crcvd=0.
         crcvd(1:NMAX)=cshift(cdat(1:NMAX),-nint(xdt*fsample))
         call timer('watterso',0)
@@ -234,14 +234,14 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.isnr0) write(*,1300)
-1300 format('    SNR  Eb/No  iters fsync  fgood  averr  worst  rmsf   rmst'/  &
-            '-------------------------------------------------------------')
+1300 format('    SNR  Eb/No  iters fsync  fgood  averr   rmsf   rmst'/  &
+            '-------------------------------------------------------')
      ave_harderr=float(ntot)/nfiles
      rmst=sqrt(sqt/ngoodsync)
      rmsf=sqrt(sqf/ngoodsync)
      ebno=snr-10*log10(baud/2500*mm0*KK/NN)
-     write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
-1310 format(f7.2,f7.2 i6,2f7.4,f7.1,i6,f7.2,f7.3)
+     write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,rmsf,rmst
+1310 format(f7.2,f7.2 i6,2f7.4,f7.1,f7.2,f7.4)
      if(fgood.le.0.5 .and. fgood0.gt.0.5) then
         threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
