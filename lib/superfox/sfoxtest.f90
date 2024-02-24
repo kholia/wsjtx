@@ -85,12 +85,10 @@ program sfoxtest
   tsync=NSYNC/fsample
   txt=(NN+NS)*NSPS/fsample
 
-  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,fspread,delay,maxerr,   &
-       tsync,txt
+  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,tsync,txt
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
-          '   Symbol Rate:',f7.3,'   BW:',f6.0/                   &
-          'Channel: ',a2,'   fspread:',f4.1,'   delay:',f5.1,     &
-          '   MaxErr:',i3,'  tsync:',f4.1,'   TxT:',f5.1/)
+          '   Baud:',f7.3,'   BW:',f6.0/                   &
+          'Channel: ',a2,'   Tsync:',f4.1,'   TxT:',f5.1/)
 
 ! Allocate storage for arrays that depend on code parameters.
   allocate(s3(0:NQ-1,0:NN-1))
@@ -236,14 +234,14 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.isnr0) write(*,1300)
-1300 format('    SNR  Eb/No  iters fsync  fgood  averr  worst rmsf   rmst'/  &
-            '------------------------------------------------------------')
+1300 format('    SNR  Eb/No  iters fsync  fgood  averr  worst  rmsf   rmst'/  &
+            '-------------------------------------------------------------')
      ave_harderr=float(ntot)/nfiles
      rmst=sqrt(sqt/ngoodsync)
      rmsf=sqrt(sqf/ngoodsync)
      ebno=snr-10*log10(baud/2500*mm0*KK/NN)
      write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,nworst,rmsf,rmst
-1310 format(f7.2,f7.2 i6,2f7.4,f7.1,i6,f6.1,f7.3)
+1310 format(f7.2,f7.2 i6,2f7.4,f7.1,i6,f7.2,f7.3)
      if(fgood.le.0.5 .and. fgood0.gt.0.5) then
         threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
