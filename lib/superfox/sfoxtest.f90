@@ -10,7 +10,7 @@ program sfoxtest
   type(hdr) h                            !Header for .wav file
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   integer param(0:8)
-  integer isync(50)
+  integer isync(44)
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
@@ -31,21 +31,24 @@ program sfoxtest
   logical hard_sync
   character fname*17,arg*12,itu*2
 
-! Shortcut: this is OK for NS <= 24 only
-  data isync(1:24)/ 21, 94, 55,125, 94, 29, 11, 64, 63,  6,  &
-                    59, 67, 52, 39,116, 98, 67, 68, 75, 87,  &
-                    116, 22,113,105/
+  data isync/ 1,   2,   5,  11,  19,  24,  26,  28,  29,  35,  &
+             39,  48,  51,  53,  55,  56,  66,  71,  74,  78,  &
+             80,  82,  84,  85,  92,  98, 103, 107, 109, 111,  &
+            116, 122, 130, 131, 134, 136, 137, 140, 146, 154,  &
+            159, 161, 163, 165/
+
+
 
   nargs=iargc()
   if(nargs.ne.11) then
-     print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K ts v hs nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15  MM 7 127 48  3 0  F   10   -10'
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K NS v hs nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 7 127 48 33 0  F   10   -10'
      print*,'         f0=0 means f0, DT will assume suitable random values'
      print*,'         LQ: Low Latitude Quiet'
      print*,'         MM: Mid Latitude Moderate'
      print*,'         HD: High Latitude Disturbed'
      print*,'         ... and similarly for LM LD MQ MD HQ HM'
-     print*,'         ts: approximate sync duration (s)'
+     print*,'         NS: number of sync symbols'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
      print*,'         hs = T for hard-wired sync'
      print*,'         snr=0 means loop over SNRs'
@@ -63,7 +66,7 @@ program sfoxtest
   call getarg(6,arg)
   read(arg,*) kk0
   call getarg(7,arg)
-  read(arg,*) ts
+  read(arg,*) ns0
   call getarg(8,arg)
   read(arg,*) nv
   call getarg(9,arg)
@@ -77,7 +80,7 @@ program sfoxtest
   call timer('sfoxtest',0)
 
   fsample=12000.0                   !Sample rate (Hz)
-  call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ts)
+  call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ns0)
   baud=fsample/NSPS
   tsym=1.0/baud
   bw=NQ*baud
@@ -107,7 +110,6 @@ program sfoxtest
   baud=fsample/nsps                 !Keying rate, 11.719 baud for nsps=1024
   bandwidth_ratio=2500.0/fsample
   fgood0=1.0
-!  isync(NS-3:NS)=NQ/2               !Set last few sync symbols to NQ/2
 
 ! Generate a message
   msg0=0
