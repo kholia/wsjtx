@@ -23,7 +23,7 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
   ftol=20.0
   ia=nint((fsync-ftol)/df)
   ib=nint((fsync+ftol)/df)
-  lagmax=1.0/dtstep
+  lagmax=1.5/dtstep
   lag1=-lagmax
   lag2=lagmax
 
@@ -60,8 +60,6 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
      enddo
   enddo
   savg=savg/jz
-
-!###
 
   ccfbest=0.
   ibest=0
@@ -106,11 +104,20 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
 !  write(*,4100) ibest,lagbest,f,dxi*df,t,dxj*dtstep
 !4100 format(2i6,2f10.1,2f10.3)
 
-!  print*,'aaa',ibest,lagbest
-!  do lag=lag1,lag2
-!     write(51,3051) lag*dtstep,ccf(ibest,lag)
-!3051 format(2f12.4)
-!  enddo
+  nsum=0
+  sq=0.
+  do lag=lag1,lag2
+     if(abs(lag-lagbest).gt.3) then
+        sq=sq + ccf(ibest,lag)**2
+        nsum=nsum+1
+     endif
+     write(51,3051) lag*dtstep,ccf(ibest,lag)
+3051 format(2f12.4)
+  enddo
+
+  rms=sqrt(sq/nsum)
+  snrsync=ccf(ibest,lagbest)/rms
+!  print*,'snr:',snrsync
 
   return
 end subroutine sfox_sync

@@ -13,6 +13,7 @@ program sfoxtest
   integer isync(44)
   integer jsync(171)
   integer itone(171)
+  integer nsb(10)
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
@@ -38,6 +39,8 @@ program sfoxtest
              80,  82,  84,  85,  92,  98, 103, 107, 109, 111,  &
             116, 122, 130, 131, 134, 136, 137, 140, 146, 154,  &
             159, 161, 163, 165/
+
+  data nsb/1,2,4,7,11,16,22,29,37,39/
 
   nargs=iargc()
   if(nargs.ne.11) then
@@ -83,11 +86,13 @@ program sfoxtest
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ns0)
   tsync=NSYNC/fsample
   txt=(NN+NS)*NSPS/fsample
+  nstype=nv/10
+  nv=mod(nv,10)
 
-  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,tsync,txt
+  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,tsync,txt,nstype
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
           '   Baud:',f7.3,'   BW:',f9.3/                   &
-          'Channel: ',a2,'   Tsync:',f4.1,'   TxT:',f5.1/)
+          'Channel: ',a2,'   Tsync:',f4.1,'   TxT:',f5.1,'   SyncType:',i2/)
 
 ! Allocate storage for arrays that depend on code parameters.
   allocate(s3(0:NQ-1,0:NN-1))
@@ -103,25 +108,33 @@ program sfoxtest
   allocate(correct(0:NN-1))
 
   idum=-1
-  jsync=0
-  jsync(1)=1
-  jsync(NDS)=1
-  ms=2
-  do i=1,100000
-     j=1 + (NDS-1)*ran1(idum)
-     if(jsync(j).eq.0) then
-        jsync(j)=1
-        ms=ms+1
-        if(ms.eq.NS) exit
-     endif
-  enddo
-  j=0
-  do i=1,NDS
-     if(jsync(i).eq.1) then
-        j=j+1
-        isync(j)=i
-     endif
-  enddo
+  if(nstype.eq.2) then
+     jsync=0
+     jsync(1)=1
+     jsync(NDS)=1
+     ms=2
+     do i=1,100000
+        j=1 + (NDS-1)*ran1(idum)
+        if(jsync(j).eq.0) then
+           jsync(j)=1
+           ms=ms+1
+           if(ms.eq.NS) exit
+        endif
+     enddo
+     j=0
+     do i=1,NDS
+        if(jsync(i).eq.1) then
+           j=j+1
+           isync(j)=i
+        endif
+     enddo
+  else if(nstype.eq.3) then
+     isync(1:10)=nsb
+     isync(11:20)=nsb + isync(10) + 2
+     isync(21:30)=nsb + isync(20) + 2
+     isync(31:40)=nsb + isync(30) + 2
+     isync(41:44)=nsb(1:4) + isync(40) + 2
+  endif
 
   rms=100.
   baud=fsample/nsps                 !Keying rate, 11.719 baud for nsps=1024
