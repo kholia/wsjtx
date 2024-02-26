@@ -1,23 +1,31 @@
 subroutine sfox_sync(iwave,fsample,isync,f,t)
 
   use sfox_mod
-  parameter (NSTEPS=8)
+  parameter (NSTEP=8)
   integer*2 iwave(NMAX)
   integer isync(44)
   integer ipeak(1)
   complex, allocatable :: c(:)             !Work array
   real x(171)
-  real, allocatable :: s(:,:)              !Symbol spectra, stepped by NSTEPS 
+  real, allocatable :: s(:,:)              !Symbol spectra, stepped by NSTEP 
   real, allocatable :: savg(:)             !Average spectrum
-  real, allocatable :: ccf(:,:)            !
-  character*1 line(-15:15),mark(0:6),c1
-  data mark/' ','.','-','+','X','$','#'/
+  real, allocatable :: ccf(:,:)
+!  character*1 line(-15:15),mark(0:6),c1
+!  data mark/' ','.','-','+','X','$','#'/
 
   nh=NFFT1/2
-  istep=NSPS/NSTEPS
+  istep=NSPS/NSTEP
   jz=(13.5*fsample)/istep
   df=fsample/NFFT1
-  tstep=istep/fsample
+  dtstep=istep/fsample
+  fsync=1500.0-bw/2
+  ftol=20.0
+  ia=nint((fsync-ftol)/df)
+  ib=nint((fsync+ftol)/df)
+  lagmax=1.0/dtstep
+  lag1=0
+  lag2=lagmax
+
   x=0.
   do i=1,NS
      x(isync(i))=1.0
@@ -26,11 +34,13 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
   allocate(s(0:nh/2,jz))
   allocate(savg(0:nh/2))
   allocate(c(0:NFFT1-1))
+  allocate(ccf(ia:ib,lag1:lag2))
 
   s=0.
   savg=0.
   fac=1.0/NFFT1
-! Compute symbol spectra with df=baud/2 and NSTEPS steps per symbol.
+
+! Compute symbol spectra with df=baud/2 and NSTEP steps per symbol.
   do j=1,jz
      k=(j-1)*istep
      do i=0,nh-1
@@ -43,105 +53,53 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
         s(i,j)=p
         savg(i)=savg(i) + p
      enddo
+     ipeak=maxloc(s(ia:ib,j))
+!     print*,j,ipeak(1)+ia-1
   enddo
-
-  pmax=maxval(s(82:112,1:jz))
-  s=s/pmax
-  do j=jz,1,-1
-     do i=-15,15
-        k=6.001*s(97+i,j)
-        line(i)=mark(k)
-     enddo
-     c1=' '
-     k=j/NSTEPS + 1
-     if(k.le.171) then
-        if(x(k).ne.0.0) c1='*'
-     endif
-!     write(*,2001) j,c1,line
-!2001 format(i3,2x,a1,' |',31a1,'|')
-     xx=0
-     if(c1.eq.'*') xx=1
-     write(44,3044) j*tstep,xx,3.5*s(96:98,j)
-3044 format(f10.4,4f10.4)
-  enddo
-     
   savg=savg/jz
-  ipeak=maxloc(savg(82:112))
-  i0=ipeak(1)+81
-  dxi=0.
-!  if(i0.gt.0 .and. i0.lt.nh/2) then
-!     call peakup(savg(i0-1),savg(i0),savg(i0+1),dxi)
-!  endif
-  f=(i0+dxi)*df + bw/2.0
 
-  do j=1,jz
-     k=j/NSTEPS + 1
-     xx=0
-     if(k.le.171) xx=x(k)
-     write(43,3043) j,s(i0,j),xx
-3043 format(i5,2f12.3)
-  enddo
-  lagmax=1.0/tstep + 1
-  pmax=0.
-  lagpk=-99
-!  print*,i0,jz,tstep,lagmax
-  do lag=0,lagmax
-     p=0.
-     do i=1,NS
-        k=NSTEPS*(isync(i)-1) + 1 + lag
-        p=p + s(i0,k)
-     enddo
-     p=p/NS
-     if(p.gt.pmax) then
-        pmax=p
-        lagpk=lag
-     endif
-     write(42,3042) lag,lag*tstep,p
-3042 format(i5,2f15.3)
-  enddo
-  t=lagpk*tstep
-!  print*,f,t
-  if(NS.ne.-99) return
+!###
+
+  ccfbest=0.
+  ibest=0
+  lagpk=0
+  lagbest=0
+  j0=0.5/dtstep                        !Nominal start-signal index
   
-  nsz=(nint(3.0*fsample) + NS*NSPS)/istep
-
-
-  pmax=0.
-  ntol=100
-  iz=nint(ntol/df)
-  i0=nint(1500.0/df)
-  ipk=-999
-  jpk=-999
-  jz=nsz-NSTEPS*NS
-  allocate(ccf(-iz:iz,1:jz))
-  ccf=0.
-  do j=1,jz
-     do i=-iz,iz
-        p=0.
-        do k=1,NS
-           ii=i0+i+(2*(isync(k)-NQ/2))
-           jj=j + NSTEPS*(k-1)
-           p=p + s(ii,jj)
-        enddo
-        ccf(i,j)=p
-        if(p.gt.pmax) then
-           pmax=p
-           ipk=i
-           jpk=j
+  do i=ia,ib
+     ccfmax=0.
+     do lag=lag1,lag2
+        ccft=0.
+        do kk=1,NS
+           k=isync(kk)
+           n=NSTEP*(k-1) + 1
+           j=n+lag+j0
+           if(j.ge.1 .and. j.le.jz) ccft=ccft + s(i,j)
+        enddo  ! kk
+        ccft=ccft - NS*savg(i)
+        ccf(i,lag)=ccft
+        if(ccft.gt.ccfmax) then
+           ccfmax=ccft
+           lagpk=lag
         endif
-     enddo
+     enddo  ! lag
+
+     if(ccfmax.gt.ccfbest) then
+        ccfbest=ccfmax
+        ibest=i
+        lagbest=lagpk
+     endif
+  enddo  ! i
+  f=ibest*df + bw/2
+  t=lagbest*dtstep
+!  write(*,4100) ibest,lagbest,f,t
+!4100 format(2i6,f10.1,f10.3)
+
+!  print*,'aaa',ibest,lagbest
+  do lag=lag1,lag2
+     write(51,3051) lag*dtstep,ccf(ibest,lag)
+3051 format(2f12.4)
   enddo
-
-  dxi=0.
-  dxj=0.
-  if(jpk.gt.1 .and. jpk.lt.jz .and. abs(ipk).lt.iz) then
-     call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
-     call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
-  endif
-
-  dfreq=(ipk+dxi)*df
-  f=1500.0+dfreq
-  t=(jpk+dxj-201.0)*istep/fsample
 
   return
 end subroutine sfox_sync

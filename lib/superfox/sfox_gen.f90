@@ -1,4 +1,4 @@
-subroutine sfox_gen(idat,f0,fsample,isync,cdat)
+subroutine sfox_gen(idat,f0,fsample,isync,itone,cdat)
 
   use sfox_mod
   complex cdat(NMAX)                     !Generated complex waveform
@@ -21,17 +21,16 @@ subroutine sfox_gen(idat,f0,fsample,isync,cdat)
         itone(i)=idat(k) + 1    !Symbol value 0 is transmitted at tone 1, etc.
      endif
   enddo
-!  print*,'aaa',NN,k,NS,isync(NS),NDS
   
   df=fsample/NSPS
   w=1.0
   j=0
   i0=NQ/2
 ! Generate the waveform
-  do k=1,NDS
+  do k=1,NDS                                       !Loop over all symbols
      dphi=(f0 + (itone(k)-i0)*df)*(twopi/fsample)
      wstep=cmplx(cos(dphi),sin(dphi))
-     do i=1,NSPS
+     do i=1,NSPS                                   !NSPS samples per symbol
         j=j+1
         w=w*wstep
         cdat(j)=w

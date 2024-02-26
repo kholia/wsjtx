@@ -11,6 +11,8 @@ program sfoxtest
   integer*2 iwave(NMAX)                  !Generated i*2 waveform
   integer param(0:8)
   integer isync(44)
+  integer jsync(171)
+  integer itone(171)
   real*4 xnoise(NMAX)                    !Random noise
   real*4 dat(NMAX)                       !Generated real data
   complex cdat(NMAX)                     !Generated complex waveform
@@ -100,6 +102,27 @@ program sfoxtest
   allocate(rxprob2(0:NN-1))
   allocate(correct(0:NN-1))
 
+  idum=-1
+  jsync=0
+  jsync(1)=1
+  jsync(NDS)=1
+  ms=2
+  do i=1,100000
+     j=1 + (NDS-1)*ran1(idum)
+     if(jsync(j).eq.0) then
+        jsync(j)=1
+        ms=ms+1
+        if(ms.eq.NS) exit
+     endif
+  enddo
+  j=0
+  do i=1,NDS
+     if(jsync(i).eq.1) then
+        j=j+1
+        isync(j)=i
+     endif
+  enddo
+
   rms=100.
   baud=fsample/nsps                 !Keying rate, 11.719 baud for nsps=1024
   bandwidth_ratio=2500.0/fsample
@@ -116,10 +139,6 @@ program sfoxtest
   chansym0(0:kk-1)=msg0(1:kk)
   chansym0(kk:nn-1)=parsym(1:nn-kk)
 
-! Generate cdat, the SuperFox waveform
-  call timer('gen     ',0)
-  call sfox_gen(chansym0,f0,fsample,isync,cdat)
-  call timer('gen     ',1)
   isnr0=-8
 
   do isnr=isnr0,-20,-1
@@ -150,26 +169,26 @@ program sfoxtest
         f1=f0
         if(f0.eq.0.0) then
            f1=1500.0 + 20.0*(ran1(idum)-0.5)
-           xdt=0.3*ran1(idum)
-           call timer('gen     ',0)
-           call sfox_gen(chansym0,f1,fsample,isync,cdat)
-           call timer('gen     ',1)
+!           xdt=0.3*ran1(idum)
         endif
+        call timer('gen     ',0)
+! Generate cdat, the SuperFox waveform
+        call sfox_gen(chansym0,f1,fsample,isync,itone,cdat)
+        call timer('gen     ',1)
 
         crcvd=0.
-        crcvd(1:NMAX)=cshift(cdat(1:NMAX),-nint(xdt*fsample))
+        crcvd(1:NMAX)=cshift(cdat(1:NMAX),-nint((0.5+xdt)*fsample))
         call timer('watterso',0)
         if(fspread.ne.0 .or. delay.ne.0) call watterson(crcvd,NMAX,NZ,fsample,&
              delay,fspread)
         call timer('watterso',1)
-        crcvd=sig*crcvd+cnoise
 
-!        dat=aimag(sigr*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
-        dat=aimag(sigr*crcvd(1:NMAX)) + xnoise     !Add generated AWGN noise
+        dat=aimag(sigr*crcvd(1:NMAX)) + xnoise    !Add generated AWGN noise
         fac=32767.0
         if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
+        crcvd=sig*crcvd+cnoise
         if(hard_sync) then
            f=f1  ! + 5.0*(ran1(idum)-0.5)
            t=xdt ! + 0.01*(ran1(idum)-0.5)
