@@ -95,10 +95,16 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
   ipeak=maxloc(ccf)
   ipk=ipeak(1)-1+ia
   jpk=ipeak(2)-1+lag1
-  
-  call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
-  call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
-  
+
+  dxi=0.
+  dxj=0.
+  if(ipk.gt.ia .and. ipk.lt.ib) then
+     call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
+  endif
+  if(jpk.gt.lag1 .and. jpk.lt.lag2) then
+     call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
+  endif
+
   f=ibest*df + bw/2 + dxi*df
   t=lagbest*dtstep + dxj*dtstep
 !  write(*,4100) ibest,lagbest,f,dxi*df,t,dxj*dtstep
