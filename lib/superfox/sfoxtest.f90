@@ -169,7 +169,7 @@ program sfoxtest
         f1=f0
         if(f0.eq.0.0) then
            f1=1500.0 + 20.0*(ran1(idum)-0.5)
-!           xdt=0.3*ran1(idum)
+           xdt=ran1(idum)-0.5
         endif
         call timer('gen     ',0)
 ! Generate cdat, the SuperFox waveform

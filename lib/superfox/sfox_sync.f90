@@ -4,7 +4,7 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
   parameter (NSTEP=8)
   integer*2 iwave(0:NMAX-1)
   integer isync(44)
-  integer ipeak(1)
+  integer ipeak(2)
   complex, allocatable :: c(:)             !Work array
   real x(171)
   real, allocatable :: s(:,:)              !Symbol spectra, stepped by NSTEP 
@@ -24,7 +24,7 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
   ia=nint((fsync-ftol)/df)
   ib=nint((fsync+ftol)/df)
   lagmax=1.0/dtstep
-  lag1=0
+  lag1=-lagmax
   lag2=lagmax
 
   x=0.
@@ -93,16 +93,24 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
         lagbest=lagpk
      endif
   enddo  ! i
-  f=ibest*df + bw/2
-  t=lagbest*dtstep
-!  write(*,4100) ibest,lagbest,f,t
-!4100 format(2i6,f10.1,f10.3)
+
+  ipeak=maxloc(ccf)
+  ipk=ipeak(1)-1+ia
+  jpk=ipeak(2)-1+lag1
+  
+  call peakup(ccf(ipk-1,jpk),ccf(ipk,jpk),ccf(ipk+1,jpk),dxi)
+  call peakup(ccf(ipk,jpk-1),ccf(ipk,jpk),ccf(ipk,jpk+1),dxj)
+  
+  f=ibest*df + bw/2 + dxi*df
+  t=lagbest*dtstep + dxj*dtstep
+!  write(*,4100) ibest,lagbest,f,dxi*df,t,dxj*dtstep
+!4100 format(2i6,2f10.1,2f10.3)
 
 !  print*,'aaa',ibest,lagbest
-  do lag=lag1,lag2
-     write(51,3051) lag*dtstep,ccf(ibest,lag)
-3051 format(2f12.4)
-  enddo
+!  do lag=lag1,lag2
+!     write(51,3051) lag*dtstep,ccf(ibest,lag)
+!3051 format(2f12.4)
+!  enddo
 
   return
 end subroutine sfox_sync
