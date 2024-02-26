@@ -13,14 +13,15 @@ subroutine sfox_gen(idat,f0,fsample,isync,cdat)
   j=1
   k=0
   do i=1,NDS
-     if(j.le.NS .and. i.eq.isync(min(j,NS))) then
-        j=j+1                   !Index for next sync symbol
+     if(j.le.NS .and. i.eq.isync(j)) then
+        if(j.lt.NS) j=j+1       !Index for next sync symbol
         itone(i)=0              !Insert sync symbol at tone 0
      else
         k=k+1
         itone(i)=idat(k) + 1    !Symbol value 0 is transmitted at tone 1, etc.
      endif
   enddo
+!  print*,'aaa',NN,k,NS,isync(NS),NDS
   
   df=fsample/NSPS
   w=1.0

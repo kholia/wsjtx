@@ -37,8 +37,6 @@ program sfoxtest
             116, 122, 130, 131, 134, 136, 137, 140, 146, 154,  &
             159, 161, 163, 165/
 
-
-
   nargs=iargc()
   if(nargs.ne.11) then
      print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K NS v hs nfiles snr'
@@ -81,16 +79,12 @@ program sfoxtest
 
   fsample=12000.0                   !Sample rate (Hz)
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ns0)
-  baud=fsample/NSPS
-  tsym=1.0/baud
-  bw=NQ*baud
-  maxerr=(NN-KK)/2
   tsync=NSYNC/fsample
   txt=(NN+NS)*NSPS/fsample
 
   write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,tsync,txt
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
-          '   Baud:',f7.3,'   BW:',f6.0/                   &
+          '   Baud:',f7.3,'   BW:',f9.3/                   &
           'Channel: ',a2,'   Tsync:',f4.1,'   TxT:',f5.1/)
 
 ! Allocate storage for arrays that depend on code parameters.
@@ -170,7 +164,8 @@ program sfoxtest
         call timer('watterso',1)
         crcvd=sig*crcvd+cnoise
 
-        dat=aimag(sigr*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
+!        dat=aimag(sigr*cdat(1:NMAX)) + xnoise     !Add generated AWGN noise
+        dat=aimag(sigr*crcvd(1:NMAX)) + xnoise     !Add generated AWGN noise
         fac=32767.0
         if(snr.ge.90.0) iwave(1:NMAX)=nint(fac*dat(1:NMAX))
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
@@ -181,12 +176,13 @@ program sfoxtest
         else
 ! Find signal freq and DT
            call timer('sync    ',0)
-           call sfox_sync(crcvd,fsample,isync,f,t)
+           call sfox_sync(iwave,fsample,isync,f,t)
            call timer('sync    ',1)
         endif
-
         ferr=f-f1
         terr=t-xdt
+!        write(*,4100) f1,f,ferr,xdt,t,terr
+!4100    format(3f10.1,3f10.3)
 
         igoodsync=0
         if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/4.0) then

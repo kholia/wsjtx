@@ -1,7 +1,8 @@
 module sfox_mod
   
   parameter (NMAX=15*12000)       !Samples in iwave (180,000)
-  integer MM,NQ,NN,KK,NS,NDS,NFZ,NSPS,NSYNC,NZ,NFFT,NFFT1
+  integer MM,NQ,NN,KK,NS,NDS,NFZ,NSPS,NSYNC,NZ,NFFT1
+  real baud,tsym,bw
 
 contains
   subroutine sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ns0)
@@ -29,8 +30,11 @@ contains
     NSPS=isps(iloc(1))  !Samples per symbol
     NSYNC=NS*NSPS       !Samples in sync waveform
     NZ=NSPS*NDS         !Samples in full Tx waveform
-    NFFT=32768          !Length of FFT for sync waveform
     NFFT1=2*NSPS        !Length of FFTs for symbol spectra
+    
+    baud=fsample/NSPS
+    tsym=1.0/baud
+    bw=NQ*baud
 
     fspread=0.0
     delay=0.0
