@@ -2,7 +2,7 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
 
   use sfox_mod
   parameter (NSTEP=8)
-  integer*2 iwave(NMAX)
+  integer*2 iwave(0:NMAX-1)
   integer isync(44)
   integer ipeak(1)
   complex, allocatable :: c(:)             !Work array
@@ -13,10 +13,11 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
 !  character*1 line(-15:15),mark(0:6),c1
 !  data mark/' ','.','-','+','X','$','#'/
 
-  nh=NFFT1/2
+  nfft=nsps
+  nh=nfft/2
   istep=NSPS/NSTEP
   jz=(13.5*fsample)/istep
-  df=fsample/NFFT1
+  df=fsample/nfft
   dtstep=istep/fsample
   fsync=1500.0-bw/2
   ftol=20.0
@@ -33,28 +34,30 @@ subroutine sfox_sync(iwave,fsample,isync,f,t)
 
   allocate(s(0:nh/2,jz))
   allocate(savg(0:nh/2))
-  allocate(c(0:NFFT1-1))
+  allocate(c(0:nfft-1))
   allocate(ccf(ia:ib,lag1:lag2))
 
   s=0.
   savg=0.
-  fac=1.0/NFFT1
+  fac=1.0/nfft
 
 ! Compute symbol spectra with df=baud/2 and NSTEP steps per symbol.
   do j=1,jz
-     k=(j-1)*istep
-     do i=0,nh-1
-        c(i)=cmplx(fac*iwave(k+2*i+1),fac*iwave(k+2*i+2))
+     i1=(j-1)*istep
+     i2=i1+nsps-1
+     k=-1
+     do i=i1,i2,2          !Load iwave data into complex array c0, for r2c FFT
+        xx=iwave(i)
+        yy=iwave(i+1)
+        k=k+1
+        c(k)=fac*cmplx(xx,yy)
      enddo
-     c(nh:)=0.
-     call four2a(c,NFFT1,1,-1,0)           !Forward FFT, r2c
-     do i=0,nh/2
-        p=real(c(i))*real(c(i)) + aimag(c(i))*aimag(c(i))
-        s(i,j)=p
-        savg(i)=savg(i) + p
+     c(k+1:)=0.
+     call four2a(c,nfft,1,-1,0)              !r2c FFT
+     do i=1,nh/2
+        s(i,j)=real(c(i))**2 + aimag(c(i))**2
+        savg(i)=savg(i) + s(i,j)
      enddo
-     ipeak=maxloc(s(ia:ib,j))
-!     print*,j,ipeak(1)+ia-1
   enddo
   savg=savg/jz
 
