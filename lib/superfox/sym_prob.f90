@@ -50,10 +50,6 @@ subroutine sym_prob(s3,rxdat,rxprob,rxdat2,rxprob2)
      rxprob(j)=scale*p1                     !Scaled probabilities, 0 - 255
      rxprob2(j)=scale*p2
   enddo
-
-!  Once, ntest.lt.50 or nlow.gt.20 were used to flag bad data:
-  ntest=sum(rxprob)
-  nlow=count(rxprob.le.5)
-
+  
   return
 end subroutine sym_prob

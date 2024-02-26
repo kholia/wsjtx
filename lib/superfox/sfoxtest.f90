@@ -213,8 +213,6 @@ program sfoxtest
         endif
         ferr=f-f1
         terr=t-xdt
-!        write(*,4100) f1,f,ferr,xdt,t,terr
-!4100    format(3f10.1,3f10.3)
 
         igoodsync=0
         if(abs(ferr).lt.baud/2.0 .and. abs(terr).lt.tsym/4.0) then
@@ -225,13 +223,13 @@ program sfoxtest
         endif
 
         a=0.
-        a(1)=1500.0-f
+        a(1)=1500.0-f - baud
         call timer('twkfreq ',0)
         call twkfreq(crcvd,crcvd,NMAX,fsample,a)
         call timer('twkfreq ',1)
         f=1500.0
         call timer('demod   ',0)
-        call sfox_demod(crcvd,f,t,s3,chansym)    !Get s3 and hard symbol values
+        call sfox_demod(crcvd,f,t,isync,s3)            !Get s3(0:NQ-1,0:127)
         call timer('demod   ',1)
 
         call timer('prob    ',0)
@@ -240,7 +238,7 @@ program sfoxtest
 
         nera=0
         chansym=mod(chansym,nq)                        !Enforce 0 to nq-1
-        nharderr=count(chansym.ne.chansym0)            !Count hard errors
+        nharderr=count(rxdat.ne.chansym0)              !Count hard errors
         ntot=ntot+nharderr
         nworst=max(nworst,nharderr)
 
