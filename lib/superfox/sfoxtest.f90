@@ -31,7 +31,6 @@ program sfoxtest
   integer, allocatable :: rxdat2(:)
   integer, allocatable :: rxprob2(:)
   integer, allocatable :: correct(:)
-  logical hard_sync
   character fname*17,arg*12,itu*2
 
   data isync/ 1,   2,   5,  11,  19,  24,  26,  28,  29,  35,  &
@@ -39,13 +38,12 @@ program sfoxtest
              80,  82,  84,  85,  92,  98, 103, 107, 109, 111,  &
             116, 122, 130, 131, 134, 136, 137, 140, 146, 154,  &
             159, 161, 163, 165/
-
   data nsb/1,2,4,7,11,16,22,29,37,39/
 
   nargs=iargc()
   if(nargs.ne.11) then
-     print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K NS v hs nfiles snr'
-     print*,'Example: sfoxtest 1500 0.15  MM 7 127 48 33 0  F   10   -10'
+     print*,'Usage:   sfoxtest  f0   DT  ITU M  N   K NS v st nfiles snr'
+     print*,'Example: sfoxtest 1500 0.15  MM 7 127 48 33 0  3   10   -10'
      print*,'         f0=0 means f0, DT will assume suitable random values'
      print*,'         LQ: Low Latitude Quiet'
      print*,'         MM: Mid Latitude Moderate'
@@ -53,7 +51,7 @@ program sfoxtest
      print*,'         ... and similarly for LM LD MQ MD HQ HM'
      print*,'         NS: number of sync symbols'
      print*,'         v=1 for .wav files, 2 for verbose output, 3 for both'
-     print*,'         hs = T for hard-wired sync'
+     print*,'         st: Sync type, 0 for hard-wired, otherwise 1-3'
      print*,'         snr=0 means loop over SNRs'
      go to 999
   endif
@@ -73,7 +71,7 @@ program sfoxtest
   call getarg(8,arg)
   read(arg,*) nv
   call getarg(9,arg)
-  hard_sync=arg(1:1).eq.'T'
+  read(arg,*) nstype
   call getarg(10,arg)
   read(arg,*) nfiles
   call getarg(11,arg)
@@ -86,8 +84,6 @@ program sfoxtest
   call sfox_init(mm0,nn0,kk0,itu,fspread,delay,fsample,ns0)
   tsync=NSYNC/fsample
   txt=(NN+NS)*NSPS/fsample
-  nstype=nv/10
-  nv=mod(nv,10)
 
   write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,tsync,txt,nstype
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
@@ -202,13 +198,12 @@ program sfoxtest
         if(snr.lt.90.0) iwave(1:NMAX)=nint(rms*dat(1:NMAX))
 
         crcvd=sig*crcvd+cnoise
-        if(hard_sync) then
-           f=f1  ! + 5.0*(ran1(idum)-0.5)
-           t=xdt ! + 0.01*(ran1(idum)-0.5)
+        if(nstype.eq.0) then
+           f=f1                                   !Hard-wired sync
+           t=xdt
         else
-! Find signal freq and DT
            call timer('sync    ',0)
-           call sfox_sync(iwave,fsample,isync,f,t)
+           call sfox_sync(iwave,fsample,isync,f,t) ! Find signal freq and DT
            call timer('sync    ',1)
         endif
         ferr=f-f1
@@ -223,7 +218,7 @@ program sfoxtest
         endif
 
         a=0.
-        a(1)=1500.0-f - baud
+        a(1)=1500.0-f - baud                !Shift frequencies down by one bin
         call timer('twkfreq ',0)
         call twkfreq(crcvd,crcvd,NMAX,fsample,a)
         call timer('twkfreq ',1)
