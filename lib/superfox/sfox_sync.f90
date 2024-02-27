@@ -136,17 +136,15 @@ subroutine sfox_sync(iwave,fsample,isync,f,t,fwidth)
      call peakup(s2(ipk-1),s2(ipk),s2(ipk+1),dxi)
   endif
   f=(ipk+dxi)*df2 + bw/2.0
-
-  call pctile(s2(ipk-100:ipk+100),201,48,base)
-  s2=s2-base
-!  do i=ipk-100,ipk+100
-!     write(51,3051) i*df2,s2(i)
-!3051 format(2f15.3)
-!  enddo
-  smax=maxval(s2(ipk-10:ipk+10))
-  w=count(s2(ipk-10:ipk+10).gt.0.5*smax)
   fwidth=0.
-  if(w.gt.4.0) fwidth=sqrt(w*w - 4*4)*df2
+
+  if(ipk.gt.100 .and. ipk.lt.nfft2/4-100) then 
+     call pctile(s2(ipk-100:ipk+100),201,48,base)
+     s2=s2-base
+     smax=maxval(s2(ipk-10:ipk+10))
+     w=count(s2(ipk-10:ipk+10).gt.0.5*smax)
+     if(w.gt.4.0) fwidth=sqrt(w*w - 4*4)*df2
+  endif
   
   return
 end subroutine sfox_sync
