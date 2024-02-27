@@ -162,6 +162,7 @@ program sfoxtest
      nworst=0
      sqt=0.
      sqf=0.
+     sumw=0.
 
      do ifile=1,nfiles
         xnoise=0.
@@ -203,7 +204,7 @@ program sfoxtest
            t=xdt
         else
            call timer('sync    ',0)
-           call sfox_sync(iwave,fsample,isync,f,t) ! Find signal freq and DT
+           call sfox_sync(iwave,fsample,isync,f,t,fwidth) !Find freq, DT, width
            call timer('sync    ',1)
         endif
         ferr=f-f1
@@ -215,6 +216,7 @@ program sfoxtest
            ngoodsync=ngoodsync+1
            sqt=sqt + terr*terr
            sqf=sqf + ferr*ferr
+           sumw=sumw+fwidth
         endif
 
         a=0.
@@ -257,14 +259,15 @@ program sfoxtest
      fgoodsync=float(ngoodsync)/nfiles
      fgood=float(ngood)/nfiles
      if(isnr.eq.isnr0) write(*,1300)
-1300 format('    SNR  Eb/No  iters fsync  fgood  averr   rmsf   rmst'/  &
-            '-------------------------------------------------------')
+1300 format('    SNR  Eb/No  iters fsync  fgood  averr   rmsf   rmst  avew'/  &
+            '-------------------------------------------------------------')
      ave_harderr=float(ntot)/nfiles
      rmst=sqrt(sqt/ngoodsync)
      rmsf=sqrt(sqf/ngoodsync)
      ebno=snr-10*log10(baud/2500*mm0*KK/NN)
-     write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,rmsf,rmst
-1310 format(f7.2,f7.2 i6,2f7.4,f7.1,f7.2,f7.4)
+     avew=sumw/ngoodsync
+     write(*,1310) snr,ebno,nfiles,fgoodsync,fgood,ave_harderr,rmsf,rmst,avew
+1310 format(f7.2,f7.2 i6,2f7.4,f7.1,f7.2,f7.4,f6.1)
      if(fgood.le.0.5 .and. fgood0.gt.0.5) then
         threshold=isnr + 1 - (fgood0-0.50)/(fgood0-fgood+0.000001)
      endif
