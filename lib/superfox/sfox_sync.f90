@@ -19,7 +19,7 @@ subroutine sfox_sync(iwave,fsample,isync,f,t,fwidth)
   df=fsample/nfft
   dtstep=istep/fsample
   fsync=1500.0-bw/2
-  ftol=20.0
+  ftol=50.0
   ia=nint((fsync-ftol)/df)
   ib=nint((fsync+ftol)/df)
   lagmax=1.5/dtstep
@@ -128,8 +128,11 @@ subroutine sfox_sync(iwave,fsample,isync,f,t,fwidth)
         s2(i)=s2(i) + real(c(i))**2 + aimag(c(i))**2
      enddo
   enddo
-  ipeak2=maxloc(s2)
-  ipk=ipeak2(1)-1
+
+  ia=nint((fsync-ftol)/df2)
+  ib=nint((fsync+ftol)/df2)
+  ipeak2=maxloc(s2(ia:ib))
+  ipk=ipeak2(1)-1+ia
 
   dxi=0.
   if(ipk.gt.1 .and. ipk.lt.nfft/4) then
