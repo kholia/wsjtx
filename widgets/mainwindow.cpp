@@ -2251,6 +2251,13 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
   bool bAltF1F6=m_config.alternate_bindings();
   switch(e->key())
     {
+  case Qt::Key_A:
+    if(m_mode=="Q65" && e->modifiers() & Qt::AltModifier) {
+      m_EMECall.clear();
+      qmapcom.ndecodes=0;
+      readWidebandDecodes();
+    }
+  return;
   case Qt::Key_B:
     if(m_mode=="FT4" && e->modifiers() & Qt::AltModifier) {
       on_pbBestSP_clicked();
@@ -3259,6 +3266,7 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>Ctrl+Shift+F12 </b></td><td>Move dial frequency up 1000 Hz</td></tr>
   <tr><td><b>Alt+1-6  </b></td><td>Set now transmission to this number on Tab 1</td></tr>
   <tr><td><b>Ctl+1-6  </b></td><td>Set next transmission to this number on Tab 1</td></tr>
+  <tr><td><b>Alt+A    </b></td><td>Clear Active Stations for QMAP</td></tr>
   <tr><td><b>Alt+B    </b></td><td>Toggle "Best S+P" status</td></tr>
   <tr><td><b>Alt+C    </b></td><td>Toggle "Call 1st" checkbox</td></tr>
   <tr><td><b>Alt+D    </b></td><td>Decode again at QSO frequency</td></tr>
