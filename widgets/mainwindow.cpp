@@ -2251,6 +2251,13 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
   bool bAltF1F6=m_config.alternate_bindings();
   switch(e->key())
     {
+  case Qt::Key_A:
+    if(m_mode=="Q65" && e->modifiers() & Qt::AltModifier) {
+      m_EMECall.clear();
+      qmapcom.ndecodes=0;
+      readWidebandDecodes();
+    }
+  return;
   case Qt::Key_B:
     if(m_mode=="FT4" && e->modifiers() & Qt::AltModifier) {
       on_pbBestSP_clicked();
@@ -3259,6 +3266,7 @@ void MainWindow::on_actionKeyboard_shortcuts_triggered()
   <tr><td><b>Ctrl+Shift+F12 </b></td><td>Move dial frequency up 1000 Hz</td></tr>
   <tr><td><b>Alt+1-6  </b></td><td>Set now transmission to this number on Tab 1</td></tr>
   <tr><td><b>Ctl+1-6  </b></td><td>Set next transmission to this number on Tab 1</td></tr>
+  <tr><td><b>Alt+A    </b></td><td>Clear Active Stations for QMAP</td></tr>
   <tr><td><b>Alt+B    </b></td><td>Toggle "Best S+P" status</td></tr>
   <tr><td><b>Alt+C    </b></td><td>Toggle "Call 1st" checkbox</td></tr>
   <tr><td><b>Alt+D    </b></td><td>Decode again at QSO frequency</td></tr>
@@ -5515,7 +5523,24 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
   } else {
     cursor=ui->decodedTextBrowser2->textCursor();
   }
-
+  DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
+  if(message.string().contains(";") && message.string().contains("<")) {
+    QVector<qint32> Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000,3575000,7047500,10140000,14080000,18104000,21140000,24919000,28180000,50318000};
+    for(int i=0; i<Freq.length()-1; i++) {
+        int kHzdiff=m_freqNominal - Freq[i];
+        if(qAbs(kHzdiff) < 3000 ) {
+        m_bTxTime=false;
+        if (m_auto) auto_tx_mode (false);
+        if (m_tune) stop_tuning();
+//        auto const& msg2 = tr("Double-clicking on combined messages\n"
+//                              "not allowed on the standard FT8 sub-bands.");
+//        QTimer::singleShot (0, [=] {               // don't block guiUpdate
+//          MessageBox::warning_message (this, tr ("Potential hash collision"), msg2);
+//        });
+        return;
+        }
+    }
+  }
   if(modifiers==(Qt::ShiftModifier + Qt::ControlModifier + Qt::AltModifier)) {
     //### What was the purpose of this ???  ###
     cursor.setPosition(0);
@@ -5530,7 +5555,6 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     }
     return;
   }
-  DecodedText message {cursor.block().text().trimmed().left(61).remove("TU; ")};
   m_bDoubleClicked = true;
   processMessage (message, modifiers);
 }

@@ -474,13 +474,17 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
         i=index(call_1,' ')
         if(i.ge.4 .and. ipa.eq.1 .and. i3.eq.1) call_1(i:i+1)='/R'
         if(i.ge.4 .and. ipa.eq.1 .and. i3.eq.2) call_1(i:i+1)='/P'
-        if(i.ge.4) call add_call_to_recent_calls(call_1)
+        if(i.ge.4) call add_call_to_recent_calls(call_1) 
      endif
      if(index(call_2,'<').le.0) then
         i=index(call_2,' ')
         if(i.ge.4 .and. ipb.eq.1 .and. i3.eq.1) call_2(i:i+1)='/R'
         if(i.ge.4 .and. ipb.eq.1 .and. i3.eq.2) call_2(i:i+1)='/P'
-        if(i.ge.4) call add_call_to_recent_calls(call_2)
+        if(i.ge.4) then
+           call add_call_to_recent_calls(call_2)
+! only hash the "from" call
+           call save_hash_call(call_2,ndum10,ndum12,ndum22)
+        endif
      endif
      if(igrid4.le.MAXGRID4) then
         call to_grid4(igrid4,grid4,unpkg4_success)
@@ -560,6 +564,7 @@ subroutine unpack77(c77,nrx,msg,unpk77_success)
         call_1=call_3          
         call_2=adjustl(c11)//'  '
         call add_call_to_recent_calls(call_2)
+        call save_hash_call(call_2,ndum10,ndum12,ndum22)
         if(nrx.eq.1 .and.                        &  
            dxcall13_set .and. mycall13_set .and. & 
            call_2.eq.dxcall13 .and.              &
@@ -1540,7 +1545,7 @@ subroutine add_call_to_recent_calls(callsign)
   endif
 
 ! Make sure that callsign is hashed
-  call save_hash_call(callsign,n10,n12,n22)
+!  call save_hash_call(callsign,n10,n12,n22) ! commented out - do this in the calling routine:
 
   return
 end subroutine add_call_to_recent_calls
