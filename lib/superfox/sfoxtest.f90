@@ -85,10 +85,10 @@ program sfoxtest
   tsync=NSYNC/fsample
   txt=(NN+NS)*NSPS/fsample
 
-  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,tsync,txt,nstype
+  write(*,1000) MM,NN,KK,NSPS,baud,bw,itu,NS,txt,nstype
 1000 format('M:',i2,'   Base code: (',i3,',',i3,')   NSPS:',i5,   &
           '   Baud:',f7.3,'   BW:',f9.3/                   &
-          'Channel: ',a2,'   Tsync:',f4.1,'   TxT:',f5.1,'   SyncType:',i2/)
+          'Channel: ',a2,'   NS:',i3,'   TxT:',f5.1,'   SyncType:',i2/)
 
 ! Allocate storage for arrays that depend on code parameters.
   allocate(s3(0:NQ-1,0:NN-1))
