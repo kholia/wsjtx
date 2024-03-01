@@ -11,8 +11,8 @@ subroutine foxgen2(nslots,cmsg)
   integer nw(19)
   integer ntype        !Message type: 0 Free Text
                        !              1 CQ MyCall MyGrid
-                       !              2 Call_1 Call_2 RR73
-                       !              3 Call_1 Call_2 rpt
+                       !              2 Call_1 MyCall RR73
+                       !              3 Call_1 MyCall rpt
                        !              4 Call_1 RR73; Call_2 <MyCall> rpt
 !  save mycall,mygrid
   
