@@ -3,7 +3,6 @@ subroutine foxgen2(nslots,cmsg)
   use packjt77
   character*40 cmsg(5)
   character*37 msg
-  character*22 sfmsg
   character*12 mycall
   character*4 mygrid
   character*6 hiscall_1,hiscall_2
@@ -13,12 +12,12 @@ subroutine foxgen2(nslots,cmsg)
   integer ntype        !Message type: 0 Free Text
                        !              1 CQ MyCall MyGrid
                        !              2 Call_1 MyCall RR73
-                       !              3 Call_1 MyCall rpt_1
-                       !              4 Call_1 RR73; Call_2 <MyCall> rpt_2
+                       !              3 Call_1 MyCall rpt
+                       !              4 Call_1 RR73; Call_2 <MyCall> rpt
+!  save mycall,mygrid
   
   if(nslots.lt.1 .or. nslots.gt.5) return
   print*,' '
-  k=0
   do i=1,nslots
      hiscall_1=''
      hiscall_2=''
@@ -52,21 +51,11 @@ subroutine foxgen2(nslots,cmsg)
         mycall=w(2)(1:12)
         rpt_1=w(3)(1:4)
      endif
-!     write(*,3001) ntype,cmsg(i),hiscall_1,rpt_1,hiscall_2,rpt_2,  &
-!          mycall(1:6),mygrid
-!3001 format(i1,2x,a37,1x,a6,1x,a4,1x,a6,1x,a4,1x,a6,1x,a4)
+     write(*,3001) ntype,cmsg(i),hiscall_1,rpt_1,hiscall_2,rpt_2,  &
+          mycall(1:6),mygrid
+3001 format(i1,2x,a37,1x,a6,1x,a4,1x,a6,1x,a4,1x,a6,1x,a4)
 
-     k=k+1
-     if(ntype.le.3) write(*,3002) i,k,msg(1:22)
-3002 format(i1,i3,1x,a22)
-     if(ntype.eq.4) then
-        sfmsg=w(1)(1:nw(1))//' '//mycall(1:len(trim(mycall))+1)//'RR73'
-        write(*,3002) i,k,sfmsg
-        sfmsg=w(3)(1:nw(3))//' '//mycall(1:len(trim(mycall))+1)//w(5)(1:3)
-        k=k+1
-        write(*,3002) i,k,sfmsg
-     endif
-
+!     if(ntype.eq.0) call
   enddo
 
   return
