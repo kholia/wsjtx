@@ -77,7 +77,7 @@ subroutine sfox_assemble(ntype,k,msg,mycall0,mygrid0,line)
            line=trim(line)//'  '//trim(hiscall(i))//' '//rpt2(i)
         enddo
         do i=1,nmsg(2)
-           line=trim(line)//'  '//trim(hiscall(i))
+           line=trim(line)//'  '//trim(hiscall(i+5))
         enddo
      endif
 
