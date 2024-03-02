@@ -10304,7 +10304,7 @@ Transmit:
   QString foxCall=m_config.my_callsign() + "         ";
   ::memcpy(foxcom_.mycall, foxCall.toLatin1(),sizeof foxcom_.mycall);   //Copy Fox callsign into foxcom_
   bool bSuperFox=m_config.superFox();
-  qDebug() << "bb" << foxcom_.nslots << foxcom_.mycall << foxcom_.cmsg;
+  qDebug() << "bb" << foxcom_.nslots << foxcom_.mycall << foxcom_.cmsg[0];
   char cmnd[120];
   foxgen_(&bSuperFox, cmnd, 120);
   if(bSuperFox) {
@@ -10888,9 +10888,9 @@ void MainWindow::on_jt65Button_clicked()
 
 void MainWindow::sfox_tx(QString t)
 {
-  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
+//  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
   p2.start("sfox_tx", QStringList {t});
   p2.waitForFinished();
   QString t2=p2.readAllStandardOutput();
-  qDebug() << "aa" << QDateTime::currentMSecsSinceEpoch() - ms0 << t2;
+//  qDebug() << "aa" << QDateTime::currentMSecsSinceEpoch() - ms0 << t2;
 }
