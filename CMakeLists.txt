@@ -429,6 +429,7 @@ set (wsjt_FSRCS
   lib/ft8/foxfilt.f90
   lib/ft8/foxgen.f90
   lib/superfox/foxgen2.f90
+  lib/superfox/sfox_assemble.f90
   lib/ft8/foxgen_wrap.f90
   lib/freqcal.f90
   lib/ft8/ft8apset.f90
