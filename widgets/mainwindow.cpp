@@ -176,7 +176,7 @@ extern "C" {
   void calibrate_(char const * data_dir, int* iz, double* a, double* b, double* rms,
                   double* sigmaa, double* sigmab, int* irc, fortran_charlen_t);
 
-  void foxgen_(bool* bSuperFox);
+  void foxgen_(bool* bSuperFox, char* cmnd, fortran_charlen_t);
 
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
@@ -4824,7 +4824,12 @@ void MainWindow::guiUpdate()
               QString foxCall=m_config.my_callsign() + "         ";
               ::memcpy(foxcom_.mycall, foxCall.toLatin1(), sizeof foxcom_.mycall); //Copy Fox callsign into foxcom_
               bool bSuperFox=m_config.superFox();
-              foxgen_(&bSuperFox);
+              char cmnd[120];
+              foxgen_(&bSuperFox, cmnd, 120);
+              if(bSuperFox) {
+                QString t=QString::fromLatin1(cmnd).trimmed();
+                sfox_tx(t);
+              }
             }
           }
         }
@@ -10299,7 +10304,13 @@ Transmit:
   QString foxCall=m_config.my_callsign() + "         ";
   ::memcpy(foxcom_.mycall, foxCall.toLatin1(),sizeof foxcom_.mycall);   //Copy Fox callsign into foxcom_
   bool bSuperFox=m_config.superFox();
-  foxgen_(&bSuperFox);
+  qDebug() << "bb" << foxcom_.nslots << foxcom_.mycall << foxcom_.cmsg;
+  char cmnd[120];
+  foxgen_(&bSuperFox, cmnd, 120);
+  if(bSuperFox) {
+    QString t=QString::fromLatin1(cmnd).trimmed();
+    sfox_tx(t);
+  }
   m_tFoxTxSinceCQ++;
 
   for(QString hc: m_foxQSO.keys()) {               //Check for strikeout or timeout
@@ -10873,4 +10884,13 @@ void MainWindow::on_q65Button_clicked()
 void MainWindow::on_jt65Button_clicked()
 {
   on_actionJT65_triggered();
+}
+
+void MainWindow::sfox_tx(QString t)
+{
+  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
+  p2.start("sfox_tx", QStringList {t});
+  p2.waitForFinished();
+  QString t2=p2.readAllStandardOutput();
+  qDebug() << "aa" << QDateTime::currentMSecsSinceEpoch() - ms0 << t2;
 }

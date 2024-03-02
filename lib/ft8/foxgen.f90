@@ -1,4 +1,4 @@
-subroutine foxgen(bSuperFox)
+subroutine foxgen(bSuperFox,cmnd)
 
   ! Called from MainWindow::foxTxSequencer() to generate the Tx waveform in
   ! FT8 Fox mode.  The Tx message can contain up to 5 "slots", each carrying
@@ -18,6 +18,7 @@ subroutine foxgen(bSuperFox)
   parameter (NWAVE=(160+2)*134400*4) !the biggest waveform we generate (FST4-1800 at 48kHz)
   parameter (NFFT=614400,NH=NFFT/2)
   logical*1 bSuperFox
+  character*120 cmnd
   character*40 cmsg
   character*37 msg,msgsent
   integer itone(79)
@@ -31,7 +32,7 @@ subroutine foxgen(bSuperFox)
   equivalence (x,cx),(y,cy)
 
   if(bSuperFox) then
-     call foxgen2(nslots,cmsg)
+     call foxgen2(nslots,cmsg,cmnd)
      return
   endif
   
