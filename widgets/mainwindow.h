@@ -379,7 +379,7 @@ private:
   bool elide_tx1_not_allowed () const;
   void readWidebandDecodes();
   void configActiveStations();
-  void sfox_tx(QString t);
+  void sfox_tx();
 
   QProcessEnvironment const& m_env;
   NetworkAccessManager m_network_manager;

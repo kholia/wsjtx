@@ -176,7 +176,9 @@ extern "C" {
   void calibrate_(char const * data_dir, int* iz, double* a, double* b, double* rms,
                   double* sigmaa, double* sigmab, int* irc, fortran_charlen_t);
 
-  void foxgen_(bool* bSuperFox, char* cmnd, fortran_charlen_t);
+  void foxgen_(bool* bSuperFox, char const * fname, FCL len);
+
+  void sfox_wave_(char const * fname, FCL len);
 
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
@@ -4824,12 +4826,9 @@ void MainWindow::guiUpdate()
               QString foxCall=m_config.my_callsign() + "         ";
               ::memcpy(foxcom_.mycall, foxCall.toLatin1(), sizeof foxcom_.mycall); //Copy Fox callsign into foxcom_
               bool bSuperFox=m_config.superFox();
-              char cmnd[120];
-              foxgen_(&bSuperFox, cmnd, 120);
-              if(bSuperFox) {
-                QString t=QString::fromLatin1(cmnd).trimmed();
-                sfox_tx(t);
-              }
+              auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox.dat")).toLocal8Bit()};
+              foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
+              if(bSuperFox) sfox_tx();
             }
           }
         }
@@ -10304,13 +10303,9 @@ Transmit:
   QString foxCall=m_config.my_callsign() + "         ";
   ::memcpy(foxcom_.mycall, foxCall.toLatin1(),sizeof foxcom_.mycall);   //Copy Fox callsign into foxcom_
   bool bSuperFox=m_config.superFox();
-//  qDebug() << "bb" << foxcom_.nslots << foxcom_.mycall << foxcom_.cmsg[0];
-  char cmnd[120];
-  foxgen_(&bSuperFox, cmnd, 120);
-  if(bSuperFox) {
-    QString t=QString::fromLatin1(cmnd).trimmed();
-    sfox_tx(t);
-  }
+  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox.dat")).toLocal8Bit()};
+  foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
+  if(bSuperFox) sfox_tx();
   m_tFoxTxSinceCQ++;
 
   for(QString hc: m_foxQSO.keys()) {               //Check for strikeout or timeout
@@ -10886,30 +10881,12 @@ void MainWindow::on_jt65Button_clicked()
   on_actionJT65_triggered();
 }
 
-void MainWindow::sfox_tx(QString t)
+void MainWindow::sfox_tx()
 {
 //  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
-  p2.start("sfox_tx", QStringList {t});
+  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox.dat")).toLocal8Bit()};
+  p2.start("sfox_tx", QStringList {fname});
   p2.waitForFinished();
-  QString t2=p2.readAllStandardOutput();
-  t2=t2.left(t2.length()-2);
-//  qDebug() << "aa" << QDateTime::currentMSecsSinceEpoch() - ms0 << t2;
-//  qDebug() << "aa" << t2;
-  p4.start("sfox_tx2",QStringList {""});
-  p4.waitForStarted();
-  QString t0;
-  for(int i=0; i<foxcom_.nslots; i++)  {
-    foxcom_.cmsg[i][39]=0;
-    t0=t0.asprintf("%s\n",foxcom_.cmsg[i]).trimmed();
-//    qDebug() << i << t0;
-    p4.write(t0.toLatin1());
-  }
-  p4.closeWriteChannel();
-  p4.waitForFinished();
-  QString t4;
-  t4=p4.readAllStandardOutput();
-//  for(int i=0; i<foxcom_.nslots; i++) {
-//    t4=p4.readLine();
-//    t4=t4.left(t2.length()-2);
-    qDebug() << "bb" << t4;
+  sfox_wave_(fname.constData(), (FCL)fname.size());
+//  qDebug() << "cc" << QDateTime::currentMSecsSinceEpoch() - ms0;
 }
