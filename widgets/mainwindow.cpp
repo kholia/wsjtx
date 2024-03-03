@@ -10894,5 +10894,22 @@ void MainWindow::sfox_tx(QString t)
   QString t2=p2.readAllStandardOutput();
   t2=t2.left(t2.length()-2);
 //  qDebug() << "aa" << QDateTime::currentMSecsSinceEpoch() - ms0 << t2;
-  qDebug() << "aa" << t2;
+//  qDebug() << "aa" << t2;
+  p4.start("sfox_tx2",QStringList {""});
+  p4.waitForStarted();
+  QString t0;
+  for(int i=0; i<foxcom_.nslots; i++)  {
+    foxcom_.cmsg[i][39]=0;
+    t0=t0.asprintf("%s\n",foxcom_.cmsg[i]).trimmed();
+//    qDebug() << i << t0;
+    p4.write(t0.toLatin1());
+  }
+  p4.closeWriteChannel();
+  p4.waitForFinished();
+  QString t4;
+  t4=p4.readAllStandardOutput();
+//  for(int i=0; i<foxcom_.nslots; i++) {
+//    t4=p4.readLine();
+//    t4=t4.left(t2.length()-2);
+    qDebug() << "bb" << t4;
 }

@@ -624,6 +624,7 @@ private:
   NonInheritingProcess p3;
 
   QProcess p2;
+  QProcess p4;
 
   WSPRNet *wsprNet;
 
