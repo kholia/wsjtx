@@ -21,13 +21,14 @@ subroutine sfox_wave(fname)
   baud=12000.d0/NSPS
   k=0
   do j=1,NN
-     f=f0 + baud*itone(j)
+     f=f0 + baud*mod(itone(j),128)
+     print*,'A',j,itone(j),f
      dphi=twopi*f*dt
-     do ii=1,NSPS
+     do ii=1,4*NSPS
         k=k+1
         phi=phi+dphi
         xphi=phi
-        wave(k)=wave(k)+sin(xphi)
+        wave(k)=sin(xphi)
      enddo
   enddo
 
