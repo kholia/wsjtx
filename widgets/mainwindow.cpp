@@ -176,8 +176,6 @@ extern "C" {
   void calibrate_(char const * data_dir, int* iz, double* a, double* b, double* rms,
                   double* sigmaa, double* sigmab, int* irc, fortran_charlen_t);
 
-  void foxgen_(bool* bSuperFox);
-
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
   void chk_samples_(int* m_ihsym,int* k, int* m_hsymStop);
@@ -2224,13 +2222,13 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
       case Qt::Key_Backspace:
         qDebug() << "Key Backspace";
         return;
-//#ifdef DEBUG_FOX
+#ifdef DEBUG_FOX
       case Qt::Key_X:
         if(e->modifiers() & Qt::AltModifier) {
             foxTest();
             return;
           }
-//#endif
+#endif
     }
     QMainWindow::keyPressEvent (e);
   }
@@ -4823,8 +4821,7 @@ void MainWindow::guiUpdate()
               if(m_config.split_mode()) foxcom_.nfreq = foxcom_.nfreq - m_XIT;  //Fox Tx freq
               QString foxCall=m_config.my_callsign() + "         ";
               ::memcpy(foxcom_.mycall, foxCall.toLatin1(), sizeof foxcom_.mycall); //Copy Fox callsign into foxcom_
-              bool bSuperFox=m_config.superFox();
-              foxgen_(&bSuperFox);
+              foxgen_();
             }
           }
         }
@@ -10298,8 +10295,7 @@ Transmit:
   if(m_config.split_mode()) foxcom_.nfreq = foxcom_.nfreq - m_XIT;  //Fox Tx freq
   QString foxCall=m_config.my_callsign() + "         ";
   ::memcpy(foxcom_.mycall, foxCall.toLatin1(),sizeof foxcom_.mycall);   //Copy Fox callsign into foxcom_
-  bool bSuperFox=m_config.superFox();
-  foxgen_(&bSuperFox);
+  foxgen_();
   m_tFoxTxSinceCQ++;
 
   for(QString hc: m_foxQSO.keys()) {               //Check for strikeout or timeout
