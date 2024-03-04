@@ -1251,7 +1251,7 @@ a few, particularly some Kenwood rigs, require it).</string>
         </spacer>
        </item>
        <item row="10" column="2">
-        <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <layout class="QHBoxLayout" name="testCATPTT_Layout">
          <item>
           <widget class="QPushButton" name="test_CAT_push_button">
            <property name="toolTip">

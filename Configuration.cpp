@@ -279,7 +279,6 @@ namespace
   constexpr quint32 qrg_version_100 {100};
 }
 
-
 //
 // Dialog to get a new Frequency item
 //
@@ -387,7 +386,6 @@ private:
   QDateTimeEdit *start_date_time_edit_;
 };
 
-
 //
 // Dialog to get a new Station item
 //
@@ -459,9 +457,6 @@ public:
     return flags;
   }
 };
-
-
-
 
 // Internal implementation of the Configuration class.
 class Configuration::impl final
@@ -765,7 +760,6 @@ private:
 };
 
 #include "Configuration.moc"
-
 
 // delegate to implementation class
 Configuration::Configuration (QNetworkAccessManager * network_manager, QDir const& temp_directory,

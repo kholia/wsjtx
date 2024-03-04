@@ -225,8 +225,7 @@ public:
   // This method queries if a CAT and PTT connection is operational.
   bool is_transceiver_online () const;
 
-  // Start the rig connection, safe and normal to call when rig is
-  // already open.
+  // Start the rig connection, safe and normal to call when rig is already open.
   bool transceiver_online ();
 
   // check if a real rig is configured
