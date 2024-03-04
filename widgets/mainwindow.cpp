@@ -4826,7 +4826,7 @@ void MainWindow::guiUpdate()
               QString foxCall=m_config.my_callsign() + "         ";
               ::memcpy(foxcom_.mycall, foxCall.toLatin1(), sizeof foxcom_.mycall); //Copy Fox callsign into foxcom_
               bool bSuperFox=m_config.superFox();
-              auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox.dat")).toLocal8Bit()};
+              auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
               foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
               if(bSuperFox) sfox_tx();
             }
@@ -10303,7 +10303,7 @@ Transmit:
   QString foxCall=m_config.my_callsign() + "         ";
   ::memcpy(foxcom_.mycall, foxCall.toLatin1(),sizeof foxcom_.mycall);   //Copy Fox callsign into foxcom_
   bool bSuperFox=m_config.superFox();
-  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox.dat")).toLocal8Bit()};
+  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
   if(bSuperFox) sfox_tx();
   m_tFoxTxSinceCQ++;
@@ -10884,7 +10884,7 @@ void MainWindow::on_jt65Button_clicked()
 void MainWindow::sfox_tx()
 {
 //  qint64 ms0 = QDateTime::currentMSecsSinceEpoch();
-  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox.dat")).toLocal8Bit()};
+  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   p2.start("sfox_tx", QStringList {fname});
   p2.waitForFinished();
   sfox_wave_(fname.constData(), (FCL)fname.size());

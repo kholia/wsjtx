@@ -1,5 +1,8 @@
 subroutine sfox_wave(fname)
-  
+
+! Called by WSJT-X when it's time for SuperFox to transmit.  Reads array
+! itone(1:151) from disk file 'sfox_2.dat' in the writable data directory.
+
   parameter (NWAVE=(160+2)*134400*4) !Max WSJT-X waveform (FST4-1800 at 48kHz)
   parameter (NN=151,NSPS=1024)
   character*(*) fname
@@ -8,8 +11,8 @@ subroutine sfox_wave(fname)
 
   common/foxcom/wave(NWAVE)
   
-  open(25,file=trim(fname),status='unknown')
-  read(25,'(20i4)') itone
+  open(25,file=trim(fname),status='unknown',err=900)
+  read(25,'(20i4)',err=900,end=900) itone
   close(25)
 
 ! Generate the SuperFox waveform.
@@ -22,7 +25,6 @@ subroutine sfox_wave(fname)
   k=0
   do j=1,NN
      f=f0 + baud*mod(itone(j),128)
-     print*,'A',j,itone(j),f
      dphi=twopi*f*dt
      do ii=1,4*NSPS
         k=k+1
@@ -31,6 +33,8 @@ subroutine sfox_wave(fname)
         wave(k)=sin(xphi)
      enddo
   enddo
+
+900 continue
 
   return  
 end subroutine sfox_wave

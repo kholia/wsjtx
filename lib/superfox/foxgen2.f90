@@ -4,7 +4,7 @@ subroutine foxgen2(nslots,cmsg,line)
 ! generate the waveform to be transmitted.  We need to parse the old-style
 ! Fox messages and extract the necessary pieces.
 
-  use packjt77
+!  use packjt77
   character*120 line
   character*40 cmsg(5)                !Old-style Fox messages are here
   character*37 msg
@@ -76,3 +76,53 @@ subroutine foxgen2(nslots,cmsg,line)
 
   return
 end subroutine foxgen2
+
+subroutine split77(msg,nwords,nw,w)
+
+! Convert msg to upper case; collapse multiple blanks; parse into words.
+
+  character*37 msg
+  character*13 w(19)
+  character*1 c,c0
+  character*6 bcall_1
+  logical ok1
+  integer nw(19)
+    
+  iz=len(trim(msg))
+  j=0
+  k=0
+  n=0
+  c0=' '
+  w='             '
+  do i=1,iz
+     if(ichar(msg(i:i)).eq.0) msg(i:i)=' '
+     c=msg(i:i)                                 !Single character
+     if(c.eq.' ' .and. c0.eq.' ') cycle         !Skip leading/repeated blanks
+     if(c.ne.' ' .and. c0.eq.' ') then
+        k=k+1                                   !New word
+        n=0
+     endif
+     j=j+1                                      !Index in msg
+     n=n+1                                      !Index in word
+     if(c.ge.'a' .and. c.le.'z') c=char(ichar(c)-32)  !Force upper case
+     msg(j:j)=c
+     if(n.le.13) w(k)(n:n)=c                    !Copy character c into word
+     c0=c
+  enddo
+  iz=j                                          !Message length
+  nwords=k                                      !Number of words in msg
+  if(nwords.le.0) go to 900
+  do i=1,nwords
+     nw(i)=len(trim(w(i)))
+  enddo
+  msg(iz+1:)='                                     '
+  if(nwords.lt.3) go to 900
+  call chkcall(w(3),bcall_1,ok1)
+  if(ok1 .and. w(1)(1:3).eq.'CQ ') then
+     w(1)='CQ_'//w(2)(1:10)             !Make "CQ " into "CQ_"
+     w(2:12)=w(3:13)                    !Move all remaining words down by one
+     nwords=nwords-1
+  endif
+
+900 return
+end subroutine split77

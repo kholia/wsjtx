@@ -15,31 +15,13 @@ CFLAGS= -O9 -Wall
 %.o: %.F90
 	${FC} ${FFLAGS} -c $<
 
-all:	rs_sf.a rstest
+all:	sfox_tx
 
-OBJS1 = rstest.o ran1.o rs_sf.a
-rstest: $(OBJS1)
-	$(FC) -o rstest $(OBJS1) rs_sf.a
+OBJS1 = sfox_tx.o foxgen2.o sfox_assemble.o
 
-OBJS2 = rs_125_49.o ran1.o get_crc14.o rs_sf.a
-rs_125_49: $(OBJS2)
-	$(FC) -o rs_125_49 $(OBJS2) rs_sf.a
-
-rs_sf.a: init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o 
-	ar -crs rs_sf.a init_rs_sf.o encode_rs_sf.o decode_rs_sf.o rs_sf.o
-
-init_rs_sf.o: init_rs.c
-	gcc -DBIGSYM=1 $(CFLAGS) -c -o $@ $^
-encode_rs_sf.o: encode_rs.c
-	gcc -DBIGSYM=1 $(CFLAGS) -c -o $@ $^
-decode_rs_sf.o: decode_rs.c
-	gcc -DBIGSYM=1 $(CFLAGS) -c -o $@ $^
-
-encode_rs_8.o: encode_rs.c
-	gcc -DFIXED=1 $(CFLAGS) -c -o $@ $^
-decode_rs_8.o: decode_rs.c
-	gcc -DFIXED=1 $(CFLAGS) -c -o $@ $^
+sfox_tx: $(OBJS1)
+	$(FC) -o sfox_tx $(OBJS1) libwsjt_fort.a
 
 .PHONY : clean
 clean:
-	-rm -f *.o *.a *.exe 
+	-rm -f *.o *.exe 
