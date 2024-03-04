@@ -1110,9 +1110,9 @@ void MainWindow::not_GA_warning_message ()
   MessageBox::critical_message (this,
                                 "This is a pre-release version of WSJT-X " + version (false) + " made\n"
                                 "available for testing purposes.  By design it will\n"
-                                "be nonfunctional after September 30, 2024.");
+                                "be nonfunctional after October 30, 2024.");
   auto now = QDateTime::currentDateTimeUtc ();
-  if (now >= QDateTime {{2024, 9, 30}, {23, 59, 59, 999}, Qt::UTC}) {
+  if (now >= QDateTime {{2024, 10, 30}, {23, 59, 59, 999}, Qt::UTC}) {
     Q_EMIT finished ();
   }
 }
