@@ -1,7 +1,6 @@
 program sfox_tx
 
-! Functioins of this program are required in order to create a SuperFox
-! transmission.
+! This program is required in order to create a SuperFox transmission.
 
 ! The present version goes through the following steps:
 !   1. Read old-style Fox messages from file 'sfox_1.dat' in the WSJT-X 
@@ -10,7 +9,7 @@ program sfox_tx
 !      calls, and the report or RR73 to be sent to each Hound.
 !   3. Assemble and encode a single SuperFox message to produce itone(1:151),
 !      the array of channel symbol values.
-!   4. Write the contents of itone to file 'sfox_2.dat'.
+!   4. Write the contents of array itone to file 'sfox_2.dat'.
 
   character*120 fname                          !Full path for sfox.dat
   character*120 line                           !List of SuperFox message pieces

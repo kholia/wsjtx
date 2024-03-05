@@ -10887,6 +10887,7 @@ void MainWindow::sfox_tx()
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   p2.start("sfox_tx", QStringList {fname});
   p2.waitForFinished();
-  sfox_wave_(fname.constData(), (FCL)fname.size());
+  auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
+  sfox_wave_(fname2.constData(), (FCL)fname2.size());
 //  qDebug() << "cc" << QDateTime::currentMSecsSinceEpoch() - ms0;
 }
