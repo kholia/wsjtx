@@ -342,7 +342,6 @@ set (wsjt_FSRCS
   lib/wavhdr.f90
   lib/qra/q65/q65_encoding_modules.f90
   lib/ft8/ft8_a7.f90
-  lib/superfox/sfox_mod.f90
 
   # remaining non-module sources
   lib/addit.f90
@@ -428,9 +427,6 @@ set (wsjt_FSRCS
   lib/fspread_lorentz.f90
   lib/ft8/foxfilt.f90
   lib/ft8/foxgen.f90
-  lib/superfox/foxgen2.f90
-  lib/superfox/sfox_assemble.f90
-  lib/superfox/sfox_wave.f90
   lib/ft8/foxgen_wrap.f90
   lib/freqcal.f90
   lib/ft8/ft8apset.f90
@@ -525,6 +521,7 @@ set (wsjt_FSRCS
   lib/sec0.f90
   lib/sec_midn.f90
   lib/setup65.f90
+  lib/sfox_wave.f90
   lib/sh65.f90
   lib/sh65snr.f90
   lib/slasubs.f
@@ -590,13 +587,6 @@ set (wsjt_FSRCS
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
   lib/77bit/hash22calc.f90
-  lib/superfox/sfox_gen.f90
-  lib/superfox/sfox_sync.f90
-  lib/superfox/sfox_demod.f90
-  lib/superfox/sym_prob.f90
-  lib/superfox/getpp3.f90
-  lib/superfox/ftrsd3.f90
-  lib/superfox/ran1.f90
   )
 
 # temporary workaround for a gfortran v7.3 ICE on Fedora 27 64-bit
@@ -637,10 +627,6 @@ set (wsjt_CSRCS
   lib/vit213.c
   lib/wisdom.c
   lib/wrapkarn.c
-  lib/superfox/init_rs.c
-  lib/superfox/encode_rs.c
-  lib/superfox/decode_rs.c
-  lib/superfox/rs_sf.c
   ${ldpc_CSRCS}
   ${qra_CSRCS}
   )
@@ -1168,12 +1154,6 @@ target_link_libraries (test_snr wsjt_fort)
 
 add_executable (q65sim lib/qra/q65/q65sim.f90)
 target_link_libraries (q65sim wsjt_fort wsjt_cxx)
-
-#add_executable (rstest lib/superfox/rstest.f90)
-#target_link_libraries (rstest wsjt_fort wsjt_cxx)
-
-add_executable (sfoxtest lib/superfox/sfoxtest.f90)
-target_link_libraries (sfoxtest wsjt_fort wsjt_cxx)
 
 add_executable (q65code lib/qra/q65/q65code.f90)
 target_link_libraries (q65code wsjt_fort wsjt_cxx)
