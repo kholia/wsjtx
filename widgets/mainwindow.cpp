@@ -7177,7 +7177,11 @@ void MainWindow::on_actionFT8_triggered()
     ui->TxFreqSpinBox->setValue(300);
   //                         01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011100001000000000010000000"));
-    ui->labDXped->setText(tr ("Fox"));
+    if(m_config.superFox()) {
+      ui->labDXped->setText(tr ("SuperFox"));
+    } else {
+      ui->labDXped->setText(tr ("Fox"));
+    }
     on_fox_log_action_triggered();
   }
   if(SpecOp::HOUND == m_specOp) {
@@ -7189,7 +7193,11 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbHoldTxFreq->setChecked(true);
     //                       01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011000001000000000011000000"));
-    ui->labDXped->setText(tr ("Hound"));
+    if(m_config.superFox()) {
+      ui->labDXped->setText(tr ("SuperHound"));
+    } else {
+      ui->labDXped->setText(tr ("Hound"));
+    }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
     ui->txrb4->setEnabled(false);
