@@ -3456,6 +3456,12 @@ void MainWindow::decode()                                       //decode()
   dec_data.params.nfb=m_wideGraph->Fmax();
   if(m_mode=="FT8" and SpecOp::HOUND == m_specOp and !ui->cbRxAll->isChecked()) dec_data.params.nfb=1000;
   if(m_mode=="FT8" and SpecOp::FOX == m_specOp ) dec_data.params.nfqso=200;
+  dec_data.params.b_even_seq=(dec_data.params.nutc%10)==0;
+  dec_data.params.b_superfox=(m_config.superFox() and (SpecOp::FOX == m_specOp or SpecOp::HOUND == m_specOp));
+  if(dec_data.params.b_superfox and dec_data.params.b_even_seq and m_ihsym<50) return;
+//  qDebug() << "aa" << dec_data.params.nutc << dec_data.params.b_even_seq
+//           << dec_data.params.b_superfox << m_ihsym;
+
   dec_data.params.ntol=ui->sbFtol->value ();
   if(!m_config.enable_VHF_features()) {
     dec_data.params.ntol=20;
@@ -3515,7 +3521,7 @@ void MainWindow::decode()                                       //decode()
   if(m_config.single_decode()) dec_data.params.nexp_decode += 32;
   if(m_config.enable_VHF_features()) dec_data.params.nexp_decode += 64;
   if(m_mode.startsWith("FST4")) dec_data.params.nexp_decode += 256*(ui->sbNB->value()+3);
-  dec_data.params.max_drift=ui->sbMaxDrift->value();
+  dec_data.params.max_drift=ui->sbMaxDrift->value();  
 
   ::memcpy(dec_data.params.datetime, m_dateTime.toLatin1()+"    ", sizeof dec_data.params.datetime);
   ::memcpy(dec_data.params.mycall, (m_config.my_callsign()+"            ").toLatin1(), sizeof dec_data.params.mycall);
@@ -7178,7 +7184,7 @@ void MainWindow::on_actionFT8_triggered()
   //                         01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011100001000000000010000000"));
     if(m_config.superFox()) {
-      ui->labDXped->setText(tr ("SuperFox"));
+      ui->labDXped->setText(tr ("Super Fox"));
     } else {
       ui->labDXped->setText(tr ("Fox"));
     }
@@ -7194,7 +7200,7 @@ void MainWindow::on_actionFT8_triggered()
     //                       01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011000001000000000011000000"));
     if(m_config.superFox()) {
-      ui->labDXped->setText(tr ("SuperHound"));
+      ui->labDXped->setText(tr ("Super Hound"));
     } else {
       ui->labDXped->setText(tr ("Hound"));
     }

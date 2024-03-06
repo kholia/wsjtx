@@ -124,8 +124,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
 
   if(params%nmode.eq.8) then
 ! We're in FT8 mode
-     
-     if(ncontest.eq.6) then
+     if(ncontest.eq.6) then            !Fox=6, Hound=7
 ! Fox mode: initialize and open houndcallers.txt     
         inquire(file=trim(temp_dir)//'/houndcallers.txt',exist=ex)
         if(.not.ex) then
@@ -140,19 +139,25 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
         open(19,file=trim(temp_dir)//'/houndcallers.txt',status='unknown')
      endif
 
-     call timer('decft8  ',0)
-     newdat=params%newdat
-     if(params%emedelay.ne.0.0) then
-        id2(1:156000)=id2(24001:180000)  ! Drop the first 2 seconds of data
-        id2(156001:180000)=0
+     if(ncontest.eq.7 .and. params%b_superfox .and. params%b_even_seq) then
+! Call the superFox decoder
+        print*,'Calling SuperFox decoder',params%nzhsym,params%b_superfox, &
+             params%b_even_seq
+     else
+        call timer('decft8  ',0)
+        newdat=params%newdat
+        if(params%emedelay.ne.0.0) then
+           id2(1:156000)=id2(24001:180000)  ! Drop the first 2 seconds of data
+           id2(156001:180000)=0
+        endif
+        call my_ft8%decode(ft8_decoded,id2,params%nQSOProgress,params%nfqso, &
+             params%nftx,newdat,params%nutc,params%nfa,params%nfb,           &
+             params%nzhsym,params%ndepth,params%emedelay,ncontest,           &
+             logical(params%nagain),logical(params%lft8apon),                &
+             logical(params%lapcqonly),params%napwid,mycall,hiscall,         &
+             params%ndiskdat)
+        call timer('decft8  ',1)
      endif
-     call my_ft8%decode(ft8_decoded,id2,params%nQSOProgress,params%nfqso,    &
-          params%nftx,newdat,params%nutc,params%nfa,params%nfb,              &
-          params%nzhsym,params%ndepth,params%emedelay,ncontest,              &
-          logical(params%nagain),logical(params%lft8apon),                   &
-          logical(params%lapcqonly),params%napwid,mycall,hiscall,            &
-          params%ndiskdat)
-     call timer('decft8  ',1)
      if(nfox.gt.0) then
         n30min=minval(n30fox(1:nfox))
         n30max=maxval(n30fox(1:nfox))

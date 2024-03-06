@@ -64,6 +64,8 @@ typedef struct dec_data {
     char mygrid[6];
     char hiscall[12];
     char hisgrid[6];
+    bool b_even_seq;
+    bool b_superfox;
   } params;
 } dec_data_t;
 
