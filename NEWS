@@ -53,8 +53,6 @@ WSJT-X:
    our recommendations) messages with short (10-bit) callsign hashes
    are used in standard FT4/FT8 sub-bands.
 
- - Enhancements useful for Fox operators.
-
                       Release: WSJT-X 2.7.0-rc3
                            January 1, 2024
                       -------------------------
