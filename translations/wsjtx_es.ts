@@ -2490,7 +2490,7 @@ Error(%2): %3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3416"/>
         <source>Quick-Start Guide to Q65</source>
-        <translation>Guía de inicio rápido de Q65</translation>
+        <translation>Guía de inicio rápido de Q65 (inglés)</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3424"/>
@@ -2500,7 +2500,7 @@ Error(%2): %3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3429"/>
         <source>Quick-Start Guide to WSJT-X 2.5.0 and MAP65 3.0</source>
-        <translation>Guía de inicio rápido para WSJT-X 2.5.0 y MAP65 3.0</translation>
+        <translation>Guía de inicio rápido para WSJT-X 2.5.0 y MAP65 3.0 (inglés)</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1588"/>
@@ -3401,7 +3401,7 @@ predefinida. La lista se puede modificar en &quot;Ajustes&quot; (F2).</translati
     <message>
         <location filename="../widgets/mainwindow.ui" line="3358"/>
         <source>Quick-Start Guide to FST4 and FST4W</source>
-        <translation>Guía de inicio rápido a FST4 y FST4W</translation>
+        <translation>Guía de inicio rápido a FST4 y FST4W (inglés)</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3384"/>
@@ -5358,7 +5358,7 @@ Error(%2): %3</translation>
     <message>
         <location filename="../SampleDownloader.cpp" line="112"/>
         <source>Base URL for samples:</source>
-        <translation>Enlace para muestras:</translation>
+        <translation>Enlace de las muestras:</translation>
     </message>
     <message>
         <location filename="../SampleDownloader.cpp" line="113"/>
@@ -7563,7 +7563,7 @@ Clic derecho para insertar y eliminar opciones.</translation>
         <location filename="../Configuration.ui" line="2970"/>
         <source>Waterfall spectra</source>
         <translatorcomment>Espectros de la cascada</translatorcomment>
-        <translation>Espectro de la cascada (waterfall)</translation>
+        <translation>Cascada (Waterfall)</translation>
     </message>
     <message>
         <location filename="../Configuration.ui" line="2976"/>
