@@ -176,6 +176,8 @@ extern "C" {
   void calibrate_(char const * data_dir, int* iz, double* a, double* b, double* rms,
                   double* sigmaa, double* sigmab, int* irc, fortran_charlen_t);
 
+  void foxgen_();
+
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
   void chk_samples_(int* m_ihsym,int* k, int* m_hsymStop);
