@@ -318,7 +318,7 @@
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="150"/>
         <source>New Call</source>
-        <translation>Nou Indicatiu</translation>
+        <translation>Indicatiu nou</translation>
     </message>
     <message>
         <location filename="../widgets/colorhighlighting.ui" line="157"/>
@@ -2238,12 +2238,12 @@ Error(%2): %3</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1683"/>
         <source>Maximum drift rate in units of symbol rate per transmission.</source>
-        <translation type="unfinished"></translation>
+        <translation>Taxa de deriva màxima en unitats de taxa de símbols per transmissió.</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="1686"/>
         <source>Max Drift  </source>
-        <translation type="unfinished"></translation>
+        <translation>Deriva màxima  </translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.ui" line="2604"/>
@@ -3658,7 +3658,7 @@ La llista es pot mantenir a la configuració (F2).</translation>
     <message>
         <location filename="../widgets/mainwindow.ui" line="3429"/>
         <source>Quick-Start Guide to WSJT-X 2.5.0 and MAP65 3.0</source>
-        <translation type="unfinished"></translation>
+        <translation>Guia d&apos;inici ràpid de WSJT-X 2.5.0 i MAP65 3.0</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="258"/>
@@ -3685,7 +3685,7 @@ La llista es pot mantenir a la configuració (F2).</translation>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="523"/>
         <source>Scanned ADIF log, %1 worked-before records created. CTY: %2</source>
-        <translation>Log ADIF escanejat, %1 funcionava abans de la creació de registres</translation>
+        <translation>Log ADIF escanejat, %1 funcionava abans de la creació de registres. CTY: %2</translation>
     </message>
     <message>
         <location filename="../widgets/mainwindow.cpp" line="631"/>
