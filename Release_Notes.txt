@@ -55,6 +55,7 @@ WSJT-X:
 
  - Enhancements useful for Fox operators.
 
+
                       Release: WSJT-X 2.7.0-rc3
                            January 1, 2024
                       -------------------------
