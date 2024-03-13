@@ -521,7 +521,6 @@ set (wsjt_FSRCS
   lib/sec0.f90
   lib/sec_midn.f90
   lib/setup65.f90
-  lib/sfox_wave.f90
   lib/sh65.f90
   lib/sh65snr.f90
   lib/slasubs.f
@@ -587,6 +586,7 @@ set (wsjt_FSRCS
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
   lib/77bit/hash22calc.f90
+  lib/superfox/sfox_wave.f90
   )
 
 # temporary workaround for a gfortran v7.3 ICE on Fedora 27 64-bit
