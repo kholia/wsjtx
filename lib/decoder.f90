@@ -139,14 +139,12 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
         open(19,file=trim(temp_dir)//'/houndcallers.txt',status='unknown')
      endif
 
-     if(((ncontest.eq.7 .and. params%b_superfox .and. params%b_even_seq) &
-          .or. params%ndiskdat) .and. params%nzhsym.ge.50) then
+     if(ncontest.eq.7 .and. params%b_superfox .and. params%b_even_seq) then
+        if(params%nzhsym.lt.50) go to 800
 ! Call the superFox decoder
         open(47,file='fort.47',status='unknown',access='stream')
         write(47) params%nutc/15,id2(1:20),id2(1:180000)
         close(47)
-!        print*,'Calling SuperFox decoder',params%nzhsym,params%b_superfox, &
-!             params%b_even_seq,params%nutc
         call execute_command_line('.\sf fort.47')
      else
         call timer('decft8  ',0)
