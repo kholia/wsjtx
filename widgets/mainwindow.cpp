@@ -4833,6 +4833,7 @@ void MainWindow::guiUpdate()
               ::memcpy(foxcom_.mycall, foxCall.toLatin1(), sizeof foxcom_.mycall); //Copy Fox callsign into foxcom_
               bool bSuperFox=m_config.superFox();
               auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+              foxcom_.bMoreCQs=ui->cbMoreCQs->isChecked();
               foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
               if(bSuperFox) sfox_tx();
             }
