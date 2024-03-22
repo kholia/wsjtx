@@ -107,7 +107,7 @@ subroutine ftrsd3(s3,rxdat,rxprob,rxdat2,rxprob2,ntrials0,correct,param,ntry)
      ratio=float(rxprob2(j))/(float(rxprob(j))+0.01)
      ii=7.999*ratio
      jj=int((7.999/NN)*(NN-1-i))
-     thresh0(i)=0.90*perr(jj,ii)
+     thresh0(i)=1.15*perr(jj,ii)
   enddo
   if(nsum.le.0) return
 
