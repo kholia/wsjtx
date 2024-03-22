@@ -9872,6 +9872,14 @@ void MainWindow::on_pbFoxReset_clicked()
   }
 }
 
+void MainWindow::on_pbFreeText_clicked()
+{
+  bool ok;
+  m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
+         tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok);
+  if(ok) m_freeTextMsg0=m_freeTextMsg;
+}
+
 void MainWindow::on_comboBoxHoundSort_activated(int index)
 {
   if(index!=-99) houndCallers();            //Silence compiler warning
