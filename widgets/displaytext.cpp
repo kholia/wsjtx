@@ -234,6 +234,7 @@ void DisplayText::extend_vertical_scrollbar (int min, int max)
         }
       if (max && max != modified_vertical_scrollbar_max_)
         {
+          setViewportMargins (0,4,0,0);  // ensure first line is readable
           auto vp_margins = viewportMargins ();
           // add enough to vertical scroll bar range to allow last
           // decode to just scroll of the top of the view port
