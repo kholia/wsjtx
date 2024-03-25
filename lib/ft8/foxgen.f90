@@ -17,9 +17,10 @@ subroutine foxgen(bSuperFox,fname)
   parameter (NN=79,ND=58,NSPS=4*1920)
   parameter (NWAVE=(160+2)*134400*4) !the biggest waveform we generate (FST4-1800 at 48kHz)
   parameter (NFFT=614400,NH=NFFT/2)
-  logical*1 bSuperFox,bMoreCQs
+  logical*1 bSuperFox,bMoreCQs,bSendMsg
   character*(*) fname
   character*40 cmsg
+  character*26 textMsg
   character*37 msg,msgsent
   integer itone(79)
   integer*1 msgbits(77),msgbits2
@@ -27,14 +28,23 @@ subroutine foxgen(bSuperFox,fname)
   real x(NFFT)
   real*8 dt,twopi,f0,fstep,dfreq,phi,dphi
   complex cx(0:NH)
-  common/foxcom/wave(NWAVE),nslots,nfreq,i3bit(5),cmsg(5),mycall(12),bMoreCQs
+  common/foxcom/wave(NWAVE),nslots,nfreq,i3bit(5),cmsg(5),mycall(12),  &
+       textMsg,bMoreCQs,bSendMsg
   common/foxcom2/itone2(NN),msgbits2(77)
   equivalence (x,cx),(y,cy)
 
   if(bSuperFox) then
-     if(bMoreCQs) cmsg(1)(40:40)='1'
+     if(bMoreCQs) cmsg(1)(40:40)='1'               !Set flag to include a CQ
+!     print*,'A',bMoreCQs,bSendMsg,nslots,textMsg
+     if(bSendMsg) then
+        cmsg(1)(39:39)='1'                         !Set flag for text message
+        n=min(nslots+1,3)
+        cmsg(n)=textMsg
+!        do i=1,n
+!           print*,'CC',i,cmsg(i)
+!        enddo
+     endif
      open(25,file=fname,status='unknown')
-     rewind(25)
      write(25,'(a40)') cmsg(1:nslots)
      close(25)
      return

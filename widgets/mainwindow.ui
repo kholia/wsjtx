@@ -2385,9 +2385,9 @@ Double-click to reset to the standard 73 message</string>
                        </widget>
                       </item>
                       <item row="9" column="2">
-                       <widget class="QCheckBox" name="cbSend_it">
+                       <widget class="QCheckBox" name="cbSendMsg">
                         <property name="text">
-                         <string>Send it</string>
+                         <string>Send msg</string>
                         </property>
                        </widget>
                       </item>

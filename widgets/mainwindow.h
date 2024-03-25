@@ -283,6 +283,7 @@ private slots:
   void on_actionAuto_Clear_Avg_toggled (bool);
   void VHF_features_enabled(bool b);
   void on_sbSubmode_valueChanged(int n);
+  void on_cbSendMsg_toggled(bool b);
   void on_cbShMsgs_toggled(bool b);
   void on_cbSWL_toggled(bool b);
   void on_cbTx6_toggled(bool b);
@@ -496,6 +497,7 @@ private:
   qint32  m_nHoundsCalling=0;
   qint32  m_Nlist=12;
   qint32  m_Nslots=5;
+  qint32  m_Nslots0=0;
   qint32  m_nFoxMsgTimes[5]={0,0,0,0,0};
   qint32  m_tAutoOn;
   qint32  m_tFoxTx=0;
