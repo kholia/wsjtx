@@ -34,20 +34,18 @@ subroutine foxgen(bSuperFox,fname)
   equivalence (x,cx),(y,cy)
 
   if(bSuperFox) then
+     n=nslots
      if(bMoreCQs) cmsg(1)(40:40)='1'               !Set flag to include a CQ
-!     print*,'A',bMoreCQs,bSendMsg,nslots,textMsg
      if(bSendMsg) then
-        cmsg(1)(39:39)='1'                         !Set flag for text message
         n=min(nslots+1,3)
         cmsg(n)=textMsg
-!        do i=1,n
-!           print*,'CC',i,cmsg(i)
-!        enddo
+        cmsg(n)(39:39)='1'                         !Set flag for text message
+        nslots=n
      endif
      open(25,file=fname,status='unknown')
-     write(25,'(a40)') cmsg(1:nslots)
+     write(25,'(a40)') cmsg(1:n)
      close(25)
-     return
+     go to 999
   endif
 
   fstep=60.d0
@@ -87,7 +85,7 @@ subroutine foxgen(bSuperFox,fname)
   peak3=maxval(abs(wave))
   wave=wave/peak3
   
-  return
+999 return
 end subroutine foxgen
 
 ! include 'plotspec.f90'

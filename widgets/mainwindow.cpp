@@ -9884,7 +9884,10 @@ void MainWindow::on_pbFreeText_clicked()
   bool ok;
   m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
          tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok);
-  if(ok) m_freeTextMsg0=m_freeTextMsg;
+  if(ok) {
+    m_freeTextMsg=m_freeTextMsg.toUpper();
+    m_freeTextMsg0=m_freeTextMsg;
+  }
 }
 
 void MainWindow::on_comboBoxHoundSort_activated(int index)
