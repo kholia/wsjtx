@@ -4677,8 +4677,12 @@ void MainWindow::guiUpdate()
       setRig ();
       if(m_mode=="FT8") {
         if (SpecOp::FOX == m_specOp) {
-          if (ui->TxFreqSpinBox->value() > 900) {
-            ui->TxFreqSpinBox->setValue(300);
+          if(m_config.superFox()) {
+            ui->TxFreqSpinBox->setValue(750);            //SuperFox transmits at 750 Hz
+          } else {
+            if (ui->TxFreqSpinBox->value() > 900) {
+              ui->TxFreqSpinBox->setValue(300);
+            }
           }
         }
         else if (SpecOp::HOUND == m_specOp) {
@@ -7179,7 +7183,11 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbHoldTxFreq->setChecked(true);
     ui->cbAutoSeq->setEnabled(false);
     ui->tabWidget->setCurrentIndex(1);
-    ui->TxFreqSpinBox->setValue(300);
+    if(m_config.superFox()) {
+      ui->TxFreqSpinBox->setValue(750);            //SuperFox transmits at 750 Hz
+    } else {
+      ui->TxFreqSpinBox->setValue(300);
+    }
   //                         01234567890123456789012345678901234567
     displayWidgets(nWidgets("11101000010011100001000000000010000000"));
     if(m_config.superFox()) {
