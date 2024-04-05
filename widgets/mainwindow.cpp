@@ -4696,14 +4696,16 @@ void MainWindow::guiUpdate()
 #endif
             }
           }
-          if (m_nSentFoxRrpt==2 and m_ntx==3) {
-            // move off the original Fox frequency on subsequent tries of Tx3
-            int nfreq=m_nFoxFreq + 300;
-            if(m_nFoxFreq>600) nfreq=m_nFoxFreq - 300;  //keep nfreq below 900 Hz
-            ui->TxFreqSpinBox->setValue(nfreq);
-          }
-          if (m_nSentFoxRrpt == 1) {
-            ++m_nSentFoxRrpt;
+          if (!m_config.superFox()) {
+            if (m_nSentFoxRrpt==2 and m_ntx==3) {
+              // move off the original Fox frequency on subsequent tries of Tx3
+              int nfreq=m_nFoxFreq + 300;
+              if(m_nFoxFreq>600) nfreq=m_nFoxFreq - 300;  //keep nfreq below 900 Hz
+              ui->TxFreqSpinBox->setValue(nfreq);
+            }
+            if (m_nSentFoxRrpt == 1) {
+              ++m_nSentFoxRrpt;
+            }
           }
         }
       }
@@ -9835,7 +9837,7 @@ void MainWindow::hound_reply ()
     m_nSentFoxRrpt = 1;
     ui->rptSpinBox->setValue(m_rptSent.toInt());
     if (!m_auto) auto_tx_mode(true);
-    ui->TxFreqSpinBox->setValue (m_nFoxFreq);
+    if (!m_config.superFox()) ui->TxFreqSpinBox->setValue (m_nFoxFreq);
   }
 }
 
