@@ -4280,7 +4280,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       }
       if(m_mode=="Q65" and !bAvgMsg and !decodedtext.string().contains(m_baseCall)) bDisplayRight=false;
       if((m_mode=="JT4" or m_mode=="Q65" or m_mode=="JT65") and decodedtext.string().contains(m_baseCall) && ui->actionInclude_averaging->isVisible() && !ui->actionInclude_averaging->isChecked()) bDisplayRight=true;
-      if(m_mode=="FT8" and SpecOp::HOUND==m_specOp && decodedtext0.string().replace("<","").replace(">","").contains(" " + m_baseCall + " ")) bDisplayRight=true;
+      if((m_mode=="FT8" or m_mode=="FT4") and SpecOp::FOX!=m_specOp && decodedtext0.string().replace("<","").replace(">","").contains(m_baseCall + " " + m_hisCall)) bDisplayRight=true;  // really all messages for us
 
       if (bDisplayRight) {
         // This msg is within 10 hertz of our tuned frequency, or a JT4 or JT65 avg,
@@ -4330,7 +4330,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_nFoxFreq=decodedtext.string().mid(16,4).toInt();
                   hound_reply ();
                 } else {
-                  if (text.contains(m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
+                  if (text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
                 }
               }
             }
