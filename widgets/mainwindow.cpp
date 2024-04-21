@@ -6684,9 +6684,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
       m_config.setSpecial_Q65_Pileup();
       m_specOp=m_config.special_op_id();
       on_actionQ65_triggered();
+      ui->q65Button->clearFocus();
   }
   if(ui->jt65Button->hasFocus() && (event->button() & Qt::RightButton)) {    // switch to JT9 mode
       on_actionJT9_triggered();
+      ui->jt65Button->clearFocus();
   }
 }
 
