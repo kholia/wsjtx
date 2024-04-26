@@ -1,7 +1,7 @@
 subroutine decode0(dd,ss,savg)
 
   use timer_module, only: timer
-  parameter (NSMAX=60*96000)
+  parameter (NSMAX=60*96000,NFFT=32768)
 
   real*4 dd(2,NSMAX),ss(400,NFFT),savg(NFFT)
   real*8 fcenter
