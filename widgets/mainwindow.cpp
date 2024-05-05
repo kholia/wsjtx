@@ -5134,6 +5134,11 @@ void MainWindow::guiUpdate()
 //Once per second (onesec)
   if(nsec != m_sec0) {
 //    qDebug() << "AAA" << nsec%60 << ipc_qmap[5];
+
+//    qint64 n64 = QDateTime::currentSecsSinceEpoch();
+//    n64=n64/30;
+//    n64=n64*30;
+//    qDebug() << "bb" << m_config.FoxKey() << nsec%60 << dec_data.params.nutc << n64 << n64%60;
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
     if( SpecOp::HOUND == m_specOp ) {
@@ -10933,7 +10938,10 @@ void MainWindow::on_jt65Button_clicked()
 void MainWindow::sfox_tx()
 {
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
-  p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", QStringList {fname});
+  QStringList args{fname};
+  args.append(m_config.FoxKey());
+  qDebug() << "aa" << args;
+  p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
   sfox_wave_(fname2.constData(), (FCL)fname2.size());
