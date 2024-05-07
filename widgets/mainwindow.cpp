@@ -3132,6 +3132,7 @@ void MainWindow::read_wav_file (QString const& fname)
           dec_data.params.newdat = 0;
         }
 
+        dec_data.params.yymmdd=basename.left(6).toInt();
         if(basename.mid(0,10)=="000000_000" && m_mode == "FT8") {
           int isec=15*basename.mid(10,3).toInt();
           int ih=isec/3600;
@@ -3406,8 +3407,10 @@ void MainWindow::decode()                                       //decode()
     m_dateTimeLastTX = now.addSecs(-900);
     dec_data.params.lapcqonly=true;
   }
-  if( m_diskData ) {
+  if(m_diskData) {
     dec_data.params.lapcqonly=false;
+  } else {
+    dec_data.params.yymmdd=-1;
   }
   if(!m_dataAvailable or m_TRperiod==0.0) return;
   ui->DecodeButton->setChecked (true);
@@ -10940,7 +10943,7 @@ void MainWindow::sfox_tx()
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
   args.append(m_config.FoxKey());
-  qDebug() << "aa" << args;
+//  qDebug() << "aa" << args;
   p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
