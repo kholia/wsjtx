@@ -147,7 +147,11 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
              access='stream')
         write(47) params%yymmdd,params%nutc,id2(1:20),id2(1:180000)
         close(47)
-        cmnd=trim(exe_dir)//'/sfrx '//trim(temp_dir)//'/fort.47'
+        cmnd=trim(exe_dir)//'/sfrx '//'"'//trim(temp_dir)//'/fort.47"'
+        i1=index(cmnd,'fort.47')
+        do i=1,i1
+           if(cmnd(i:i).eq.char(92)) cmnd(i:i)='/'
+        enddo
         call execute_command_line(cmnd,exitstat=ierr)
         if(ierr.ne.0) print*,trim(cmnd),' failed'
      else
