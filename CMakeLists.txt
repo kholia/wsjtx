@@ -1673,6 +1673,7 @@ if (UNIX)
   lib/superfox/linux/sftx
   lib/superfox/linux/foxchk
   DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PERMISSIONS WORLD_READ WORLD_WRITE WORLD_EXECUTE
   #COMPONENT runtime
   )
 endif (UNIX)
@@ -1683,6 +1684,7 @@ if (APPLE)
   lib/superfox/mac/sftx
   lib/superfox/mac/foxchk
   DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PERMISSIONS WORLD_READ WORLD_WRITE WORLD_EXECUTE
   #COMPONENT runtime
   )
 endif (APPLE)
