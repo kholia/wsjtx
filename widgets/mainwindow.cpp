@@ -4086,7 +4086,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
       write_all("Rx",line_read.trimmed());
       int ntime=6;
       if(m_TRperiod>=60) ntime=4;
-      if (line_read.left(ntime) != m_tBlankLine) {
+      if (line_read.left(ntime) != m_tBlankLine && QString::fromUtf8(line_read.constData()).left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {
           ui->decodedTextBrowser->new_period ();
           if (m_config.insert_blank ()
               && SpecOp::FOX != m_specOp) {
