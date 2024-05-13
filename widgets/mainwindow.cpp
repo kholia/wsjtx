@@ -215,6 +215,7 @@ QVector<QColor> g_ColorTbl;
 
 using SpecOp = Configuration::SpecialOperatingActivity;
 
+bool verified = false;
 bool blocked = false;
 bool m_displayBand = false;
 bool no_a7_decodes = false;
@@ -1164,6 +1165,9 @@ void MainWindow::on_the_minute ()
     tx_watchdog (false);
   }
   update_foxLogWindow_rate(); // update the rate on the window
+  if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+    ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+  verified = false;
 }
 
 //--------------------------------------------------- MainWindow destructor
@@ -2136,6 +2140,8 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
           "Fox-and-Hound operation is available only in FT8 mode.\nGo back and change your selection.");
     }
     ui->labDXped->setVisible(SpecOp::NONE != m_specOp);
+    if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+      ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
     set_mode(m_mode);
     configActiveStations();
   }
@@ -4137,6 +4143,14 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
             ARRL_Digi_Update(decodedtext1);
           }
+          if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(4,12).contains(" verified")) {
+            verified = true;
+            ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
+          } else {
+            verified = false;
+          }
+          if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+            ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
           ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
                                                       m_logBook, m_currentBandPeriod, m_config.ppfx (),
                                                       ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
@@ -7266,6 +7280,7 @@ void MainWindow::on_actionFT8_triggered()
        "the *Settings | Radio* tab.)", errorMsg);
     m_bWarnedSplit=true;
   }
+  if (ui->labDXped->isVisible()) ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   statusChanged();
   configActiveStations();
 }
