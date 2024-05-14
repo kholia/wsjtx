@@ -10678,7 +10678,9 @@ void MainWindow::write_all(QString txRx, QString message)
     } else {
       mode_string=m_mode.leftJustified(6,' ');
     }
-    if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox()) mode_string="FT8_SF";
+
+    if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox() and
+       m_specOp==SpecOp::FOX) mode_string="FT8_SF";
 
     msg=msg.mid(0,15) + msg.mid(18,-1);
 
