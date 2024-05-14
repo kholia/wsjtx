@@ -10510,8 +10510,10 @@ void MainWindow::foxGenWaveform(int i,QString fm)
 
   QString txModeArg;
   txModeArg = txModeArg.asprintf("FT8fox %d",i+1);
+  int nfreq=ui->TxFreqSpinBox->value()+60*i;
+  if(m_config.superFox()) nfreq=750;
   ui->decodedTextBrowser2->displayTransmittedText(fm.trimmed(), txModeArg,
-        ui->TxFreqSpinBox->value()+60*i,m_bFastMode,m_TRperiod);
+        nfreq,m_bFastMode,m_TRperiod);
   foxcom_.i3bit[i]=0;
   if(fm.indexOf("<")>0) foxcom_.i3bit[i]=1;
   strncpy(&foxcom_.cmsg[i][0],fm.toLatin1(),40);   //Copy this message into cmsg[i]
@@ -10676,6 +10678,7 @@ void MainWindow::write_all(QString txRx, QString message)
     } else {
       mode_string=m_mode.leftJustified(6,' ');
     }
+    if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox()) mode_string="FT8_SF";
 
     msg=msg.mid(0,15) + msg.mid(18,-1);
 
