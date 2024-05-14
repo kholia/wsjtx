@@ -10373,7 +10373,7 @@ Transmit:
   bool bSuperFox=m_config.superFox();
   foxcom_.bMoreCQs=ui->cbMoreCQs->isChecked();
   foxcom_.bSendMsg=ui->cbSendMsg->isChecked();
-//  qDebug() << "bb" << foxcom_.bMoreCQs << foxcom_.bSendMsg << foxcom_.nslots
+//  qDebug() << "cc" << foxcom_.bMoreCQs << foxcom_.bSendMsg << foxcom_.nslots
 //           << m_Nslots << m_freeTextMsg0;
   ::memcpy(foxcom_.textMsg, m_freeTextMsg0.leftJustified(26,' ').toLatin1(),26);
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
@@ -10958,7 +10958,8 @@ void MainWindow::sfox_tx()
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
   args.append(m_config.FoxKey());
-//  qDebug() << "aa" << args;
+//  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
+//  qDebug() << "bb" << args;
   p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
