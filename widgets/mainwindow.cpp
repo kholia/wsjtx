@@ -9487,7 +9487,7 @@ void MainWindow::setRig (Frequency f)
   if(m_transmitting && !m_config.tx_QSY_allowed ()) return;
   if ((m_monitoring || m_transmitting) && m_config.transceiver_online ())
     {
-      if (m_transmitting && m_config.split_mode ())
+      if (m_transmitting && m_config.split_mode () && !(m_config.superFox() && m_specOp==SpecOp::FOX))
         {
           m_config.transceiver_tx_frequency (m_freqTxNominal + m_astroCorrection.tx);
         }
