@@ -7272,7 +7272,7 @@ void MainWindow::on_actionFT8_triggered()
     if(m_specOp!=SpecOp::Q65_PILEUP) on_contest_log_action_triggered();
   }
 
-  if((SpecOp::FOX==m_specOp or SpecOp::HOUND==m_specOp) and !m_config.split_mode() and !m_bWarnedSplit) {
+  if((SpecOp::FOX==m_specOp or SpecOp::HOUND==m_specOp) and !m_config.superFox() and !m_config.split_mode() and !m_bWarnedSplit) {
     QString errorMsg;
     MessageBox::critical_message (this,
        "Operation in FT8 DXpedition mode normally requires\n"
