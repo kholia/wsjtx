@@ -189,6 +189,7 @@ public:
   void setSpecial_Hound();
   void setSpecial_Fox();
   void setSpecial_None();
+  void toggle_SF();
   bool highlight_DXcall () const;
   bool highlight_DXgrid () const;
   bool Individual_Contest_Name() const;

@@ -6730,6 +6730,14 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
       on_actionJT9_triggered();
       ui->jt65Button->clearFocus();
   }
+  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {
+      keep_frequency = true;
+      m_config.toggle_SF();
+      QTimer::singleShot (250, [=] {
+        keep_frequency = false;
+      });
+      on_actionFT8_triggered();
+  }
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
@@ -7265,7 +7273,7 @@ void MainWindow::on_actionFT8_triggered()
     ui->txb5->setEnabled(false);
     ui->txb6->setEnabled(false);
   } else {
-    if (!(keep_frequency)) switch_mode (Modes::FT8);
+    switch_mode (Modes::FT8);
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
@@ -7768,9 +7776,11 @@ void MainWindow::switch_mode (Mode mode)
   m_fastGraph->setMode(m_mode);
   m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
   auto const& row = m_config.frequencies ()->best_working_frequency (m_freqNominal);
-  ui->bandComboBox->setCurrentIndex (row);
-  if (row >= 0) {
-    on_bandComboBox_activated (row);
+  if (!keep_frequency) {
+      ui->bandComboBox->setCurrentIndex (row);
+    if (row >= 0 ) {
+      on_bandComboBox_activated (row);
+    }
   }
   ui->rptSpinBox->setSingleStep(1);
   ui->rptSpinBox->setMinimum(-50);
