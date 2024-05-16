@@ -8243,7 +8243,7 @@ void MainWindow::setXIT(int n, Frequency base)
     }
   if (!base) base = m_freqNominal;
   m_XIT = 0;
-  if (!m_bSimplex) {
+  if (!(m_bSimplex || (SpecOp::FOX==m_specOp && m_config.superFox()))) {
     // m_bSimplex is false, so we can use split mode if requested
     if (m_config.split_mode () && (!m_config.enable_VHF_features () ||
         m_mode=="FT4" || m_mode == "FT8" || m_mode=="FST4")) {
@@ -10514,6 +10514,9 @@ void MainWindow::foxGenWaveform(int i,QString fm)
   int nfreq=ui->TxFreqSpinBox->value()+60*i;
   if(m_config.superFox()) nfreq=750;
   ui->decodedTextBrowser2->displayTransmittedText(fm.trimmed(), txModeArg,
+        nfreq,m_bFastMode,m_TRperiod);
+  if (SpecOp::FOX==m_specOp && m_config.superFox() && ui->cbSendMsg->isChecked())
+    ui->decodedTextBrowser2->displayTransmittedText(m_freeTextMsg0, txModeArg,
         nfreq,m_bFastMode,m_TRperiod);
   foxcom_.i3bit[i]=0;
   if(fm.indexOf("<")>0) foxcom_.i3bit[i]=1;
