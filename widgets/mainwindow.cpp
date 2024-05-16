@@ -5150,7 +5150,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec%60 << ipc_qmap[5];
+//    qDebug() << "AAA" << nsec%60;
 
 //    qint64 n64 = QDateTime::currentSecsSinceEpoch();
 //    n64=n64/30;
@@ -8888,10 +8888,11 @@ void MainWindow::on_cbFast9_clicked(bool b)
 void MainWindow::on_cbSendMsg_toggled(bool b)
 {
   if(m_Nslots0>0 and !b) {
+    ui->sbNslots->setMaximum(5);
     ui->sbNslots->setValue(m_Nslots0);
   } else {
     m_Nslots0=m_Nslots;
-    if(m_Nslots>2) ui->sbNslots->setValue(2);
+    ui->sbNslots->setMaximum(2);
   }
 }
 
