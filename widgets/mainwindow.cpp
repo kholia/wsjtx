@@ -220,6 +220,7 @@ bool blocked = false;
 bool m_displayBand = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
+int m_Nslots0 {1};
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -1226,7 +1227,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("RespondCQ",ui->respondComboBox->currentIndex());
   m_settings->setValue("HoundSort",ui->comboBoxHoundSort->currentIndex());
   m_settings->setValue("FoxNlist",ui->sbNlist->value());
-  if(!m_config.superFox()) m_settings->setValue("FoxNslots",ui->sbNslots->value());
+  m_settings->setValue("FoxNslots",m_Nslots0);
   m_settings->setValue("FoxMaxDB_v2",ui->sbMax_dB->value()); // original key abandoned
   m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->setValue("FoxTextMsg", m_freeTextMsg0);
@@ -1338,6 +1339,7 @@ void MainWindow::readSettings()
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
   m_Nslots=m_settings->value("FoxNslots",3).toInt();
+  m_Nslots0=m_Nslots;
   if(!m_config.superFox()) ui->sbNslots->setValue(m_Nslots);
   ui->sbMax_dB->setValue(m_settings->value("FoxMaxDB_v2",70).toInt());
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
@@ -2609,12 +2611,7 @@ void MainWindow::statusChanged()
     ui->sbNslots->setVisible(true);
     ui->pbFreeText->setVisible(false);
     ui->cbSendMsg->setVisible(false);
-    ui->sbNslots->setValue(m_Nslots);
-    if (SpecOp::FOX==m_specOp && !m_config.superFox()) {
-//      readSettings();   // Disable re-reading of the saved FoxNslots value for now because it confuses some other functions.
-                          // However, the FoxNslots value will then only be remembered when not coming from SuperFox mode.
-      ui->sbNslots->setValue(m_Nslots);
-    }
+    ui->sbNslots->setValue(m_Nslots0);
   }
 }
 
@@ -6732,7 +6729,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
       on_actionJT9_triggered();
       ui->jt65Button->clearFocus();
   }
-  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {
+  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // toggle SuperFox mode
       keep_frequency = true;
       m_config.toggle_SF();
       QTimer::singleShot (250, [=] {keep_frequency = false;});
@@ -9907,6 +9904,7 @@ void MainWindow::on_sbNslots_valueChanged(int n)
   QString t;
   t = t.asprintf(" NSlots %d",m_Nslots);
   writeFoxQSO(t);
+  if(!m_config.superFox()) m_Nslots0=n;
 }
 
 void MainWindow::on_sbMax_dB_valueChanged(int n)
