@@ -2609,10 +2609,12 @@ void MainWindow::statusChanged()
     ui->sbNslots->setVisible(true);
     ui->pbFreeText->setVisible(false);
     ui->cbSendMsg->setVisible(false);
-    if (SpecOp::FOX==m_specOp) QTimer::singleShot (100, [=] {
-      readSettings();
+    ui->sbNslots->setValue(m_Nslots);
+    if (SpecOp::FOX==m_specOp && !m_config.superFox()) {
+//      readSettings();   // Disable re-reading of the saved FoxNslots value for now because it confuses some other functions.
+                          // However, the FoxNslots value will then only be remembered when not coming from SuperFox mode.
       ui->sbNslots->setValue(m_Nslots);
-    });
+    }
   }
 }
 
@@ -6733,10 +6735,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
   if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {
       keep_frequency = true;
       m_config.toggle_SF();
-      QTimer::singleShot (250, [=] {
-        keep_frequency = false;
-      });
+      QTimer::singleShot (250, [=] {keep_frequency = false;});
       on_actionFT8_triggered();
+      ui->ft8Button->clearFocus();
+      ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   }
 }
 
