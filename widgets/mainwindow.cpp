@@ -220,6 +220,7 @@ bool blocked = false;
 bool m_displayBand = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
+int m_Nslots0 {1};
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -1226,7 +1227,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("RespondCQ",ui->respondComboBox->currentIndex());
   m_settings->setValue("HoundSort",ui->comboBoxHoundSort->currentIndex());
   m_settings->setValue("FoxNlist",ui->sbNlist->value());
-  m_settings->setValue("FoxNslots",ui->sbNslots->value());
+  m_settings->setValue("FoxNslots",m_Nslots0);
   m_settings->setValue("FoxMaxDB_v2",ui->sbMax_dB->value()); // original key abandoned
   m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->setValue("FoxTextMsg", m_freeTextMsg0);
@@ -1337,8 +1338,9 @@ void MainWindow::readSettings()
   ui->respondComboBox->setCurrentIndex(m_settings->value("RespondCQ",0).toInt());
   ui->comboBoxHoundSort->setCurrentIndex(m_settings->value("HoundSort",3).toInt());
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
-  m_Nslots=m_settings->value("FoxNslots",5).toInt();
-  ui->sbNslots->setValue(m_Nslots);
+  m_Nslots=m_settings->value("FoxNslots",3).toInt();
+  m_Nslots0=m_Nslots;
+  if(!m_config.superFox()) ui->sbNslots->setValue(m_Nslots);
   ui->sbMax_dB->setValue(m_settings->value("FoxMaxDB_v2",70).toInt());
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
@@ -2595,6 +2597,21 @@ void MainWindow::statusChanged()
         ui->rh_decodes_title_label->setText(tr ("Rx Frequency"));
       }
     }
+  }
+  if (SpecOp::FOX==m_specOp && m_config.superFox()) {
+    ui->sbNslots->setVisible(false);
+    ui->pbFreeText->setVisible(true);
+    ui->cbSendMsg->setVisible(true);
+    if(ui->cbSendMsg->isChecked()) {
+      ui->sbNslots->setValue(2);
+    } else {
+      ui->sbNslots->setValue(5);
+    }
+  } else {
+    ui->sbNslots->setVisible(true);
+    ui->pbFreeText->setVisible(false);
+    ui->cbSendMsg->setVisible(false);
+    ui->sbNslots->setValue(m_Nslots0);
   }
 }
 
@@ -6717,6 +6734,14 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
       on_actionJT9_triggered();
       ui->jt65Button->clearFocus();
   }
+  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // toggle SuperFox mode
+      keep_frequency = true;
+      m_config.toggle_SF();
+      QTimer::singleShot (250, [=] {keep_frequency = false;});
+      on_actionFT8_triggered();
+      ui->ft8Button->clearFocus();
+      ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+  }
 }
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
@@ -7252,7 +7277,7 @@ void MainWindow::on_actionFT8_triggered()
     ui->txb5->setEnabled(false);
     ui->txb6->setEnabled(false);
   } else {
-    if (!(keep_frequency)) switch_mode (Modes::FT8);
+    switch_mode (Modes::FT8);
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
@@ -7755,9 +7780,11 @@ void MainWindow::switch_mode (Mode mode)
   m_fastGraph->setMode(m_mode);
   m_config.frequencies ()->filter (m_config.region (), mode, true); // filter on current time
   auto const& row = m_config.frequencies ()->best_working_frequency (m_freqNominal);
-  ui->bandComboBox->setCurrentIndex (row);
-  if (row >= 0) {
-    on_bandComboBox_activated (row);
+  if (!keep_frequency) {
+      ui->bandComboBox->setCurrentIndex (row);
+    if (row >= 0 ) {
+      on_bandComboBox_activated (row);
+    }
   }
   ui->rptSpinBox->setSingleStep(1);
   ui->rptSpinBox->setMinimum(-50);
@@ -8892,12 +8919,10 @@ void MainWindow::on_cbFast9_clicked(bool b)
 
 void MainWindow::on_cbSendMsg_toggled(bool b)
 {
-  if(m_Nslots0>0 and !b) {
-    ui->sbNslots->setMaximum(5);
-    ui->sbNslots->setValue(m_Nslots0);
+  if(b) {
+    ui->sbNslots->setValue(2);
   } else {
-    m_Nslots0=m_Nslots;
-    ui->sbNslots->setMaximum(2);
+    ui->sbNslots->setValue(5);
   }
 }
 
@@ -9884,6 +9909,7 @@ void MainWindow::on_sbNslots_valueChanged(int n)
   QString t;
   t = t.asprintf(" NSlots %d",m_Nslots);
   writeFoxQSO(t);
+  if(!m_config.superFox()) m_Nslots0=n;
 }
 
 void MainWindow::on_sbMax_dB_valueChanged(int n)

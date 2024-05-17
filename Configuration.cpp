@@ -1059,6 +1059,18 @@ void Configuration::setSpecial_None()
   m_->SelectedActivity_ = static_cast<int> (SpecialOperatingActivity::HOUND); // brings backward compatibility to versions without Q65_PILEUP
   m_->write_settings();
 }
+
+void Configuration::toggle_SF()
+{
+  if (m_->bSuperFox_) {
+    m_->ui_->cbSuperFox->setChecked(false);
+  } else {
+    m_->ui_->cbSuperFox->setChecked(true);
+  }
+  m_->bSuperFox_ = m_->ui_->cbSuperFox->isChecked ();
+  m_->write_settings();
+}
+
 namespace
 {
 #if defined (Q_OS_MAC)
