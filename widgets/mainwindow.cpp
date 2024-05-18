@@ -1448,7 +1448,12 @@ void MainWindow::readSettings()
   ui->sbCQTxFreq->setValue (m_settings->value ("CQTxFreq", 260).toInt());
   m_noSuffix=m_settings->value("NoSuffix",false).toBool();
   int n=m_settings->value("GUItab",0).toInt();
-  ui->tabWidget->setCurrentIndex(n);
+  if (SpecOp::FOX==m_specOp) {
+    ui->tabWidget->setCurrentIndex(n);
+  } else {
+    ui->tabWidget->setCurrentIndex(1);  // needed for GUI initialisation when SuperFox controls are invisible
+    ui->tabWidget->setCurrentIndex(n);
+  }
   outBufSize=m_settings->value("OutBufSize",4096).toInt();
   ui->cbHoldTxFreq->setChecked (m_settings->value ("HoldTxFreq", false).toBool ());
   m_pwrBandTxMemory=m_settings->value("pwrBandTxMemory").toHash();
