@@ -1663,6 +1663,7 @@ if (WIN32)
 
   if (DEFINED ENV{SFOX_DIR})
     set(sfox_dir "$ENV{SFOX_DIR}")
+    string(REPLACE "\\" "/" sfox_dir "${sfox_dir}")
   else ()
     set(sfox_dir lib/superfox/win)
   endif ()
