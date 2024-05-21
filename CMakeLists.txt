@@ -1658,19 +1658,10 @@ install (DIRECTORY
   )
 
 if (WIN32)
-
-#  set (sfox_dir "$ENV{SFOX_DIR}")
-
-  if (DEFINED ENV{SFOX_DIR})
-    set(sfox_dir "$ENV{SFOX_DIR}")
-  else ()
-    set(sfox_dir lib/superfox/win)
-  endif ()
-  
   install (FILES
-  ${sfox_dir}/sfrx.exe
-  ${sfox_dir}/sftx.exe
-  ${sfox_dir}/foxchk.exe
+  lib/superfox/win/sfrx.exe
+  lib/superfox/win/sftx.exe
+  lib/superfox/win/foxchk.exe
   DESTINATION ${CMAKE_INSTALL_BINDIR}
   #COMPONENT runtime
   )
