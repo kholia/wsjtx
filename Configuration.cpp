@@ -594,6 +594,7 @@ private:
   Q_SLOT void on_rbRTTY_Roundup_clicked (bool);
   Q_SLOT void on_rbARRL_Digi_clicked (bool);
   Q_SLOT void on_cbSuperFox_clicked (bool);
+  Q_SLOT void on_cbContestName_clicked (bool);
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
   void display_file_information();
@@ -3199,6 +3200,11 @@ void Configuration::impl::on_cbSuperFox_clicked (bool)
   check_visibility ();
 }
 
+void Configuration::impl::on_cbContestName_clicked (bool)
+{
+  check_visibility ();
+}
+
 void Configuration::impl::check_visibility ()
 {
   if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked()) {
@@ -3207,6 +3213,27 @@ void Configuration::impl::check_visibility ()
   } else {
     ui_->sfkey_label->setEnabled (false);
     ui_->FoxKey->setEnabled (false);
+  }
+  if (ui_->rbField_Day->isChecked()) {
+    ui_->labFD->setEnabled (true);
+    ui_->Field_Day_Exchange->setEnabled (true);
+  } else {
+    ui_->labFD->setEnabled (false);
+    ui_->Field_Day_Exchange->setEnabled (false);
+  }
+  if (ui_->rbRTTY_Roundup->isChecked()) {
+    ui_->labRTTY->setEnabled (true);
+    ui_->RTTY_Exchange->setEnabled (true);
+  } else {
+    ui_->labRTTY->setEnabled (false);
+    ui_->RTTY_Exchange->setEnabled (false);
+  }
+  if (ui_->cbContestName->isChecked() and !ui_->rbFox->isChecked() and !ui_->rbHound->isChecked()) {
+    ui_->labCN->setEnabled (true);
+    ui_->Contest_Name->setEnabled (true);
+  } else {
+    ui_->labCN->setEnabled (false);
+    ui_->Contest_Name->setEnabled (false);
   }
 }
 
