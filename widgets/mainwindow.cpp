@@ -4729,7 +4729,7 @@ void MainWindow::guiUpdate()
             }
           }
         }
-        else if (SpecOp::HOUND == m_specOp and !m_config.superFox()) {
+        else if (SpecOp::HOUND == m_specOp) {
           if(m_auto && !m_tune) {
             if (ui->TxFreqSpinBox->value() < 999 && m_ntx != 3) {
               // Hound randomized range: 1000-3000 Hz
