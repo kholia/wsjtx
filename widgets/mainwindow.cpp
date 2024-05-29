@@ -3166,14 +3166,6 @@ void MainWindow::read_wav_file (QString const& fname)
         }
 
         dec_data.params.yymmdd=basename.left(6).toInt();
-        if(basename.mid(0,10)=="000000_000" && m_mode == "FT8") {
-          int isec=15*basename.mid(10,3).toInt();
-          int ih=isec/3600;
-          int im=(isec-3600*ih)/60;
-          isec=isec%60;
-          dec_data.params.nutc=3600*ih+60*im+isec;
-        }
-
       }));
 }
 
