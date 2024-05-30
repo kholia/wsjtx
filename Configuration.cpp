@@ -584,6 +584,7 @@ private:
   Q_SLOT void on_LotW_CSV_fetch_push_button_clicked (bool);
   Q_SLOT void on_hamlib_download_button_clicked (bool);
   Q_SLOT void on_revert_update_button_clicked (bool);
+  Q_SLOT void on_gbSpecialOpActivity_clicked (bool);
   Q_SLOT void on_rbFox_clicked (bool);
   Q_SLOT void on_rbHound_clicked (bool);
   Q_SLOT void on_rbNA_VHF_Contest_clicked (bool);
@@ -3150,6 +3151,11 @@ void Configuration::impl::on_cbx4ToneSpacing_clicked(bool b)
   if(b) ui_->cbx2ToneSpacing->setChecked(false);
 }
 
+void Configuration::impl::on_gbSpecialOpActivity_clicked (bool)
+{
+  check_visibility ();
+}
+
 void Configuration::impl::on_rbFox_clicked (bool)
 {
   check_visibility ();
@@ -3207,21 +3213,21 @@ void Configuration::impl::on_cbContestName_clicked (bool)
 
 void Configuration::impl::check_visibility ()
 {
-  if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked()) {
+  if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->sfkey_label->setEnabled (true);
     ui_->FoxKey->setEnabled (true);
   } else {
     ui_->sfkey_label->setEnabled (false);
     ui_->FoxKey->setEnabled (false);
   }
-  if (ui_->rbField_Day->isChecked()) {
+  if (ui_->rbField_Day->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->labFD->setEnabled (true);
     ui_->Field_Day_Exchange->setEnabled (true);
   } else {
     ui_->labFD->setEnabled (false);
     ui_->Field_Day_Exchange->setEnabled (false);
   }
-  if (ui_->rbRTTY_Roundup->isChecked()) {
+  if (ui_->rbRTTY_Roundup->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->labRTTY->setEnabled (true);
     ui_->RTTY_Exchange->setEnabled (true);
   } else {
@@ -3229,22 +3235,23 @@ void Configuration::impl::check_visibility ()
     ui_->RTTY_Exchange->setEnabled (false);
   }
   if (ui_->cbContestName->isChecked() and !ui_->rbFox->isChecked() and !ui_->rbHound->isChecked()
-      and  !ui_->rbQ65pileup->isChecked()) {
+      and !ui_->rbQ65pileup->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->labCN->setEnabled (true);
     ui_->Contest_Name->setEnabled (true);
   } else {
     ui_->labCN->setEnabled (false);
     ui_->Contest_Name->setEnabled (false);
   }
-  if (ui_->rbFox->isChecked() or ui_->rbHound->isChecked()) {
+  if ((ui_->rbFox->isChecked() or ui_->rbHound->isChecked()) and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->cbSuperFox->setEnabled (true);
   } else {
     ui_->cbSuperFox->setEnabled (false);
   }
-  if (ui_->rbFox->isChecked() or ui_->rbHound->isChecked() or ui_->rbQ65pileup->isChecked()) {
-    ui_->cbContestName->setEnabled (false);
-  } else {
+  if (!ui_->rbFox->isChecked() and !ui_->rbHound->isChecked() and !ui_->rbQ65pileup->isChecked()
+      and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->cbContestName->setEnabled (true);
+  } else {
+    ui_->cbContestName->setEnabled (false);
   }
 }
 
