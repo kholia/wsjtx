@@ -5167,7 +5167,7 @@ void MainWindow::guiUpdate()
 
 //Once per second (onesec)
   if(nsec != m_sec0) {
-//    qDebug() << "AAA" << nsec%60;
+//    qDebug() << "AAA" << nsec%60 << ui->cbWorkDupes->isChecked();
 
 //    qint64 n64 = QDateTime::currentSecsSinceEpoch();
 //    n64=n64/30;
@@ -10143,7 +10143,8 @@ void MainWindow::houndCallers()
       paddedHoundCall=houndCall + " ";
       //Don't list a hound already in the queue
       if(!ui->houndQueueTextBrowser->toPlainText().contains(paddedHoundCall)) {
-        if(m_loggedByFox[houndCall].contains(m_lastBand))   continue;   //already logged on this band
+        if(m_loggedByFox[houndCall].contains(m_lastBand) and
+           !ui->cbWorkDupes->isChecked())   continue;   //already logged on this band
         if(m_foxQSO.contains(houndCall)) continue;   //still in the QSO map
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
         auto const& continent = AD1CCty::continent (entity.continent);
