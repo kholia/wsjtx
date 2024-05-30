@@ -506,11 +506,11 @@ void DisplayText::displayDecodedText(DecodedText const& decodedText, QString con
 
 
 void DisplayText::displayTransmittedText(QString text, QString modeTx, qint32 txFreq,
-                                         bool bFastMode, double TRperiod)
+                                         bool bFastMode, double TRperiod,bool bSuperfox)
 {
     QString t1=" @  ";
     if(modeTx=="FT4") t1=" +  ";
-    if(modeTx=="FT8") t1=" ~  ";
+    if(modeTx.contains("FT8")) t1=" ~  ";
     if(modeTx=="JT4") t1=" $  ";
     if(modeTx=="Q65") t1=" :  ";
     if(modeTx=="JT65") t1=" #  ";
@@ -534,7 +534,18 @@ void DisplayText::displayTransmittedText(QString text, QString modeTx, qint32 tx
     QColor fg;
     highlight_types types {Highlight::Tx};
     set_colours (m_config, &bg, &fg, types);
-    insertText (t, bg, fg);
+    if(bSuperfox and t.contains(";")) {
+      int i0=t.indexOf(";");
+      int i1=t.indexOf("<");
+      int i2=t.indexOf(">");
+      QString foxcall=t.mid(i1+1,i2-i1-1);
+      t2=t.left(i0) + " " + foxcall;
+      QString t3=t.left(24) + t.mid(i0+2,-1).remove("<").remove(">");
+      insertText (t2, bg, fg);
+      insertText (t3, bg, fg);
+    } else {
+      insertText (t, bg, fg);
+    }
 }
 
 void DisplayText::displayQSY(QString text)
