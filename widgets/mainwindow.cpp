@@ -7261,8 +7261,10 @@ void MainWindow::on_actionFT8_triggered()
     displayWidgets(nWidgets("11101000010011000001000000000011000000"));
     if(m_config.superFox()) {
       ui->labDXped->setText(tr ("Super Hound"));
+      ui->cbRxAll->setEnabled(false);
     } else {
       ui->labDXped->setText(tr ("Hound"));
+      ui->cbRxAll->setEnabled(true);
     }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
