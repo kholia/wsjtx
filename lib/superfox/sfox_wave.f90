@@ -10,10 +10,12 @@ subroutine sfox_wave(fname)
   real*8 dt,twopi,f0,baud,phi,dphi
 
   common/foxcom/wave(NWAVE)
-  
-  open(25,file=trim(fname),status='unknown',err=900)
-  read(25,'(20i4)',err=900,end=900) itone
+
+  wave=0.
+  open(25,file=trim(fname),status='unknown',err=999)
+  read(25,'(20i4)',err=999,end=999) itone
   close(25)
+  if(itone(1).lt.0 .or. itone(1).gt.128) go to 999
 
 ! Generate the SuperFox waveform.
 
@@ -34,7 +36,5 @@ subroutine sfox_wave(fname)
      enddo
   enddo
 
-900 continue
-
-  return  
+999 return
 end subroutine sfox_wave
