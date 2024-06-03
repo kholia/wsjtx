@@ -10997,6 +10997,7 @@ void MainWindow::sfox_tx()
 {
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
+  args.append(m_config.my_callsign());
   args.append(m_config.FoxKey());
 //  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
 //  qDebug() << "bb" << args;
