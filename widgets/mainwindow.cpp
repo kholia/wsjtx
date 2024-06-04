@@ -221,6 +221,7 @@ bool m_displayBand = false;
 bool no_a7_decodes = false;
 bool keep_frequency = false;
 int m_Nslots0 {1};
+int m_TxFreqFox {300};
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -1250,7 +1251,8 @@ void MainWindow::writeSettings()
   m_settings->setValue("SaveAll",ui->actionSave_all->isChecked());
   m_settings->setValue("NDepth",m_ndepth);
   m_settings->setValue("RxFreq",ui->RxFreqSpinBox->value());
-  m_settings->setValue("TxFreq",ui->TxFreqSpinBox->value());
+  if(m_specOp!=SpecOp::FOX) m_settings->setValue("TxFreq",ui->TxFreqSpinBox->value());
+  m_settings->setValue("TxFreqFox",m_TxFreqFox);
   m_settings->setValue("WSPRfreq",ui->WSPRfreqSpinBox->value());
   m_settings->setValue("FST4W_RxFreq",ui->sbFST4W_RxFreq->value());
   m_settings->setValue("FST4W_FTol",ui->sbFST4W_FTol->value());
@@ -1425,7 +1427,9 @@ void MainWindow::readSettings()
   ui->WSPRfreqSpinBox->setValue(0); // ensure a change is signaled
   ui->WSPRfreqSpinBox->setValue(m_settings->value("WSPRfreq",1500).toInt());
   ui->TxFreqSpinBox->setValue(0); // ensure a change is signaled
-  ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq",1500).toInt());
+  if(m_specOp!=SpecOp::FOX) ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq",1500).toInt());
+  m_TxFreqFox=m_settings->value("TxFreqFox",300).toInt();
+  if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
   m_ndepth=m_settings->value("NDepth",3).toInt();
   ui->sbTxPercent->setValue (m_settings->value ("PctTx", 20).toInt ());
   on_sbTxPercent_valueChanged (ui->sbTxPercent->value ());
@@ -7184,7 +7188,8 @@ void MainWindow::on_actionFT4_triggered()
 void MainWindow::on_actionFT8_triggered()
 {
   QTimer::singleShot (50, [=] {
-    ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    if(m_specOp!=SpecOp::FOX) ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
+    if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
     ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
@@ -7871,9 +7876,11 @@ void MainWindow::on_TxFreqSpinBox_valueChanged(int n)
       ui->TxFreqSpinBox->setStyleSheet("");
     }
   }
-  if (m_mode != "MSK144" && m_mode != "FST4W" && m_mode != "WSPR" && m_mode != "Echo" && m_mode != "FreqCal") {
+  if (m_mode != "MSK144" && m_mode != "FST4W" && m_mode != "WSPR" && m_mode != "Echo" && m_mode != "FreqCal"
+      && m_specOp!=SpecOp::FOX) {
       QTimer::singleShot (200, [=] {m_settings->setValue("TxFreq_old",ui->TxFreqSpinBox->value());});
   }
+  if(m_specOp==SpecOp::FOX && !m_config.superFox()) QTimer::singleShot (50, [=] {m_TxFreqFox=n;});
   statusUpdate ();
 }
 
