@@ -8489,7 +8489,7 @@ void MainWindow::transmit (double snr)
     if(m_config.x2ToneSpacing()) toneSpacing=2*12000.0/1920.0;
     if(m_config.x4ToneSpacing()) toneSpacing=4*12000.0/1920.0;
     if(SpecOp::FOX==m_specOp and !m_tune) toneSpacing=-1;
-    if(m_config.superFox()) {
+    if(SpecOp::FOX==m_specOp and m_config.superFox()) {
        Q_EMIT sendMessage (m_mode, NUM_SUPERFOX_SYMBOLS,
            1024.0, ui->TxFreqSpinBox->value () - m_XIT,
            toneSpacing, m_soundOutput, m_config.audio_output_channel (),
