@@ -4597,6 +4597,8 @@ void MainWindow::guiUpdate()
 
   if(m_TRperiod==0) m_TRperiod=60.0;
   txDuration=tx_duration(m_mode,m_TRperiod,m_nsps,m_bFast9);
+  if(m_mode=="FT8" and m_specOp==SpecOp::FOX and m_config.superFox()) txDuration=1.0+151*1024.0/12000.0;
+  // qDebug () << "DEBUG SF " << m_mode << m_TRperiod << m_nsps << (SpecOp::FOX==m_specOp) << m_config.superFox() << txDuration;
   double tx1=0.0;
   double tx2=txDuration;
   if(m_mode=="FT8" or m_mode=="FT4") icw[0]=0;              //No CW ID in FT4 or FT8 mode
@@ -8487,10 +8489,17 @@ void MainWindow::transmit (double snr)
     if(m_config.x2ToneSpacing()) toneSpacing=2*12000.0/1920.0;
     if(m_config.x4ToneSpacing()) toneSpacing=4*12000.0/1920.0;
     if(SpecOp::FOX==m_specOp and !m_tune) toneSpacing=-1;
-    Q_EMIT sendMessage (m_mode, NUM_FT8_SYMBOLS,
+    if(m_config.superFox()) {
+       Q_EMIT sendMessage (m_mode, NUM_SUPERFOX_SYMBOLS,
+           1024.0, ui->TxFreqSpinBox->value () - m_XIT,
+           toneSpacing, m_soundOutput, m_config.audio_output_channel (),
+           true, false, snr, m_TRperiod);
+    } else {
+       Q_EMIT sendMessage (m_mode, NUM_FT8_SYMBOLS,
            1920.0, ui->TxFreqSpinBox->value () - m_XIT,
            toneSpacing, m_soundOutput, m_config.audio_output_channel (),
            true, false, snr, m_TRperiod);
+    }
   }
 
   if (m_mode == "FT4") {
