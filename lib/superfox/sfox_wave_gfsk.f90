@@ -26,7 +26,7 @@ subroutine sfox_wave_gfsk(fname)
     hmod=1.0
     dphi_peak=twopi*hmod/real(NSPS)
     do i=1,3*NSPS 
-      tt=(i-1.5*nsps)/real(nsps)
+      tt=(i-1.5*NSPS)/real(NSPS)
       pulse(i)=gfsk_pulse(BT,tt)
     enddo
     first=.false.
