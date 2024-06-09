@@ -11,6 +11,43 @@
                                                          
 Copyright 2001 - 2024 by Joe Taylor, K1JT, and the WSJT Development Team
 
+                      Release: WSJT-X 2.7.0-rc5
+                             July 1, 2024
+                      -------------------------
+
+WSJT-X 2.7.0 Release Candidate 5 primarily introduces a new "SuperFox 
+and SuperHound" mode. Furthermore, it brings some fixes and detail 
+improvements.
+
+SuperFox and SuperHound mode:
+
+   - .....
+
+   - Right-click on the FT8 buttons to toggle SuperFox mode. It works 
+     both when in Hound or in Fox mode.
+
+Other enhancements:
+
+ - Fixed a flaw that caused "Log automatically" to not work for the ARRL 
+   Digi Contest mode.
+
+ - Control elements for special operating activities are now disabled
+   if the respective function is not applicable.
+
+ - Fixed a long-standing error that caused "Start new period decodes at 
+   top" to stop working properly after some time.
+
+ - Right-click mouse press events are now less error-prone.
+
+ - Improved the readability of the first line when "Start new period 
+   decodes at top" is checked.
+
+ - 4-digit grids are now logged for certain contest modes to ensure that 
+   the log complies with the contest rules.
+
+ - The Fox Tx frequency is now saved and restored separately.
+
+
                       Release: WSJT-X 2.7.0-rc4
                            March 11, 2024
                       -------------------------
