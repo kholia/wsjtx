@@ -16,15 +16,42 @@ Copyright 2001 - 2024 by Joe Taylor, K1JT, and the WSJT Development Team
                       -------------------------
 
 WSJT-X 2.7.0 Release Candidate 5 primarily introduces a new "SuperFox 
-and SuperHound" mode. Furthermore, it brings some fixes and detail 
-improvements.
+and SuperHound" mode, a powerful new tool that helps DXpeditions to make 
+digital QSOs at very high rates. Furthermore, it brings some fixes and 
+other improvements.
 
 SuperFox and SuperHound mode:
 
-   - .....
+ - The SuperFox mode behaves operationally like the present Fox and Hounds 
+   but uses a constant envelope waveform for Fox’s transmissions rather 
+   than sending concurrent streams of up to five normal FT8 signals. This
+   has the advantage that up to 9 messages can be transmitted without
+   getting a signal-strength penalty, resulting in a system gain of approx. 
+   +10 dB compared to the conventional Fox/Hound operation with 5 slots!
 
-   - Right-click on the FT8 buttons to toggle SuperFox mode. It works 
-     both when in Hound or in Fox mode.
+ - Hounds chasing the DX station transmit normal FT8 signals, as in the 
+   already familiar Fox and Hound mode. 
+
+ - Important: Hounds must use at least WSJT-X 2.7.0-rc5 to be able to 
+   receive SuperFox messages.
+
+ - When in SuperFox mode, Hound stations can call now also below 1000 Hz. 
+
+ - SuperFox Operation requires the Fox operator to use a valid key. Such 
+   messages then contain a digital signature. Authorized keys will be 
+   issued in advance for legitimate DXpeditions by the Northern California 
+   DX Foundation.
+
+ - Hounds will see the "Super Hound" label turn to green when a verified 
+   SuperFox message arrives, as well as a "CALLSIGN verified" message. 
+
+ - Hound Operation should begin by selecting Special operating activity, 
+   SuperFox, and Hound on the Settings / Advanced page. Alternatively, 
+   right-clicking on the FT8 buttons toggles SuperFox mode on/off.  
+   It works both when in Hound or in Fox mode. This allows quick switching 
+   between SuperFox and the normal Fox and Hound operation.
+
+ - SuperFox stations can send free text messages of up to 26 characters.
 
 Other enhancements:
 
