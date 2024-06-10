@@ -3003,6 +3003,9 @@ Right click for insert and delete options.</string>
            <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="0,1,0,1">
             <item>
              <widget class="QCheckBox" name="cbSuperFox">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check this box to transmit (Fox) or receive (Hound) the SuperFox waveform.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
               <property name="text">
                <string>SuperFox mode</string>
               </property>
@@ -3047,6 +3050,9 @@ Right click for insert and delete options.</string>
                 <width>16777215</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SuperFox operator must enter a valid key to enable transmission.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="maxLength">
                <number>9</number>
