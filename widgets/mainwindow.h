@@ -50,7 +50,7 @@
 #define NUM_MSK144_SYMBOLS 144             //s8 + d48 + s8 + d80
 #define NUM_Q65_SYMBOLS 85                 //63 data + 22 sync
 #define NUM_FT8_SYMBOLS 79
-#define NUM_SUPERFOX_SYMBOLS 151
+#define NUM_SUPERFOX_SYMBOLS 153         //24 sync + 127 data + 2 ramp up/down
 #define NUM_FT4_SYMBOLS 105
 #define NUM_FST4_SYMBOLS 160             //240/2 data + 5*8 sync
 #define NUM_CW_SYMBOLS 250
