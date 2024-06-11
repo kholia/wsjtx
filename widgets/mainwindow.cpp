@@ -9967,8 +9967,8 @@ void MainWindow::on_pbFreeText_clicked()
   bool ok;
   static QStringList items;
   if(items.isEmpty()) items << "HELLO TEST 1234..." << "CALL FROM 200 to 5000 HZ";
-  m_freeTextMsg = QInputDialog::getItem (this, tr("Free Text Message"),
-         tr("Message:"), items, 0, true, &ok);
+  m_freeTextMsg = QInputDialog::getItem(this, tr("Free Text Message"),
+         tr("Message:"), items, 0, true, &ok).left(26);
   if(ok) {
     if(!m_freeTextMsg.isEmpty()) items.append(m_freeTextMsg);
     m_freeTextMsg=m_freeTextMsg.toUpper();
