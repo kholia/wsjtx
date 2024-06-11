@@ -9965,9 +9965,12 @@ void MainWindow::on_pbFoxReset_clicked()
 void MainWindow::on_pbFreeText_clicked()
 {
   bool ok;
-  m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
-         tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok);
+  static QStringList items;
+  if(items.isEmpty()) items << "HELLO TEST 1234..." << "CALL FROM 200 to 5000 HZ";
+  m_freeTextMsg = QInputDialog::getItem (this, tr("Free Text Message"),
+         tr("Message:"), items, 0, true, &ok);
   if(ok) {
+    if(!m_freeTextMsg.isEmpty()) items.append(m_freeTextMsg);
     m_freeTextMsg=m_freeTextMsg.toUpper();
     m_freeTextMsg0=m_freeTextMsg;
   }
