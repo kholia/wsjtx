@@ -47,10 +47,10 @@ SuperFox mode:
    key.  Keys will be issued in advance for legitimate DXpeditions by
    the Northern California DX Foundation, and will be kept secret.
 
- - Every SuperFox transmission includes a unique digital
-   signature. Hounds receiving a SuperFox message will see a "CALLSIGN
-   verified" flag if the transmitted signature is valid, and the
-   on-screen "Super Hound" label will turn from red to green.
+ - Every SuperFox transmission includes a unique digital signature.
+   Hounds receiving a SuperFox message will see a "CALLSIGN verified"
+   flag if the transmitted signature is valid, and the on-screen 
+   "Super Hound" label will turn from red to green.
 
  - Hound operation should begin by selecting "Special operating
    activity", "Hound", and "SuperFox mode" on the Settings -> Advanced
