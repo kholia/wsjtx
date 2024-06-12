@@ -9966,7 +9966,7 @@ void MainWindow::on_pbFreeText_clicked()
 {
   bool ok;
   m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
-         tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok);
+         tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok).left(26);
   if(ok) {
     m_freeTextMsg=m_freeTextMsg.toUpper();
     m_freeTextMsg0=m_freeTextMsg;
