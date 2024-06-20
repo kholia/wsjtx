@@ -31,6 +31,7 @@ subroutine sfox_wave_gfsk(fname)
     enddo
     first=.false.
   endif
+  wave=0.
  
   open(25,file=trim(fname),status='unknown',err=999)
   read(25,'(20i4)',err=999,end=999) itone
@@ -48,7 +49,6 @@ subroutine sfox_wave_gfsk(fname)
   dphi(0:2*NSPS-1)=dphi(0:2*NSPS-1)+dphi_peak*itone(1)*pulse(NSPS+1:3*NSPS)
   dphi(NSYM*NSPS:(NSYM+2)*NSPS-1)=dphi(NSYM*NSPS:(NSYM+2)*NSPS-1)+dphi_peak*itone(NSYM)*pulse(1:2*NSPS)
 
-  wave=0.
   phi=0.d0
   f0=750.0d0
   dphi=dphi+twopi*f0*dt
