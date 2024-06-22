@@ -2254,18 +2254,18 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     }
     QMainWindow::keyPressEvent (e);
   }
-
-  if(SpecOp::HOUND == m_specOp) {
-    switch (e->key()) {
-      case Qt::Key_Return:
-        auto_tx_mode(true);
-        return;
-      case Qt::Key_Enter:
-        auto_tx_mode(true);
-        return;
-    }
-    QMainWindow::keyPressEvent (e);
-  }
+  // Why shall RETURN switch Tx on when in Hound mode? Makes little sense and confuses many OMs!
+//  if(SpecOp::HOUND == m_specOp) {
+//    switch (e->key()) {
+//      case Qt::Key_Return:
+//        auto_tx_mode(true);
+//        return;
+//      case Qt::Key_Enter:
+//        auto_tx_mode(true);
+//        return;
+//    }
+//    QMainWindow::keyPressEvent (e);
+//  }
 
   int n;
   bool bAltF1F6=m_config.alternate_bindings();
@@ -8087,8 +8087,8 @@ void MainWindow::on_bandComboBox_activated (int index)
   m_bandEdited = true;
   band_changed (frequency);
   m_wideGraph->setRxBand (m_config.bands ()->find (frequency));
-  m_specOp=m_config.special_op_id();
-  if (m_specOp==SpecOp::HOUND) auto_tx_mode(false);
+//  m_specOp=m_config.special_op_id();
+//  if (m_specOp==SpecOp::HOUND) auto_tx_mode(false);
 }
 
 void MainWindow::band_changed (Frequency f)
