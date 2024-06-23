@@ -1348,7 +1348,7 @@ void MainWindow::readSettings()
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
   m_freeTextMsg=m_freeTextMsg0;
-  ui->cbWorkDupes->setChecked(m_settings->value("WorkDupes",true).toBool());
+  ui->cbWorkDupes->setChecked(m_settings->value("WorkDupes",false).toBool());
   m_settings->endGroup();
 
   m_settings->beginGroup("Common");
