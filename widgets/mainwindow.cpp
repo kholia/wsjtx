@@ -1232,6 +1232,7 @@ void MainWindow::writeSettings()
   m_settings->setValue("FoxMaxDB_v2",ui->sbMax_dB->value()); // original key abandoned
   m_settings->setValue ("SerialNumber",ui->sbSerialNumber->value ());
   m_settings->setValue("FoxTextMsg", m_freeTextMsg0);
+  m_settings->setValue("WorkDupes", ui->cbWorkDupes->isChecked());
   m_settings->endGroup();
 
   // do this in the General group because we save the parameters from various places
@@ -1347,6 +1348,7 @@ void MainWindow::readSettings()
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
   m_freeTextMsg=m_freeTextMsg0;
+  ui->cbWorkDupes->setChecked(m_settings->value("WorkDupes",true).toBool());
   m_settings->endGroup();
 
   m_settings->beginGroup("Common");
