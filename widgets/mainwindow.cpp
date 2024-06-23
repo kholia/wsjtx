@@ -3716,7 +3716,10 @@ void MainWindow::decodeDone ()
   ui->DecodeButton->setChecked (false);
   decodeBusy(false);
   m_RxLog=0;
-  if(SpecOp::FOX == m_specOp) houndCallers();
+  if(SpecOp::FOX == m_specOp) {
+    houndCallers();
+    if(ui->cbWorkDupes->isChecked()) QTimer::singleShot (5000, [=] {band_activity_cleared();});
+  }
   to_jt9(m_ihsym,-1,1);                //Tell jt9 we know it has finished
 
   m_startAnother=m_loopall;
