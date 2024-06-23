@@ -10147,6 +10147,18 @@ void MainWindow::houndCallers()
     return; // don't use these decodes
   }
 
+// Read decodes of the current period
+  QFile d(m_config.temp_dir().absoluteFilePath("decoded.txt"));
+  QTextStream ds(&d);
+  QString decoded="";
+  if(d.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    while (!ds.atEnd()) {
+      decoded = ds.readAll();
+    }
+    ds.flush();
+    d.close();
+  }
+
   QFile f(m_config.temp_dir().absoluteFilePath("houndcallers.txt"));
   if(f.open(QIODevice::ReadOnly | QIODevice::Text)) {
     QTextStream s(&f);
@@ -10164,13 +10176,17 @@ void MainWindow::houndCallers()
       paddedHoundCall=houndCall + " ";
       //Don't list a hound already in the queue
       if(!ui->houndQueueTextBrowser->toPlainText().contains(paddedHoundCall)) {
-        if(m_loggedByFox[houndCall].contains(m_lastBand) and
-           !ui->cbWorkDupes->isChecked())   continue;   //already logged on this band
-        if(m_foxQSO.contains(houndCall)) continue;   //still in the QSO map
+        if(ui->cbWorkDupes->isChecked()) {
+           if(m_loggedByFox[houndCall].contains(m_lastBand)
+              and !decoded.contains(paddedHoundCall)) continue;        // don't display old messages again of stations already logged
+        } else {
+          if(m_loggedByFox[houndCall].contains(m_lastBand)) continue;  // already logged on this band
+        }
+        if(m_foxQSO.contains(houndCall)) continue;                     // still in the QSO map
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
         auto const& continent = AD1CCty::continent (entity.continent);
 
-//If we are using a directed CQ, ignore Hound calls that do not comply.
+// If we are using a directed CQ, ignore Hound calls that do not comply.
         QString CQtext=ui->comboBoxCQ->currentText();
         if(CQtext.length()==5 and (continent!=CQtext.mid(3,2))) continue;
         int nCallArea=-1;
@@ -10182,7 +10198,7 @@ void MainWindow::houndCallers()
           }
           if(nCallArea!=CQtext.mid(3,1).toInt()) continue;
         }
-//This houndCall passes all tests, add it to the list.
+// This houndCall passes all tests, add it to the list.
         t = t + line + "  " + continent + "\n";
         m_nHoundsCalling++;                // Number of accepted Hounds to be sorted
       }
