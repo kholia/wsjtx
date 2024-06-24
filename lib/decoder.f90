@@ -169,14 +169,17 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
              params%ndiskdat)
         call timer('decft8  ',1)
      endif
-     if(nfox.gt.0) then
-        n30min=minval(n30fox(1:nfox))
-        n30max=maxval(n30fox(1:nfox))
-     endif
      j=0
 
      if(ncontest.eq.6) then
 ! Fox mode: save decoded Hound calls for possible selection by FoxOp
+
+        n=params%nutc
+        n30=(3600*(n/10000) + 60*mod((n/100),100) + mod(n,100))/30
+        if(n30.lt.n30z) nwrap=nwrap+2880    !New UTC day, handle the wrap
+        n30z=n30
+        n30=n30+nwrap
+
         rewind 19
         if(nfox.eq.0) then
            endfile 19
@@ -184,21 +187,21 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
         else
            do i=1,nfox
               n=n30fox(i)
-              if(n30max-n30fox(i).le.4) then
+              if(n30-n30fox(i).le.4) then
                  j=j+1
                  c2fox(j)=c2fox(i)
                  g2fox(j)=g2fox(i)
                  nsnrfox(j)=nsnrfox(i)
                  nfreqfox(j)=nfreqfox(i)
                  n30fox(j)=n
-                 m=n30max-n
+                 nage=n30-n
                  if(len(trim(g2fox(j))).eq.4) then
                     call azdist(mygrid,g2fox(j)//'  ',0.d0,nAz,nEl,nDmiles, &
                          nDkm,nHotAz,nHotABetter)
                  else
                     nDkm=9999
                  endif
-                 write(19,1004) c2fox(j),g2fox(j),nsnrfox(j),nfreqfox(j),nDkm,m
+                 write(19,1004) c2fox(j),g2fox(j),nsnrfox(j),nfreqfox(j),nDkm,nage
 1004             format(a12,1x,a4,i5,i6,i7,i3)
               endif
            enddo
@@ -680,7 +683,7 @@ contains
           if(b0 .and. (b1.or.b2) .and. (nint(freq).ge.1000 .or. params%b_superfox)) then
              n=params%nutc
              n30=(3600*(n/10000) + 60*mod((n/100),100) + mod(n,100))/30
-             if(n30.lt.n30z) nwrap=nwrap+5760    !New UTC day, handle the wrap
+             if(n30.lt.n30z) nwrap=nwrap+2880    !New UTC day, handle the wrap
              n30z=n30
              n30=n30+nwrap
              if(nfox.lt.MAXFOX) nfox=nfox+1
