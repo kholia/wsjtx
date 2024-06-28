@@ -31,7 +31,7 @@ program cwsim
   call getarg(5,arg)
   read(arg,*) snrdb                  !S/N in dB (2500 hz reference BW)
 
-  rmsdb=25.
+  rmsdb=40.
   rms=10.0**(0.05*rmsdb)
   sig=10.0**(0.05*snrdb)
   twopi=8.0*atan(1.0)
@@ -86,7 +86,7 @@ program cwsim
   endif
 
   dat=aimag(cdat) + xnoise
-  iwave=nint(10*rms*dat)
+  iwave=nint(rms*dat)
   write(10) h,iwave
   close(10)
 
