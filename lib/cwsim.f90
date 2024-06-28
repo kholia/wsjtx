@@ -31,9 +31,9 @@ program cwsim
   call getarg(5,arg)
   read(arg,*) snrdb                  !S/N in dB (2500 hz reference BW)
 
-  rmsdb=40.
-  rms=10.0**(0.05*rmsdb)
-  sig=10.0**(0.05*snrdb)
+  rms=100.0
+  bandwidth_ratio=2500.0/6000.0
+  sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
   twopi=8.0*atan(1.0)
 
   h=default_header(12000,NMAX)
