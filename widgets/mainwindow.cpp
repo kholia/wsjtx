@@ -4173,7 +4173,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
           if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
             ARRL_Digi_Update(decodedtext1);
           }
-          if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(4,12).contains(" verified")) {
+          if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(3,18).contains(" verified")) {
             verified = true;
             ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
           } else {
