@@ -10756,7 +10756,7 @@ void MainWindow::write_all(QString txRx, QString message)
     if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox() and
        m_specOp==SpecOp::FOX) mode_string="FT8_SF";
 
-    if(mode_string=="FT8   " and txRx=="Rx" and m_config.superFox() and
+    if(mode_string=="FT8   " and m_config.superFox() and
        m_specOp==SpecOp::HOUND) mode_string="FT8_SH";
 
     if (mode_string == "FT8_SH" && verified_call_regex.match(message).hasMatch()) {
