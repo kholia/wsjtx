@@ -10734,6 +10734,7 @@ void MainWindow::write_all(QString txRx, QString message)
   QString msg;
   QString mode_string;
   QString file_name="ALL.TXT";
+  QRegularExpression verified_call_regex {"[A-Z0-9/]+\\sverified\\s*"};
 
   if(m_mode!="Echo") {
     if (message.size () > 5 && message[4]==' ') {
@@ -10755,7 +10756,14 @@ void MainWindow::write_all(QString txRx, QString message)
     if(mode_string=="FT8   " and txRx=="Tx" and m_config.superFox() and
        m_specOp==SpecOp::FOX) mode_string="FT8_SF";
 
-    msg=msg.mid(0,15) + msg.mid(18,-1);
+    if(mode_string=="FT8   " and txRx=="Rx" and m_config.superFox() and
+       m_specOp==SpecOp::HOUND) mode_string="FT8_SH";
+
+    if (mode_string == "FT8_SH" && verified_call_regex.match(message).hasMatch()) {
+      msg = "               "+message;
+    } else {
+      msg = msg.mid(0, 15) + msg.mid(18, -1);
+    }
 
     t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
     if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
