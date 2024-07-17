@@ -4,8 +4,10 @@ Download and execute the package file {win32} (Windows 7 or later,
 32-bit) or {win64} (Windows 7 or later, 64-bit) following these
 instructions:
 
-* Install _WSJT-X_ into its own directory, for example `C:\WSJTX` or `C:\WSJT\WSJTX`, rather than the conventional location `C:\Program
-  Files ...\WSJTX`.
+* Install _WSJT-X_ into its own directory, for example
+`C:\WSJTX` or `C:\WSJT\WSJTX`, rather than the conventional location
+`C:\Program Files ...\WSJTX`.  Do not use a directory path that
+includes an embedded blank.
 
 * All program files relating to _WSJT-X_ are stored in the chosen
   installation directory and its subdirectories.
