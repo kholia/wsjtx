@@ -194,14 +194,15 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
                  nsnrfox(j)=nsnrfox(i)
                  nfreqfox(j)=nfreqfox(i)
                  n30fox(j)=n
-                 nage=n30-n
+                 nage=min(99,mod(n30-n+288000,2880))
                  if(len(trim(g2fox(j))).eq.4) then
                     call azdist(mygrid,g2fox(j)//'  ',0.d0,nAz,nEl,nDmiles, &
                          nDkm,nHotAz,nHotABetter)
                  else
                     nDkm=9999
                  endif
-                 write(19,1004) c2fox(j),g2fox(j),nsnrfox(j),nfreqfox(j),nDkm,nage
+                 write(19,1004) c2fox(j),g2fox(j),nsnrfox(j),nfreqfox(j), &
+                      nDkm,nage
 1004             format(a12,1x,a4,i5,i6,i7,i3)
               endif
            enddo
