@@ -11,6 +11,34 @@
                                                          
 Copyright 2001 - 2024 by Joe Taylor, K1JT, and the WSJT Development Team
 
+                      Release: WSJT-X 2.7.0-rc6
+                             July 19, 2024
+                      -------------------------
+
+WSJT-X 2.7.0 Release Candidate 6 is a bug-fix release primarily
+affecting the new SuperFox mode.  The following bugs have been fixed:
+
+ - Strong signals from Superfox too frequently failed to decode.
+
+ - SuperFox sometimes sent incorrect signal reports and an invalid
+   digital signature.
+
+ - A Fortran bounds error could sometimes occur in the SuperFox
+   decoder.
+
+ - For SuperFox operator, the "age" displayed for Hound callers
+   became garbled after the 0000 UTC date change.
+
+ - Decodes of SuperFox transmissions were not posted to PSK Reporter.
+
+ - Some SuperFox-related  messages were posted incorrectly to ALL.TXT.
+
+ - Logic for turning the SuperHound label green was flawed in some
+   circumstances.
+
+Release Candidate 6 also includes updates to Hamlib and the Chinese
+user interface translation.
+
                       Release: WSJT-X 2.7.0-rc5
                              July 1, 2024
                       -------------------------
