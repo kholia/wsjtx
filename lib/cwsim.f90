@@ -8,16 +8,16 @@ program cwsim
   integer*2 iwave(NMAX)                  !Generated waveform (no noise)
   integer icw(500)                       !Encoded CW message bits
   complex cspread(0:NMAX-1)              !Complex amplitude for Rayleigh fading
-  complex cdat(NMAX)                     !Complex waveform
+  complex cdat(0:NMAX-1)                 !Complex waveform
   real dat(NMAX)                         !Audio waveform
   real*4 xnoise(NMAX)                    !Generated random noise
   character*60 message
   character*12 arg
 
   nargs=iargc()
-  if(nargs.ne.5) then
-     print*,'Usage:   cwsim         "message"           freq wpm fspread snr'
-     print*,'Example: cwsim "CQ CQ CQ DE K1JT K1JT K1JT" 700  20   100   -10'
+  if(nargs.ne.6) then
+     print*,'Usage:   cwsim         "message"           freq  bw wpm fspread snr'
+     print*,'Example: cwsim "CQ CQ CQ DE K1JT K1JT K1JT" 700 100  20   100   -10'
      go to 999
   endif
 
@@ -25,13 +25,15 @@ program cwsim
   call getarg(2,arg)
   read(arg,*) ifreq                  !Audio frequency (Hz)
   call getarg(3,arg)
-  read(arg,*) wpm                    !CW speed, words per minute
+  read(arg,*) bw                     !Bandwidth (Hz)
   call getarg(4,arg)
-  read(arg,*) fspread                !Doppler spread in Hz
+  read(arg,*) wpm                    !CW speed, words per minute
   call getarg(5,arg)
+  read(arg,*) fspread                !Doppler spread in Hz
+  call getarg(6,arg)
   read(arg,*) snrdb                  !S/N in dB (2500 hz reference BW)
 
-  rms=100.0
+  rms=500.0
   bandwidth_ratio=2500.0/6000.0
   sig=sqrt(2*bandwidth_ratio)*10.0**(0.05*snrdb)
   twopi=8.0*atan(1.0)
@@ -45,9 +47,9 @@ program cwsim
   itone=0
   call morse(message,icw,ncw)
   call cwsig(icw,ncw,ifreq,wpm,sig,cdat)
+  nfft=NMAX
 
   if(fspread.ne.0) then                  !Apply specified Doppler spread
-     nfft=NMAX
      nh=nfft/2
      df=12000.0/nfft
      cspread(0)=1.0
@@ -73,7 +75,6 @@ program cwsim
      enddo
 
      call four2a(cspread,nfft,1,1,1)             !Transform to time domain
-
      sum=0.
      do i=0,nfft-1
         p=real(cspread(i))**2 + aimag(cspread(i))**2
@@ -86,6 +87,17 @@ program cwsim
   endif
 
   dat=aimag(cdat) + xnoise
+  
+  cdat=dat
+  call four2a(cdat,nfft,1,-1,1)                 !c2c to frequency domain
+  ia=max(250/df,(ifreq-0.5*bw)/df)
+  ib=ia+bw/df
+  cdat(0:ia)=0.
+  cdat(ib:)=0.
+  call four2a(cdat,nfft,1,+1,1)                 !c2c to time domain
+  fac=sqrt(5000/bw)/nfft
+  dat=fac*real(cdat)
+  
   iwave=nint(rms*dat)
   write(10) h,iwave
   close(10)
