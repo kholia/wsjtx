@@ -3,6 +3,7 @@
 #define ARRL_DIGI_H_
 
 #include <QWidget>
+#include <QMap>
 
 class QSettings;
 class QFont;
@@ -20,6 +21,7 @@ public:
   explicit ActiveStations(QSettings *, QFont const&, QWidget * parent = 0);
   ~ActiveStations();
   void displayRecentStations(QString mode, QString const&);
+  void setupUi(QString display_mode);
   void changeFont (QFont const&);
   int  maxRecent();
   int  maxAge();
@@ -30,6 +32,8 @@ public:
   void setRate(int n);
   void setBandChanges(int n);
   void setScore(int n);
+  void clearStations();
+  void addLine(QString);
 
   bool m_clickOK=false;
   bool m_bReadyOnly;
@@ -41,14 +45,16 @@ private:
   Q_SIGNAL void callSandP(int nline);
   Q_SIGNAL void activeStationsDisplay();
   Q_SIGNAL void cursorPositionChanged();
+  Q_SIGNAL void queueActiveWindowHound(QString text);
 
   Q_SLOT void on_cbReadyOnly_toggled(bool b);
   Q_SLOT void on_cbWantedOnly_toggled(bool b);
   Q_SLOT void on_textEdit_clicked();
 
-//  qint64 m_msec0=0;
   QString m_mode="";
   QSettings * settings_;
+  QString m_textbuffer="";                      // F/H mode band decodes
+  QMap<int, QString> m_decodes_by_frequency;    // store decodes for F/H band awareness by frequency
 
   QScopedPointer<Ui::ActiveStations> ui;
 };

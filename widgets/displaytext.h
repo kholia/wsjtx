@@ -36,6 +36,7 @@ public:
                               double TRperiod, bool bSuperfox);
   void displayQSY(QString text);
   void displayHoundToBeCalled(QString t, bool bAtTop=false, QColor bg = QColor {}, QColor fg = QColor {});
+  void setHighlightedHoundText(QString text);
   void new_period ();
   QString CQPriority(){return m_CQPriority;};
   qint32 m_points;

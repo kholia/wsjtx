@@ -2375,6 +2375,21 @@ Double-click to reset to the standard 73 message</string>
                           <string>Distance</string>
                          </property>
                         </item>
+                        <item>
+                         <property name="text">
+                          <string>Age</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Continent</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Score</string>
+                         </property>
+                        </item>
                        </widget>
                       </item>
                       <item row="1" column="1" rowspan="10">

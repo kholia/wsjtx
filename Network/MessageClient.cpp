@@ -392,7 +392,22 @@ void MessageClient::impl::parse_message (QByteArray const& msg)
               }
               break;
 
-            default:
+              case NetworkMessage::AnnotationInfo: {
+                QByteArray dx_call;
+                bool sort_order_provided{false};
+                quint32 sort_order{std::numeric_limits<quint32>::max()};
+                in >> dx_call >> sort_order_provided >> sort_order;
+                TRACE_UDP ("External Callsign Info:" << dx_call << "sort_order_provided:" << sort_order_provided
+                                                     << "sort_order:" << sort_order);
+                if (sort_order > 50000) sort_order = 50000;
+                if (check_status(in) != Fail) {
+                  Q_EMIT
+                  self_->annotation_info(QString::fromUtf8(dx_call), sort_order_provided, sort_order);
+                }
+              }
+                break;
+
+              default:
               // Ignore
               //
               // Note that although server  heartbeat messages are not

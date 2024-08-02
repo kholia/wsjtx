@@ -560,6 +560,22 @@ void DisplayText::displayHoundToBeCalled(QString t, bool bAtTop, QColor bg, QCol
   insertText(t, bg, fg, "", "", bAtTop ? QTextCursor::Start : QTextCursor::End);
 }
 
+void DisplayText::setHighlightedHoundText(QString t) {
+  QColor bg;
+  QColor fg;
+  highlight_types types{Highlight::Call};
+  set_colours(m_config, &bg, &fg, types);
+  // t is multiple lines of text, each line is a hound calling
+  // iterate through each line and highlight the callsign
+  auto lines = t.split(QChar('\n'), Qt::SkipEmptyParts);
+  clear();
+  foreach (auto line, lines)
+  {
+    auto fields = line.split(QChar(' '), Qt::SkipEmptyParts);
+    insertText(line, bg, fg, fields.first(), QString{});
+  }
+}
+
 namespace
 {
   void update_selection (QTextCursor& cursor, QColor const& bg, QColor const& fg)
@@ -617,6 +633,11 @@ void DisplayText::highlight_callsign (QString const& callsign, QColor const& bg,
 {
   if (!callsign.size ())
     {
+      return;
+    }
+  if (callsign == "CLEARALL!")  // programmatic means of clearing all highlighting
+    {
+      highlighted_calls_.clear();
       return;
     }
   auto regexp = callsign;

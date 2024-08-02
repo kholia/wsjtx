@@ -40,6 +40,26 @@ void ActiveStations::changeFont (QFont const& font)
   updateGeometry ();
 }
 
+void ActiveStations::clearStations() {
+  m_textbuffer.clear();
+  m_decodes_by_frequency.clear();
+}
+
+void ActiveStations::addLine(QString line) {
+  QString m_textbuffer = "";
+  // "012700  -1  0.2  210 ~  KJ7COA JA2HGF -14"
+  unsigned freq = line.mid(16, 4).toUInt();
+  m_decodes_by_frequency[freq] = line;
+  // show them in frequency order
+  QMap<int, QString>::const_iterator i = m_decodes_by_frequency.constBegin();
+  m_textbuffer.clear();
+  while (i != m_decodes_by_frequency.constEnd()) {
+    m_textbuffer.append(i.value());
+    ++i;
+  }
+  this->displayRecentStations(m_mode, m_textbuffer);
+}
+
 void ActiveStations::read_settings ()
 {
   SettingsGroup group {settings_, "ActiveStations"};
@@ -60,8 +80,7 @@ void ActiveStations::write_settings ()
   settings_->setValue("WantedOnly",ui->cbWantedOnly->isChecked());
 }
 
-void ActiveStations::displayRecentStations(QString mode, QString const& t)
-{
+void ActiveStations::setupUi(QString mode) {
   if(mode!=m_mode) {
     m_mode=mode;
     ui->cbReadyOnly->setText(" Ready only");
@@ -71,24 +90,37 @@ void ActiveStations::displayRecentStations(QString mode, QString const& t)
       ui->cbReadyOnly->setText("* CQ only");
     } else if(m_mode=="Q65-pileup") {
       ui->header_label2->setText("  N   Freq  Call    Grid   El   Age(h)");
+      ui->cbWantedOnly->setText(QCoreApplication::translate("ActiveStations", "Wanted only", nullptr));
+    } else if(m_mode=="Fox Mode" || m_mode=="SuperFox Mode" ) {
+      ui->header_label2->setText("  UTC   dB   DT Freq    " + tr("Message"));
+      ui->cbWantedOnly->setText(QCoreApplication::translate("ActiveStations", "My call only", nullptr));
+      this->setClickOK(true);
     } else {
       ui->header_label2->setText("  N   Call    Grid   Az  S/N  Freq Tx Age Pts");
       ui->label->setText("Rate:");
+      ui->cbWantedOnly->setText(QCoreApplication::translate("ActiveStations", "Wanted only", nullptr));
     }
     bool b=(m_mode.left(3)=="Q65");
-    ui->bandChanges->setVisible(!b);
-    ui->cbReadyOnly->setVisible(m_mode!="Q65-pileup");
-    ui->cbWantedOnly->setVisible(m_mode!="Q65-pileup");
-    ui->label_2->setVisible(!b);
-    ui->label_3->setVisible(!b);
-    ui->score->setVisible(!b);
-    ui->sbMaxRecent->setVisible(!b);
+    bool is_fox_mode =(m_mode=="Fox Mode");
+    ui->bandChanges->setVisible(!b && !is_fox_mode);
+    ui->cbReadyOnly->setVisible(m_mode != "Q65-pileup" && !is_fox_mode);
+    ui->cbWantedOnly->setVisible(m_mode != "Q65-pileup"); // this is used for "My call only" in Fox mode
+    ui->label_2->setVisible(!b && !is_fox_mode);
+    ui->label_3->setVisible(!b && !is_fox_mode);
+    ui->score->setVisible(!b && !is_fox_mode);
+    ui->sbMaxRecent->setVisible(!b && !is_fox_mode);
 
-    b=(m_mode!="Q65-pileup");
+    b=(m_mode!="Q65-pileup" && !is_fox_mode);
     ui->sbMaxAge->setVisible(b);
     ui->label->setVisible(b);
     ui->rate->setVisible(b);
   }
+}
+
+void ActiveStations::displayRecentStations(QString mode, QString const& t)
+{
+  setupUi(mode);
+
   bool bClickOK=m_clickOK;
   m_clickOK=false;
   ui->RecentStationsPlainTextEdit->setPlainText(t);
@@ -143,7 +175,10 @@ void ActiveStations::on_textEdit_clicked()
     if(text!="") {
       int nline=text.left(2).toInt();
       if(QGuiApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) nline=-nline;
-      emit callSandP(nline);
+      if ("Fox Mode" != m_mode)
+        emit callSandP(nline);
+      else
+        emit queueActiveWindowHound(text);
     }
   }
 }

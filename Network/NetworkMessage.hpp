@@ -463,6 +463,14 @@
  *      limit the  number of active  highlighting requests to  no more
  *      than 100.
  *
+ *      Using a callsign of "CLEARALL!" and anything for the
+ *      color values will clear the internal highlighting data. It will
+ *      NOT remove the highlighting on the screen, however. The exclamation
+ *      symbol is used to avoid accidental clearing of all highlighting
+ *      data via a decoded callsign, since an exclamation symbol is not
+ *      a valid character in a callsign.
+
+ *
  *      The "Highlight last"  field allows the sender  to request that
  *      all instances of  "Callsign" in the last  period only, instead
  *      of all instances in all periods, be highlighted.
@@ -494,7 +502,33 @@
  *      fields an empty value implies no change, for the quint32 Rx DF
  *      and  Frequency  Tolerance  fields the  maximum  quint32  value
  *      implies  no change.   Invalid or  unrecognized values  will be
- *      silently ignored.
+ *      silently ignored. NOTE that if a mode/submode change occurs and
+ *      the current frequency is NOT in the frequency table for that
+ *      mode, a frequency change (to the default frequency for that band
+ *      and mode) may occur.
+ *
+ * AnnotationInfo   In     16                     quint32
+ *                         Id (unique key)        utf8
+ *                         DX Call                utf8
+ *                         Sort Order Provided    bool
+ *                         Sort Order             quint32
+ *
+ *      The server may send this message at any time. Sort orders can be used
+ *      for sorting hound callers when in Fox mode. A typical usage is to
+ *      "score" callsigns based on number of bands and/or modes worked using
+ *      an external logging program during a DXpedition, to be able to give
+ *      preference to calls that have not been worked before on any other
+ *      band or mode. An external program can watch decodes from wsjt-x,
+ *      then use this message to annotate the calls with a sort order. The
+ *      hound queue can be displayed by that sort order. *
+ *
+ *      If 'sort order provided' is true, the message also specifies a numeric
+ *      sort order for the DX call.
+ *
+ *      Invalid or  unrecognized values  will be silently ignored. A sort-order of
+ *      ffffffff will remove the sort-order value from the internal table.
+ *      Callsigns without a sort order will be valued at zero for sorting purposes
+ *      in the hound display.
  */
 
 #include <QDataStream>
@@ -526,6 +560,7 @@ namespace NetworkMessage
       HighlightCallsign,
       SwitchConfiguration,
       Configure,
+      AnnotationInfo,
       maximum_message_type_     // ONLY add new message types
                                 // immediately before here
     };
