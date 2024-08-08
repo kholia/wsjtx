@@ -126,6 +126,7 @@ option (WSJT_GENERATE_DOCS "Generate documentation files." ON)
 option (WSJT_RIG_NONE_CAN_SPLIT "Allow split operation with \"None\" as rig.")
 option (WSJT_TRACE_UDP "Debugging option that turns on UDP message protocol diagnostics.")
 option (WSJT_BUILD_UTILS "Build simulators and code demonstrators." ON)
+option (WSJT_FOX_OTP "Enable Fox OTP Verification Messages." OFF)
 CMAKE_DEPENDENT_OPTION (WSJT_QDEBUG_IN_RELEASE "Leave Qt debugging statements in Release configuration." OFF
   "NOT is_debug_build" OFF)
 CMAKE_DEPENDENT_OPTION (WSJT_ENABLE_EXPERIMENTAL_FEATURES "Enable features not fully ready for public releases." ON
@@ -161,6 +162,12 @@ endif ()
 set (WSJT_PLUGIN_DESTINATION ${PLUGIN_DESTINATION} CACHE PATH "Path for plugins")
 set (WSJT_QT_CONF_DESTINATION ${QT_CONF_DESTINATION} CACHE PATH "Path for the qt.conf file")
 
+if (WSJT_FOX_OTP)
+  set (wsjt_fox_CXXSRCS
+          foxotpcode.cpp
+  )
+  message (STATUS "Including Fox verification code feature")
+endif ()
 
 #
 # Project sources
@@ -223,6 +230,7 @@ set (wsjt_qt_CXXSRCS
   widgets/DoubleClickableRadioButton.cpp
   Network/LotWUsers.cpp
   Network/FileDownload.cpp
+  Network/FoxVerifier.cpp
   models/DecodeHighlightingModel.cpp
   widgets/DecodeHighlightingListView.cpp
   models/FoxLog.cpp
@@ -292,6 +300,7 @@ set (wsjt_CXXSRCS
   lib/crc10.cpp
   lib/crc13.cpp
   lib/crc14.cpp
+  ${wsjt_fox_CXXSRCS}
   )
 # deal with a GCC v6 UB error message
 set_source_files_properties (
@@ -903,7 +912,9 @@ check_type_size (CACHE_ALL HAMLIB_OLD_CACHING)
 check_symbol_exists (rig_set_cache_timeout_ms "hamlib/rig.h" HAVE_HAMLIB_CACHING)
 
 find_package (Usb REQUIRED)
-
+if (WSJT_FOX_OTP)
+  add_definitions (-DFOX_OTP)
+endif ()
 #
 # Qt5 setup
 #
