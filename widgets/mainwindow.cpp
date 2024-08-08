@@ -58,6 +58,7 @@
 #include "echograph.h"
 #include "fastplot.h"
 #include "fastgraph.h"
+#include "foxotpcode.h"
 #include "about.h"
 #include "messageaveraging.h"
 #include "activeStations.h"
@@ -72,6 +73,7 @@
 #include "models/StationList.hpp"
 #include "validators/LiveFrequencyValidator.hpp"
 #include "Network/MessageClient.hpp"
+#include "Network/FoxVerifier.hpp"
 #include "Network/wsprnet.h"
 #include "signalmeter.h"
 #include "HelpTextWindow.hpp"
@@ -194,7 +196,7 @@ extern "C" {
 
   void jpl_setup_(char* fname, FCL len);
 }
-
+QList<FoxVerifier *> m_verifications;
 int volatile itone[MAX_NUM_SYMBOLS];   //Audio tones for all Tx symbols
 int volatile itone0[MAX_NUM_SYMBOLS];  //Dummy array, data not actually used
 int volatile icw[NUM_CW_SYMBOLS];        //Dits for CW ID
@@ -1038,6 +1040,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   ui->actionAuto_Clear_Avg->setChecked(m_ndepth&128);
 
   m_UTCdisk=-1;
+  m_UTCdiskDateTime=QDateTime{}; // UTCDateTime of file being read from disk.
   m_fCPUmskrtd=0.0;
   m_bFastDone=false;
   m_bAltV=false;
@@ -2473,14 +2476,38 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
     }
     break;
   case Qt::Key_X:
+
     if(e->modifiers() & Qt::AltModifier) {
-      foxTest();
+      //foxTest();
       return;
     }
   }
 
   QMainWindow::keyPressEvent (e);
 }
+
+void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, QString const &response) {
+  (void)status;
+  (void)code;
+  if (response.length() > 0) {
+    QString msg = FoxVerifier::formatDecodeMessage(ts, callsign, response);
+      if (msg.length() > 0)
+        ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
+                                                   m_logBook, m_currentBand, m_config.ppfx());
+        write_all("Ck",msg);
+    }
+  LOG_INFO(QString("FoxVerifier response for [%1]: - [%2]").arg(callsign).arg(response).toStdString());
+}
+
+QString MainWindow::userAgent() {
+  // see User-Agent format definition https://www.rfc-editor.org/rfc/rfc9110#name-user-agent
+  //
+  QString platform = "(" + QSysInfo::prettyProductName()+"; "+QSysInfo::productType() + " " + QSysInfo::productVersion() + "; " +
+                     QSysInfo::currentCpuArchitecture() + "; " +
+                     QString("rv:%1").arg(QSysInfo::kernelVersion()) + ")";
+  QString userAgent = QString{"WSJT-X/" + version() + "_" + m_revision}.simplified() + " " +platform;
+  return userAgent;
+  }
 
 void MainWindow::bumpFqso(int n)                                 //bumpFqso()
 {
@@ -3141,6 +3168,11 @@ void MainWindow::read_wav_file (QString const& fname)
   int i1=fname.indexOf(".wav");
   m_nutc0=m_UTCdisk;
   m_UTCdisk=fname.mid(i0+1,i1-i0-1).toInt();
+  if (i0 > 6) {
+    m_UTCdiskDateTime = QDateTime::fromString("20" + fname.mid(i0 - 6, 13) + "Z", "yyyyMMdd_hhmmsst").toUTC();
+  } else
+    m_UTCdiskDateTime = QDateTime{};
+
   m_wav_future_watcher.setFuture (QtConcurrent::run ([this, fname] {
         auto basename = fname.mid (fname.lastIndexOf ('/') + 1);
         auto pos = fname.indexOf (".wav", 0, Qt::CaseInsensitive);
@@ -4183,7 +4215,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
         if(navg>=2) bAvgMsg=true;
       }
-      write_all("Rx",line_read.trimmed());
+      if (!line_read.trimmed().contains("$VERIFY$")) {
+        write_all("Rx", line_read.trimmed());
+      }
       int ntime=6;
       if(m_TRperiod>=60) ntime=4;
       if (line_read.left(ntime) != m_tBlankLine && QString::fromUtf8(line_read.constData()).left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {
@@ -4237,64 +4271,103 @@ void MainWindow::readFromStdout()                             //readFromStdout
             m_bDisplayedOnce=true;
           }
         } else {
-          DecodedText decodedtext1=decodedtext0;
-          if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
+
+          // remove verifications that are done
+          QMutableListIterator < FoxVerifier * > it(m_verifications);
+          while (it.hasNext()) {
+            if (it.next()->finished()) {
+              it.remove();
+            }
+          }
+
+          DecodedText decodedtext1 = decodedtext0;
+          if ((m_mode == "FT4" or m_mode == "FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
             ARRL_Digi_Update(decodedtext1);
           }
-          if (ui->labDXped->text()=="Super Hound" && decodedtext0.mid(3,18).contains(" verified")) {
-            verified = true;
-            ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
+
+          if (ui->labDXped->text() == "Super Hound" && (decodedtext0.mid(24, 8) == "$VERIFY$")) {
+            // $VERIFY$ foxcall otp
+            // QString test_return = QString{"203630 -12  0.1  775 ~  $VERIFY$ K8R 920749"};
+            QStringList lineparts;
+            lineparts = decodedtext0.string().split(' ', SkipEmptyParts);
+
+            QDateTime verifyDateTime;
+            if (m_diskData) {
+              verifyDateTime = m_UTCdiskDateTime; // get the date set from reading the wav file
+            } else {
+              verifyDateTime = QDateTime(QDateTime::currentDateTimeUtc().date(),
+                                         QTime::fromString(lineparts[0], "hhmmss"));
+            }
+            FoxVerifier *fv = new FoxVerifier(MainWindow::userAgent(),
+                                              &m_network_manager,
+                                              "https://www.9dx.cc",
+                                              lineparts[6], // foxcall
+                                              verifyDateTime,
+                                              lineparts[7]); // otp
+            connect(fv, &FoxVerifier::verifyComplete, this, &MainWindow::handleVerifyMsg);
+            m_verifications << fv;
           } else {
-            if (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30")) verified = false;
-          }
-          if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
-            ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
-          ui->decodedTextBrowser->displayDecodedText (decodedtext1, m_config.my_callsign (), m_mode, m_config.DXCC (),
-                                                      m_logBook, m_currentBandPeriod, m_config.ppfx (),
-                                                      ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                                                      haveFSpread, fSpread, bDisplayPoints, m_points);
-          if((m_mode=="FT4" or m_mode=="FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
-            QString deCall,deGrid;
-            decodedtext.deCallAndGrid(/*out*/deCall,deGrid);
-            bool bWorkedOnBand=(ui->decodedTextBrowser->CQPriority()!="New Call on Band") and ui->decodedTextBrowser->CQPriority()!="";
-            if(bWorkedOnBand) activeWorked(deCall,m_currentBand);
-          }
 
-          if (m_config.highlight_DXcall () && (m_hisCall!="") && ((decodedtext.string().contains(QRegularExpression {"(\\w+) " + m_hisCall}))
-               || (decodedtext.string().contains(QRegularExpression {"(\\w+) <" + m_hisCall +">"}))
-               || (decodedtext.string().contains(QRegularExpression {"<(\\w+)> " + m_hisCall}))
-               || (decodedtext.string().contains(QRegularExpression {"<...> " + m_hisCall}))))  {
-              ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true); // highlight dxCallEntry
-              QTimer::singleShot (500, [=] {                       // repeated highlighting to override JTAlert
-                  ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-                  });
-              QTimer::singleShot (1000, [=] {                      // repeated highlighting to override JTAlert
-                  ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-                  });
-              QTimer::singleShot (2500, [=] {                      // repeated highlighting to override JTAlert
-                  ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255,0,0), QColor(255,255,255), true);
-                  });
-          }
-          if (m_config.highlight_DXgrid () && (m_hisGrid!="") && (decodedtext.string().contains(m_hisGrid)))  {
-              ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0,0,255), QColor(255,255,255), true); // highlight dxGridEntry
-          }
+            if (ui->labDXped->text() == "Super Hound" && decodedtext0.mid(3, 18).contains(" verified")) {
+              verified = true;
+              write_all("Vf",decodedtext0.string());
+              ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
+            } else {
+              if (decodedtext0.mid(4, 2).contains("00") or decodedtext0.mid(4, 2).contains("30")) verified = false;
+            }
+            if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text() != "Super Hound")
+              ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
+            ui->decodedTextBrowser->displayDecodedText(decodedtext1, m_config.my_callsign(), m_mode, m_config.DXCC(),
+                                                       m_logBook, m_currentBandPeriod, m_config.ppfx(),
+                                                       ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                       haveFSpread, fSpread, bDisplayPoints, m_points);
+            if ((m_mode == "FT4" or m_mode == "FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
+              QString deCall, deGrid;
+              decodedtext.deCallAndGrid(/*out*/deCall, deGrid);
+              bool bWorkedOnBand = (ui->decodedTextBrowser->CQPriority() != "New Call on Band") and
+                                   ui->decodedTextBrowser->CQPriority() != "";
+              if (bWorkedOnBand) activeWorked(deCall, m_currentBand);
+            }
 
-          if(m_bBestSPArmed && m_mode=="FT4" && CALLING == m_QSOProgress) {
-            QString messagePriority=ui->decodedTextBrowser->CQPriority();
-            if(messagePriority!="") {
-              if(messagePriority=="New Call on Band"
-                 and m_BestCQpriority!="New Call on Band"
-                 and m_BestCQpriority!="New Multiplier") {
-                m_BestCQpriority="New Call on Band";
-                m_bDoubleClicked = true;
-                processMessage(decodedtext0);
-              }
-              if(messagePriority=="New DXCC"
-                 and m_BestCQpriority!="New DXCC"
-                 and m_BestCQpriority!="New Multiplier") {
-                m_BestCQpriority="New DXCC";
-                m_bDoubleClicked = true;
-                processMessage(decodedtext0);
+            if (m_config.highlight_DXcall() && (m_hisCall != "") &&
+                ((decodedtext.string().contains(QRegularExpression{"(\\w+) " + m_hisCall}))
+                 || (decodedtext.string().contains(QRegularExpression{"(\\w+) <" + m_hisCall + ">"}))
+                 || (decodedtext.string().contains(QRegularExpression{"<(\\w+)> " + m_hisCall}))
+                 || (decodedtext.string().contains(QRegularExpression{"<...> " + m_hisCall})))) {
+              ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255, 0, 0), QColor(255, 255, 255),
+                                                         true); // highlight dxCallEntry
+              QTimer::singleShot(500, [=] {                       // repeated highlighting to override JTAlert
+                  ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255, 0, 0), QColor(255, 255, 255), true);
+              });
+              QTimer::singleShot(1000, [=] {                      // repeated highlighting to override JTAlert
+                  ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255, 0, 0), QColor(255, 255, 255), true);
+              });
+              QTimer::singleShot(2500, [=] {                      // repeated highlighting to override JTAlert
+                  ui->decodedTextBrowser->highlight_callsign(m_hisCall, QColor(255, 0, 0), QColor(255, 255, 255), true);
+              });
+            }
+            if (m_config.highlight_DXgrid() && (m_hisGrid != "") && (decodedtext.string().contains(m_hisGrid))) {
+              ui->decodedTextBrowser->highlight_callsign(m_hisGrid, QColor(0, 0, 255), QColor(255, 255, 255),
+                                                         true); // highlight dxGridEntry
+            }
+
+            if (m_bBestSPArmed && m_mode == "FT4" && CALLING == m_QSOProgress) {
+              QString messagePriority = ui->decodedTextBrowser->CQPriority();
+              if (messagePriority != "") {
+                if (messagePriority == "New Call on Band"
+                    and m_BestCQpriority != "New Call on Band"
+                    and m_BestCQpriority != "New Multiplier") {
+                  m_BestCQpriority = "New Call on Band";
+                  m_bDoubleClicked = true;
+                  processMessage(decodedtext0);
+                }
+                if (messagePriority == "New DXCC"
+                    and m_BestCQpriority != "New DXCC"
+                    and m_BestCQpriority != "New Multiplier") {
+                  m_BestCQpriority = "New DXCC";
+                  m_bDoubleClicked = true;
+                  processMessage(decodedtext0);
+                }
               }
             }
           }
@@ -10875,7 +10948,7 @@ void MainWindow::write_all(QString txRx, QString message)
     t = t.asprintf("%5d",ui->TxFreqSpinBox->value());
     if (txRx=="Tx") msg="   0  0.0" + t + " " + message;
     auto time = QDateTime::currentDateTimeUtc ();
-    if( txRx=="Rx" && !m_bFastMode ) time=m_dateTimeSeqStart;
+    if( (txRx=="Rx" || txRx=="Ck") && !m_bFastMode ) time=m_dateTimeSeqStart;
 
     if (txRx=="Rx") {
        t = t.asprintf("%10.3f ",m_freqNominalPeriod/1.e6);   // prevent writing of wrong frequencies
@@ -11151,14 +11224,43 @@ void MainWindow::on_jt65Button_clicked()
   on_actionJT65_triggered();
 }
 
-void MainWindow::sfox_tx()
-{
-  auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+void MainWindow::sfox_tx() {
+  auto fname{QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
+  qint32 otp_key = 0;
   args.append(m_config.my_callsign());
+#ifdef FOX_OTP
+  if (m_config.FoxKey().startsWith("OTP:", Qt::CaseInsensitive))
+  {
+      LOG_INFO("OTP: Generating OTP key");
+      if (m_config.FoxKey().length() > 19) {
+        QString foxCodeSeed = m_config.FoxKey().mid(4);
+        char output[7];
+        QDateTime dateTime = dateTime.currentDateTime();
+        QByteArray ba = foxCodeSeed.toLocal8Bit();
+        char *c_str = ba.data();
+        int return_length;
+        if (6 == (return_length = create_totp(c_str, output, dateTime.toTime_t(), 30, 0)))
+        {
+          otp_key = QString(output).toInt();
+          LOG_INFO(QString("TOTP: %1 [%2]").arg(output).arg(otp_key).toStdString());
+        } else
+        {
+          LOG_INFO(QString("TOTP: Incorrect return length %1").arg(return_length));
+        }
+      } else
+      {
+        showStatusMessage (tr ("TOTP: seed not long enough."));
+        LOG_INFO(QString("TOTP: seed not long enough"));
+      }
+  }
+  args.append(QString("OTP:%1").arg(otp_key));
+#else
   args.append(m_config.FoxKey());
+#endif
 //  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
 //  qDebug() << "bb" << args;
+LOG_INFO(QString("%1 %2").arg(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx").arg(args.join(" ")).toStdString());
   p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
   p2.waitForFinished();
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};

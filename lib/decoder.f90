@@ -146,7 +146,7 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
              access='stream')
         write(47) params%yymmdd,params%nutc,id2(1:20),id2(1:180000)
         close(47)
-        call execute_command_line(trim(exe_dir)//'/sfrx '//'"'//trim(temp_dir)//'/fort.47"')
+        call execute_command_line(trim(exe_dir)//'/sfrx OTP '//'"'//trim(temp_dir)//'/fort.47"')
      else
         call timer('decft8  ',0)
         newdat=params%newdat
