@@ -5187,6 +5187,14 @@ void MainWindow::guiUpdate()
 //    n64=n64/30;
 //    n64=n64*30;
 //    qDebug() << "bb" << m_config.FoxKey() << nsec%60 << dec_data.params.nutc << n64 << n64%60;
+
+    // prevent tuning on top of a SuperFox message
+    if (SpecOp::HOUND==m_specOp && m_config.superFox() && m_tune) {
+      QDateTime now = QDateTime::currentDateTimeUtc();
+      int s = now.time().toString("ss").toInt();
+      if ((s >= 0 && s < 15) || (s >= 30 && s < 45)) ui->tuneButton->click ();
+    }
+
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
     if( SpecOp::HOUND == m_specOp ) {
