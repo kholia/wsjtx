@@ -1,0 +1,111 @@
+#include "FoxVerifier.hpp"
+#include "Logger.hpp"
+
+FoxVerifier::FoxVerifier(QString user_agent, QNetworkAccessManager *manager,QString base_url, QString callsign, QDateTime timestamp, QString code) : QObject(nullptr)
+{
+  manager_ = manager;
+  finished_ = false;
+  errored_ = false;
+  callsign_ = callsign;
+  code_ = code;
+  ts_ = timestamp;
+
+  QString url = QString("%1/check/%2/%3/%4.text").arg(base_url).arg(callsign).arg(timestamp.toString(Qt::ISODate)).arg(code);
+  LOG_INFO(QString("FoxVerifier: url %1").arg(url).toStdString());
+  q_url_ = QUrl(url);
+  if (manager_ == nullptr) {
+    LOG_INFO("FoxVerifier: manager is null, creating new one");
+    manager_ = new QNetworkAccessManager(this);
+    manager_->deleteLater();
+  }
+  if (q_url_.isValid()) {
+    request_ = QNetworkRequest(q_url_);
+    request_.setRawHeader( "User-Agent" , user_agent.toUtf8());
+    request_.setRawHeader( "Accept" , "*/*" );
+    request_.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    request_.setTransferTimeout(FOXVERIFIER_DEFAULT_TIMEOUT_MSEC);
+#endif
+
+    reply_ =  manager_->get(request_);
+    connect(reply_, &QNetworkReply::finished, this, &FoxVerifier::httpFinished);
+    connect(reply_, &QNetworkReply::errorOccurred, this, &FoxVerifier::errorOccurred);
+    connect(reply_, &QNetworkReply::redirected, this, &FoxVerifier::httpRedirected);
+    connect(reply_, &QNetworkReply::encrypted, this, &FoxVerifier::httpEncrypted);
+#if QT_CONFIG(ssl)
+    connect(reply_, &QNetworkReply::sslErrors, this, &FoxVerifier::sslErrors);
+#else
+    LOG_INFO("FoxVerifier: ssl not supported");
+#endif
+
+  } else {
+    LOG_INFO(QString("FoxVerifier: url invalid ! %1").arg(url).toStdString());
+  }
+}
+
+FoxVerifier::~FoxVerifier() {
+}
+
+bool FoxVerifier::finished() {
+  return finished_;
+}
+
+void FoxVerifier::errorOccurred(QNetworkReply::NetworkError code)
+{
+  int status =  reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  errored_ = true;
+  error_reason_ = reply_->errorString();
+  if (reply_->error() != QNetworkReply::NoError) {
+    LOG_INFO(QString("FoxVerifier: errorOccurred status %1 error [%2] isFinished %3 isrunning %4 code %5").arg(status).arg(
+            error_reason_).arg(reply_->isFinished()).arg(reply_->isRunning()).arg(code).toStdString());
+    return;
+  }
+  // TODO emit
+}
+
+void FoxVerifier::httpFinished()
+{
+  int status =  reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  QString reason = reply_->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+  if (reply_->error() != QNetworkReply::NoError) {
+    LOG_INFO(QString("FoxVerifier: httpFinished error:[%1 - %2] msg:[%3]").arg(status).arg(reason).arg(reply_->errorString()).toStdString());
+    reply_->abort();
+    emit verifyError(status, ts_, callsign_, code_, reply_->errorString());
+  }
+  return_value = reply_->read(1024); // limit amount we get
+  LOG_INFO(QString("FoxVerifier: httpFinished status:[%1 - %2] body:[%3] ").arg(status).arg(reason).arg(return_value).toStdString());
+  finished_ = true;
+  reply_->deleteLater();
+  if (status >= 200 && status <= 299) {
+    emit verifyComplete(status, ts_, callsign_, code_, return_value);
+  }
+}
+
+void FoxVerifier::sslErrors(const QList<QSslError> &)
+{
+  LOG_INFO(QString("FoxVerifier: sslErrors").toStdString());
+  reply_->ignoreSslErrors();
+}
+
+void FoxVerifier::httpRedirected(const QUrl &url) {
+  LOG_INFO(QString("FoxVerifier: redirected to %1").arg(url.toString()).toStdString());
+}
+
+void FoxVerifier::httpEncrypted() {
+  LOG_INFO("FoxVerifier: httpEncrypted");
+}
+
+QString FoxVerifier::formatDecodeMessage(QDateTime ts, QString callsign, QString const& verify_message) {
+  //"172100 -00  0.0  750 ~  K8R VERIFIED"
+  QTime rx_time = ts.time();
+  if (verify_message.endsWith(" VERIFIED")) {
+    return QString("%1 -00  0.0  750 ~  %2 VERIFIED").arg(rx_time.toString("hhmmss")).arg(callsign);
+  } else
+    if (verify_message.endsWith(" INVALID"))
+    {
+      return QString("%1   0  0.0  750 ~  %2 INVALID").arg(rx_time.toString("hhmmss")).arg(callsign);
+    }
+    else
+      return QString{};
+}

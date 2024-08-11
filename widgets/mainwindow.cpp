@@ -4300,7 +4300,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             }
             FoxVerifier *fv = new FoxVerifier(MainWindow::userAgent(),
                                               &m_network_manager,
-                                              "https://www.9dx.cc",
+                                              FOXVERIFIER_DEFAULT_BASE_URL,
                                               lineparts[6], // foxcall
                                               verifyDateTime,
                                               lineparts[7]); // otp
