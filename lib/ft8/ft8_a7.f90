@@ -1,6 +1,6 @@
 module ft8_a7
 
-  parameter(MAXDEC=100)
+  parameter(MAXDEC=200)
 
 ! For the following three arrays
 !    First index   i=decode number in this sequence
@@ -43,7 +43,7 @@ subroutine ft8_a7_save(nutc,dt,f,msg)
 ! Add this decode to current table for this sequence
   ndec(j,1)=ndec(j,1)+1                  !Number of decodes in this sequence
   i=ndec(j,1)                            !i is index of a new table entry
-  if(i.ge.MAXDEC-1) return               !Prevent table overflow
+  if(i.gt.MAXDEC) return                 !Prevent table overflow (indexes start at 1)
 
   dt0(i,j,1)=dt                          !Save dt in table
   f0(i,j,1)=f                            !Save f in table

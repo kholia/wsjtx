@@ -58,7 +58,7 @@ contains
     integer*2 iwave(15*12000)
     integer apsym2(58),aph10(10)
     character datetime*13,msg37*37
-    character*37 allmessages(200)
+    character*37 allmessages(MAX_EARLY)
     character*12 ctime
     integer allsnrs(MAX_EARLY)
     integer itone(NN)
