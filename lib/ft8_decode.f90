@@ -44,7 +44,7 @@ contains
 
     class(ft8_decoder), intent(inout) :: this
     procedure(ft8_decode_callback) :: callback
-    parameter (MAXCAND=600,MAX_EARLY=100)
+    parameter (MAXCAND=600,MAX_EARLY=200)
     real*8 tsec,tseq
     real sbase(NH1)
     real candidate(3,MAXCAND)
@@ -60,7 +60,7 @@ contains
     character datetime*13,msg37*37
     character*37 allmessages(200)
     character*12 ctime
-    integer allsnrs(200)
+    integer allsnrs(MAX_EARLY)
     integer itone(NN)
     integer itone_save(NN,MAX_EARLY)
     real f1_save(MAX_EARLY)
@@ -215,6 +215,9 @@ contains
               if(msg37.eq.allmessages(id)) ldupe=.true.
            enddo
            if(.not.ldupe) then
+              if(ndecodes.ge.MAX_EARLY) then 
+                cycle
+              endif
               ndecodes=ndecodes+1
               allmessages(ndecodes)=msg37
               allsnrs(ndecodes)=nsnr
