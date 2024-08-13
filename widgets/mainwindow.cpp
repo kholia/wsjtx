@@ -4961,7 +4961,10 @@ void MainWindow::guiUpdate()
               foxcom_.bSendMsg=ui->cbSendMsg->isChecked();
               memcpy(foxcom_.textMsg, m_freeTextMsg.leftJustified(26,' ').toLatin1(),26);
               foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
-              if(bSuperFox) sfox_tx();
+              if(bSuperFox) {
+                writeFoxTxMsgs();
+                sfox_tx();
+              }
             }
           }
         }
@@ -10578,7 +10581,10 @@ Transmit:
   ::memcpy(foxcom_.textMsg, m_freeTextMsg0.leftJustified(26,' ').toLatin1(),26);
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
-  if(bSuperFox) sfox_tx();
+  if(bSuperFox) {
+    writeFoxTxMsgs();
+    sfox_tx();
+  }
   m_tFoxTxSinceCQ++;
 
   for(QString hc: m_foxQSO.keys()) {               //Check for strikeout or timeout
@@ -10711,7 +10717,24 @@ void MainWindow::foxGenWaveform(int i,QString fm)
   writeFoxQSO(t + fm.trimmed());
 }
 
-void MainWindow::writeFoxQSO(QString const& msg)
+void MainWindow::writeFoxTxMsgs() {
+  // references extern struct foxcom_
+  QString t;
+  for (int i = 0; i < 5; i++) {
+    t = QString::fromLatin1(foxcom_.cmsg[i]).left(40);
+    if (t.length() > 0) {
+      write_all("Tx", t);
+    }
+  }
+  t = QString::fromLatin1(foxcom_.textMsg).left(38);
+  if (foxcom_.bSendMsg) {
+    write_all("Tx", "-Free Text- "+t);
+  }
+  if (foxcom_.bMoreCQs) {
+    write_all("Tx", "-MoreCQs- ");
+  }
+}
+  void MainWindow::writeFoxQSO(QString const& msg)
 {
   QString t;
   t = t.asprintf("%3d%3d%3d",m_houndQueue.count(),m_foxQSOinProgress.count(),m_foxQSO.count());

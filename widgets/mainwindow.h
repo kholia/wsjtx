@@ -889,6 +889,7 @@ private:
   void activeWorked(QString call, QString band);
   void read_log();
   void refreshPileupList();
+  void writeFoxTxMsgs();
 };
 
 extern int killbyname(const char* progName);
