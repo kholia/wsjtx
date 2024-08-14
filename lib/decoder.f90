@@ -150,8 +150,8 @@ subroutine multimode_decoder(ss,id2,params,nfsample)
         close(47)
         write(crxfreq,'(i6)') params%nfqso
         write(cftol,'(i5)') params%ntol
-        cmnd=trim(exe_dir)//char(92)//'sfrx'//crxfreq//cftol// '"' // &
-             trim(temp_dir)//char(92)//'fort.47"'
+        cmnd=trim(exe_dir)//'/sfrx'//crxfreq//cftol// '"' // &
+             trim(temp_dir)//'/fort.47"'
         call execute_command_line(trim(cmnd),exitstat=nexitstat,  &
              cmdstat=ncmdstat,cmdmsg=cmndmsg)
      else
