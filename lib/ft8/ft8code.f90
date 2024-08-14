@@ -23,7 +23,7 @@ program ft8code
           'LDPC(174,91) encoding,'
      print*,'bit and symbol ordering, and other details of the FT8 protocol.'
      print*
-     print*,'Usage: ft8code [-c grid] "message"  # Results for specified message'
+     print*,'Usage: ft8code "message"  # Results for specified message'
      print*,'       ft8code -T                   # Examples of all message types'
      print*,'       ft8code -t                   # Short format examples'
      go to 999
