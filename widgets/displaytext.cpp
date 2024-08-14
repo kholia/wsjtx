@@ -561,8 +561,8 @@ void DisplayText::displayHoundToBeCalled(QString t, bool bAtTop, QColor bg, QCol
 }
 
 void DisplayText::setHighlightedHoundText(QString t) {
-  QColor bg;
-  QColor fg;
+  QColor bg=QColor{255,255,255};
+  QColor fg=QColor{0,0,0};
   highlight_types types{Highlight::Call};
   set_colours(m_config, &bg, &fg, types);
   // t is multiple lines of text, each line is a hound calling
