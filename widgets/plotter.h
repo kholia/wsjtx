@@ -77,6 +77,7 @@ public:
   void setColours(QVector<QColor> const& cl);
   void setFlatten(bool b1, bool b2);
   void setTol(int n);
+  void setSuperHound(bool b);
   void setRxBand(QString band);
   void setReference(bool b) {m_bReference = b;}
   bool Reference() const {return m_bReference;}
@@ -125,6 +126,7 @@ private:
   bool    m_bSingleDecode;
   bool    m_bFirst=true;
   bool    m_bResized;
+  bool    m_bSuperHound=false;
 
   float   m_fSpan;
   float   m_pdB=0.0;

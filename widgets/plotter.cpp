@@ -483,7 +483,10 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
 
   float bw=9.0*12000.0/m_nsps;               //JT9
   if(m_mode=="FT4") bw=3*12000.0/576.0;      //FT4  ### (3x, or 4x???) ###
-  if(m_mode=="FT8") bw=7*12000.0/1920.0;     //FT8
+  if(m_mode=="FT8") {
+    bw=7*12000.0/1920.0;     //FT8
+    if(m_bSuperHound) bw=1500.0;
+  }
   if(m_mode.startsWith("FST4")) {
     int h=int(pow(2.0,m_nSubMode));
     int nsps=800;
@@ -585,7 +588,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
       painter0.drawLine(x2,25,x2-5,20);
     }
 
-    if(m_mode=="Q65" or (m_mode=="JT65" and m_bVHF)) {
+    if(m_mode=="Q65" or (m_mode=="JT65" and m_bVHF) or (m_mode=="FT8" and m_bSuperHound) ) {
       painter0.setPen(penGreen);
       x1=XfromFreq(m_rxFreq-m_tol);
       x2=XfromFreq(m_rxFreq+m_tol);
@@ -883,6 +886,11 @@ void CPlotter::setFlatten(bool b1, bool b2)
   m_Flatten=0;
   if(b1) m_Flatten=1;
   if(b2) m_Flatten=2;
+}
+
+void CPlotter::setSuperHound(bool b)
+{
+  m_bSuperHound=b;
 }
 
 void CPlotter::setTol(int n)                                 //setTol()

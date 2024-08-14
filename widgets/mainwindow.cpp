@@ -7279,14 +7279,20 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbAutoSeq->setEnabled(false);
     ui->tabWidget->setCurrentIndex(0);
     ui->cbHoldTxFreq->setChecked(true);
-    //                       01234567890123456789012345678901234567
-    displayWidgets(nWidgets("11101000010011000001000000000011000000"));
     if(m_config.superFox()) {
+      //                       01234567890123456789012345678901234567
+      displayWidgets(nWidgets("11111000010011000001000000000011000000"));
       ui->labDXped->setText(tr ("Super Hound"));
       ui->cbRxAll->setEnabled(false);
+      m_wideGraph->setRxFreq(ui->RxFreqSpinBox->value());
+      m_wideGraph->setTol(ui->sbFtol->value());
+      m_wideGraph->setSuperHound(true);
     } else {
+      //                       01234567890123456789012345678901234567
+      displayWidgets(nWidgets("11101000010011000001000000000011000000"));
       ui->labDXped->setText(tr ("Hound"));
       ui->cbRxAll->setEnabled(true);
+      m_wideGraph->setSuperHound(false);
     }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
