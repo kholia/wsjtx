@@ -4519,6 +4519,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
                   m_nFoxFreq=decodedtext.string().mid(16,4).toInt();
                   hound_reply ();
                 } else {
+                  if (SpecOp::HOUND==m_specOp && (text.mid(4,2).contains("15") or text.mid(4,2).contains("45"))) return;  // ignore stations calling in the wrong time slot
                   if (text.contains(" " + m_config.my_callsign() + " " + m_hisCall) && !text.contains("73 "))  processMessage(decodedtext0);   // needed for MSHV multistream messages
                 }
               }
@@ -5033,7 +5034,10 @@ void MainWindow::guiUpdate()
               foxcom_.bSendMsg=ui->cbSendMsg->isChecked();
               memcpy(foxcom_.textMsg, m_freeTextMsg.leftJustified(26,' ').toLatin1(),26);
               foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
-              if(bSuperFox) sfox_tx();
+              if(bSuperFox) {
+                writeFoxTxMsgs();
+                sfox_tx();
+              }
             }
           }
         }
@@ -5331,6 +5335,14 @@ void MainWindow::guiUpdate()
 //    n64=n64/30;
 //    n64=n64*30;
 //    qDebug() << "bb" << m_config.FoxKey() << nsec%60 << dec_data.params.nutc << n64 << n64%60;
+
+    // prevent tuning on top of a SuperFox message
+    if (SpecOp::HOUND==m_specOp && m_config.superFox() && m_tune) {
+      QDateTime now = QDateTime::currentDateTimeUtc();
+      int s = now.time().toString("ss").toInt();
+      if ((s >= 0 && s < 15) || (s >= 30 && s < 45)) ui->tuneButton->click ();
+    }
+
     if(m_mode=="FST4") chk_FST4_freq_range();
     m_currentBand=m_config.bands()->find(m_freqNominal);
     if( SpecOp::HOUND == m_specOp ) {
@@ -10642,7 +10654,10 @@ Transmit:
   ::memcpy(foxcom_.textMsg, m_freeTextMsg0.leftJustified(26,' ').toLatin1(),26);
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
-  if(bSuperFox) sfox_tx();
+  if(bSuperFox) {
+    writeFoxTxMsgs();
+    sfox_tx();
+  }
   m_tFoxTxSinceCQ++;
 
   for(QString hc: m_foxQSO.keys()) {               //Check for strikeout or timeout
@@ -10775,7 +10790,24 @@ void MainWindow::foxGenWaveform(int i,QString fm)
   writeFoxQSO(t + fm.trimmed());
 }
 
-void MainWindow::writeFoxQSO(QString const& msg)
+void MainWindow::writeFoxTxMsgs() {
+  // references extern struct foxcom_
+  QString t;
+  for (int i = 0; i < 5; i++) {
+    t = QString::fromLatin1(foxcom_.cmsg[i]).left(40);
+    if (t.length() > 0) {
+      write_all("Tx", t);
+    }
+  }
+  t = QString::fromLatin1(foxcom_.textMsg).left(38);
+  if (foxcom_.bSendMsg) {
+    write_all("Tx", "-Free Text- "+t);
+  }
+  if (foxcom_.bMoreCQs) {
+    write_all("Tx", "-MoreCQs- ");
+  }
+}
+  void MainWindow::writeFoxQSO(QString const& msg)
 {
   QString t;
   t = t.asprintf("%3d%3d%3d",m_houndQueue.count(),m_foxQSOinProgress.count(),m_foxQSO.count());

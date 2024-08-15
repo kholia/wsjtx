@@ -894,6 +894,7 @@ private:
   void refreshPileupList();
   QString userAgent();
   void handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, QString const &response);
+  void writeFoxTxMsgs();
 };
 
 extern int killbyname(const char* progName);
