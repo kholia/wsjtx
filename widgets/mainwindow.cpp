@@ -7312,6 +7312,7 @@ void MainWindow::on_actionFT8_triggered()
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
+      m_wideGraph->setSuperHound(false);
   }
 
   m_specOp=m_config.special_op_id();
