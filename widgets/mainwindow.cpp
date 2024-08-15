@@ -10135,7 +10135,11 @@ QString MainWindow::sortHoundCalls(QString t, int isort, int max_dB)
         else
           i=isort;                               // part of the line that we want
         t1=map[a].split(" ",SkipEmptyParts).at(i);
-        n=1000*(t1.toInt()+100) + j;                   // pack (snr or dist or age) and index j into n
+        int isort_value = t1.toInt();
+        if (isort==5) {                           // sort by age ascending
+          isort_value = (100 < isort_value ? 100 : 100-isort_value);
+        }
+        n=1000*(isort_value+100) + j;                   // pack (snr or dist or age) and index j into n
         list.insert(j,n);                              // add n to list at [j]
       }
       if (isort == 6) { //  sort by continent
@@ -10222,7 +10226,7 @@ void MainWindow::selectHound(QString line, bool bTopQueue)
  * The line may be selected by double-clicking; alternatively, hitting
  * <Enter> is equivalent to double-clicking on the top-most line.
 */
-  if(line.length()==0) return;
+  if(line.simplified().isEmpty()) return;
   if(line.length() < 6) return;
   QString houndCall=line.split(" ",SkipEmptyParts).at(0);
 
