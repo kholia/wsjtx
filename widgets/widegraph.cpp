@@ -498,6 +498,11 @@ void WideGraph::on_zero2dSlider_valueChanged(int value)               //Zero2
   }
 }
 
+void WideGraph::setSuperFox(bool b)
+{
+  ui->widePlot->setSuperFox(b);
+}
+
 void WideGraph::setSuperHound(bool b)
 {
   ui->widePlot->setSuperHound(b);

@@ -610,7 +610,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
       painter0.drawLine(x6,20,x6,26);
 
     } else {
-      // Draw the green "goal post"
+      // Draw the green goal post
       painter0.setPen(penGreen);
       x1=XfromFreq(m_rxFreq);
       x2=XfromFreq(m_rxFreq+bw);
@@ -630,12 +630,13 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
     painter0.setPen(penRed);
     x1=XfromFreq(m_txFreq);
     x2=XfromFreq(m_txFreq+bw);
+    if(m_bSuperFox) x2=XfromFreq(m_txFreq+1500.0);
     if(m_mode=="WSPR") {
       bw=4*12000.0/8192.0;                  //WSPR
       x1=XfromFreq(m_txFreq-0.5*bw);
       x2=XfromFreq(m_txFreq+0.5*bw);
     }
-    // Draw the red "goal post"
+    // Draw the red goal post
     painter0.drawLine(x1,yTxTop,x1,yTxTop+yh);
     painter0.drawLine(x1,yTxTop,x2,yTxTop);
     painter0.drawLine(x2,yTxTop,x2,yTxTop+yh);
@@ -888,9 +889,16 @@ void CPlotter::setFlatten(bool b1, bool b2)
   if(b2) m_Flatten=2;
 }
 
+void CPlotter::setSuperFox(bool b)
+{
+  m_bSuperFox=b;
+  if(m_bSuperFox) m_bSuperHound=false;
+}
+
 void CPlotter::setSuperHound(bool b)
 {
   m_bSuperHound=b;
+  if(m_bSuperHound) m_bSuperFox=false;
 }
 
 void CPlotter::setTol(int n)                                 //setTol()

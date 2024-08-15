@@ -2158,6 +2158,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     set_mode(m_mode);
     configActiveStations();
   }
+  if(m_mode=="FT8") on_actionFT8_triggered(); //in case we need to reset some things for Fox/Hound
 }
 
 void MainWindow::on_monitorButton_clicked (bool checked)
@@ -7258,8 +7259,10 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbHoldTxFreq->setChecked(true);
     ui->cbAutoSeq->setEnabled(false);
     ui->tabWidget->setCurrentIndex(1);
+    m_wideGraph->setSuperFox(false);
     if(m_config.superFox()) {
       ui->TxFreqSpinBox->setValue(750);            //SuperFox transmits at 750 Hz
+      m_wideGraph->setSuperFox(true);
     } else {
       ui->TxFreqSpinBox->setValue(300);
     }
@@ -7279,6 +7282,7 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbAutoSeq->setEnabled(false);
     ui->tabWidget->setCurrentIndex(0);
     ui->cbHoldTxFreq->setChecked(true);
+    m_wideGraph->setSuperHound(false);
     if(m_config.superFox()) {
       //                       01234567890123456789012345678901234567
       displayWidgets(nWidgets("11111000010011000001000000000011000000"));
