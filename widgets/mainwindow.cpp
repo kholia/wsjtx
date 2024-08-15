@@ -1368,6 +1368,9 @@ void MainWindow::readSettings()
     ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
     QTimer::singleShot (50, [=] {blocked = false;});
   }
+  if (m_mode=="FT8") {
+    ui->sbFtol->setValue (m_settings->value("Ftol_SF", 50).toInt());
+  }
   if (m_mode=="Q65") {
     m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
     ui->sbSubmode->setValue(m_nSubMode_Q65);
@@ -7227,6 +7230,7 @@ void MainWindow::on_actionFT8_triggered()
   VHF_features_enabled(bVHF);
   ui->cbAutoSeq->setChecked(true);
   m_TRperiod=15.0;
+  ui->sbFtol->setValue (m_settings->value ("Ftol_SF", 50).toInt()); // restore last used Ftol parameter
   m_fastGraph->hide();
   m_wideGraph->show();
   ui->rh_decodes_headings_label->setText("  UTC   dB   DT Freq    " + tr ("Message"));
@@ -8785,6 +8789,7 @@ void MainWindow::on_sbFtol_valueChanged(int value)
   statusUpdate ();
   // save last used parameters
   QTimer::singleShot (200, [=] {
+    if (m_mode=="FT8") m_settings->setValue ("Ftol_SF", ui->sbFtol->value());
     if (m_mode=="Q65") m_settings->setValue ("Ftol_Q65", ui->sbFtol->value());
     if (m_mode=="MSK144") m_settings->setValue ("Ftol_MSK144", ui->sbFtol->value());
     if (m_mode=="JT65") m_settings->setValue ("Ftol_JT65", ui->sbFtol->value ());
