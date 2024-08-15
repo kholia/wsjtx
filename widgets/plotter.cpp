@@ -485,7 +485,6 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
   if(m_mode=="FT4") bw=3*12000.0/576.0;      //FT4  ### (3x, or 4x???) ###
   if(m_mode=="FT8") {
     bw=7*12000.0/1920.0;     //FT8
-    if(m_bSuperHound) bw=1500.0;
   }
   if(m_mode.startsWith("FST4")) {
     int h=int(pow(2.0,m_nSubMode));
@@ -607,6 +606,7 @@ void CPlotter::DrawOverlay()                   //DrawOverlay()
       }
       painter0.setPen(penGreen);
       x6=XfromFreq(m_rxFreq+bw);             //Highest tone
+      if(m_mode=="FT8" and m_bSuperHound) x6=XfromFreq(m_rxFreq+1500.0);
       painter0.drawLine(x6,20,x6,26);
 
     } else {
