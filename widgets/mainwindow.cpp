@@ -10410,7 +10410,7 @@ void MainWindow::foxTxSequencer()
   QString t,rpt;
   qint32  islot=0;
   qint32  n1,n2,n3;
-
+  int nMaxRemainingSlots=0;
   m_tFoxTx++;                               //Increment Fox Tx cycle counter
 
   //Is it time for a stand-alone CQ?
@@ -10462,13 +10462,15 @@ void MainWindow::foxTxSequencer()
 
 list1Done:
 //Compile list2: Up to Nslots Hound calls to be sent a report.
+// For Superfox, up to 5 RR73, but only 4 callsigns with reports. m_NSlots should be 5 for SF.
+  nMaxRemainingSlots = (m_config.superFox()) ? m_Nslots - 1 : m_Nslots;
   for(int i=0; i<m_foxQSOinProgress.count(); i++) {
     //First do those for QSOs in progress
     hc=m_foxQSOinProgress.at(i);
     if((m_foxQSO[hc].tFoxRrpt < 0) and (m_foxQSO[hc].ncall < m_maxStrikes)) {
       //Sent him a report and have not received R+rpt: call him again
       list2 << hc;                          //Add to list2
-      if(list2.size()==m_Nslots) goto list2Done;
+      if(list2.size()==nMaxRemainingSlots) goto list2Done;
     }
   }
 
@@ -10489,7 +10491,7 @@ list1Done:
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     refreshHoundQueueDisplay();
 
-    if(list2.size()==m_Nslots) {
+    if(list2.size()==nMaxRemainingSlots) {
       break;
     }
     
@@ -10501,7 +10503,6 @@ list2Done:
   n2=list2.size();
   n3=qMax(n1,n2);
   if(n3>m_Nslots) n3=m_Nslots;
-
   for(int i=0; i<n3; i++) {
     hc1="";
     fm="";
