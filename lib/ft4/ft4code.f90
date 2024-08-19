@@ -26,8 +26,8 @@ program ft4code
           'LDPC(174,91) encoding,'
      print*,'bit and symbol ordering, and other details of the FT4 protocol.'
      print*
-     print*,'Usage: ft4code [-c grid] "message"  # Results for specified message'
-     print*,'       ft4code -t                   # Examples of all message types'
+     print*,'Usage: ft4code "message"  # Results for specified message'
+     print*,'       ft4code -t         # Examples of all message types'
      go to 999
   endif
 
