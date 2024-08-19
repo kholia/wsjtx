@@ -1372,6 +1372,9 @@ void MainWindow::readSettings()
     ui->sbTR->setValue (m_settings->value ("TRPeriod", 15).toInt());
     QTimer::singleShot (50, [=] {blocked = false;});
   }
+  if (m_mode=="FT8") {
+    ui->sbFtol->setValue (m_settings->value("Ftol_SF", 50).toInt());
+  }
   if (m_mode=="Q65") {
     m_nSubMode=m_settings->value("SubMode_Q65",0).toInt();
     ui->sbSubmode->setValue(m_nSubMode_Q65);
@@ -2162,6 +2165,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
     set_mode(m_mode);
     configActiveStations();
   }
+  if(m_mode=="FT8") on_actionFT8_triggered(); //in case we need to reset some things for Fox/Hound
 }
 
 void MainWindow::on_monitorButton_clicked (bool checked)
@@ -7373,6 +7377,7 @@ void MainWindow::on_actionFT8_triggered()
   VHF_features_enabled(bVHF);
   ui->cbAutoSeq->setChecked(true);
   m_TRperiod=15.0;
+  ui->sbFtol->setValue (m_settings->value ("Ftol_SF", 50).toInt()); // restore last used Ftol parameter
   m_fastGraph->hide();
   m_wideGraph->show();
   ui->rh_decodes_headings_label->setText("  UTC   dB   DT Freq    " + tr ("Message"));
@@ -7405,8 +7410,10 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbHoldTxFreq->setChecked(true);
     ui->cbAutoSeq->setEnabled(false);
     ui->tabWidget->setCurrentIndex(1);
+    m_wideGraph->setSuperFox(false);
     if(m_config.superFox()) {
       ui->TxFreqSpinBox->setValue(750);            //SuperFox transmits at 750 Hz
+      m_wideGraph->setSuperFox(true);
     } else {
       ui->TxFreqSpinBox->setValue(500);
     }
@@ -7428,15 +7435,21 @@ void MainWindow::on_actionFT8_triggered()
     ui->cbAutoSeq->setEnabled(false);
     ui->tabWidget->setCurrentIndex(0);
     ui->cbHoldTxFreq->setChecked(true);
-    //                       01234567890123456789012345678901234567
-    displayWidgets(nWidgets("11101000010011000001000000000011000000"));
-    ui->cbRxAll->setText(tr("Rx All Freqs"));
+    m_wideGraph->setSuperHound(false);
     if(m_config.superFox()) {
+      //                       01234567890123456789012345678901234567
+      displayWidgets(nWidgets("11111000010011000001000000000011000000"));
       ui->labDXped->setText(tr ("Super Hound"));
       ui->cbRxAll->setEnabled(false);
+      m_wideGraph->setRxFreq(ui->RxFreqSpinBox->value());
+      m_wideGraph->setTol(ui->sbFtol->value());
+      m_wideGraph->setSuperHound(true);
     } else {
+      //                       01234567890123456789012345678901234567
+      displayWidgets(nWidgets("11101000010011000001000000000011000000"));
       ui->labDXped->setText(tr ("Hound"));
       ui->cbRxAll->setEnabled(true);
+      m_wideGraph->setSuperHound(false);
     }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
@@ -7453,6 +7466,7 @@ void MainWindow::on_actionFT8_triggered()
   }
   if(m_specOp != SpecOp::HOUND) {
       ui->houndButton->setChecked(false);
+      m_wideGraph->setSuperHound(false);
   }
 
   m_specOp=m_config.special_op_id();
@@ -8925,6 +8939,7 @@ void MainWindow::on_sbFtol_valueChanged(int value)
   statusUpdate ();
   // save last used parameters
   QTimer::singleShot (200, [=] {
+    if (m_mode=="FT8") m_settings->setValue ("Ftol_SF", ui->sbFtol->value());
     if (m_mode=="Q65") m_settings->setValue ("Ftol_Q65", ui->sbFtol->value());
     if (m_mode=="MSK144") m_settings->setValue ("Ftol_MSK144", ui->sbFtol->value());
     if (m_mode=="JT65") m_settings->setValue ("Ftol_JT65", ui->sbFtol->value ());
@@ -10208,7 +10223,11 @@ QString MainWindow::sortHoundCalls(QString t, int isort, int max_dB)
         else
           i=isort;                               // part of the line that we want
         t1=map[a].split(" ",SkipEmptyParts).at(i);
-        n=1000*(t1.toInt()+100) + j;                   // pack (snr or dist or age) and index j into n
+        int isort_value = t1.toInt();
+        if (isort==5) {                           // sort by age ascending
+          isort_value = (100 < isort_value ? 100 : 100-isort_value);
+        }
+        n=1000*(isort_value+100) + j;                   // pack (snr or dist or age) and index j into n
         list.insert(j,n);                              // add n to list at [j]
       }
       if (isort == 6) { //  sort by continent
@@ -10295,7 +10314,7 @@ void MainWindow::selectHound(QString line, bool bTopQueue)
  * The line may be selected by double-clicking; alternatively, hitting
  * <Enter> is equivalent to double-clicking on the top-most line.
 */
-  if(line.length()==0) return;
+  if(line.simplified().isEmpty()) return;
   if(line.length() < 6) return;
   QString houndCall=line.split(" ",SkipEmptyParts).at(0);
 
@@ -10479,7 +10498,7 @@ void MainWindow::foxTxSequencer()
   QString t,rpt;
   qint32  islot=0;
   qint32  n1,n2,n3;
-
+  int nMaxRemainingSlots=0;
   m_tFoxTx++;                               //Increment Fox Tx cycle counter
 
   //Is it time for a stand-alone CQ?
@@ -10531,13 +10550,15 @@ void MainWindow::foxTxSequencer()
 
 list1Done:
 //Compile list2: Up to Nslots Hound calls to be sent a report.
+// For Superfox, up to 5 RR73, but only 4 callsigns with reports. m_NSlots should be 5 for SF.
+  nMaxRemainingSlots = (m_config.superFox()) ? m_Nslots - 1 : m_Nslots;
   for(int i=0; i<m_foxQSOinProgress.count(); i++) {
     //First do those for QSOs in progress
     hc=m_foxQSOinProgress.at(i);
     if((m_foxQSO[hc].tFoxRrpt < 0) and (m_foxQSO[hc].ncall < m_maxStrikes)) {
       //Sent him a report and have not received R+rpt: call him again
       list2 << hc;                          //Add to list2
-      if(list2.size()==m_Nslots) goto list2Done;
+      if(list2.size()==nMaxRemainingSlots) goto list2Done;
     }
   }
 
@@ -10558,7 +10579,7 @@ list1Done:
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     refreshHoundQueueDisplay();
 
-    if(list2.size()==m_Nslots) {
+    if(list2.size()==nMaxRemainingSlots) {
       break;
     }
     
@@ -10570,7 +10591,6 @@ list2Done:
   n2=list2.size();
   n3=qMax(n1,n2);
   if(n3>m_Nslots) n3=m_Nslots;
-
   for(int i=0; i<n3; i++) {
     hc1="";
     fm="";

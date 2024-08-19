@@ -42,6 +42,8 @@ public:
   bool   flatten();
   bool   useRef();
   void   setTol(int n);
+  void   setSuperFox(bool b);
+  void   setSuperHound(bool b);
   int    smoothYellow();
   void   setRxBand (QString const& band);
   void   setWSPRtransmitted();
