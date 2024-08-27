@@ -2348,7 +2348,7 @@ Double-click to reset to the standard 73 message</string>
                          <string>Random</string>
                         </property>
                         <property name="maxVisibleItems">
-                         <number>5</number>
+                         <number>8</number>
                         </property>
                         <item>
                          <property name="text">
