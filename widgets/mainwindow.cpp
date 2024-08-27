@@ -3975,16 +3975,22 @@ void MainWindow::queueActiveWindowHound2(QString line) {
       // houndcall rpt grid
       if (w[7].contains(grid_regexp)) grid = w[7];
       if (w[7].contains(non_r_db_regexp)) {
-        LOG_INFO(QString("%1 called with signal report %2").arg(caller).arg(w[7]));
+        LOG_INFO(QString("ActiveStations Window click: %1 called with signal report %2").arg(caller).arg(w[7]));
       }
       if (caller.length() > 2) {
         // make sure it's not already in the queue
         for ( QString hs : m_houndQueue) {
           if (hs.startsWith(caller)) {
-            LOG_INFO(QString("%1 already in queue. Skipping").arg(hs));
+            //LOG_INFO(QString("ActiveStations Window click: %1 already in queue. Skipping").arg(hs));
             return;
           }
         }
+        // make sure caller is not in fox queue either
+        if(m_foxQSO.contains(caller)) {
+          //LOG_INFO(QString("ActiveStations Window click: %1 already in progress. Skipping").arg(caller));
+          return;
+        }
+
         QString caller_rpt = (caller+"            ").mid(0,12)+db;
         if (m_houndQueue.count() < MAX_HOUNDS_IN_QUEUE) {
           // add it to the queue
@@ -3994,7 +4000,7 @@ void MainWindow::queueActiveWindowHound2(QString line) {
         }
       }
     } else {
-      LOG_INFO(QString("queueActiveWindowHound2 - skipping %1").arg(line));
+      LOG_INFO(QString("ActiveStations Window click: skipping %1").arg(line));
     }
   }
 }
@@ -4564,7 +4570,7 @@ void MainWindow::auto_sequence (DecodedText const& message, unsigned start_toler
     }
     if (m_auto
         && (m_QSOProgress==REPLYING  or (!ui->tx1->isEnabled () and m_QSOProgress==REPORT))
-        && qAbs (ui->TxFreqSpinBox->value () - df) <= int (stop_tolerance)
+        && !m_config.superFox() && (SpecOp::HOUND != m_specOp) && qAbs (ui->TxFreqSpinBox->value () - df) <= int (stop_tolerance) //
         && message_words.at (2) != "DE"
         && !message_words.at (2).contains (QRegularExpression {"(^(CQ|QRZ))|" + m_baseCall})
         && message_words.at (3).contains (Radio::base_callsign (ui->dxCallEntry->text ()))) {
