@@ -3998,6 +3998,7 @@ void MainWindow::queueActiveWindowHound2(QString line) {
           refreshHoundQueueDisplay();
           // TODO: remove from active stations window too?
         }
+        removeHoundFromCallingList(caller);
       }
     } else {
       LOG_INFO(QString("ActiveStations Window click: skipping %1").arg(line));
@@ -10239,6 +10240,17 @@ QString MainWindow::sortHoundCalls(QString t, int isort, int max_dB)
   return m_houndCallers;
 }
 
+void MainWindow::removeHoundFromCallingList(QString callsign)
+{
+  QString text = m_houndCallers;
+  QRegularExpression re = QRegularExpression("^" + callsign + "[^\\n]+\\n", QRegularExpression::MultilineOption);
+  text.remove(re);
+  if (text != m_houndCallers) {
+    m_nSortedHounds--;
+    m_houndCallers = text;
+    ui->decodedTextBrowser->setHighlightedHoundText(m_houndCallers);
+  }
+}
 //------------------------------------------------------------------------------
 void MainWindow::selectHound(QString line, bool bTopQueue)
 {

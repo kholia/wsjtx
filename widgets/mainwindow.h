@@ -873,6 +873,7 @@ private:
   QChar current_submode () const; // returns QChar {0} if submode is not appropriate
   void write_transmit_entry (QString const& file_name);
   void selectHound(QString t, bool bTopQueue);
+  void removeHoundFromCallingList(QString callsign);
   void houndCallers();
   void updateFoxQSOsInProgressDisplay();
   void foxQueueTopCallCommand();
