@@ -567,11 +567,11 @@ void DisplayText::setHighlightedHoundText(QString t) {
   set_colours(m_config, &bg, &fg, types);
   // t is multiple lines of text, each line is a hound calling
   // iterate through each line and highlight the callsign
-  auto lines = t.split(QChar('\n'), Qt::SkipEmptyParts);
+  auto lines = t.split(QChar('\n'), SkipEmptyParts);
   clear();
   foreach (auto line, lines)
   {
-    auto fields = line.split(QChar(' '), Qt::SkipEmptyParts);
+    auto fields = line.split(QChar(' '), SkipEmptyParts);
     insertText(line, bg, fg, fields.first(), QString{});
   }
 }
