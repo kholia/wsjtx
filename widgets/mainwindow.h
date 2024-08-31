@@ -146,6 +146,7 @@ private:
 
 private slots:
   void initialize_fonts ();
+  void stopWRTimeout();
   void on_houndButton_clicked(bool checked);
   void on_ft8Button_clicked();
   void on_ft4Button_clicked();
@@ -637,6 +638,7 @@ private:
   WSPRNet *wsprNet;
 
   QTimer m_guiTimer;
+  QTimer stopWRTimer;
   QTimer ptt1Timer;                 //StartTx delay
   QTimer ptt0Timer;                 //StopTx delay
   QTimer logQSOTimer;
