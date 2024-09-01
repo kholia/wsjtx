@@ -1496,10 +1496,10 @@ void MainWindow::readSettings()
 
   m_specOp=m_config.special_op_id();
   checkMSK144ContestType();
-  if(displayMsgAvg) on_actionMessage_averaging_triggered();
+  if (displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
-  if(displayActiveStations) on_actionActiveStations_triggered();
+  if (displayActiveStations) on_actionActiveStations_triggered();
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -7037,7 +7037,7 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
         refreshPileupList();
       }
       m_ActiveStationsWidget->setRate(m_score);
-    } else {
+    } else if (m_specOp==SpecOp::ARRL_DIGI) {
       QString band=m_config.bands()->find(dial_freq);
       activeWorked(call,band);
       int points=m_activeCall[call].points;
@@ -11061,7 +11061,8 @@ void MainWindow::set_mode (QString const& mode)
     else if ("Echo" == mode) on_actionEcho_triggered ();
 }
 
-void MainWindow::configActiveStations() {
+void MainWindow::configActiveStations()
+{
   if (m_ActiveStationsWidget != NULL and (m_mode == "Q65" or m_mode == "FT4" or m_mode == "FT8")) {
     if (m_specOp == SpecOp::Q65_PILEUP) {
       m_ActiveStationsWidget->displayRecentStations("Q65-pileup", "");
