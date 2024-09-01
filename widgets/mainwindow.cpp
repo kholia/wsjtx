@@ -863,6 +863,9 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   connect(&m_guiTimer, &QTimer::timeout, this, &MainWindow::guiUpdate);
   m_guiTimer.start(100);   //### Don't change the 100 ms! ###
 
+  stopWRTimer.setSingleShot(true);
+  connect(&stopWRTimer, &QTimer::timeout, this, &MainWindow::stopWRTimeout);
+
   ptt0Timer.setSingleShot(true);
   connect(&ptt0Timer, &QTimer::timeout, this, &MainWindow::stopTx2);
 
@@ -1496,10 +1499,10 @@ void MainWindow::readSettings()
 
   m_specOp=m_config.special_op_id();
   checkMSK144ContestType();
-  if(displayMsgAvg) on_actionMessage_averaging_triggered();
+  if (displayMsgAvg) on_actionMessage_averaging_triggered();
   if (displayFoxLog) on_fox_log_action_triggered ();
   if (displayContestLog) on_contest_log_action_triggered ();
-  if(displayActiveStations) on_actionActiveStations_triggered();
+  if (displayActiveStations) on_actionActiveStations_triggered();
 }
 
 void MainWindow::checkMSK144ContestType()
@@ -2213,6 +2216,7 @@ void MainWindow::on_actionAbout_triggered()                  //Display "About"
 
 void MainWindow::on_autoButton_clicked (bool checked)
 {
+  stopWRTimer.stop();             // stop a running Tx3 timer
   m_auto = checked;
   m_maxPoints=-1;
   if (checked
@@ -2583,6 +2587,11 @@ void MainWindow::displayDialFrequency ()
   ui->labDialFreq->setText (Radio::pretty_frequency_MHz_string (dial_frequency));
 }
 
+  void MainWindow::stopWRTimeout()
+  {
+      auto_tx_mode(false);
+  }
+
 void MainWindow::statusChanged()
 {
   if (m_specOp==SpecOp::Q65_PILEUP && m_mode != "Q65") on_actionQ65_triggered();
@@ -2846,6 +2855,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
     MessageBox::information_message (this, tr ("Reference spectrum saved"));
     m_bRefSpec=false;
   }
+  stopWRTimer.stop();             // stop a running Tx3 timer
 }
 
 void MainWindow::on_actionRelease_Notes_triggered ()
@@ -7048,6 +7058,7 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
                         m_dateTimeQSOOn, dateTimeQSOOff, m_freqNominal +
                         ui->TxFreqSpinBox->value(), m_noSuffix, m_xSent, m_xRcvd);
   m_inQSOwith="";
+  stopWRTimer.stop();             // stop a running Tx3 timer
 }
 
 void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, QString const& grid
@@ -7099,7 +7110,7 @@ void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, 
         refreshPileupList();
       }
       m_ActiveStationsWidget->setRate(m_score);
-    } else {
+    } else if (m_specOp==SpecOp::ARRL_DIGI) {
       QString band=m_config.bands()->find(dial_freq);
       activeWorked(call,band);
       int points=m_activeCall[call].points;
@@ -7365,7 +7376,12 @@ void MainWindow::on_actionFT8_triggered()
   QTimer::singleShot (50, [=] {
     if(m_specOp!=SpecOp::FOX) ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
-    ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    if(SpecOp::HOUND == m_specOp && m_config.superFox() &&
+       (ui->RxFreqSpinBox->value() < 700 or ui->RxFreqSpinBox->value() > 800)) {
+      ui->RxFreqSpinBox->setValue(750);
+    } else {
+      ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
+    }
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FT8";
@@ -8079,7 +8095,8 @@ void MainWindow::on_RxFreqSpinBox_valueChanged(int n)
   if (m_mode == "FreqCal") {
     setRig ();
   }
-  if (m_mode != "MSK144" && m_mode != "FST4W" && m_mode != "WSPR" && m_mode != "Echo" && m_mode != "FreqCal") {
+  if (m_mode != "MSK144" && m_mode != "FST4W" && m_mode != "WSPR" && m_mode != "Echo" && m_mode != "FreqCal"
+      && !(SpecOp::HOUND == m_specOp && m_config.superFox())) {
       QTimer::singleShot (200, [=] {m_settings->setValue("RxFreq_old",ui->RxFreqSpinBox->value());});
   }
   statusUpdate ();
@@ -8360,6 +8377,7 @@ void MainWindow::on_rptSpinBox_valueChanged(int n)
 
 void MainWindow::on_tuneButton_clicked (bool checked)
 {
+  stopWRTimer.stop();             // stop a running Tx3 timer
   static bool lastChecked = false;
   if (lastChecked == checked) return;
   lastChecked = checked;
@@ -8420,6 +8438,7 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   m_bCallingCQ = false;
   m_bAutoReply = false;         // ready for next
   m_maxPoints=-1;
+  stopWRTimer.stop();           // stop a running Tx3 timer
 }
 
 void MainWindow::rigOpen ()
@@ -10091,12 +10110,13 @@ void MainWindow::readWidebandDecodes()
 void MainWindow::hound_reply ()
 {
   if (!m_tune) {
-    //Select TX3, set TxFreq to FoxFreq, and Force Auto ON.
+    // Select Tx3, set TxFreq to FoxFreq, and Force Auto ON.
     ui->txrb3->setChecked (true);
     m_nSentFoxRrpt = 1;
     ui->rptSpinBox->setValue(m_rptSent.toInt());
     if (!m_auto) auto_tx_mode(true);
     if (!m_config.superFox()) ui->TxFreqSpinBox->setValue (m_nFoxFreq);
+    stopWRTimer.start(int(11000.0*m_TRperiod));     // Tx3 timeout when in Hound mode
   }
 }
 
@@ -11120,7 +11140,8 @@ void MainWindow::set_mode (QString const& mode)
     else if ("Echo" == mode) on_actionEcho_triggered ();
 }
 
-void MainWindow::configActiveStations() {
+void MainWindow::configActiveStations()
+{
   if (m_ActiveStationsWidget != NULL and (m_mode == "Q65" or m_mode == "FT4" or m_mode == "FT8")) {
     if (m_specOp == SpecOp::Q65_PILEUP) {
       m_ActiveStationsWidget->displayRecentStations("Q65-pileup", "");
