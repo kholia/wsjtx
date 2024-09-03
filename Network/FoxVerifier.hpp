@@ -7,6 +7,7 @@
 #include <QPointer>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
+#include <QMutex>
 
 #define FOXVERIFIER_DEFAULT_TIMEOUT_MSEC 5000
 #define FOXVERIFIER_DEFAULT_BASE_URL "https://www.9dx.cc"

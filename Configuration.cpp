@@ -1124,7 +1124,7 @@ QString Configuration::OTPUrl() const
   return m_->OTPUrl_;
 }
 
-u_int Configuration::OTPinterval() const
+unsigned int Configuration::OTPinterval() const
 {
   return m_->OTPinterval_;
 }
