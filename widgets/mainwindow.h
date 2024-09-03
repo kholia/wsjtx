@@ -896,7 +896,7 @@ private:
   void read_log();
   void refreshPileupList();
   QString userAgent();
-  void handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, QString const &response);
+  void handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response);
   void writeFoxTxMsgs();
   QString foxOTPcode();
 };

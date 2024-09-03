@@ -1,7 +1,7 @@
 #include "FoxVerifier.hpp"
 #include "Logger.hpp"
 
-FoxVerifier::FoxVerifier(QString user_agent, QNetworkAccessManager *manager,QString base_url, QString callsign, QDateTime timestamp, QString code) : QObject(nullptr)
+FoxVerifier::FoxVerifier(QString user_agent, QNetworkAccessManager *manager,QString base_url, QString callsign, QDateTime timestamp, QString code, unsigned int hz=750) : QObject(nullptr)
 {
   manager_ = manager;
   finished_ = false;
@@ -9,6 +9,7 @@ FoxVerifier::FoxVerifier(QString user_agent, QNetworkAccessManager *manager,QStr
   callsign_ = callsign;
   code_ = code;
   ts_ = timestamp;
+  hz_ = hz;
 
   QString url = QString("%1/check/%2/%3/%4.text").arg(base_url).arg(callsign).arg(timestamp.toString(Qt::ISODate)).arg(code);
   LOG_INFO(QString("FoxVerifier: url %1").arg(url).toStdString());
@@ -72,14 +73,14 @@ void FoxVerifier::httpFinished()
   if (reply_->error() != QNetworkReply::NoError) {
     LOG_INFO(QString("FoxVerifier: httpFinished error:[%1 - %2] msg:[%3]").arg(status).arg(reason).arg(reply_->errorString()).toStdString());
     reply_->abort();
-    emit verifyError(status, ts_, callsign_, code_, reply_->errorString());
+    emit verifyError(status, ts_, callsign_, code_, hz_, reply_->errorString());
   }
   return_value = reply_->read(1024); // limit amount we get
   LOG_INFO(QString("FoxVerifier: httpFinished status:[%1 - %2] body:[%3] ").arg(status).arg(reason).arg(return_value).toStdString());
   finished_ = true;
   reply_->deleteLater();
   if (status >= 200 && status <= 299) {
-    emit verifyComplete(status, ts_, callsign_, code_, return_value);
+    emit verifyComplete(status, ts_, callsign_, code_, hz_, return_value);
   }
 }
 
@@ -97,15 +98,16 @@ void FoxVerifier::httpEncrypted() {
   LOG_INFO("FoxVerifier: httpEncrypted");
 }
 
-QString FoxVerifier::formatDecodeMessage(QDateTime ts, QString callsign, QString const& verify_message) {
+QString FoxVerifier::formatDecodeMessage(QDateTime ts, QString callsign, unsigned int hz_, QString const& verify_message) {
   //"172100 -00  0.0  750 ~  K8R VERIFIED"
   QTime rx_time = ts.time();
+  QString hz=QString("%1").arg(hz_, 4, 10 ); // insert Hz
   if (verify_message.endsWith(" VERIFIED")) {
-    return QString("%1 -00  0.0  750 ~  %2 VERIFIED").arg(rx_time.toString("hhmmss")).arg(callsign);
+    return QString("%1   0  0.0 %2 ~  %3 VERIFIED").arg(rx_time.toString("hhmmss")).arg(hz).arg(callsign);
   } else
     if (verify_message.endsWith(" INVALID"))
     {
-      return QString("%1   0  0.0  750 ~  %2 INVALID").arg(rx_time.toString("hhmmss")).arg(callsign);
+      return QString("%1   0  0.0 %2 ~  %3 INVALID").arg(rx_time.toString("hhmmss")).arg(hz).arg(callsign);
     }
     else
       return QString{};
