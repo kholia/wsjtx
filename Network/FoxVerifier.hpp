@@ -9,7 +9,7 @@
 #include <QtNetwork/QNetworkReply>
 
 #define FOXVERIFIER_DEFAULT_TIMEOUT_MSEC 5000
-#define FOXVERIFIER_DEFAULT_BASE_URL "https://www.9dx.ccm"
+#define FOXVERIFIER_DEFAULT_BASE_URL "https://www.9dx.cc"
 
 class FoxVerifier : public QObject {
     Q_OBJECT
@@ -22,6 +22,7 @@ public:
     QString return_value;
     bool finished();
     static QString formatDecodeMessage(QDateTime ts, QString callsign, QString const& verify_message);
+    static QString default_url();
 
 private:
     QNetworkAccessManager* manager_;
@@ -57,4 +58,6 @@ signals:
      void verifyError(int status, QDateTime ts, QString callsign, QString code, QString const& response);
 
 };
+
+
 #endif //WSJTX2_FOXVERIFIER_HPP

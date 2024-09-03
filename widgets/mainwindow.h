@@ -898,6 +898,7 @@ private:
   QString userAgent();
   void handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, QString const &response);
   void writeFoxTxMsgs();
+  QString foxOTPcode();
 };
 
 extern int killbyname(const char* progName);

@@ -51,6 +51,7 @@ bool FoxVerifier::finished() {
   return finished_;
 }
 
+
 void FoxVerifier::errorOccurred(QNetworkReply::NetworkError code)
 {
   int status =  reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -108,4 +109,8 @@ QString FoxVerifier::formatDecodeMessage(QDateTime ts, QString callsign, QString
     }
     else
       return QString{};
+}
+
+QString FoxVerifier::default_url() {
+  return QString(FOXVERIFIER_DEFAULT_BASE_URL);
 }

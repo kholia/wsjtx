@@ -4306,12 +4306,29 @@ void MainWindow::readFromStdout()                             //readFromStdout
             ARRL_Digi_Update(decodedtext1);
           }
 
-          if (ui->labDXped->text() == "Super Hound" && (decodedtext0.mid(24, 8) == "$VERIFY$")) {
+          if ((SpecOp::HOUND == m_specOp) &&
+               ((m_config.superFox() && (decodedtext0.mid(24, 8) == "$VERIFY$")) || // $VERIFY$ K8R 920749
+               (decodedtext0.mid(24, 8).contains(QRegularExpression{"^[A-Z0-9]{2,5}\\.V[0-9]{6}$"})))) // K8R.V920749
+          {
+            // two cases:
+            // QString test_return = QString{"203630 -12  0.1  775 ~  K8R.V920749"};
             // $VERIFY$ foxcall otp
             // QString test_return = QString{"203630 -12  0.1  775 ~  $VERIFY$ K8R 920749"};
             QStringList lineparts;
+            QStringList otp_parts;
+            QString callsign, otp;
             lineparts = decodedtext0.string().split(' ', SkipEmptyParts);
-
+            if (lineparts.length() <= 6) {
+              // split K8R.V920749 into K8R and 920749
+              otp_parts = lineparts[5].split('.', SkipEmptyParts);
+              callsign = otp_parts[0];
+              otp = otp_parts[1].mid(1); // remove the V
+            } else
+            {
+              // split $VERIFY$ K8R 920749 into K8R and 920749
+              callsign = lineparts[6];
+              otp = lineparts[7];
+            }
             QDateTime verifyDateTime;
             if (m_diskData) {
               verifyDateTime = m_UTCdiskDateTime; // get the date set from reading the wav file
@@ -4322,9 +4339,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
             FoxVerifier *fv = new FoxVerifier(MainWindow::userAgent(),
                                               &m_network_manager,
                                               FOXVERIFIER_DEFAULT_BASE_URL,
-                                              lineparts[6], // foxcall
+                                              callsign, // foxcall
                                               verifyDateTime,
-                                              lineparts[7]); // otp
+                                              otp); // otp
             connect(fv, &FoxVerifier::verifyComplete, this, &MainWindow::handleVerifyMsg);
             m_verifications << fv;
           } else {
@@ -10185,6 +10202,33 @@ void MainWindow::on_comboBoxHoundSort_activated(int index)
   if(index!=-99) houndCallers();            //Silence compiler warning
 }
 
+QString MainWindow::foxOTPcode()
+{
+  QString code;
+  if (!m_config.OTPSeed().isEmpty())
+  {
+    char output[7];
+    QDateTime dateTime = dateTime.currentDateTime();
+    QByteArray ba = m_config.OTPSeed().toLocal8Bit();
+    char *c_str = ba.data();
+    int return_length;
+    if (6 == (return_length = create_totp(c_str, output, dateTime.toTime_t(), 30, 0)))
+    {
+      code = QString(output);
+    } else
+    {
+      code = "000000";
+      LOG_INFO(QString("foxOTPcode: Incorrect return length %1").arg(return_length));
+    }
+  } else
+  {
+    code = "000000";
+    showStatusMessage(tr("TOTP: No seed entered in fox configuration to generate verification code."));
+    LOG_INFO(QString("foxOTPcode: No seed entered in fox configuration to generate verification code."));
+  }
+  return code;
+}
+
 //------------------------------------------------------------------------------
 QString MainWindow::sortHoundCalls(QString t, int isort, int max_dB)
 {
@@ -10505,6 +10549,7 @@ void MainWindow::foxRxSequencer(QString msg, QString houndCall, QString rptRcvd)
     }
   }
 }
+
 void MainWindow::updateFoxQSOsInProgressDisplay()
 {
 
@@ -10535,8 +10580,12 @@ void MainWindow::foxTxSequencer()
   QString hc,hc1,hc2;                       //Hound calls
   QString t,rpt;
   qint32  islot=0;
+  qint32  ncalls_sent=0;
   qint32  n1,n2,n3;
   int nMaxRemainingSlots=0;
+  static u_int m_tFoxTxSinceOTP=99;
+
+  m_tFoxTxSinceOTP++;
   m_tFoxTx++;                               //Increment Fox Tx cycle counter
 
   //Is it time for a stand-alone CQ?
@@ -10552,15 +10601,27 @@ void MainWindow::foxTxSequencer()
     foxGenWaveform(islot-1,fm);
     goto Transmit;
   }
+
+  // Send OTP message maybe for regular fox mode
+  if (!m_config.superFox() && m_config.OTPEnabled() && (islot < m_Nslots) && (m_tFoxTxSinceOTP >= m_config.OTPinterval()))
+  {
+      // truncated callsign + OTP code (to be under 13 character limit of free text)
+      QString trunc_call=m_config.my_callsign().left(5).split("/").at(0);
+      fm = trunc_call + ".V" + foxOTPcode(); // N5J-> N5J.V123456, W1AW/7 -> W1AW.V123456, 4U1IARU -> 4U1IA.V123456
+      m_tFoxTxSinceOTP = 0;                     //Remember when we sent a Tx5
+      islot++;
+      foxGenWaveform(islot - 1, fm);
+  }
+
 //Compile list1: up to NSLots Hound calls to be sent RR73
   for(QString hc: m_foxQSO.keys()) {           //Check all Hound calls: First priority
     if(m_foxQSO[hc].tFoxRrpt<0) continue;
     if(m_foxQSO[hc].tFoxRrpt - m_foxQSO[hc].tFoxTxRR73 > 3) {
       //Has been a long time since we sent RR73
+      if(list1.size()>=(m_Nslots - islot)) goto list1Done;
       list1 << hc;                          //Add to list1
       m_foxQSO[hc].tFoxTxRR73 = m_tFoxTx;   //Time RR73 is sent
       m_foxQSO[hc].nRR73++;                 //Increment RR73 counter
-      if(list1.size()==m_Nslots) goto list1Done;
     }
   }
 
@@ -10568,10 +10629,10 @@ void MainWindow::foxTxSequencer()
     if(m_foxQSO[hc].tFoxRrpt<0) continue;
     if(m_foxQSO[hc].tFoxTxRR73 < 0) {
       //Have not yet sent RR73
+      if(list1.size()>=(m_Nslots - islot)) goto list1Done;
       list1 << hc;                          //Add to list1
       m_foxQSO[hc].tFoxTxRR73 = m_tFoxTx;   //Time RR73 is sent
       m_foxQSO[hc].nRR73++;                 //Increment RR73 counter
-      if(list1.size()==m_Nslots) goto list1Done;
     }
   }
 
@@ -10579,10 +10640,10 @@ void MainWindow::foxTxSequencer()
     if(m_foxQSO[hc].tFoxRrpt<0) continue;
     if(m_foxQSO[hc].tFoxTxRR73 <= m_foxQSO[hc].tFoxRrpt) {
       //We received R+rpt more recently than we sent RR73
+      if(list1.size()>=(m_Nslots - islot)) goto list1Done;
       list1 << hc;                          //Add to list1
       m_foxQSO[hc].tFoxTxRR73 = m_tFoxTx;   //Time RR73 is sent
       m_foxQSO[hc].nRR73++;                 //Increment RR73 counter
-      if(list1.size()==m_Nslots) goto list1Done;
     }
   }
 
@@ -10595,13 +10656,18 @@ list1Done:
     hc=m_foxQSOinProgress.at(i);
     if((m_foxQSO[hc].tFoxRrpt < 0) and (m_foxQSO[hc].ncall < m_maxStrikes)) {
       //Sent him a report and have not received R+rpt: call him again
+      if(list2.size()>=(nMaxRemainingSlots - islot)) goto list2Done;
       list2 << hc;                          //Add to list2
-      if(list2.size()==nMaxRemainingSlots) goto list2Done;
+      if(list2.size() == nMaxRemainingSlots) goto list2Done;
     }
   }
 
   while(!m_houndQueue.isEmpty()) {
     //Start QSO with a new Hound
+    if (list2.size() == (nMaxRemainingSlots - islot))
+    {
+      break;
+    }
     t=m_houndQueue.dequeue();             //Fetch new hound from queue
     int i0=t.indexOf(" ");
     hc=t.mid(0,i0);                       //hound call
@@ -10616,11 +10682,6 @@ list1Done:
     m_foxQSO[hc].tFoxRrpt = -1;           //Have not received R+rpt
     m_foxQSO[hc].tFoxTxRR73 = -1;         //Have not sent RR73
     refreshHoundQueueDisplay();
-
-    if(list2.size()==nMaxRemainingSlots) {
-      break;
-    }
-    
   }
 
 list2Done:
@@ -10680,12 +10741,13 @@ list2Done:
       fm = Radio::base_callsign(hc2) + " " + m_baseCall + " " + m_foxQSO[hc2].sent; //Standard FT8 message
     }
     islot++;
+    ncalls_sent++;
     foxGenWaveform(islot-1,fm);                             //Generate tx waveform
   }
 
   if(islot < m_Nslots) {
     //At least one slot is still open
-    if(islot==0 or ((m_tFoxTx-m_tFoxTx0>=4) and ui->cbMoreCQs->isChecked())) {
+    if(ncalls_sent==0 or ((m_tFoxTx-m_tFoxTx0>=4) and ui->cbMoreCQs->isChecked())) {
       //Roughly every 4th Tx sequence, put a CQ message in an otherwise empty slot
       fm=ui->comboBoxCQ->currentText() + " " + m_config.my_callsign();
       if(!fm.contains("/")) {
@@ -11321,28 +11383,24 @@ void MainWindow::sfox_tx() {
   qint32 otp_key = 0;
   args.append(m_config.my_callsign());
 #ifdef FOX_OTP
-  if (m_config.FoxKey().startsWith("OTP:", Qt::CaseInsensitive))
+  if (m_config.OTPEnabled())
   {
-      LOG_INFO("OTP: Generating OTP key");
-      if (m_config.FoxKey().length() > 19) {
-        QString foxCodeSeed = m_config.FoxKey().mid(4);
-        char output[7];
-        QDateTime dateTime = dateTime.currentDateTime();
-        QByteArray ba = foxCodeSeed.toLocal8Bit();
-        char *c_str = ba.data();
-        int return_length;
-        if (6 == (return_length = create_totp(c_str, output, dateTime.toTime_t(), 30, 0)))
+      LOG_INFO("TOTP: Generating OTP key");
+      if (m_config.OTPSeed().length() == 16) {
+        QString output=foxOTPcode();
+        if (6 == output.length())
         {
           otp_key = QString(output).toInt();
-          LOG_INFO(QString("TOTP: %1 [%2]").arg(output).arg(otp_key).toStdString());
+          LOG_INFO(QString("TOTP SF: %1 [%2]").arg(output).arg(otp_key).toStdString());
         } else
         {
-          LOG_INFO(QString("TOTP: Incorrect return length %1").arg(return_length));
+          otp_key = 0;
+          LOG_INFO(QString("TOTP SF: Incorrect length"));
         }
       } else
       {
-        showStatusMessage (tr ("TOTP: seed not long enough."));
-        LOG_INFO(QString("TOTP: seed not long enough"));
+        showStatusMessage (tr ("TOTP SF: seed not long enough."));
+        LOG_INFO(QString("TOTP SF: seed not long enough"));
       }
   }
   args.append(QString("OTP:%1").arg(otp_key));
