@@ -2499,10 +2499,11 @@ void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QSt
   (void)code;
   if (response.length() > 0) {
     QString msg = FoxVerifier::formatDecodeMessage(ts, callsign, response);
-      if (msg.length() > 0)
+      if (msg.length() > 0) {
         ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
                                                    m_logBook, m_currentBand, m_config.ppfx());
         write_all("Ck",msg);
+	}
     }
   LOG_INFO(QString("FoxVerifier response for [%1]: - [%2]").arg(callsign).arg(response).toStdString());
 }
@@ -10583,7 +10584,7 @@ void MainWindow::foxTxSequencer()
   qint32  ncalls_sent=0;
   qint32  n1,n2,n3;
   int nMaxRemainingSlots=0;
-  static u_int m_tFoxTxSinceOTP=99;
+  static unsigned int m_tFoxTxSinceOTP=99;
 
   m_tFoxTxSinceOTP++;
   m_tFoxTx++;                               //Increment Fox Tx cycle counter
@@ -11380,9 +11381,9 @@ void MainWindow::on_jt65Button_clicked()
 void MainWindow::sfox_tx() {
   auto fname{QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
-  qint32 otp_key = 0;
   args.append(m_config.my_callsign());
 #ifdef FOX_OTP
+  qint32 otp_key = 0;
   if (m_config.OTPEnabled())
   {
       LOG_INFO("TOTP: Generating OTP key");
