@@ -17,12 +17,12 @@ class FoxVerifier : public QObject {
     QMutex mutex_;
 
 public:
-    explicit FoxVerifier(QString user_agent, QNetworkAccessManager *manager, QString base_url, QString callsign, QDateTime timestamp, QString code);
+    explicit FoxVerifier(QString user_agent, QNetworkAccessManager *manager, QString base_url, QString callsign, QDateTime timestamp, QString code, unsigned int);
     ~FoxVerifier();
 
     QString return_value;
     bool finished();
-    static QString formatDecodeMessage(QDateTime ts, QString callsign, QString const& verify_message);
+    static QString formatDecodeMessage(QDateTime ts, QString callsign, unsigned int hz, QString const& verify_message);
     static QString default_url();
 
 private:
@@ -32,6 +32,7 @@ private:
     QUrl q_url_;
     bool finished_;
     bool errored_;
+    unsigned int hz_;
     QString error_reason_;
     QDateTime ts_;
     QString callsign_;
@@ -55,8 +56,8 @@ private slots:
 
 public slots:
 signals:
-     void verifyComplete(int status, QDateTime ts, QString callsign, QString code, QString const& response);
-     void verifyError(int status, QDateTime ts, QString callsign, QString code, QString const& response);
+     void verifyComplete(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const& response);
+     void verifyError(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const& response);
 
 };
 
