@@ -4028,7 +4028,7 @@ void MainWindow::queueActiveWindowHound2(QString line) {
           }
         }
         // make sure caller is not in fox queue either
-        if(m_foxQSO.contains(caller)) {
+        if(m_foxQSOinProgress.contains(caller)) {
           //LOG_INFO(QString("ActiveStations Window click: %1 already in progress. Skipping").arg(caller));
           return;
         }
@@ -10496,10 +10496,15 @@ void MainWindow::houndCallers()
         if(ui->cbWorkDupes->isChecked()) {
            if(m_loggedByFox[houndCall].contains(m_lastBand)
               and !decoded.contains(paddedHoundCall)) continue;        // don't display old messages again of stations already logged
-        } else {
-          if(m_loggedByFox[houndCall].contains(m_lastBand)) continue;  // already logged on this band
         }
-        if(m_foxQSO.contains(houndCall)) continue;                     // still in the QSO map
+        if(m_foxQSOinProgress.contains(houndCall) || m_foxQSO.contains(houndCall))
+        {
+          continue;
+        }                      // still in the QSO map, or was (very) recently worked
+
+        if(m_foxQSO.contains(houndCall) && !ui->cbRxAll->isChecked()) {
+          continue;
+        }                      // already worked
         auto const& entity = m_logBook.countries ()->lookup (houndCall);
         auto const& continent = AD1CCty::continent (entity.continent);
 
