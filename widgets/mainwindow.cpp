@@ -11412,13 +11412,13 @@ void MainWindow::sfox_tx() {
           otp_key = 0;
           LOG_INFO(QString("TOTP SF: Incorrect length"));
         }
+        args.append(QString("OTP:%1").arg(otp_key));
       } else
       {
         showStatusMessage (tr ("TOTP SF: seed not long enough."));
         LOG_INFO(QString("TOTP SF: seed not long enough"));
       }
   }
-  args.append(QString("OTP:%1").arg(otp_key));
 #else
   args.append(m_config.FoxKey());
 #endif
