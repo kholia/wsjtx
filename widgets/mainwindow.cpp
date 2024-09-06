@@ -4310,10 +4310,10 @@ void MainWindow::readFromStdout()                             //readFromStdout
 #ifdef FOX_OTP
           if ((SpecOp::HOUND == m_specOp) &&
                ((m_config.superFox() && (decodedtext0.mid(24, 8) == "$VERIFY$")) || // $VERIFY$ K8R 920749
-               (decodedtext0.mid(24,-1).contains(QRegularExpression{"^[A-Z0-9]{2,5}\\.V[0-9]{6}"})))) // K8R.V920749
+               (decodedtext0.mid(24,-1).contains(QRegularExpression{"^[A-Z0-9]{2,5}\\.[0-9]{6}"})))) // K8R.920749
           {
             // two cases:
-            // QString test_return = QString{"203630 -12  0.1  775 ~  K8R.V920749"};
+            // QString test_return = QString{"203630 -12  0.1  775 ~  K8R.920749"};
             // $VERIFY$ foxcall otp
             // QString test_return = QString{"203630 -12  0.1  775 ~  $VERIFY$ K8R 920749"};
             QStringList lineparts;
@@ -4325,7 +4325,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
               // split K8R.V920749 into K8R and 920749
               otp_parts = lineparts[5].split('.', SkipEmptyParts);
               callsign = otp_parts[0];
-              otp = otp_parts[1].mid(1); // remove the V
+              otp = otp_parts[1];
               hz = lineparts[3].toInt();
             } else
             {
@@ -4343,7 +4343,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             }
             FoxVerifier *fv = new FoxVerifier(MainWindow::userAgent(),
                                               &m_network_manager,
-                                              FOXVERIFIER_DEFAULT_BASE_URL,
+                                              m_config.OTPUrl(),
                                               callsign, // foxcall
                                               verifyDateTime,
                                               otp,
@@ -10620,8 +10620,8 @@ void MainWindow::foxTxSequencer()
   if (!m_config.superFox() && m_config.OTPEnabled() && (islot < m_Nslots) && (m_tFoxTxSinceOTP >= m_config.OTPinterval()))
   {
       // truncated callsign + OTP code (to be under 13 character limit of free text)
-      QString trunc_call=m_config.my_callsign().left(5).split("/").at(0);
-      fm = trunc_call + ".V" + foxOTPcode(); // N5J-> N5J.V123456, W1AW/7 -> W1AW.V123456, 4U1IARU -> 4U1IA.V123456
+      QString trunc_call=m_config.my_callsign().left(6).split("/").at(0); // truncate callsign to 6 characters
+      fm = trunc_call + "." + foxOTPcode(); // N5J-> N5J.123456, W1AW/7 -> W1AW.123456, 4U1IARU -> 4U1IAR.123456
       m_tFoxTxSinceOTP = 0;                     //Remember when we sent a Tx5
       islot++;
       foxGenWaveform(islot - 1, fm);
