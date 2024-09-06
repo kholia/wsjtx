@@ -4310,7 +4310,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
 #ifdef FOX_OTP
           if ((SpecOp::HOUND == m_specOp) &&
                ((m_config.superFox() && (decodedtext0.mid(24, 8) == "$VERIFY$")) || // $VERIFY$ K8R 920749
-               (decodedtext0.mid(24,-1).contains(QRegularExpression{"^[A-Z0-9]{2,5}\\.[0-9]{6}"})))) // K8R.920749
+               (decodedtext0.mid(24,-1).contains(QRegularExpression{"^[A-Z0-9]{2,6}\\.[0-9]{6}"})))) // K8R.920749
           {
             // two cases:
             // QString test_return = QString{"203630 -12  0.1  775 ~  K8R.920749"};
@@ -4322,7 +4322,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
             lineparts = decodedtext0.string().split(' ', SkipEmptyParts);
             if (lineparts.length() <= 6) {
               QStringList otp_parts;
-              // split K8R.V920749 into K8R and 920749
+              // split K8.V920749 into K8R and 920749
               otp_parts = lineparts[5].split('.', SkipEmptyParts);
               callsign = otp_parts[0];
               otp = otp_parts[1];
