@@ -26,7 +26,6 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QDateTime>
-#include <QCalendar>
 
 #include "MultiGeometryWidget.hpp"
 #include "NonInheritingProcess.hpp"
