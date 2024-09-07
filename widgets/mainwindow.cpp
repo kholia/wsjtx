@@ -58,7 +58,7 @@
 #include "echograph.h"
 #include "fastplot.h"
 #include "fastgraph.h"
-#include "foxotpcode.h"
+#include "otpgenerator.h"
 #include "about.h"
 #include "messageaveraging.h"
 #include "activeStations.h"
@@ -4684,6 +4684,7 @@ void MainWindow::auto_sequence (DecodedText const& message, unsigned start_toler
         && message_words.at (3).contains (Radio::base_callsign (ui->dxCallEntry->text ()))) {
       // auto stop to avoid accidental QRM
       ui->stopTxButton->click (); // halt any transmission
+      LOG_INFO("STOPPED!");
     } else if (m_auto             // transmit allowed
                && ui->cbAutoSeq->isVisible () && ui->cbAutoSeq->isEnabled () && ui->cbAutoSeq->isChecked () // auto-sequencing allowed
                && ((!m_bCallingCQ      // not calling CQ/QRZ
@@ -10214,19 +10215,11 @@ QString MainWindow::foxOTPcode()
   QString code;
   if (!m_config.OTPSeed().isEmpty())
   {
-    char output[7];
+
+    OTPGenerator totp;
     QDateTime dateTime = dateTime.currentDateTime();
-    QByteArray ba = m_config.OTPSeed().toLocal8Bit();
-    char *c_str = ba.data();
-    int return_length;
-    if (6 == (return_length = create_totp(c_str, output, dateTime.toTime_t(), 30, 0)))
-    {
-      code = QString(output);
-    } else
-    {
-      code = "000000";
-      LOG_INFO(QString("foxOTPcode: Incorrect return length %1").arg(return_length));
-    }
+    code = totp.generateTOTP(m_config.OTPSeed(), dateTime, 6);
+    LOG_INFO(QString("foxOTPcode: code is %1").arg(code));
   } else
   {
     code = "000000";
@@ -11396,11 +11389,12 @@ void MainWindow::sfox_tx() {
   auto fname{QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   QStringList args{fname};
   args.append(m_config.my_callsign());
+  LOG_INFO(QString("sfox_tx: OTP code is %1").arg(foxOTPcode()));
 #ifdef FOX_OTP
   qint32 otp_key = 0;
   if (m_config.OTPEnabled())
   {
-      LOG_INFO("TOTP: Generating OTP key");
+      LOG_INFO(QString("TOTP: Generating OTP key with %1").arg(m_config.OTPSeed()));
       if (m_config.OTPSeed().length() == 16) {
         QString output=foxOTPcode();
         if (6 == output.length())

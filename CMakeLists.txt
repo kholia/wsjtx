@@ -50,6 +50,7 @@ project (wsjtx
   )
 set (PROJECT_DESCRIPTION "WSJT-X: Digital Modes for Weak Signal Communications in Amateur Radio")
 set (CMAKE_PROJECT_DESCRIPTION ${PROJECT_DESCRIPTION})
+set (CMAKE_AUTOUIC ON) 
 
 #
 # Local CMake modules and support files
@@ -164,7 +165,7 @@ set (WSJT_QT_CONF_DESTINATION ${QT_CONF_DESTINATION} CACHE PATH "Path for the qt
 
 if (WSJT_FOX_OTP)
   set (wsjt_fox_CXXSRCS
-          foxotpcode.cpp
+
   )
   message (STATUS "Including Fox verification code feature")
 endif ()
@@ -250,6 +251,7 @@ set (wsjt_qt_CXXSRCS
   widgets/LazyFillComboBox.cpp
   widgets/CheckableItemComboBox.cpp
   widgets/BandComboBox.cpp
+  otpgenerator.cpp
   )
 
 set (wsjt_qtmm_CXXSRCS

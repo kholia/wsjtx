@@ -9,7 +9,7 @@
 #include "models/IARURegions.hpp"
 #include "Audio/AudioDevice.hpp"
 #include "Transceiver/Transceiver.hpp"
-#include "foxotpcode.h"
+#include "otpgenerator.h"
 
 #include "pimpl_h.hpp"
 
