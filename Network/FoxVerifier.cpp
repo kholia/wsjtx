@@ -31,7 +31,9 @@ FoxVerifier::FoxVerifier(QString user_agent, QNetworkAccessManager *manager,QStr
 
     reply_ =  manager_->get(request_);
     connect(reply_, &QNetworkReply::finished, this, &FoxVerifier::httpFinished);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     connect(reply_, &QNetworkReply::errorOccurred, this, &FoxVerifier::errorOccurred);
+#endif
     connect(reply_, &QNetworkReply::redirected, this, &FoxVerifier::httpRedirected);
     connect(reply_, &QNetworkReply::encrypted, this, &FoxVerifier::httpEncrypted);
 #if QT_CONFIG(ssl)
@@ -52,7 +54,7 @@ bool FoxVerifier::finished() {
   return finished_;
 }
 
-
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 void FoxVerifier::errorOccurred(QNetworkReply::NetworkError code)
 {
   int status =  reply_->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -65,6 +67,7 @@ void FoxVerifier::errorOccurred(QNetworkReply::NetworkError code)
   }
   // TODO emit
 }
+#endif
 
 void FoxVerifier::httpFinished()
 {
