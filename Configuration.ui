@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>720</height>
+    <width>750</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -2907,8 +2907,210 @@ Right click for insert and delete options.</string>
          <property name="checked">
           <bool>false</bool>
          </property>
-         <layout class="QGridLayout" name="gridLayout_15" columnstretch="1,0,0,0,0,0,0">
-          <item row="2" column="6">
+         <layout class="QGridLayout" name="gridLayout_15" columnstretch="1,1,0,2">
+          <item row="3" column="3">
+           <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="2,1,1">
+            <item>
+             <widget class="QRadioButton" name="rbRTTY_Roundup">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT Roundup and similar contests. Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="accessibleName">
+               <string>R T T Y Roundup</string>
+              </property>
+              <property name="text">
+               <string>FT Roundup</string>
+              </property>
+              <attribute name="buttonGroup">
+               <string notr="true">special_op_activity_button_group</string>
+              </attribute>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_10">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QFormLayout" name="formLayout_17">
+              <item row="0" column="0">
+               <widget class="QLabel" name="labRTTY">
+                <property name="accessibleName">
+                 <string>RTTY Roundup exchange</string>
+                </property>
+                <property name="text">
+                 <string>FT RU Exch:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>RTTY_Exchange</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="RTTY_Exchange">
+                <property name="minimumSize">
+                 <size>
+                  <width>70</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT Roundup and similar contests.  Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>NJ</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="rbHound">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode:  Hound operator calling the DX.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="accessibleName">
+             <string>Hound</string>
+            </property>
+            <property name="text">
+             <string>Hound</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QRadioButton" name="rbARRL_Digi">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ARRL International Digital Contest&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>ARRL Digi Contest</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QRadioButton" name="rbWW_DIGI">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>18</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;World-Wide Digi-mode contest&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="accessibleName">
+             <string>WW Digital Contest</string>
+            </property>
+            <property name="text">
+             <string>WW Digi Contest</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <layout class="QHBoxLayout" name="horizontalLayout_24">
+            <item>
+             <widget class="QCheckBox" name="cbContestName">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Call CQ with an individual contest name instead of TEST, RU, or WW. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>CQ with individual contest name</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_12">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_25">
+              <item>
+               <widget class="QLabel" name="labCN">
+                <property name="text">
+                 <string>Contest name:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="Contest_Name">
+                <property name="maximumSize">
+                 <size>
+                  <width>70</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="maxLength">
+                 <number>4</number>
+                </property>
+                <property name="cursorPosition">
+                 <number>0</number>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item row="5" column="0">
+           <widget class="QRadioButton" name="rbQ65pileup">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>18</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exchange 4-character locator instead of signal report.  Provides q3-level sensitivities for the DX operator.  Especially useful for 6m EME DXpeditions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Q65 Pileup</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="2" column="3">
            <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="2,1,1">
             <item>
              <widget class="QRadioButton" name="rbField_Day">
@@ -2977,149 +3179,6 @@ Right click for insert and delete options.</string>
             </item>
            </layout>
           </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="OTPUrl">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;URL used to verify OTP codes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="whatsThis">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="cbOTP">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to enable OTP method of Fox verification. Requires internet.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="whatsThis">
-             <string/>
-            </property>
-            <property name="text">
-             <string>OTP</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QRadioButton" name="rbFox">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode:  Fox (DXpedition) operator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="accessibleName">
-             <string>Fox</string>
-            </property>
-            <property name="text">
-             <string>Fox</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">special_op_activity_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="1" column="5" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout_26">
-            <item>
-             <widget class="QLabel" name="lblOTPEvery">
-              <property name="text">
-               <string>OTP every</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="sbOTPinterval">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many cycles between sends of the OTP.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="whatsThis">
-               <string/>
-              </property>
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>20</number>
-              </property>
-              <property name="value">
-               <number>3</number>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="lblOTPSeed">
-              <property name="text">
-               <string>OTP Key</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLineEdit" name="OTPSeed">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fox's key to generate OTP Codes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="whatsThis">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="5" column="0">
-           <widget class="QRadioButton" name="rbQ65pileup">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>18</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exchange 4-character locator instead of signal report.  Provides q3-level sensitivities for the DX operator.  Especially useful for 6m EME DXpeditions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>Q65 Pileup</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">special_op_activity_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <spacer name="horizontalSpacer_11">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="4" column="0">
-           <widget class="QRadioButton" name="rbWW_DIGI">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>18</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;World-Wide Digi-mode contest&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="accessibleName">
-             <string>WW Digital Contest</string>
-            </property>
-            <property name="text">
-             <string>WW Digi Contest</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">special_op_activity_button_group</string>
-            </attribute>
-           </widget>
-          </item>
           <item row="2" column="0">
            <widget class="QRadioButton" name="rbNA_VHF_Contest">
             <property name="sizePolicy">
@@ -3142,128 +3201,7 @@ Right click for insert and delete options.</string>
             </attribute>
            </widget>
           </item>
-          <item row="5" column="6">
-           <layout class="QHBoxLayout" name="horizontalLayout_24">
-            <item>
-             <widget class="QCheckBox" name="cbContestName">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Call CQ with an individual contest name instead of TEST, RU, or WW. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="text">
-               <string>CQ with individual contest name</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_12">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_25">
-              <item>
-               <widget class="QLabel" name="labCN">
-                <property name="text">
-                 <string>Contest name:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="Contest_Name">
-                <property name="maximumSize">
-                 <size>
-                  <width>70</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="maxLength">
-                 <number>4</number>
-                </property>
-                <property name="cursorPosition">
-                 <number>0</number>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item row="3" column="0">
-           <widget class="QRadioButton" name="rbEU_VHF_Contest">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;European VHF+ contests requiring a signal report, serial number, and 6-character locator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="accessibleName">
-             <string>EU VHF Contest</string>
-            </property>
-            <property name="text">
-             <string>EU VHF Contest</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">special_op_activity_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="lblOTPUrl">
-            <property name="text">
-             <string>OTP URL</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QRadioButton" name="rbHound">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode:  Hound operator calling the DX.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="accessibleName">
-             <string>Hound</string>
-            </property>
-            <property name="text">
-             <string>Hound</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">special_op_activity_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="4" column="6">
-           <widget class="QRadioButton" name="rbARRL_Digi">
-            <property name="toolTip">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ARRL International Digital Contest&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-            </property>
-            <property name="text">
-             <string>ARRL Digi Contest</string>
-            </property>
-            <attribute name="buttonGroup">
-             <string notr="true">special_op_activity_button_group</string>
-            </attribute>
-           </widget>
-          </item>
-          <item row="0" column="6">
+          <item row="0" column="3">
            <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="0,1,0,1">
             <item>
              <widget class="QCheckBox" name="cbSuperFox">
@@ -3305,7 +3243,7 @@ Right click for insert and delete options.</string>
               </property>
               <property name="minimumSize">
                <size>
-                <width>160</width>
+                <width>70</width>
                 <height>0</height>
                </size>
               </property>
@@ -3319,81 +3257,187 @@ Right click for insert and delete options.</string>
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SuperFox operator must enter a valid key to enable transmission.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="maxLength">
-               <number>20</number>
+               <number>9</number>
               </property>
               <property name="alignment">
-               <set>Qt::AlignLeading</set>
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="3" column="6">
-           <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="2,1,1">
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_11">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="rbEU_VHF_Contest">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;European VHF+ contests requiring a signal report, serial number, and 6-character locator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="accessibleName">
+             <string>EU VHF Contest</string>
+            </property>
+            <property name="text">
+             <string>EU VHF Contest</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="rbFox">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT8 DXpedition mode:  Fox (DXpedition) operator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="accessibleName">
+             <string>Fox</string>
+            </property>
+            <property name="text">
+             <string>Fox</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">special_op_activity_button_group</string>
+            </attribute>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="4">
+           <layout class="QHBoxLayout" name="OTP_Layout" stretch="0,0,0,1,0,0,0,0,0,0,0,1">
             <item>
-             <widget class="QRadioButton" name="rbRTTY_Roundup">
+             <widget class="QCheckBox" name="cbOTP">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT Roundup and similar contests. Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="accessibleName">
-               <string>R T T Y Roundup</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click to enable OTP method of Fox verification. Requires internet.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="text">
-               <string>FT Roundup</string>
+               <string>OTP</string>
               </property>
-              <attribute name="buttonGroup">
-               <string notr="true">special_op_activity_button_group</string>
-              </attribute>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_10">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
+             <spacer name="horizontalSpacer_11">
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>20</width>
                 <height>20</height>
                </size>
               </property>
              </spacer>
             </item>
             <item>
-             <layout class="QFormLayout" name="formLayout_17">
-              <item row="0" column="0">
-               <widget class="QLabel" name="labRTTY">
-                <property name="accessibleName">
-                 <string>RTTY Roundup exchange</string>
-                </property>
-                <property name="text">
-                 <string>FT RU Exch:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>RTTY_Exchange</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="RTTY_Exchange">
-                <property name="minimumSize">
-                 <size>
-                  <width>70</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;FT Roundup and similar contests.  Exchange is US state, Canadian province, or &amp;quot;DX&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string>NJ</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
+             <widget class="QLabel" name="lblOTPUrl">
+              <property name="text">
+               <string>OTP URL</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="OTPUrl">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;URL used to verify OTP codes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_15">
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblOTPEvery">
+              <property name="text">
+               <string>Interval</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSpinBox" name="sbOTPinterval">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Interval at which the OTP messages are sent. Select 1 to sign every message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="maximum">
+               <number>20</number>
+              </property>
+              <property name="value">
+               <number>1</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_17">
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbHideOTP">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Hide OTP messages in the Band Activity window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Hide OTP messages</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_18">
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="lblOTPSeed">
+              <property name="text">
+               <string>OTP Key: </string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="OTPSeed">
+              <property name="minimumSize">
+               <size>
+                <width>70</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fox's key to generate OTP Codes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -3635,13 +3679,13 @@ Right click for insert and delete options.</string>
   </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="CAT_data_bits_button_group"/>
-  <buttongroup name="CAT_handshake_button_group"/>
-  <buttongroup name="split_mode_button_group"/>
-  <buttongroup name="TX_audio_source_button_group"/>
-  <buttongroup name="PTT_method_button_group"/>
   <buttongroup name="TX_mode_button_group"/>
-  <buttongroup name="CAT_stop_bits_button_group"/>
   <buttongroup name="special_op_activity_button_group"/>
+  <buttongroup name="PTT_method_button_group"/>
+  <buttongroup name="split_mode_button_group"/>
+  <buttongroup name="CAT_handshake_button_group"/>
+  <buttongroup name="TX_audio_source_button_group"/>
+  <buttongroup name="CAT_data_bits_button_group"/>
+  <buttongroup name="CAT_stop_bits_button_group"/>
  </buttongroups>
 </ui>

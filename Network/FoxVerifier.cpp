@@ -106,11 +106,11 @@ QString FoxVerifier::formatDecodeMessage(QDateTime ts, QString callsign, unsigne
   QTime rx_time = ts.time();
   QString hz=QString("%1").arg(hz_, 4, 10 ); // insert Hz
   if (verify_message.endsWith(" VERIFIED")) {
-    return QString("%1   0  0.0 %2 ~  %3 Verified").arg(rx_time.toString("hhmmss")).arg(hz).arg(callsign);
+    return QString("%1   0  0.0 %2 ~  %3 verified").arg(rx_time.toString("hhmmss")).arg(hz).arg(callsign);
   } else
     if (verify_message.endsWith(" INVALID"))
     {
-      return QString("%1   0  0.0 %2 ~  %3 Invalid").arg(rx_time.toString("hhmmss")).arg(hz).arg(callsign);
+      return QString("%1   0  0.0 %2 ~  %3 invalid").arg(rx_time.toString("hhmmss")).arg(hz).arg(callsign);
     }
     else
       return QString{};

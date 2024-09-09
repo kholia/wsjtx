@@ -224,6 +224,7 @@ bool no_a7_decodes = false;
 bool keep_frequency = false;
 int m_Nslots0 {1};
 int m_TxFreqFox {300};
+bool filtered = false;
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -1174,7 +1175,7 @@ void MainWindow::on_the_minute ()
     tx_watchdog (false);
   }
   update_foxLogWindow_rate(); // update the rate on the window
-  if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text()!="Super Hound")
+  if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
     ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   verified = false;
 }
@@ -1947,6 +1948,7 @@ void MainWindow::fastSink(qint64 frames)
 {
   int k (frames);
   bool decodeNow=false;
+  filtered = false;
   if(k < m_k0) {                                 //New sequence ?
     memcpy(fast_green2,fast_green,4*703);        //Copy fast_green[] to fast_green2[]
     memcpy(fast_s2,fast_s,4*703*64);             //Copy fast_s[] into fast_s2[]
@@ -2225,7 +2227,10 @@ void MainWindow::on_autoButton_clicked (bool checked)
     m_bAutoReply = false;         // ready for next
     m_bCallingCQ = true;          // allows tail-enders to be picked up
   }
-  if (!checked) m_bCallingCQ = false;
+  if (!checked) {
+    m_bCallingCQ = false;
+    filtered = false;
+  }
   statusUpdate ();
   m_bEchoTxOK=false;
   if(m_mode=="Echo" and m_auto) {
@@ -2494,15 +2499,22 @@ void MainWindow::keyPressEvent (QKeyEvent * e)
   QMainWindow::keyPressEvent (e);
 }
 
-void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response) {  (void)status;
+void MainWindow::handleVerifyMsg(int status, QDateTime ts, QString callsign, QString code, unsigned int hz, QString const &response)
+{
+  (void)status;
   (void)code;
   if (response.length() > 0) {
     QString msg = FoxVerifier::formatDecodeMessage(ts, callsign, hz, response);
       if (msg.length() > 0) {
+        // Hound label
+        if ((ui->labDXped->text().contains("Hound") && msg.contains(" verified"))) {
+          verified = true;
+          ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
+        }
         ui->decodedTextBrowser->displayDecodedText(DecodedText{msg}, m_config.my_callsign(), m_mode, m_config.DXCC(),
                                                    m_logBook, m_currentBand, m_config.ppfx());
         write_all("Ck",msg);
-	}
+      }
     }
   LOG_INFO(QString("FoxVerifier response for [%1]: - [%2]").arg(callsign).arg(response).toStdString());
 }
@@ -2856,6 +2868,7 @@ void MainWindow::on_stopButton_clicked()                       //stopButton
     m_bRefSpec=false;
   }
   stopWRTimer.stop();             // stop a running Tx3 timer
+  filtered = false;
 }
 
 void MainWindow::on_actionRelease_Notes_triggered ()
@@ -4144,6 +4157,7 @@ void MainWindow::activeWorked(QString call, QString band)
 void MainWindow::readFromStdout()                             //readFromStdout
 {
   bool bDisplayPoints = false;
+  filtered = false;
   QString all_decodes;
   if(m_ActiveStationsWidget!=NULL) {
     bDisplayPoints=(m_mode=="FT4" or m_mode=="FT8") and
@@ -4327,12 +4341,14 @@ void MainWindow::readFromStdout()                             //readFromStdout
               callsign = otp_parts[0];
               otp = otp_parts[1];
               hz = lineparts[3].toInt();
+              if (m_config.HideOTP()) filtered = true;
             } else
             {
               // split $VERIFY$ K8R 920749 into K8R and 920749
               callsign = lineparts[6];
               otp = lineparts[7];
               hz = 750; // SF is 750
+              if (m_config.HideOTP()) filtered = true;
             }
             QDateTime verifyDateTime;
             if (m_diskData) {
@@ -4353,19 +4369,21 @@ void MainWindow::readFromStdout()                             //readFromStdout
           }
 #endif
           {
-            if (ui->labDXped->text() == "Super Hound" && decodedtext0.mid(3, 18).contains(" verified")) {
+            if (ui->labDXped->text().contains("Hound") && decodedtext0.mid(3,18).contains(" verified")) {
               verified = true;
               write_all("Vf",decodedtext0.string());
               ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
             } else {
-              if (decodedtext0.mid(4, 2).contains("00") or decodedtext0.mid(4, 2).contains("30")) verified = false;
+              if (m_specOp==SpecOp::HOUND && m_config.superFox() && (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30"))) verified = false;
             }
-            if ((!verified && ui->labDXped->isVisible()) or ui->labDXped->text() != "Super Hound")
+            if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
               ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
-            ui->decodedTextBrowser->displayDecodedText(decodedtext1, m_config.my_callsign(), m_mode, m_config.DXCC(),
-                                                       m_logBook, m_currentBandPeriod, m_config.ppfx(),
-                                                       ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
-                                                       haveFSpread, fSpread, bDisplayPoints, m_points);
+            if (!filtered) {
+              ui->decodedTextBrowser->displayDecodedText(decodedtext1, m_config.my_callsign(), m_mode, m_config.DXCC(),
+                                                         m_logBook, m_currentBandPeriod, m_config.ppfx(),
+                                                         ui->cbCQonly->isVisible() && ui->cbCQonly->isChecked(),
+                                                         haveFSpread, fSpread, bDisplayPoints, m_points);
+            }
             if ((m_mode == "FT4" or m_mode == "FT8") and bDisplayPoints and decodedtext1.isStandardMessage()) {
               QString deCall, deGrid;
               decodedtext.deCallAndGrid(/*out*/deCall, deGrid);
@@ -7084,6 +7102,7 @@ void MainWindow::on_logQSOButton_clicked()                 //Log QSO button
                         ui->TxFreqSpinBox->value(), m_noSuffix, m_xSent, m_xRcvd);
   m_inQSOwith="";
   stopWRTimer.stop();             // stop a running Tx3 timer
+  filtered = false;
 }
 
 void MainWindow::acceptQSO (QDateTime const& QSO_date_off, QString const& call, QString const& grid
@@ -8464,6 +8483,7 @@ void MainWindow::on_stopTxButton_clicked()                    //Stop Tx
   m_bAutoReply = false;         // ready for next
   m_maxPoints=-1;
   stopWRTimer.stop();           // stop a running Tx3 timer
+  filtered = false;
 }
 
 void MainWindow::rigOpen ()
