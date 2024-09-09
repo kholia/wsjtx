@@ -4374,7 +4374,9 @@ void MainWindow::readFromStdout()                             //readFromStdout
               write_all("Vf",decodedtext0.string());
               ui->labDXped->setStyleSheet("QLabel {background-color: #00ff00; color: black;}");
             } else {
+#ifndef FOX_OTP
               if (m_specOp==SpecOp::HOUND && m_config.superFox() && (decodedtext0.mid(4,2).contains("00") or decodedtext0.mid(4,2).contains("30"))) verified = false;
+#endif
             }
             if ((!verified && ui->labDXped->isVisible()) or !ui->labDXped->text().contains("Hound"))
               ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
