@@ -101,7 +101,6 @@ public:
   QString my_grid () const;
   QString Field_Day_Exchange() const;
   QString RTTY_Exchange() const;
-  QString FoxKey() const;
   QString Contest_Name() const;
   void setEU_VHF_Contest();
   QFont text_font () const;
