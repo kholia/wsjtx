@@ -5400,7 +5400,7 @@ void MainWindow::guiUpdate()
 //    qint64 n64 = QDateTime::currentSecsSinceEpoch();
 //    n64=n64/30;
 //    n64=n64*30;
-//    qDebug() << "bb" << m_config.FoxKey() << nsec%60 << dec_data.params.nutc << n64 << n64%60;
+//    qDebug() << "bb" << nsec%60 << dec_data.params.nutc << n64 << n64%60;
 
     // prevent tuning on top of a SuperFox message
     if (SpecOp::HOUND==m_specOp && m_config.superFox() && m_tune) {
@@ -8571,6 +8571,15 @@ void MainWindow::setXIT(int n, Frequency base)
 void MainWindow::setFreq4(int rxFreq, int txFreq)
 {
   if (m_mode=="ECHO") return; // we do not adjust rx/tx for echo mode -- always 1500Hz
+
+  if(m_mode=="FT8" and m_config.superFox() and (m_specOp == SpecOp::HOUND) and
+     (qAbs(rxFreq-750)>200)) {
+// SuperHound should normally keep RxFreq close to 750 Hz
+    if(MessageBox::No == MessageBox::query_message (this,
+           tr ("Please confirm setting RxFreq to %1 Hz").arg
+           (QString::number(rxFreq)))) return;
+  }
+
   if (ui->RxFreqSpinBox->isEnabled ()) ui->RxFreqSpinBox->setValue(rxFreq);
   if(m_mode=="WSPR" or m_mode=="FST4W") {
     ui->WSPRfreqSpinBox->setValue(txFreq);
@@ -11444,8 +11453,6 @@ void MainWindow::sfox_tx() {
         LOG_INFO(QString("TOTP SF: seed not long enough"));
       }
   }
-#else
-  args.append(m_config.FoxKey());
 #endif
 //  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
 //  qDebug() << "bb" << args;
