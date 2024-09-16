@@ -57,6 +57,7 @@ include(Detector/Detector.pri)
 include(Modulator/Modulator.pri)
 include(Audio/Audio.pri)
 include(Transceiver/Transceiver.pri)
+include(Network/Network.pri)
 
 SOURCES += \
   ExceptionCatchingApplication.cpp Logger.cpp WSJTXLogging.cpp \
