@@ -42,7 +42,7 @@ program ft8d
      j2=index(infile,'.wav')
      read(infile(j2-6:j2-1),*) nutc
      datetime=infile(j2-13:j2-1)
-     call sync8(iwave,nfa,nfb,nfqso,s,candidate,ncand)
+     call sync8(iwave,NMAX,nfa,nfb,nfqso,s,candidate,ncand)
      syncmin=2.0
      dd=iwave
      do icand=1,ncand
