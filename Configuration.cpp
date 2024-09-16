@@ -611,7 +611,6 @@ private:
   Q_SLOT void on_cbAutoLog_clicked(bool);
   Q_SLOT void on_Field_Day_Exchange_textEdited (QString const&);
   Q_SLOT void on_RTTY_Exchange_textEdited (QString const&);
-  Q_SLOT void on_FoxKey_textEdited (QString const&);
   Q_SLOT void on_OTPUrl_textEdited (QString const&);
   Q_SLOT void on_OTPSeed_textEdited (QString const&);
   Q_SLOT void on_Contest_Name_textEdited (QString const&);
@@ -712,7 +711,6 @@ private:
   QString RTTY_exchange_;
   QString Contest_Name_;
   QString hamlib_backed_up_;
-  QString FoxKey_;
 
   QString OTPUrl_;
   QString OTPSeed_;
@@ -1046,11 +1044,6 @@ void Configuration::setEU_VHF_Contest()
 QString Configuration::RTTY_Exchange() const
 {
   return m_->RTTY_exchange_;
-}
-
-QString Configuration::FoxKey() const
-{
-  return m_->FoxKey_;
 }
 
 QString Configuration::Contest_Name() const
@@ -1670,11 +1663,9 @@ void Configuration::impl::read_settings ()
   my_grid_ = settings_->value ("MyGrid", QString {}).toString ();
   FD_exchange_ = settings_->value ("Field_Day_Exchange",QString {}).toString ();
   RTTY_exchange_ = settings_->value ("RTTY_Exchange",QString {}).toString ();
-  FoxKey_ = settings_->value ("FoxKey",QString {}).toString ();
   Contest_Name_ = settings_->value ("Contest_Name",QString {}).toString ();
   ui_->Field_Day_Exchange->setText(FD_exchange_);
   ui_->RTTY_Exchange->setText(RTTY_exchange_);
-  ui_->FoxKey->setText(FoxKey_);
   ui_->Contest_Name->setText(Contest_Name_);
   hamlib_backed_up_ = settings_->value ("HamlibBackedUp",QString {}).toString ();
 
@@ -1916,7 +1907,6 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("MyGrid", my_grid_);
   settings_->setValue ("Field_Day_Exchange", FD_exchange_);
   settings_->setValue ("RTTY_Exchange", RTTY_exchange_);
-  settings_->setValue ("FoxKey", FoxKey_);
   settings_->setValue ("Contest_Name", Contest_Name_);
   settings_->setValue ("Font", font_.toString ());
   settings_->setValue ("DecodedTextFont", decoded_text_font_.toString ());
@@ -2389,7 +2379,6 @@ void Configuration::impl::accept ()
   my_grid_ = ui_->grid_line_edit->text ();
   FD_exchange_= ui_->Field_Day_Exchange->text ().toUpper ();
   RTTY_exchange_= ui_->RTTY_Exchange->text ().toUpper ();
-  FoxKey_= ui_->FoxKey->text().toUpper();
   Contest_Name_= ui_->Contest_Name->text ().toUpper ();
   spot_to_psk_reporter_ = ui_->psk_reporter_check_box->isChecked ();
   psk_reporter_tcpip_ = ui_->psk_reporter_tcpip_check_box->isChecked ();
@@ -3305,13 +3294,6 @@ void Configuration::impl::on_cbHideOTP_clicked(bool)
 
 void Configuration::impl::check_visibility ()
 {
-  if (ui_->rbFox->isChecked() and ui_->cbSuperFox->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
-    ui_->sfkey_label->setEnabled (true);
-    ui_->FoxKey->setEnabled (true);
-  } else {
-    ui_->sfkey_label->setEnabled (false);
-    ui_->FoxKey->setEnabled (false);
-  }
   if (ui_->rbField_Day->isChecked() and ui_->gbSpecialOpActivity->isChecked()) {
     ui_->labFD->setEnabled (true);
     ui_->Field_Day_Exchange->setEnabled (true);
@@ -3408,11 +3390,6 @@ void Configuration::impl::on_Field_Day_Exchange_textEdited (QString const& excha
 void Configuration::impl::on_RTTY_Exchange_textEdited (QString const& exchange)
 {
   ui_->RTTY_Exchange->setText (exchange.toUpper ());
-}
-
-void Configuration::impl::on_FoxKey_textEdited (QString const& ckey)
-{
-  ui_->FoxKey->setText (ckey.toUpper ());
 }
 
 void Configuration::impl::on_Contest_Name_textEdited (QString const& exchange)
