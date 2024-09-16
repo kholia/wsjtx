@@ -8,10 +8,10 @@ subroutine ft8_downsample(dd,newdat,f0,c1)
   logical newdat,first
   complex c1(0:NFFT2-1)
   complex cx(0:NFFT1/2)
-  real dd(NMAX),x(NFFT1),taper(0:100)
-  equivalence (x,cx)
+  real dd(NMAX),x(NFFT1+2),taper(0:100)
   data first/.true./
-  save cx,first,taper
+  save x,cx,first,taper
+  equivalence (x,cx)
 
   if(first) then
      pi=4.0*atan(1.0)
@@ -23,11 +23,10 @@ subroutine ft8_downsample(dd,newdat,f0,c1)
   if(newdat) then
 ! Data in dd have changed, recompute the long FFT
      x(1:NMAX)=dd
-     x(NMAX+1:NFFT1)=0.                       !Zero-pad the x array
+     x(NMAX+1:NFFT1+2)=0.                       !Zero-pad the x array
      call four2a(cx,NFFT1,1,-1,0)             !r2c FFT to freq domain
      newdat=.false.
   endif
-
   df=12000.0/NFFT1
   baud=12000.0/NSPS
   i0=nint(f0/df)

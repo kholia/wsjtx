@@ -353,6 +353,10 @@ set (wsjt_FSRCS
   lib/wavhdr.f90
   lib/qra/q65/q65_encoding_modules.f90
   lib/ft8/ft8_a7.f90
+  lib/superfox/sfox_mod.f90
+  lib/superfox/julian.f90
+  lib/superfox/popen_module.f90
+  lib/superfox/qpc/qpc_mod.f90
 
   # remaining non-module sources
   lib/addit.f90
@@ -597,8 +601,18 @@ set (wsjt_FSRCS
   lib/fst4/get_crc24.f90
   lib/fst4/fst4_baseline.f90
   lib/77bit/hash22calc.f90
+
+  lib/superfox/qpc_decode2.f90
+  lib/superfox/qpc_likelihoods2.f90
+  lib/superfox/qpc_snr.f90
+  lib/superfox/qpc_sync.f90
+  lib/superfox/sfox_ana.f90
+  lib/superfox/sfox_demod.f90
+  lib/superfox/sfox_remove_ft8.f90
+  lib/superfox/sfox_unpack.f90
   lib/superfox/sfox_wave.f90
   lib/superfox/sfox_wave_gfsk.f90
+  lib/superfox/twkfreq2.f90
   )
 
 # temporary workaround for a gfortran v7.3 ICE on Fedora 27 64-bit
@@ -641,6 +655,15 @@ set (wsjt_CSRCS
   lib/wrapkarn.c
   ${ldpc_CSRCS}
   ${qra_CSRCS}
+
+  lib/superfox/qpc/dbgprintf.c
+  lib/superfox/qpc/nhash2.c
+  lib/superfox/qpc/np_qpc.c
+  lib/superfox/qpc/np_rnd.c
+  lib/superfox/qpc/qpc_fwht.c
+  lib/superfox/qpc/qpc_n127k50q128.c
+  lib/superfox/qpc/qpc_subs.c
+  
   )
 
 set (wsjt_qt_UISRCS
@@ -1226,6 +1249,9 @@ target_link_libraries (echosim wsjt_fort wsjt_cxx)
 add_executable (ft8sim lib/ft8/ft8sim.f90)
 target_link_libraries (ft8sim wsjt_fort wsjt_cxx)
 
+add_executable (sfrx lib/superfox/sfrx.f90)
+target_link_libraries (sfrx wsjt_fort wsjt_cxx)
+
 add_executable (msk144sim lib/msk144sim.f90)
 target_link_libraries (msk144sim wsjt_fort wsjt_cxx)
 
@@ -1613,7 +1639,7 @@ install (TARGETS udp_daemon message_aggregator wsjtx_app_version
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
 
-install (TARGETS jt9 wsprd fmtave fcal fmeasure
+install (TARGETS jt9 wsprd fmtave fcal fmeasure sfrx
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   BUNDLE DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
   )
@@ -1686,7 +1712,7 @@ if (WIN32)
   endif ()
   
   install (FILES
-  ${sfox_dir}/sfrx.exe
+#  ${sfox_dir}/sfrx.exe
   ${sfox_dir}/sftx.exe
   ${sfox_dir}/foxchk.exe
   DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -1696,7 +1722,7 @@ endif (WIN32)
 
 if (UNIX)
   install (FILES
-  lib/superfox/linux/sfrx
+#  lib/superfox/linux/sfrx
   lib/superfox/linux/sftx
   lib/superfox/linux/foxchk
   DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -1709,7 +1735,7 @@ endif (UNIX)
 
 if (APPLE)
   install (FILES
-  lib/superfox/mac/sfrx
+#  lib/superfox/mac/sfrx
   lib/superfox/mac/sftx
   lib/superfox/mac/foxchk
   DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -1729,7 +1755,7 @@ execute_process(COMMAND
 
 if(${CMAKE_DEB_HOST_ARCH}    MATCHES "arm64")
   install (FILES
-  lib/superfox/arm/sfrx
+#  lib/superfox/arm/sfrx
   lib/superfox/arm/sftx
   lib/superfox/arm/foxchk
   DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -1742,7 +1768,7 @@ endif()
 
 if(${CMAKE_DEB_HOST_ARCH}    MATCHES "armhf")
    install (FILES
-   lib/superfox/arm32/sfrx
+#   lib/superfox/arm32/sfrx
    lib/superfox/arm32/sftx
    lib/superfox/arm32/foxchk
    DESTINATION ${CMAKE_INSTALL_BINDIR}
