@@ -14,9 +14,6 @@ subroutine sfrx_sub(nyymmdd,nutc,nfqso,ntol,iwave)
 
   fsync=nfqso
   ftol=ntol
-  nf=0
-  nd=0
-  nv=0
   fsample=12000.0
   call sfox_init(7,127,50,'no',fspread,delay,fsample,24)
   npts=15*12000
