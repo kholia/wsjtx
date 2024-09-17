@@ -1,4 +1,4 @@
-subroutine sfox_wave_gfsk(fname)
+subroutine sfox_wave_gfsk()
 
 ! Called by WSJT-X when it's time for SuperFox to transmit.  Reads array
 ! itone(1:151) from disk file 'sfox_2.dat' in the writable data directory.
@@ -9,7 +9,6 @@ subroutine sfox_wave_gfsk(fname)
   parameter (NSYM=151,NSPS=1024*4)
   parameter (NPTS=(NSYM+2)*NSPS)
   parameter (BT=8)
-  character*(*) fname
   character*40 cmsg2
   integer itone(151)
   real*8 dt,twopi,f0,phi,dphi_peak

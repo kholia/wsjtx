@@ -180,7 +180,7 @@ extern "C" {
 
   void foxgen_(bool* bSuperFox, char const * fname, FCL len);
 
-  void sfox_wave_gfsk_(char const * fname, FCL len);
+  void sfox_wave_gfsk_();
 
   void sftx_sub_(char const * otp_key, FCL len1);
 
@@ -11456,6 +11456,5 @@ void MainWindow::sfox_tx() {
   }
 #endif
   sftx_sub_(ckey.toLatin1().constData(), (FCL)ckey.size());
-  auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
-  sfox_wave_gfsk_(fname2.constData(), (FCL)fname2.size());
+  sfox_wave_gfsk_();
 }
