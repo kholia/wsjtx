@@ -19,7 +19,7 @@ subroutine foxgen(bSuperFox,fname)
   parameter (NFFT=614400,NH=NFFT/2)
   logical*1 bSuperFox,bMoreCQs,bSendMsg
   character*(*) fname
-  character*40 cmsg
+  character*40 cmsg,cmsg2
   character*26 textMsg
   character*37 msg,msgsent
   integer itone(79)
@@ -31,6 +31,7 @@ subroutine foxgen(bSuperFox,fname)
   common/foxcom/wave(NWAVE),nslots,nfreq,i3bit(5),cmsg(5),mycall(12),  &
        textMsg,bMoreCQs,bSendMsg
   common/foxcom2/itone2(NN),msgbits2(77)
+  common/foxcom3/nslots2,cmsg2(5),itone3(151)
   equivalence (x,cx),(y,cy)
 
   if(bSuperFox) then
@@ -42,9 +43,8 @@ subroutine foxgen(bSuperFox,fname)
         cmsg(n)(39:39)='1'                         !Set flag for text message
         nslots=n
      endif
-     open(25,file=fname,status='unknown')
-     write(25,'(a40)') cmsg(1:n)
-     close(25)
+     nslots2=nslots
+     cmsg2=cmsg
      go to 999
   endif
 

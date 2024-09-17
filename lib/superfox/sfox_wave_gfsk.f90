@@ -10,6 +10,7 @@ subroutine sfox_wave_gfsk(fname)
   parameter (NPTS=(NSYM+2)*NSPS)
   parameter (BT=8)
   character*(*) fname
+  character*40 cmsg2
   integer itone(151)
   real*8 dt,twopi,f0,baud,phi,dphi_peak
   real*8 dphi(0:NPTS-1)
@@ -17,6 +18,7 @@ subroutine sfox_wave_gfsk(fname)
   logical first/.true./
 
   common/foxcom/wave(NWAVE)
+  common/foxcom3/nslots2,cmsg2(5),itone3(151)
   save first,twopi,dt,hmod,dphi_peak,pulse
 
   if(first) then
@@ -33,9 +35,7 @@ subroutine sfox_wave_gfsk(fname)
   endif
   wave=0.
  
-  open(25,file=trim(fname),status='unknown',err=999)
-  read(25,'(20i4)',err=999,end=999) itone
-  close(25)
+  itone=itone3
   if(itone(1).lt.0 .or. itone(1).gt.128) go to 999
 
 ! Generate the SuperFox waveform.

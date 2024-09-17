@@ -15,7 +15,7 @@ subroutine sftx_sub(fname,foxcall0,ckey0)
   use sfox_mod
   character*(*) fname                 !Corrected path for sfox_1.dat
   character*120 line                  !List of SuperFox message pieces
-  character*40 cmsg(5)                !Old-style Fox messages
+  character*40 cmsg                   !Old-style Fox messages
   character*26 freeTextMsg
   character*2 arg
   character*(*) ckey0
@@ -26,7 +26,6 @@ subroutine sftx_sub(fname,foxcall0,ckey0)
   logical crc_ok
   real py(0:127,0:127)                !Probabilities for received synbol values
   integer*8 n47
-  integer itone(151)                  !SuperFox channel-symbol values
   integer*1 xin(0:49)                 !Packed message as 7-bit symbols
   integer*1 xdec(0:49)                !Decoded message
   integer*1 y(0:127)                  !Encoded symbols as i*1 integers
@@ -35,6 +34,7 @@ subroutine sftx_sub(fname,foxcall0,ckey0)
   integer chansym0(127)               !Transmitted symbols, data only
   integer chansym(127)                !Received symbols, data only
   integer isync(24)                   !Symbol numbers for sync tones
+  common/foxcom3/nslots,cmsg(5),itone(151)
   data isync/1,2,4,7,11,16,22,29,37,39,42,43,45,48,52,57,63,70,78,80,  &
              83,84,86,89/
 
@@ -42,14 +42,6 @@ subroutine sftx_sub(fname,foxcall0,ckey0)
 
   fsample=12000.0
   call sfox_init(7,127,50,'no',fspread,delay,fsample,24)
-  open(25,file=trim(fname),status='unknown')
-  do i=1,5
-     read(25,1000,end=10) cmsg(i)
-1000 format(a40)
-  enddo
-  i=6
-10 close(25)
-  nslots=i-1
   freeTextMsg='                          '
   bMoreCQs=cmsg(1)(40:40).eq.'1'
   bSendMsg=cmsg(nslots)(39:39).eq.'1'
@@ -80,11 +72,4 @@ subroutine sftx_sub(fname,foxcall0,ckey0)
      endif
   enddo
 
-100 i1=max(index(fname,'sfox_1'),1)
-  fname(i1:i1+9)='sfox_2.dat'
-  open(25,file=trim(fname),status='unknown')
-  write(25,1100) itone
-1100 format(20i4)
-  close(25)
-
-999 end subroutine sftx_sub
+end subroutine sftx_sub
