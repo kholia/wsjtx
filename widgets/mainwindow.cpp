@@ -349,7 +349,6 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   m_widebandDecode {false},
   m_dataAvailable {false},
   m_decodedText2 {false},
-  m_freeText {false},
   m_sentFirst73 {false},
   m_currentMessageType {-1},
   m_lastMessageType {-1},
@@ -2675,8 +2674,8 @@ void MainWindow::statusChanged()
     }
   } else {
     ui->sbNslots->setVisible(true);
-    ui->pbFreeText->setVisible(false);
-    ui->cbSendMsg->setVisible(false);
+    ui->pbFreeText->setVisible(true);
+    ui->cbSendMsg->setVisible(true);
     ui->sbNslots->setValue(m_Nslots0);
   }
   if (SpecOp::HOUND==m_specOp) ui->cbRxAll->setVisible(!m_config.superFox());
@@ -9208,6 +9207,8 @@ void MainWindow::on_cbFast9_clicked(bool b)
 
 void MainWindow::on_cbSendMsg_toggled(bool b)
 {
+  if (!(m_config.superFox() && m_specOp==SpecOp::FOX))
+    return; // don't do anything with slot values unless SuperFox mode
   if(b) {
     ui->sbNslots->setValue(2);
   } else {
@@ -10636,7 +10637,7 @@ void MainWindow::foxTxSequencer()
   m_tFoxTxSinceOTP++;
   m_tFoxTx++;                               //Increment Fox Tx cycle counter
 
-  //Is it time for a stand-alone CQ?
+  // Is it time for a stand-alone CQ?
   if(m_tFoxTxSinceCQ >= m_foxCQtime and ui->cbMoreCQs->isChecked()) {
     fm=ui->comboBoxCQ->currentText() + " " + m_config.my_callsign();
     if(!fm.contains("/")) {
@@ -10648,6 +10649,13 @@ void MainWindow::foxTxSequencer()
     islot++;
     foxGenWaveform(islot-1,fm);
     goto Transmit;
+  }
+
+  // Maybe send out the freetext message?
+  if (ui->cbSendMsg->isChecked() && (islot < m_Nslots)) {
+    fm = m_freeTextMsg;
+    islot++;
+    foxGenWaveform(islot - 1, fm);
   }
 
 #ifdef FOX_OTP
