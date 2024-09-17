@@ -52,6 +52,7 @@ program sfrx
 
   do ifile=ifile1,narg
      call getarg(ifile,fname)
+     write(72,*) ifile,narg,fname
           if(fname.eq.'OTP') then
              use_otp = .TRUE.
              cycle
