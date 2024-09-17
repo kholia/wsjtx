@@ -12,7 +12,7 @@ subroutine sfox_wave_gfsk(fname)
   character*(*) fname
   character*40 cmsg2
   integer itone(151)
-  real*8 dt,twopi,f0,baud,phi,dphi_peak
+  real*8 dt,twopi,f0,phi,dphi_peak
   real*8 dphi(0:NPTS-1)
   real*8 pulse(3*NSPS)
   logical first/.true./

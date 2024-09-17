@@ -4,7 +4,6 @@ subroutine sfox_pack(line,ckey,bMoreCQs,bSendMsg,freeTextMsg,xin)
   use packjt
   use packjt77
   use julian
-  integer stat
   integer*8 n47,n58,now
   integer*1 xin(0:49)                    !Packed message as 7-bit symbols
   logical*1 bMoreCQs,bSendMsg
@@ -89,7 +88,7 @@ subroutine sfox_pack(line,ckey,bMoreCQs,bSendMsg,freeTextMsg,xin)
 1002 format(b28.28)
      j=j+28
      nh1=nh1+1
-     if( nht.ge.5 ) exit                     !At most 5 RR73 callsigns
+     if(nh1.ge.5) exit                       !At most 5 RR73 callsigns
   enddo
   
 ! Process callsigns with a report
