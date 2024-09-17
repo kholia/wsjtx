@@ -616,7 +616,7 @@ set (wsjt_FSRCS
   lib/superfox/sfox_wave.f90
   lib/superfox/sfox_wave_gfsk.f90
   lib/superfox/sfrx_sub.f90
-  lib/superfox/sftx.f90
+  lib/superfox/sftx_sub.f90
   lib/superfox/twkfreq2.f90
   )
 

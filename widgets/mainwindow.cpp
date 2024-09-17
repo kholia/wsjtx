@@ -182,6 +182,8 @@ extern "C" {
 
   void sfox_wave_gfsk_(char const * fname, FCL len);
 
+  void sftx_sub_(char const * fname, char const * foxcall, char const * otp_key, FCL len1, FCL len2, FCL len3);
+
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
   void chk_samples_(int* m_ihsym,int* k, int* m_hsymStop);
@@ -11454,11 +11456,13 @@ void MainWindow::sfox_tx() {
       }
   }
 #endif
-//  qDebug() << "aa" << QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx";
-//  qDebug() << "bb" << args;
 LOG_INFO(QString("%1 %2").arg(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx").arg(args.join(" ")).toStdString());
-  p2.start(QDir::toNativeSeparators(m_appDir)+QDir::separator()+"sftx", args);
-  p2.waitForFinished();
+  auto fname1 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
+//  qDebug() << "aa" << fname1;
+//  qDebug() << "bb" << args[0] << args[1] << args[2];
+  sftx_sub_(fname1.constData(), args[1].toLatin1().constData() , args[2].toLatin1().constData(), (FCL)fname1.size(),
+      (FCL)args[1].size(), (FCL)args[2].size());
   auto fname2 {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_2.dat")).toLocal8Bit()};
+
   sfox_wave_gfsk_(fname2.constData(), (FCL)fname2.size());
 }
