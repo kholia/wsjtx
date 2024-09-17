@@ -1,4 +1,4 @@
-subroutine sftx_sub(fname,foxcall0,ckey0)
+subroutine sftx_sub(ckey0)
 
 ! This routine is required in order to create a SuperFox transmission.
 
@@ -13,13 +13,11 @@ subroutine sftx_sub(fname,foxcall0,ckey0)
 
   use qpc_mod
   use sfox_mod
-  character*(*) fname                 !Corrected path for sfox_1.dat
   character*120 line                  !List of SuperFox message pieces
   character*40 cmsg                   !Old-style Fox messages
   character*26 freeTextMsg
   character*(*) ckey0
   character*10 ckey
-  character*(*) foxcall0
   character*11 foxcall
   logical*1 bMoreCQs,bSendMsg
   integer*1 xin(0:49)                 !Packed message as 7-bit symbols
