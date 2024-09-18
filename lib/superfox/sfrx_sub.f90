@@ -36,6 +36,8 @@ subroutine sfrx_sub(nyymmdd,nutc,nfqso,ntol,iwave)
 
   call sfox_ana(dd,npts,c0,npts)
 
+!  call remove_tone(c0,fsync)  ! Needs testing
+
   ndepth=3
   dth=0.5
   damp=1.0
