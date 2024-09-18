@@ -598,7 +598,7 @@ private:
   Q_SLOT void on_cbSuperFox_clicked (bool);
   Q_SLOT void on_cbContestName_clicked (bool);
   Q_SLOT void on_cbOTP_clicked (bool);
-  Q_SLOT void on_cbHideOTP_clicked (bool);
+  Q_SLOT void on_cbShowOTP_clicked (bool);
 
   void error_during_hamlib_download (QString const& reason);
   void after_hamlib_downloaded();
@@ -715,7 +715,7 @@ private:
   QString OTPUrl_;
   QString OTPSeed_;
   bool  OTPEnabled_;
-  bool  HideOTP_;
+  bool  ShowOTP_;
   qint32 OTPinterval_;
 
   qint32 id_interval_;
@@ -1129,9 +1129,9 @@ bool Configuration::OTPEnabled() const
   return m_->OTPSeed_.size() == 16 && m_->OTPEnabled_;
 }
 
-bool Configuration::HideOTP () const
+bool Configuration::ShowOTP () const
 {
-  return m_->HideOTP_;
+  return m_->ShowOTP_;
 }
 
 namespace
@@ -1673,13 +1673,13 @@ void Configuration::impl::read_settings ()
   OTPUrl_ = settings_->value ("OTPUrl", FoxVerifier::default_url()).toString ();
   OTPSeed_ = settings_->value ("OTPSeed", QString {}).toString ();
   OTPEnabled_ = settings_->value ("OTPEnabled", false).toBool ();
-  HideOTP_ = settings_->value ("HideOTP", true).toBool ();
+  ShowOTP_ = settings_->value ("ShowOTP", false).toBool ();
 
   ui_->sbOTPinterval->setValue(OTPinterval_);
   ui_->OTPUrl->setText(OTPUrl_);
   ui_->OTPSeed->setText(OTPSeed_);
   ui_->cbOTP->setChecked(OTPEnabled_);
-  ui_->cbHideOTP->setChecked(HideOTP_);
+  ui_->cbShowOTP->setChecked(ShowOTP_);
 
 
   if (next_font_.fromString (settings_->value ("Font", QGuiApplication::font ().toString ()).toString ())
@@ -2011,7 +2011,7 @@ void Configuration::impl::write_settings ()
   settings_->setValue ("OTPUrl", OTPUrl_);
   settings_->setValue ("OTPSeed", OTPSeed_);
   settings_->setValue ("OTPEnabled", OTPEnabled_);
-  settings_->setValue ("HideOTP", HideOTP_);
+  settings_->setValue ("ShowOTP", ShowOTP_);
   settings_->sync ();
 }
 
@@ -2432,7 +2432,7 @@ void Configuration::impl::accept ()
   OTPSeed_=ui_->OTPSeed->text();
   OTPUrl_=ui_->OTPUrl->text();
   OTPEnabled_=ui_->cbOTP->isChecked();
-  HideOTP_=ui_->cbHideOTP->isChecked();
+  ShowOTP_=ui_->cbShowOTP->isChecked();
 
   auto new_server = ui_->udp_server_line_edit->text ().trimmed ();
   auto new_interfaces = get_selected_network_interfaces (ui_->udp_interfaces_combo_box);
@@ -3287,7 +3287,7 @@ void Configuration::impl::on_cbOTP_clicked(bool)
   check_visibility();
 }
 
-void Configuration::impl::on_cbHideOTP_clicked(bool)
+void Configuration::impl::on_cbShowOTP_clicked(bool)
 {
   check_visibility();
 }
@@ -3322,7 +3322,7 @@ void Configuration::impl::check_visibility ()
   } else {
     ui_->cbSuperFox->setEnabled (false);
     ui_->cbOTP->setEnabled (false);
-    ui_->cbHideOTP->setEnabled(false);
+    ui_->cbShowOTP->setEnabled(false);
   }
   if (!ui_->rbFox->isChecked() and !ui_->rbHound->isChecked() and !ui_->rbQ65pileup->isChecked()
       and ui_->gbSpecialOpActivity->isChecked()) {
@@ -3337,7 +3337,7 @@ void Configuration::impl::check_visibility ()
     ui_->lblOTPSeed->setEnabled(false);
     ui_->lblOTPUrl->setEnabled(false);
     ui_->lblOTPEvery->setEnabled(false);
-    ui_->cbHideOTP->setEnabled(false);
+    ui_->cbShowOTP->setEnabled(false);
   } else {
     if (ui_->rbHound->isChecked()) {
       if (ui_->OTPUrl->text().isEmpty())
@@ -3346,7 +3346,7 @@ void Configuration::impl::check_visibility ()
       }
       ui_->OTPUrl->setEnabled(true);
       ui_->lblOTPUrl->setEnabled(true);
-      ui_->cbHideOTP->setEnabled(true);
+      ui_->cbShowOTP->setEnabled(true);
     } else {
       ui_->OTPUrl->setEnabled(false);
       ui_->lblOTPUrl->setEnabled(false);
@@ -3356,7 +3356,7 @@ void Configuration::impl::check_visibility ()
       ui_->OTPSeed->setEnabled(true);
       ui_->lblOTPSeed->setEnabled(true);
       ui_->lblOTPEvery->setEnabled(true);
-      ui_->cbHideOTP->setEnabled(false);
+      ui_->cbShowOTP->setEnabled(false);
     } else {
       ui_->OTPSeed->setEnabled(false);
       ui_->lblOTPSeed->setEnabled(false);
