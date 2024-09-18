@@ -1085,6 +1085,7 @@ MainWindow::MainWindow(QDir const& temp_directory, bool multiple,
   }
 
   m_specOp=m_config.special_op_id();
+
   // Starting in FT8 Hound mode needs this initialization
   if (m_specOp==SpecOp::HOUND) {
       on_ft8Button_clicked();
@@ -1469,7 +1470,10 @@ void MainWindow::readSettings()
   if (SpecOp::FOX==m_specOp) {
     ui->tabWidget->setCurrentIndex(n);
   } else {
-    ui->tabWidget->setCurrentIndex(1);  // needed for GUI initialisation when SuperFox controls are invisible
+    // We need this to initialize the height of tab 1 correctly
+    ui->pbFreeText->setVisible(false);
+    ui->cbSendMsg->setVisible(false);
+    ui->tabWidget->setCurrentIndex(1);
     ui->tabWidget->setCurrentIndex(n);
   }
   outBufSize=m_settings->value("OutBufSize",4096).toInt();
