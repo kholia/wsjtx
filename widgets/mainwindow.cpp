@@ -2663,19 +2663,23 @@ void MainWindow::statusChanged()
       }
     }
   }
-  if (SpecOp::FOX==m_specOp && m_config.superFox()) {
-    ui->sbNslots->setVisible(false);
+  if (SpecOp::FOX==m_specOp) {
     ui->pbFreeText->setVisible(true);
     ui->cbSendMsg->setVisible(true);
-    if(ui->cbSendMsg->isChecked()) {
-      ui->sbNslots->setValue(2);
+    if (m_config.superFox()) {
+      ui->sbNslots->setVisible(false);
+      if(ui->cbSendMsg->isChecked()) {
+        ui->sbNslots->setValue(2);
+      } else {
+        ui->sbNslots->setValue(5);
+      }
     } else {
-      ui->sbNslots->setValue(5);
+      ui->sbNslots->setVisible(true);
     }
   } else {
     ui->sbNslots->setVisible(true);
-    ui->pbFreeText->setVisible(true);
-    ui->cbSendMsg->setVisible(true);
+    ui->pbFreeText->setVisible(false);
+    ui->cbSendMsg->setVisible(false);
     ui->sbNslots->setValue(m_Nslots0);
   }
   if (SpecOp::HOUND==m_specOp) ui->cbRxAll->setVisible(!m_config.superFox());
