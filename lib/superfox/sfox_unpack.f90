@@ -118,7 +118,7 @@ subroutine sfox_unpack(nutc,x,nsnr,f0,dt0,foxcall,nsignature)
 100 read(msgbits(307:326),'(b20)') nsignature
 !  print*,'i3:',i3
   if (use_otp) then
-     write(ssignature,'(I0)') nsignature
+     write(ssignature,'(I6.6)') nsignature
      write(*,1100) nutc,nsnr,dt0,nint(f0),'$VERIFY$ '//trim(foxcall)//' '//trim(ssignature)
   endif
   return
