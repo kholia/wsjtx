@@ -3570,8 +3570,8 @@ void MainWindow::decode()                                       //decode()
   if(dec_data.params.b_superfox and dec_data.params.b_even_seq and m_ihsym<50) return;
 
   dec_data.params.ntol=ui->sbFtol->value ();
-  if(!m_config.enable_VHF_features()) {
-    dec_data.params.ntol=20;
+  if(!m_config.enable_VHF_features() and ) {
+    if(!m_config.superFox()) dec_data.params.ntol=20;
     dec_data.params.naggressive=0;
   }
   if(m_mode=="FST4") {
@@ -8593,7 +8593,7 @@ void MainWindow::setFreq4(int rxFreq, int txFreq)
      (qAbs(rxFreq-750)>200)) {
 // SuperHound should normally keep RxFreq close to 750 Hz
     if(MessageBox::No == MessageBox::query_message (this,
-           tr ("Please confirm setting RxFreq to %1 Hz").arg
+           tr ("Please confirm setting RxFreq to %1 Hz.\nSuperFox should be at 750 Hz.").arg
            (QString::number(rxFreq)))) return;
   }
 
