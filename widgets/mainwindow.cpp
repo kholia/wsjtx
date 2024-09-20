@@ -4904,7 +4904,7 @@ void MainWindow::guiUpdate()
       QVector<qint32> ft8Freq = {1840000,3573000,7074000,10136000,14074000,18100000,21074000,24915000,28074000,50313000,70154000};
       for(int i=0; i<ft8Freq.length()-1; i++) {
           int kHzdiff=m_freqNominal - ft8Freq[i];
-          if(qAbs(kHzdiff) < 3000) {
+          if(qAbs(kHzdiff) < 3000 ) {
           m_bTxTime=false;
           if (m_auto) auto_tx_mode (false);
           if (m_tune) stop_tuning();
@@ -4916,7 +4916,6 @@ void MainWindow::guiUpdate()
             MessageBox::warning_message (this, tr ("Fox Mode warning"), message);
           });
           break;
-          if(qAbs(kHzdiff) > 2999) m_bTxTime=true;  // allow Tx again
         }
       }
     }
