@@ -10657,7 +10657,7 @@ void MainWindow::foxTxSequencer()
   }
 
   // Maybe send out the freetext message?
-  if (ui->cbSendMsg->isChecked() && (islot < m_Nslots)) {
+  if (!m_config.superFox() && ui->cbSendMsg->isChecked() && (islot < m_Nslots)) {
     fm = m_freeTextMsg;
     islot++;
     foxGenWaveform(islot - 1, fm);
