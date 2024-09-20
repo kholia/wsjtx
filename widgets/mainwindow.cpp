@@ -2082,6 +2082,7 @@ void MainWindow::showStatusMessage(const QString& statusMsg)
 
 void MainWindow::on_actionSettings_triggered()               //Setup Dialog
 {
+  if (m_mode=="FT8") keep_frequency = true;
   // things that might change that we need know about
   auto callsign = m_config.my_callsign ();
   auto my_grid = m_config.my_grid ();
@@ -2122,7 +2123,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
                                           , m_tx_audio_buffer_frames);
     }
 
-    displayDialFrequency ();
+    if (!keep_frequency or ui->bandComboBox->currentText()=="oob") displayDialFrequency ();
     bool vhf {m_config.enable_VHF_features()};
     m_wideGraph->setVHF(vhf);
     if (!vhf) ui->sbSubmode->setValue (0);
@@ -2172,8 +2173,10 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
     set_mode(m_mode);
     configActiveStations();
+    keep_frequency = false;
+  } else {
+    keep_frequency = false;
   }
-  if(m_mode=="FT8") on_actionFT8_triggered(); //in case we need to reset some things for Fox/Hound
 }
 
 void MainWindow::on_monitorButton_clicked (bool checked)
