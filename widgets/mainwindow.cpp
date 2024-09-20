@@ -2082,6 +2082,7 @@ void MainWindow::showStatusMessage(const QString& statusMsg)
 
 void MainWindow::on_actionSettings_triggered()               //Setup Dialog
 {
+  if (m_mode=="FT8") keep_frequency = true;
   // things that might change that we need know about
   auto callsign = m_config.my_callsign ();
   auto my_grid = m_config.my_grid ();
@@ -2122,7 +2123,7 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
                                           , m_tx_audio_buffer_frames);
     }
 
-    displayDialFrequency ();
+    if (!keep_frequency or ui->bandComboBox->currentText()=="oob") displayDialFrequency ();
     bool vhf {m_config.enable_VHF_features()};
     m_wideGraph->setVHF(vhf);
     if (!vhf) ui->sbSubmode->setValue (0);
@@ -2172,8 +2173,10 @@ void MainWindow::on_actionSettings_triggered()               //Setup Dialog
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
     set_mode(m_mode);
     configActiveStations();
+    keep_frequency = false;
+  } else {
+    keep_frequency = false;
   }
-  if(m_mode=="FT8") on_actionFT8_triggered(); //in case we need to reset some things for Fox/Hound
 }
 
 void MainWindow::on_monitorButton_clicked (bool checked)
@@ -7434,13 +7437,6 @@ void MainWindow::on_actionFT8_triggered()
   QTimer::singleShot (50, [=] {
     if(m_specOp!=SpecOp::FOX) ui->TxFreqSpinBox->setValue(m_settings->value("TxFreq_old",1500).toInt());
     if(m_specOp==SpecOp::FOX && !m_config.superFox()) ui->TxFreqSpinBox->setValue(m_TxFreqFox);
-    if(SpecOp::HOUND == m_specOp && m_config.superFox()) clearDX();
-    if(SpecOp::HOUND == m_specOp && m_config.superFox() &&
-       (ui->RxFreqSpinBox->value() < 700 or ui->RxFreqSpinBox->value() > 800)) {
-      ui->RxFreqSpinBox->setValue(750);
-    } else {
-      ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
-    }
     on_sbSubmode_valueChanged(ui->sbSubmode->value());
   });
   m_mode="FT8";
@@ -7526,12 +7522,16 @@ void MainWindow::on_actionFT8_triggered()
       m_wideGraph->setRxFreq(ui->RxFreqSpinBox->value());
       m_wideGraph->setTol(ui->sbFtol->value());
       m_wideGraph->setSuperHound(true);
+      clearDX();
+      if(ui->RxFreqSpinBox->value() < 700 or ui->RxFreqSpinBox->value() > 800)
+        ui->RxFreqSpinBox->setValue(750);
     } else {
       //                       01234567890123456789012345678901234567
       displayWidgets(nWidgets("11101000010011000001000000000011000000"));
       ui->labDXped->setText(tr ("Hound"));
       ui->cbRxAll->setEnabled(true);
       m_wideGraph->setSuperHound(false);
+      ui->RxFreqSpinBox->setValue(m_settings->value("RxFreq_old",1500).toInt());
     }
     ui->txrb1->setChecked(true);
     ui->txrb2->setEnabled(false);
