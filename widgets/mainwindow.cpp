@@ -5404,11 +5404,6 @@ void MainWindow::guiUpdate()
   if(nsec != m_sec0) {
 //    qDebug() << "AAA" << nsec%60 << ui->cbWorkDupes->isChecked();
 
-//    qint64 n64 = QDateTime::currentSecsSinceEpoch();
-//    n64=n64/30;
-//    n64=n64*30;
-//    qDebug() << "bb" << nsec%60 << dec_data.params.nutc << n64 << n64%60;
-
     // prevent tuning on top of a SuperFox message
     if (SpecOp::HOUND==m_specOp && m_config.superFox() && m_tune) {
       QDateTime now = QDateTime::currentDateTimeUtc();
@@ -9223,7 +9218,7 @@ void MainWindow::on_cbSendMsg_toggled(bool b)
   if (!(m_config.superFox() && m_specOp==SpecOp::FOX))
     return; // don't do anything with slot values unless SuperFox mode
   if(b) {
-    ui->sbNslots->setValue(2);
+    ui->sbNslots->setValue(4);         //### Is the correct value 4? Or 2? Is better logic needed? ###
   } else {
     ui->sbNslots->setValue(5);
   }
@@ -10466,17 +10461,12 @@ void MainWindow::selectHound(QString line, bool bTopQueue)
   t1=t1.mid(0,12) + t2;
   // display the callers, highlighting calls if necessary
   ui->houndQueueTextBrowser->insertText(bTopQueue ? t1 + "\n" : t1, QColor{}, QColor{}, houndCall, "", bTopQueue ? QTextCursor::Start : QTextCursor::End);
-
   t1_with_grid=t1 + " " + houndGrid;                    // Append the grid
-
-  if (bTopQueue)
-    {
-      m_houndQueue.prepend(t1_with_grid);     // Put this hound into the queue at the top
-    }
-  else
-    {
-      m_houndQueue.enqueue(t1_with_grid);      // Put this hound into the queue
-    }
+  if (bTopQueue) {
+    m_houndQueue.prepend(t1_with_grid);     // Put this hound into the queue at the top
+  } else {
+    m_houndQueue.enqueue(t1_with_grid);      // Put this hound into the queue
+  }
   writeFoxQSO(" Sel:  " + t1_with_grid);
   QTextCursor cursor = ui->houndQueueTextBrowser->textCursor();
   cursor.setPosition(0);                                 // Scroll to top of list
@@ -10832,8 +10822,6 @@ Transmit:
   bool bSuperFox=m_config.superFox();
   foxcom_.bMoreCQs=ui->cbMoreCQs->isChecked();
   foxcom_.bSendMsg=ui->cbSendMsg->isChecked();
-//  qDebug() << "cc" << foxcom_.bMoreCQs << foxcom_.bSendMsg << foxcom_.nslots
-//           << m_Nslots << m_freeTextMsg0;
   ::memcpy(foxcom_.textMsg, m_freeTextMsg0.leftJustified(26,' ').toLatin1(),26);
   auto fname {QDir::toNativeSeparators(m_config.writeable_data_dir().absoluteFilePath("sfox_1.dat")).toLocal8Bit()};
   foxgen_(&bSuperFox, fname.constData(), (FCL)fname.size());
@@ -10958,11 +10946,16 @@ void MainWindow::foxGenWaveform(int i,QString fm)
   QString txModeArg;
   txModeArg = txModeArg.asprintf("FT8fox %d",i+1);
   int nfreq=ui->TxFreqSpinBox->value()+60*i;
-  if(m_config.superFox()) nfreq=750;
+
+  if(m_config.superFox() && SpecOp::FOX==m_specOp) {
+      nfreq=750;
+      if(i==0 && ui->cbSendMsg->isChecked()) {
+        ui->decodedTextBrowser2->displayTransmittedText(m_freeTextMsg0, txModeArg,
+               nfreq,m_bFastMode,m_TRperiod,m_config.superFox());
+      }
+  }
+
   ui->decodedTextBrowser2->displayTransmittedText(fm.trimmed(), txModeArg,
-        nfreq,m_bFastMode,m_TRperiod,m_config.superFox());
-  if (SpecOp::FOX==m_specOp && m_config.superFox() && ui->cbSendMsg->isChecked())
-    ui->decodedTextBrowser2->displayTransmittedText(m_freeTextMsg0, txModeArg,
         nfreq,m_bFastMode,m_TRperiod,m_config.superFox());
   foxcom_.i3bit[i]=0;
   if(fm.indexOf("<")>0) foxcom_.i3bit[i]=1;
