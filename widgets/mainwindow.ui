@@ -2054,7 +2054,7 @@ Double-click to reset to the standard 73 message</string>
                      <number>4</number>
                     </property>
                     <item row="0" column="0" rowspan="2">
-                     <layout class="QGridLayout" name="gridLayout" columnstretch="2,0,0">
+                     <layout class="QGridLayout" name="gridLayout" columnstretch="2,2,1">
                       <property name="topMargin">
                        <number>0</number>
                       </property>
