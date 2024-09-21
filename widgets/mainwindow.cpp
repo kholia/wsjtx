@@ -10704,6 +10704,7 @@ list1Done:
 //Compile list2: Up to Nslots Hound calls to be sent a report.
 // For Superfox, up to 5 RR73, but only 4 callsigns with reports. m_NSlots should be 5 for SF.
   nMaxRemainingSlots = (m_config.superFox()) ? m_Nslots - 1 : m_Nslots;
+  if(m_config.superFox() and ui->cbSendMsg->isChecked()) nMaxRemainingSlots=4;
   for(int i=0; i<m_foxQSOinProgress.count(); i++) {
     //First do those for QSOs in progress
     hc=m_foxQSOinProgress.at(i);
