@@ -2674,7 +2674,7 @@ void MainWindow::statusChanged()
     if (m_config.superFox()) {
       ui->sbNslots->setVisible(false);
       if(ui->cbSendMsg->isChecked()) {
-        ui->sbNslots->setValue(2);
+        ui->sbNslots->setValue(4);
       } else {
         ui->sbNslots->setValue(5);
       }
