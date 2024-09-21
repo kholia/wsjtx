@@ -39,7 +39,7 @@ program sfoxsim
               83,84,86,89/
 
   nargs=iargc()
-  if(nargs.ne.11) then
+  if(nargs.ne.10) then
      print*,'Usage:   sfoxsim   f0  DT Chan FoxC H1 H2 CQ FT nfiles snr'
      print*,'Example: sfoxsim  750 0.0  MM  K1JT  5  1  0  0   10   -15'
      print*,'         f0=0 to dither f0 and DT'
@@ -58,19 +58,19 @@ program sfoxsim
   read(arg,*) xdt
   call getarg(3,channel)
   call getarg(4,foxcall)
-  call getarg(6,arg)
+  call getarg(5,arg)
   read(arg,*) nh1
-  call getarg(7,arg)
+  call getarg(6,arg)
   read(arg,*) nh2
-  call getarg(8,arg)
+  call getarg(7,arg)
   read(arg,*) ncq
   bMoreCQs=ncq.ne.0
-  call getarg(9,arg)
+  call getarg(8,arg)
   read(arg,*) nft
   bSendMsg=nft.ne.0
-  call getarg(10,arg)
+  call getarg(9,arg)
   read(arg,*) nfiles
-  call getarg(11,arg)
+  call getarg(10,arg)
   read(arg,*) snr
 
   fspread=0.0
