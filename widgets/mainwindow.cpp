@@ -6926,6 +6926,10 @@ void MainWindow::on_tx2_editingFinished()                       //tx2 edited
 
 void MainWindow::on_tx3_editingFinished()                       //tx3 edited
 {
+  if (SpecOp::HOUND==m_specOp && m_config.superFox() && !m_bDoubleClicked) {
+    clearDX();
+    return;
+  }
   QString t=ui->tx3->text();
   msgtype(t, ui->tx3);
 }
