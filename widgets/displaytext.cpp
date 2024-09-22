@@ -539,7 +539,7 @@ void DisplayText::displayTransmittedText(QString text, QString modeTx, qint32 tx
       int i1=t.indexOf("<");
       int i2=t.indexOf(">");
       QString foxcall=t.mid(i1+1,i2-i1-1);
-      t2=t.left(i0) + " " + foxcall;
+      t2=t.left(i0-4) + foxcall + " RR73";
       QString t3=t.left(24) + t.mid(i0+2,-1).remove("<").remove(">");
       insertText (t2, bg, fg);
       insertText (t3, bg, fg);
