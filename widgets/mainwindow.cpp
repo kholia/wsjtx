@@ -10236,8 +10236,13 @@ void MainWindow::on_pbFoxReset_clicked()
 void MainWindow::on_pbFreeText_clicked()
 {
   bool ok;
-  m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
-         tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok).left(26);
+  if(m_config.superFox()) {
+    m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
+           tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok).left(26);
+  } else {
+    m_freeTextMsg = QInputDialog::getText (this, tr("Free Text Message"),
+           tr("Message:"), QLineEdit::Normal, m_freeTextMsg0, &ok).left(13);
+  }
   if(ok) {
     m_freeTextMsg=m_freeTextMsg.toUpper();
     m_freeTextMsg0=m_freeTextMsg;
