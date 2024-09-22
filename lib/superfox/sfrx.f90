@@ -1,8 +1,9 @@
 program sfrx
 
+! Command-line SuperFox decoder
+
   use sfox_mod
   use julian
-!  use popen_module, only: get_command_as_string
 
   integer*2 iwave(NMAX)
   integer ihdr(11)
@@ -55,7 +56,4 @@ program sfrx
      nf=nf+1
   enddo
    
-  if(ncarg.gt.ifile1) write(*,1999) nf,nd,nv
-1999 format('nfiles:',i5,'   ndecodes:',i5,'   nverified:',i5)
-
 999 end program sfrx
