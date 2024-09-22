@@ -1260,8 +1260,8 @@ target_link_libraries (ft8sim wsjt_fort wsjt_cxx)
 add_executable (sfoxsim lib/superfox/sfoxsim.f90)
 target_link_libraries (sfoxsim wsjt_fort wsjt_cxx)
 
-#add_executable (sfrx lib/superfox/sfrx.f90)
-#target_link_libraries (sfrx wsjt_fort wsjt_cxx)
+add_executable (sfrx lib/superfox/sfrx.f90)
+target_link_libraries (sfrx wsjt_fort wsjt_cxx)
 
 #add_executable (sftx lib/superfox/sftx.f90)
 #target_link_libraries (sftx wsjt_fort wsjt_cxx)
