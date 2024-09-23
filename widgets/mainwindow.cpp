@@ -1352,7 +1352,7 @@ void MainWindow::readSettings()
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
   m_Nslots=m_settings->value("FoxNslots",3).toInt();
   m_Nslots0=m_Nslots;
-  ui->sbNslots->setValue(m_Nslots);
+  if(!m_config.superFox()) ui->sbNslots->setValue(m_Nslots);
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
   m_freeTextMsg=m_freeTextMsg0;
