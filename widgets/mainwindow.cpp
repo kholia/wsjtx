@@ -2674,7 +2674,7 @@ void MainWindow::statusChanged()
     if (m_config.superFox()) {
       ui->sbNslots->setVisible(false);
       if(ui->cbSendMsg->isChecked()) {
-        ui->sbNslots->setValue(4);
+        ui->sbNslots->setValue(2);
       } else {
         ui->sbNslots->setValue(5);
       }
@@ -9222,7 +9222,7 @@ void MainWindow::on_cbSendMsg_toggled(bool b)
   if (!(m_config.superFox() && m_specOp==SpecOp::FOX))
     return; // don't do anything with slot values unless SuperFox mode
   if(b) {
-    ui->sbNslots->setValue(4);         //### Is the correct value 4? Or 2? Is better logic needed? ###
+    ui->sbNslots->setValue(2);
   } else {
     ui->sbNslots->setValue(5);
   }
