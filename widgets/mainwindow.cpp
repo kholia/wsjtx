@@ -182,7 +182,7 @@ extern "C" {
 
   void sfox_wave_gfsk_();
 
-  void sftx_sub_(char const * otp_key, int* nslots, bool* b, FCL len1);
+  void sftx_sub_(char const * otp_key, FCL len1);
 
   void plotsave_(float swide[], int* m_w , int* m_h1, int* irow);
 
@@ -2673,7 +2673,11 @@ void MainWindow::statusChanged()
     ui->cbSendMsg->setVisible(true);
     if (m_config.superFox()) {
       ui->sbNslots->setVisible(false);
+      if(ui->cbSendMsg->isChecked()) {
+        ui->sbNslots->setValue(4);
+      } else {
         ui->sbNslots->setValue(5);
+      }
     } else {
       ui->sbNslots->setVisible(true);
       ui->sbNslots->setValue(m_Nslots0);
@@ -9217,7 +9221,11 @@ void MainWindow::on_cbSendMsg_toggled(bool b)
 {
   if (!(m_config.superFox() && m_specOp==SpecOp::FOX))
     return; // don't do anything with slot values unless SuperFox mode
-  if(b or !b) ui->sbNslots->setValue(5);  //SF always uses Nslots=5
+  if(b) {
+    ui->sbNslots->setValue(4);         //### Is the correct value 4? Or 2? Is better logic needed? ###
+  } else {
+    ui->sbNslots->setValue(5);
+  }
 }
 
 void MainWindow::on_cbShMsgs_toggled(bool b)
@@ -11463,8 +11471,6 @@ void MainWindow::sfox_tx() {
       }
   }
 #endif
-  bool b=ui->cbSendMsg->isChecked();
-  foxcom_.bSendMsg=b;
-  sftx_sub_(ckey.toLatin1().constData(), &m_Nslots, &b, (FCL)ckey.size());
+  sftx_sub_(ckey.toLatin1().constData(), (FCL)ckey.size());
   sfox_wave_gfsk_();
 }
