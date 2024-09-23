@@ -1352,7 +1352,7 @@ void MainWindow::readSettings()
   ui->sbNlist->setValue(m_settings->value("FoxNlist",12).toInt());
   m_Nslots=m_settings->value("FoxNslots",3).toInt();
   m_Nslots0=m_Nslots;
-  if(!m_config.superFox()) ui->sbNslots->setValue(m_Nslots);
+  ui->sbNslots->setValue(m_Nslots);
   ui->sbSerialNumber->setValue (m_settings->value ("SerialNumber", 1).toInt ());
   m_freeTextMsg0=m_settings->value("FoxTextMsg","").toString();
   m_freeTextMsg=m_freeTextMsg0;
@@ -2672,7 +2672,7 @@ void MainWindow::statusChanged()
     ui->pbFreeText->setVisible(true);
     ui->cbSendMsg->setVisible(true);
     if (m_config.superFox()) {
-      ui->sbNslots->setVisible(false);
+      ui->sbNslots->setVisible(true);
       if(ui->cbSendMsg->isChecked()) {
         ui->sbNslots->setValue(2);
       } else {
@@ -10207,8 +10207,9 @@ void MainWindow::on_sbNlist_valueChanged(int n)
 
 void MainWindow::on_sbNslots_valueChanged(int n)
 {
-  m_Nslots=n;
   if(m_specOp!=SpecOp::FOX) return;
+  if(m_config.superFox()) return;  // Don't allow setting m_Nslots manually in SF mode
+  m_Nslots=n;
   QString t;
   t = t.asprintf(" NSlots %d",m_Nslots);
   writeFoxQSO(t);
