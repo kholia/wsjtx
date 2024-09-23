@@ -2674,8 +2674,8 @@ void MainWindow::statusChanged()
     if (m_config.superFox()) {
       ui->sbNslots->setVisible(true);
       if(ui->cbSendMsg->isChecked()) {
-        ui->sbNslots->setValue(4);
-        m_Nslots=4;
+        ui->sbNslots->setValue(2);
+        m_Nslots=2;
       } else {
         ui->sbNslots->setValue(5);
         m_Nslots=5;
@@ -9224,8 +9224,8 @@ void MainWindow::on_cbSendMsg_toggled(bool b)
   if (!(m_config.superFox() && m_specOp==SpecOp::FOX))
     return; // don't do anything with slot values unless SuperFox mode
   if(b) {
-    ui->sbNslots->setValue(4);
-    m_Nslots=4;
+    ui->sbNslots->setValue(2);
+    m_Nslots=2;
   } else {
     ui->sbNslots->setValue(5);
     m_Nslots=5;
