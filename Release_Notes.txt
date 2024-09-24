@@ -11,6 +11,92 @@
                                                          
 Copyright 2001 - 2024 by Joe Taylor, K1JT, and the WSJT Development Team
 
+
+                      Release: WSJT-X 2.7.0-rc7
+                         September 30, 2024
+                      -------------------------
+
+WSJT-X 2.7.0 Release Candidate 7 brings significant improvements for
+the new SuperFox mode. It introduces a new verification system which
+replaces the previous one, and works for both the SuperFox mode and
+for old-style Fox and Hound operation. 
+  
+IMPORTANT: OpenSSL v1.1.1 or higher is now required.
+
+Enhancements to the SuperFox decoder:
+
+ - The performance of the SuperFox decoder has been further improved. 
+
+ - Users can now set individual FTol values and tune the decoder to
+   the exact syc frequency of the SuperFox signal if it is not exactly
+   750 Hz. Both result in a better decodability in certain situations.
+
+ - Important: The Rx frequency must now always be set to the sync 
+   frequency +- FTol (i.e. usually to 750 +-50 Hz). 
+
+Introduction of a new Fox verification system:
+
+ - The new Fox verification system uses one time passwords (OTPs), and 
+   works for the SuperFox mode as well as for old-style Fox and Hound 
+   operation. It can be enabled by the new OTP checkbox on the Advanced
+   tab of the Settings dialog.
+
+ - Fox or SuperFox stations send individual OTPs via radio. Hounds 
+   automatically check the validity of the received OTPs in real time 
+   from a sever when there is an internet connection. Otherwise, the 
+   validity can also be queried manually later. OTP verifications can 
+   only be retrieved once the transmission has already taken place.
+
+ - Displaying the OTP verification messages can be switched off. 
+   Verfication then runs fully automatically in the background.
+
+ - If the verification was successful, the background color of the Hound 
+   or Super Hound label switches to green.
+
+ - Theoretically, DXpeditions can set up their own OTP server, however, 
+   we recommend using the server at https://www.9dx.cc. 
+
+ - Use of the new Fox verification system requires an OTP key. The system
+   uses open source code and standard encryption technology. Non-verified
+   SuperFox transmissions are now possible without a key.
+
+Improvements to SuperFox/Hound operation:
+
+ - SuperHounds must now first receive the SuperFox before they can call.
+   A QSO can only be started by double-clicking on a SuperFox signal.
+   Note that calling the Fox blindly not only leads to unnecessary band
+   utilization, but can also significantly reduce the QSO rate due to
+   unanswered (Super)Fox replies.
+
+ - Switching to SuperHound mode automatically sets the Rx frequency to
+   750 Hz. The previously selected frequency is saved and restored 
+   afterwards.
+ 
+ - Old-style Fox stations can now also transmit free text messages of
+   up to 13 characters.
+
+ - Some enhancements useful for Fox operators: Active Station Window now shows 
+   shows band activity. Hound callsigns can be highlighted via UDP API, and 
+   assigned a score for sorting via UDP API. Fox Tx frequency is preserved 
+   when switching in/out of Fox mode.
+
+ - UDP Status Update messages now include information on how many callsigns
+   have highlighting applied, and how many callsigns have a score assigned.
+
+Other enhancenments and fixes:
+
+ - In FT8 mode, the Settings dialog no longer resets the VFO frequency 
+   to band/mode default unless really needed.
+
+ - Fixed a flaw which resulted in sub-optimal QSO rates in SuperFox 
+   mode.
+
+ - Several code improvements for macOS.
+
+ - Updated CTY.DAT and Hamlib.
+
+
+
                       Release: WSJT-X 2.7.0-rc6
                              July 19, 2024
                       -------------------------
