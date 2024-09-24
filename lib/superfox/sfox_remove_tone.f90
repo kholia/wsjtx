@@ -35,7 +35,7 @@ subroutine sfox_remove_tone(c0,fsync)
    df=fsample/NMAX
    fac=1.0/NMAX
 
-   do it=1,2
+   do it=1,1                           ! Remove 1 tone, if present
       cfilt=fac*c0
       call four2a(cfilt,NMAX,1,-1,1)   ! fourier transform of input data
       iz=NMAX/4
@@ -43,8 +43,8 @@ subroutine sfox_remove_tone(c0,fsync)
          s(i)=real(cfilt(i))**2 + aimag(cfilt(i))**2
       enddo
 
-      ia=nint((fsync-100.0)/df)
-      ib=nint((fsync+1500.0+100.0)/df)
+      ia=nint((fsync-50.0)/df)
+      ib=nint((fsync+1500.0+50.0)/df)
       ipk=maxloc(s(ia:ib))
       i0=ipk(1) + ia - 1
 
@@ -69,9 +69,9 @@ subroutine sfox_remove_tone(c0,fsync)
       enddo
       sigma=sqrt(s2/s0)*df
 
-      write(*,*) 'frequency, spectral width ',f2,sigma
+!      write(*,*) 'frequency, spectral width ',f2,sigma
       if(sigma .gt. 2.5) exit
-      write(*,*) 'remove_tone - frequency: ',f2
+!      write(*,*) 'remove_tone - frequency: ',f2
 
       dt=1.0/fsample
       do i=1, NMAX
