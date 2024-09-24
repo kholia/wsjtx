@@ -28,7 +28,7 @@ Enhancements to the SuperFox decoder:
  - The performance of the SuperFox decoder has been further improved. 
 
  - Users can now set individual FTol values and tune the decoder to
-   the exact syc frequency of the SuperFox signal if it is not exactly
+   the exact sync frequency of the SuperFox signal if it is not exactly
    750 Hz. Both result in a better decodability in certain situations.
 
  - Important: The Rx frequency must now always be set to the sync 
@@ -43,7 +43,7 @@ Introduction of a new Fox verification system:
 
  - Fox or SuperFox stations send individual OTPs via radio. Hounds 
    automatically check the validity of the received OTPs in real time 
-   from a sever when there is an internet connection. Otherwise, the 
+   from a server when there is an internet connection. Otherwise, the 
    validity can also be queried manually later. OTP verifications can 
    only be retrieved once the transmission has already taken place.
 
@@ -75,7 +75,7 @@ Improvements to SuperFox/Hound operation:
  - Old-style Fox stations can now also transmit free text messages of
    up to 13 characters.
 
- - Some enhancements useful for Fox operators: Active Station Window now shows 
+ - Some enhancements useful for Fox operators: Active Station Window now 
    shows band activity. Hound callsigns can be highlighted via UDP API, and 
    assigned a score for sorting via UDP API. Fox Tx frequency is preserved 
    when switching in/out of Fox mode.
@@ -83,7 +83,7 @@ Improvements to SuperFox/Hound operation:
  - UDP Status Update messages now include information on how many callsigns
    have highlighting applied, and how many callsigns have a score assigned.
 
-Other enhancenments and fixes:
+Other enhancements and fixes:
 
  - In FT8 mode, the Settings dialog no longer resets the VFO frequency 
    to band/mode default unless really needed.
