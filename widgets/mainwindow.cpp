@@ -2671,8 +2671,10 @@ void MainWindow::statusChanged()
   if (SpecOp::FOX==m_specOp) {
     ui->pbFreeText->setVisible(true);
     ui->cbSendMsg->setVisible(true);
+    ui->txb6->click();
     if (m_config.superFox()) {
       ui->sbNslots->setVisible(true);
+      m_XIT=0;
       if(ui->cbSendMsg->isChecked()) {
         ui->sbNslots->setValue(2);
         m_Nslots=2;
