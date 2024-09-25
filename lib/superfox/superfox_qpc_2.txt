@@ -54,9 +54,10 @@ R  Report, (5 bits: -18 to +12 dB, or RR73)
 T  Free text, up to 26 characters total
 U  Unused bits
 
-Unused callsign slots are set to 2, the numerical value for CQ.
-Unused report slots are set to 0 (-20 dB).  "CQ FoxCall" will be
-displayed along with other messages if the "q1" bit is 1.
+Unused callsign slots are set to the numerical value for "QU1RKS", and
+ignored when received. Similarly for unused t71 slots.  Unused report
+slots are set to 0 (-20 dB).  "CQ FoxCall" will be displayed along
+with other messages if the "q1" bit is 1.
 
 The SuperFox decoder displays its results with a separate line for each Hound.
 Thus, the old-style message "K1ABC RR73; W9XYZ <VP8PJ> -14" becomes
