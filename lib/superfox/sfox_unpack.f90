@@ -54,6 +54,8 @@ subroutine sfox_unpack(nutc,x,nsnr,f0,dt0,foxcall,notp)
      call unpackgrid(n15,grid4)
      msg(1)='CQ '//trim(foxcall)//' '//grid4
      write(*,1100) nutc,nsnr,dt0,nint(f0),trim(msg(1))
+     read(msgbits(74:105),'(b32)') n32
+     if(n32.eq.NQU1RKS) go to 100
      call unpacktext77(msgbits(74:144),freeTextMsg(1:13))
      call unpacktext77(msgbits(145:215),freeTextMsg(14:26))
      do i=26,1,-1

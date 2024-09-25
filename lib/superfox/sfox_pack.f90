@@ -8,7 +8,7 @@ subroutine sfox_pack(line,ckey,bMoreCQs,bSendMsg,freeTextMsg,xin)
   integer*8 n47,n58,now
   integer*1 xin(0:49)                    !Packed message as 7-bit symbols
   logical*1 bMoreCQs,bSendMsg
-  logical text
+  logical text,allz
   character*120 line                     !SuperFox message pieces
   character*10 ckey
   character*26 freeTextMsg
@@ -146,6 +146,19 @@ subroutine sfox_pack(line,ckey,bMoreCQs,bSendMsg,freeTextMsg,xin)
         read(msgbits(i0:i0+27),'(b28)') n28
         if(n28.eq.0) write(msgbits(i0:i0+27),'(b28.28)') NQU1RKS
      enddo
+  else if(i3.eq.3) then
+     allz=.true.
+     do i=0,6
+        i0=i*32 + 74
+        read(msgbits(i0:i0+31),'(b32)') n32
+        if(n32.ne.0) allz=.false.
+     enddo
+     if(allz) then
+        do i=0,6
+           i0=i*32 + 74
+           write(msgbits(i0:i0+31),'(b32.32)') NQU1RKS
+        enddo
+     endif
   endif
 
   read(msgbits,1004) xin(0:46)
