@@ -227,6 +227,7 @@ bool keep_frequency = false;
 int m_Nslots0 {1};
 int m_TxFreqFox {300};
 bool filtered = false;
+QString m_hisCall0 = "";
 
 QSharedMemory mem_qmap("mem_qmap");         //Memory segment to be shared (optionally) with QMAP
 struct {
@@ -2671,8 +2672,10 @@ void MainWindow::statusChanged()
   if (SpecOp::FOX==m_specOp) {
     ui->pbFreeText->setVisible(true);
     ui->cbSendMsg->setVisible(true);
+    ui->txb6->click();
     if (m_config.superFox()) {
       ui->sbNslots->setVisible(true);
+      m_XIT=0;
       if(ui->cbSendMsg->isChecked()) {
         ui->sbNslots->setValue(2);
         m_Nslots=2;
@@ -5856,6 +5859,7 @@ void MainWindow::doubleClickOnCall(Qt::KeyboardModifiers modifiers)
     return;
   }
   m_bDoubleClicked = true;
+  m_hisCall0 = m_hisCall;
   processMessage (message, modifiers);
 }
 
@@ -6477,6 +6481,7 @@ void MainWindow::genStdMsgs(QString rpt, bool unconditional)
     m_gen_message_is_cq = false;
     return;
   }
+  m_hisCall0 = hisCall;
   auto const& my_callsign = m_config.my_callsign ();
   auto is_compound = my_callsign != m_baseCall;
   auto is_type_one = !is77BitMode () && is_compound && shortList (my_callsign);
@@ -6723,6 +6728,8 @@ void MainWindow::clearDX ()
   if (m_mode=="FT8" and SpecOp::HOUND == m_specOp) {
     m_ntx=1;
     ui->txrb1->setChecked(true);
+    m_hisCall = "";
+    m_hisCall0 = "";
   } else {
     m_ntx=6;
     ui->txrb6->setChecked(true);
@@ -6994,7 +7001,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::on_dxCallEntry_textChanged (QString const& call)
 {
-  if (SpecOp::HOUND==m_specOp && m_config.superFox() && !m_bDoubleClicked) {
+  if (SpecOp::HOUND==m_specOp && m_config.superFox() && !(m_bDoubleClicked or (m_hisCall0 != ""
+       && (call.left(6).contains(m_hisCall0) or call.right(6).contains(m_hisCall0))))) {
     clearDX();
     return;
   }
@@ -9393,6 +9401,7 @@ void MainWindow::replayDecodes ()
 
 void MainWindow::postDecode (bool is_new, QString const& message)
 {
+  if (message.contains("$VERIFY$")) return;   // Don't send SuperFox OTP messages to messageClient
   auto const& decode = message.trimmed ();
   auto const& parts = decode.left (22).split (' ', SkipEmptyParts);
   if (parts.size () >= 5)
