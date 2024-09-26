@@ -9395,6 +9395,7 @@ void MainWindow::replayDecodes ()
 
 void MainWindow::postDecode (bool is_new, QString const& message)
 {
+  if (message.contains("$VERIFY$")) return;   // Don't send OTP messages to messageClient
   auto const& decode = message.trimmed ();
   auto const& parts = decode.left (22).split (' ', SkipEmptyParts);
   if (parts.size () >= 5)
