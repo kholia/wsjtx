@@ -4266,9 +4266,7 @@ void MainWindow::readFromStdout()                             //readFromStdout
         }
         if(navg>=2) bAvgMsg=true;
       }
-      if (!line_read.trimmed().contains("$VERIFY$")) {
-        write_all("Rx", line_read.trimmed());
-      }
+      write_all("Rx", line_read.trimmed());
       int ntime=6;
       if(m_TRperiod>=60) ntime=4;
       if (line_read.left(ntime) != m_tBlankLine && QString::fromUtf8(line_read.constData()).left(4).contains(QRegularExpression {"\\d\\d\\d\\d"})) {
