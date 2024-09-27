@@ -3455,6 +3455,12 @@ void MainWindow::on_actionSpecial_mouse_commands_triggered()
     </td>
   </tr>
   <tr>
+    <td align="right">H Button:</td>
+    <td><b>Click</b> to toggle FT8 Hound Mode On/Off.<br/>
+        <b>Right-click</b> to activate or deactivate SuperFox mode.
+    </td>
+  </tr>
+  <tr>
     <td align="right">Q65 Button:</td>
     <td><b>Click</b> to switch to Q65 Mode.<br/>
         <b>Right-click</b> to switch to Q65 Pileup Mode.
