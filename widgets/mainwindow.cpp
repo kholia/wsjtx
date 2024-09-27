@@ -6987,12 +6987,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
       on_actionJT9_triggered();
       ui->jt65Button->clearFocus();
   }
-  if(ui->ft8Button->hasFocus() && (event->button() & Qt::RightButton)) {     // toggle SuperFox mode
+  if(ui->houndButton->hasFocus() && (event->button() & Qt::RightButton)) {   // toggle SuperFox mode
       keep_frequency = true;
       m_config.toggle_SF();
       QTimer::singleShot (250, [=] {keep_frequency = false;});
       on_actionFT8_triggered();
-      ui->ft8Button->clearFocus();
+      ui->houndButton->clearFocus();
       ui->labDXped->setStyleSheet("QLabel {background-color: red; color: white;}");
   }
 }
@@ -11428,7 +11428,7 @@ void MainWindow::on_houndButton_clicked (bool checked)
 
 void MainWindow::on_ft8Button_clicked()
 {
-  if (m_specOp==SpecOp::HOUND) {
+  if (m_specOp==SpecOp::HOUND or m_specOp==SpecOp::FOX) {
     m_config.setSpecial_None();
     m_specOp=m_config.special_op_id();
   }
